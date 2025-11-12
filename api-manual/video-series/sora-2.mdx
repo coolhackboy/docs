@@ -40,18 +40,18 @@ Authorization: Bearer YOUR_API_KEY
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `model` | string | Model identifier: `sora-2`, `sora-2-pro`, `sora-2-private`, or `sora-2-pro-private` |
-| `prompt` | string | Description of the desired video (max 1000 characters) |
+| `input.prompt` | string | Description of the desired video (max 1000 characters) |
 
 ### Optional Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `duration` | integer | Model-dependent | Video length in seconds. `sora-2`: `10` or `15`; `sora-2-pro`: `15` or `25` |
-| `aspect_ratio` | string | `16:9` | Video aspect ratio: `16:9` (landscape) or `9:16` (portrait) |
-| `image_urls` | array | - | Reference image URLs for image-to-video generation (max 10MB each) |
-| `watermark` | boolean | `false` | Add Sora watermark to generated video |
-| `thumbnail` | boolean | `false` | Generate preview thumbnail |
 | `callback_url` | string | - | HTTPS webhook URL for task completion notifications |
+| `input.duration` | integer | Model-dependent | Video length in seconds. `sora-2`: `10` or `15`; `sora-2-pro`: `15` or `25` |
+| `input.aspect_ratio` | string | `16:9` | Video aspect ratio: `16:9` (landscape) or `9:16` (portrait) |
+| `input.image_urls` | array | - | Reference image URLs for image-to-video generation (max 10MB each) |
+| `input.watermark` | boolean | `false` | Add Sora watermark to generated video |
+| `input.thumbnail` | boolean | `false` | Generate preview thumbnail |
 
 ### Image Requirements (for Image-to-Video)
 

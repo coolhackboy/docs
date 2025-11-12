@@ -38,17 +38,17 @@ Authorization: Bearer YOUR_API_KEY
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `model` | string | Model identifier: `gpt-4o-image` or `gpt-4o-image-edit` |
-| `prompt` | string | Description of the desired image (max 1000 characters) |
+| `input.prompt` | string | Description of the desired image (max 1000 characters) |
 
 ### Optional Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `size` | string | `1024x1024` | Image dimensions. Aspect ratio: `1:1`, `2:3`, `3:2` OR pixel format: `1024x1024`, `1024x1536`, `1536x1024` |
-| `n` | integer | `1` | Number of images to generate. Supports `1`, `2`, or `4` |
-| `image_urls` | array | - | Reference image URLs for image-to-image or editing (max 5 images) |
-| `mask_url` | string | - | PNG format mask URL for editing (required for `gpt-4o-image-edit`) |
 | `callback_url` | string | - | HTTPS webhook URL for task completion notifications (max 2048 chars) |
+| `input.size` | string | `1024x1024` | Image dimensions. Aspect ratio: `1:1`, `2:3`, `3:2` OR pixel format: `1024x1024`, `1024x1536`, `1536x1024` |
+| `input.n` | integer | `1` | Number of images to generate. Supports `1`, `2`, or `4` |
+| `input.image_urls` | array | - | Reference image URLs for image-to-image or editing (max 5 images) |
+| `input.mask_url` | string | - | PNG format mask URL for editing (required for `gpt-4o-image-edit`) |
 
 ### Image Requirements
 

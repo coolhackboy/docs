@@ -37,16 +37,16 @@ Authorization: Bearer YOUR_API_KEY
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `model` | string | Model identifier: `veo3.1-fast` |
-| `prompt` | string | Description of the desired video (max 1000 characters) |
+| `input.prompt` | string | Description of the desired video (max 1000 characters) |
 
 ### Optional Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `duration` | integer | `8` | Video length in seconds (fixed at 8 for VEO 3.1) |
-| `aspect_ratio` | string | `16:9` | Video aspect ratio: `16:9` (landscape) or `9:16` (portrait) |
-| `image_urls` | array | - | Reference image URLs for image-to-video generation (max 10MB each) |
 | `callback_url` | string | - | HTTPS webhook URL for task completion notifications |
+| `input.duration` | integer | `8` | Video length in seconds (fixed at 8 for VEO 3.1) |
+| `input.aspect_ratio` | string | `16:9` | Video aspect ratio: `16:9` (landscape) or `9:16` (portrait) |
+| `input.image_urls` | array | - | Reference image URLs for image-to-video generation (max 10MB each) |
 
 ### Image Requirements (for Image-to-Video)
 
