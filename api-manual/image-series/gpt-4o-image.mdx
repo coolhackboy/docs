@@ -45,7 +45,7 @@ Authorization: Bearer YOUR_API_KEY
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `callback_url` | string | - | HTTPS webhook URL for task completion notifications (max 2048 chars) |
-| `input.size` | string | `1024x1024` | Image dimensions. Aspect ratio: `1:1`, `2:3`, `3:2` OR pixel format: `1024x1024`, `1024x1536`, `1536x1024` |
+| `input.size` | string | `` | Image dimensions. Aspect ratio: `1:1`, `2:3`, `3:2` |
 | `input.n` | integer | `1` | Number of images to generate. Supports `1`, `2`, or `4` |
 | `input.image_urls` | array | - | Reference image URLs for image-to-image or editing (max 5 images) |
 | `input.mask_url` | string | - | PNG format mask URL for editing (required for `gpt-4o-image-edit`) |
@@ -81,7 +81,7 @@ Transform existing images based on a text prompt.
 
 ```json
 {
-  "model": "gpt-4o-image",
+  "model": "gpt-4o-image-edit",
   "callback_url": "https://your-domain.com/callback",
   "input": {
     "prompt": "Convert this photo to an oil painting style",
@@ -424,7 +424,7 @@ When the task completes, PoYo AI will send a POST request to your callback URL:
 {
   "code": 400,
   "error": {
-    "message": "Invalid parameter: size must be one of 1:1, 2:3, 3:2, 1024x1024, 1024x1536, 1536x1024",
+    "message": "Invalid parameter: size must be one of 1:1, 2:3, 3:2",
     "type": "invalid_request_error",
     "param": "size"
   }
