@@ -161,21 +161,17 @@ When the task completes, the response will include the generated images:
 {
   "code": 200,
   "data": {
-    "id": "task-unified-1757165031-uyujaw3d",
+    "task_id": "task-unified-1757165031-uyujaw3d",
     "status": "finished",
-    "progress": 100,
-    "created": 1757165031,
-    "completed": 1757165061,
-    "model": "gpt-4o-image",
     "files": [
       {
         "file_url": "https://storage.poyo.ai/generated/image-1.jpg",
         "file_type": "image"
       }
     ],
-    "usage": {
-      "credits_used": 2.5
-    }
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
   }
 }
 ```
@@ -184,16 +180,15 @@ When the task completes, the response will include the generated images:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `data.id` | string | Task identifier |
+| `code` | integer | HTTP status code (200 for success) |
+| `data.task_id` | string | Unique task identifier |
 | `data.status` | string | Task status (`finished` when complete) |
-| `data.progress` | integer | Completion percentage (0-100) |
-| `data.created` | integer | Unix timestamp of task creation |
-| `data.completed` | integer | Unix timestamp of task completion |
-| `data.model` | string | Model used for generation |
-| `data.files` | array | Array of generated file objects |
-| `data.files[].file_url` | string | URL to download the generated image |
-| `data.files[].file_type` | string | File type identifier (always `"image"` for image generation) |
-| `data.usage.credits_used` | float | Credits consumed for this generation |
+| `data.files` | array | Array of generated image files |
+| `data.files[].file_url` | string | Direct URL to generated file (valid for 24 hours) |
+| `data.files[].file_type` | string | Type of media file: `image` |
+| `data.created_time` | string | ISO 8601 timestamp of task creation |
+| `data.progress` | integer | Completion percentage (100 when finished) |
+| `data.error_message` | string | Error description (null when successful) |
 
 <Warning>
   **Image Validity**: Generated image links are valid for **24 hours**. Please download and save them promptly.
@@ -396,14 +391,20 @@ When the task completes, PoYo AI will send a POST request to your callback URL:
 
 ```json
 {
-  "id": "task-unified-1757165031-uyujaw3d",
-  "status": "finished",
-  "files": [
-    {
-      "file_url": "https://storage.poyo.ai/generated/image-1.jpg",
-      "file_type": "image"
-    }
-  ]
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "finished",
+    "files": [
+      {
+        "file_url": "https://storage.poyo.ai/generated/image-1.jpg",
+        "file_type": "image"
+      }
+    ],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
 }
 ```
 

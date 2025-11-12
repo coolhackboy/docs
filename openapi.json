@@ -338,7 +338,7 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "files", "created_time", "credits_amount", "progress"],
+            "required": ["task_id", "status", "files", "created_time", "progress"],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -385,11 +385,6 @@
                 "example": "2025-11-12T10:30:00",
                 "description": "ISO 8601 timestamp of task creation"
               },
-              "credits_amount": {
-                "type": "number",
-                "example": 2.5,
-                "description": "Credits consumed (0 until finished)"
-              },
               "progress": {
                 "type": "integer",
                 "minimum": 0,
@@ -418,7 +413,6 @@
               }
             ],
             "created_time": "2025-11-12T10:30:00",
-            "credits_amount": 2.5,
             "progress": 100,
             "error_message": null
           }

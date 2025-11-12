@@ -529,15 +529,19 @@ Receive automatic notifications when video generation completes:
 
 ```json
 {
+  "code": 200,
   "data": {
-    "id": "task-unified-1757165031-uyujaw3d",
-    "status": "succeeded",
+    "task_id": "task-unified-1757165211-xyz789",
+    "status": "finished",
     "files": [
       {
-        "file_url": "https://storage.poyo.ai/generated/veo-video-xyz789.mp4",
+        "file_url": "https://storage.poyo.ai/generated/video-xyz789.mp4",
         "file_type": "video"
       }
-    ]
+    ],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
   }
 }
 ```

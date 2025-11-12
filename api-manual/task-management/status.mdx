@@ -51,7 +51,6 @@ Authorization: Bearer YOUR_API_KEY
       }
     ],
     "created_time": "2025-11-12T10:30:00",
-    "credits_amount": 2.5,
     "progress": 100,
     "error_message": null
   }
@@ -69,7 +68,6 @@ Authorization: Bearer YOUR_API_KEY
 | `data.files[].file_url` | string | Direct URL to generated file |
 | `data.files[].file_type` | string | Type of media file: `image` or `video` |
 | `data.created_time` | string | ISO 8601 timestamp of task creation |
-| `data.credits_amount` | number | Credits consumed (0 until finished) |
 | `data.progress` | integer | Completion percentage (0-100) |
 | `data.error_message` | string | Error description (when status is `failed`) |
 
@@ -94,7 +92,6 @@ Authorization: Bearer YOUR_API_KEY
     "status": "not_started",
     "files": [],
     "created_time": "2025-11-12T10:30:00",
-    "credits_amount": 0,
     "progress": 0,
     "error_message": null
   }
@@ -111,7 +108,6 @@ Authorization: Bearer YOUR_API_KEY
     "status": "running",
     "files": [],
     "created_time": "2025-11-12T10:30:00",
-    "credits_amount": 0,
     "progress": 45,
     "error_message": null
   }
@@ -133,7 +129,6 @@ Authorization: Bearer YOUR_API_KEY
       }
     ],
     "created_time": "2025-11-12T10:30:00",
-    "credits_amount": 2.5,
     "progress": 100,
     "error_message": null
   }
@@ -155,7 +150,6 @@ Authorization: Bearer YOUR_API_KEY
       }
     ],
     "created_time": "2025-11-12T10:30:00",
-    "credits_amount": 45.0,
     "progress": 100,
     "error_message": null
   }
@@ -172,7 +166,6 @@ Authorization: Bearer YOUR_API_KEY
     "status": "failed",
     "files": [],
     "created_time": "2025-11-12T10:30:00",
-    "credits_amount": 0,
     "progress": 0,
     "error_message": "The prompt violates our content policy"
   }
@@ -271,7 +264,6 @@ type TaskData struct {
     Status       string      `json:"status"`
     Files        []MediaFile `json:"files"`
     CreatedTime  string      `json:"created_time"`
-    CreditsAmount float64    `json:"credits_amount"`
     Progress     int         `json:"progress"`
     ErrorMessage *string     `json:"error_message"`
 }
