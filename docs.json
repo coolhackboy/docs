@@ -19,10 +19,10 @@
   },
   "openapi": [
     "/openapi.json",
-    "/openapi-gpt4o.json",
-    "/openapi-nano-banana.json",
-    "/openapi-sora2.json",
-    "/openapi-veo3.json"
+    "/api-manual/image-series/gpt-4o-image.json",
+    "/api-manual/image-series/nano-banana.json",
+    "/api-manual/video-series/sora2.json",
+    "/api-manual/video-series/veo3.json"
   ],
   "navigation": {
     "tabs": [
