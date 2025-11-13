@@ -255,8 +255,8 @@
               },
               "size": {
                 "type": "string",
-                "description": "Image size (e.g., '1024x1024') or aspect ratio (e.g., '16:9')",
-                "example": "1024x1024"
+                "description": "Image size (e.g., '1:1')",
+                "example": "1:1"
               },
               "n": {
                 "type": "integer",
