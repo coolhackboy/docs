@@ -17,7 +17,13 @@
       "mode": "simple"
     }
   },
-  "openapi": "/openapi.json",
+  "openapi": [
+    "/openapi.json",
+    "/openapi-gpt4o.json",
+    "/openapi-nano-banana.json",
+    "/openapi-sora2.json",
+    "/openapi-veo3.json"
+  ],
   "navigation": {
     "tabs": [
       {
