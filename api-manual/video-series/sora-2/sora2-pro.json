@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Sora 2 API",
-    "description": "Professional Video Generation with OpenAI's Sora 2",
+    "title": "PoYo AI - Sora 2 Pro API",
+    "description": "Sora 2 Pro Premium Quality Video Generation",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Sora 2 Video Generation Task",
-        "description": "Generate professional videos using Sora 2 models",
-        "operationId": "submitSora2Task",
-        "tags": ["Sora 2"],
+        "summary": "Submit Sora 2 Pro Video Generation Task",
+        "description": "Generate premium HD quality videos using Sora 2 Pro",
+        "operationId": "submitSora2ProTask",
+        "tags": ["Sora 2 Pro"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,18 +31,6 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "sora-2": {
-                  "summary": "Sora 2 Video Generation",
-                  "value": {
-                    "model": "sora-2",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A time-lapse of a bustling city street transitioning from day to night",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
-                    }
-                  }
-                },
                 "sora-2-pro": {
                   "summary": "Sora 2 Pro Video Generation",
                   "value": {
@@ -51,18 +39,6 @@
                     "input": {
                       "prompt": "A cinematic drone shot flying through a misty forest at dawn",
                       "duration": 25,
-                      "aspect_ratio": "16:9"
-                    }
-                  }
-                },
-                "sora-2-private": {
-                  "summary": "Sora 2 Private Video Generation",
-                  "value": {
-                    "model": "sora-2-private",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A peaceful sunset over a calm ocean with gentle waves",
-                      "duration": 15,
                       "aspect_ratio": "16:9"
                     }
                   }
@@ -133,11 +109,9 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Sora 2 model identifier",
+            "description": "Sora 2 Pro model identifier",
             "enum": [
-              "sora-2",
               "sora-2-pro",
-              "sora-2-private",
               "sora-2-pro-private"
             ]
           },
@@ -169,9 +143,9 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Video duration in seconds (sora-2/sora-2-private: 10 or 15; sora-2-pro/sora-2-pro-private: 15 or 25)",
-                "enum": [10, 15, 25],
-                "example": 15
+                "description": "Video duration in seconds (15 or 25)",
+                "enum": [15, 25],
+                "example": 25
               },
               "aspect_ratio": {
                 "type": "string",
