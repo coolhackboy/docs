@@ -213,19 +213,7 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Model identifier",
-            "enum": [
-              "gpt-4o-image",
-              "gpt-4o-image-edit",
-              "nano-banana",
-              "nano-banana-edit",
-              "sora-2",
-              "sora-2-pro",
-              "sora-2-private",
-              "sora-2-pro-private",
-              "veo3.1-fast"
-            ],
-            "example": "gpt-4o-image"
+            "description": "Model identifier for image or video generation"
           },
           "callback_url": {
             "type": "string",

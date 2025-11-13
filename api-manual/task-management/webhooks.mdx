@@ -1,0 +1,289 @@
+---
+title: "Webhook Callbacks"
+description: "Receive automatic notifications when tasks complete"
+---
+
+# Webhook Callbacks
+
+Instead of polling the status endpoint, you can provide a callback URL when submitting tasks to receive automatic notifications when generation completes.
+
+## How It Works
+
+1. **Submit with callback URL**: Include a `callback_url` in your task submission
+2. **Receive notification**: When the task completes (success or failure), PoYo AI sends a POST request to your URL
+3. **Process result**: Your server receives the complete task data including generated files
+
+## Callback Request
+
+When a task completes, PoYo AI will send a POST request to your callback URL with the same structure as the [status endpoint response](/api-manual/task-management/status):
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "finished",
+    "files": [
+      {
+        "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+        "file_type": "image"
+      }
+    ],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```
+
+### Failed Task Callback
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "failed",
+    "files": [],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 0,
+    "error_message": "The prompt violates our content policy"
+  }
+}
+```
+
+## Requirements
+
+Your callback endpoint must meet the following requirements:
+
+- **HTTPS only**: Must use HTTPS protocol (HTTP not supported)
+- **Maximum URL length**: 2048 characters
+- **Response timeout**: Must respond within 10 seconds
+- **Success response**: Should return HTTP 200-299 status code
+- **No internal IPs**: Cannot use private/internal IP addresses (e.g., 192.168.x.x, 10.x.x.x)
+- **Public accessibility**: Must be publicly accessible from the internet
+
+## Retry Policy
+
+If your callback endpoint fails to respond or returns an error:
+
+- **Retry attempts**: 3 automatic retries
+- **Retry delays**: After 1 second, 2 seconds, and 4 seconds
+- **Final failure**: After 3 failed attempts, no further retries are made
+
+<Warning>
+  If all retry attempts fail, you can still retrieve the results by polling the [status endpoint](/api-manual/task-management/status).
+</Warning>
+
+## Example Implementation
+
+### Python (Flask)
+
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/webhook/generation-complete', methods=['POST'])
+def handle_generation_complete():
+    # Parse the callback payload
+    data = request.json
+    task_data = data.get('data', {})
+
+    task_id = task_data.get('task_id')
+    status = task_data.get('status')
+
+    if status == 'finished':
+        # Task completed successfully
+        files = task_data.get('files', [])
+        for file in files:
+            print(f"Generated file: {file['file_url']}")
+            # Download and process the file
+            # save_file(file['file_url'])
+
+    elif status == 'failed':
+        # Task failed
+        error = task_data.get('error_message')
+        print(f"Task {task_id} failed: {error}")
+        # Handle the failure
+
+    # Return 200 to acknowledge receipt
+    return jsonify({"received": True}), 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=443, ssl_context='adhoc')
+```
+
+### Node.js (Express)
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+app.post('/webhook/generation-complete', (req, res) => {
+  const { data } = req.body;
+  const { task_id, status, files, error_message } = data;
+
+  if (status === 'finished') {
+    // Task completed successfully
+    console.log(`Task ${task_id} completed`);
+    files.forEach(file => {
+      console.log(`Generated file: ${file.file_url}`);
+      // Download and process the file
+    });
+  } else if (status === 'failed') {
+    // Task failed
+    console.log(`Task ${task_id} failed: ${error_message}`);
+    // Handle the failure
+  }
+
+  // Return 200 to acknowledge receipt
+  res.status(200).json({ received: true });
+});
+
+const https = require('https');
+const fs = require('fs');
+
+const options = {
+  key: fs.readFileSync('private-key.pem'),
+  cert: fs.readFileSync('certificate.pem')
+};
+
+https.createServer(options, app).listen(443, () => {
+  console.log('Webhook server listening on port 443');
+});
+```
+
+### Go
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type CallbackPayload struct {
+    Code int      `json:"code"`
+    Data TaskData `json:"data"`
+}
+
+type TaskData struct {
+    TaskID       string      `json:"task_id"`
+    Status       string      `json:"status"`
+    Files        []MediaFile `json:"files"`
+    CreatedTime  string      `json:"created_time"`
+    Progress     int         `json:"progress"`
+    ErrorMessage *string     `json:"error_message"`
+}
+
+type MediaFile struct {
+    FileURL  string `json:"file_url"`
+    FileType string `json:"file_type"`
+}
+
+func handleWebhook(w http.ResponseWriter, r *http.Request) {
+    var payload CallbackPayload
+
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    taskData := payload.Data
+
+    if taskData.Status == "finished" {
+        // Task completed successfully
+        fmt.Printf("Task %s completed\n", taskData.TaskID)
+        for _, file := range taskData.Files {
+            fmt.Printf("Generated file: %s\n", file.FileURL)
+            // Download and process the file
+        }
+    } else if taskData.Status == "failed" {
+        // Task failed
+        fmt.Printf("Task %s failed: %s\n", taskData.TaskID, *taskData.ErrorMessage)
+        // Handle the failure
+    }
+
+    // Return 200 to acknowledge receipt
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]bool{"received": true})
+}
+
+func main() {
+    http.HandleFunc("/webhook/generation-complete", handleWebhook)
+
+    // Use HTTPS
+    err := http.ListenAndServeTLS(":443", "cert.pem", "key.pem", nil)
+    if err != nil {
+        panic(err)
+    }
+}
+```
+
+## Security Best Practices
+
+<Tip>
+  **Verify requests**: Consider adding a signature verification mechanism to ensure requests are from PoYo AI
+</Tip>
+
+<Tip>
+  **Idempotency**: Design your webhook handler to be idempotent in case of duplicate deliveries
+</Tip>
+
+<Tip>
+  **Async processing**: Process the callback asynchronously and return 200 quickly to avoid timeouts
+</Tip>
+
+<Tip>
+  **Logging**: Log all webhook requests for debugging and monitoring
+</Tip>
+
+## Testing
+
+### Using ngrok for Local Testing
+
+During development, you can use [ngrok](https://ngrok.com) to expose your local server:
+
+```bash
+# Start your local webhook server on port 3000
+node webhook-server.js
+
+# In another terminal, start ngrok
+ngrok http 3000
+
+# Use the HTTPS URL provided by ngrok as your callback_url
+# Example: https://abc123.ngrok.io/webhook/generation-complete
+```
+
+## Webhook vs Polling
+
+| Method | Best For | Pros | Cons |
+|--------|----------|------|------|
+| **Webhooks** | Production systems | Real-time notifications, no polling overhead | Requires public endpoint, harder to debug |
+| **Polling** | Development, simple integrations | Easy to implement, no server required | Higher latency, consumes more resources |
+
+<Info>
+  For production systems handling high volumes, webhooks are recommended to reduce API calls and get instant notifications.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Task Status" icon="list-check" href="/api-manual/task-management/status">
+    Learn about polling task status
+  </Card>
+  <Card title="Image Generation" icon="image" href="/api-manual/image-series/gpt-4o-image">
+    Generate images with GPT-4o
+  </Card>
+  <Card title="Video Generation" icon="video" href="/api-manual/video-series/sora-2">
+    Create videos with Sora 2
+  </Card>
+  <Card title="Quick Start" icon="rocket" href="/guides/getting-started/quickstart">
+    Back to Quick Start guide
+  </Card>
+</CardGroup>

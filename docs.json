@@ -57,7 +57,8 @@
           {
             "group": "Task Management",
             "pages": [
-              "api-manual/task-management/status"
+              "api-manual/task-management/status",
+              "api-manual/task-management/webhooks"
             ]
           }
         ]

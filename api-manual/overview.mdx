@@ -169,7 +169,7 @@ while True:
         print(f"Image URL: {task['files'][0]['file_url']}")
         break
     elif task["status"] == "failed":
-        print(f"Generation failed: {task['error']['message']}")
+        print(f"Generation failed: {task['error_message']}")
         break
 
     print(f"Progress: {task['progress']}%")
