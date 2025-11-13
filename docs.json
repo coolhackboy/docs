@@ -21,8 +21,8 @@
     "/openapi.json",
     "/api-manual/image-series/gpt-4o-image.json",
     "/api-manual/image-series/nano-banana.json",
-    "/api-manual/video-series/sora-2/sora2.json",
-    "/api-manual/video-series/sora-2/sora2-pro.json",
+    "/api-manual/video-series/sora2.json",
+    "/api-manual/video-series/sora2-pro.json",
     "/api-manual/video-series/veo3.json"
   ],
   "navigation": {
@@ -57,13 +57,8 @@
           {
             "group": "Video Series",
             "pages": [
-              {
-                "group": "Sora 2 Video Generation",
-                "pages": [
-                  "api-manual/video-series/sora-2/sora2",
-                  "api-manual/video-series/sora-2/sora2-pro"
-                ]
-              },
+              "api-manual/video-series/sora2",
+              "api-manual/video-series/sora2-pro",
               "api-manual/video-series/veo3"
             ]
           },
