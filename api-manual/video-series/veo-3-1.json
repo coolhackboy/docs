@@ -140,7 +140,7 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Reference image URLs",
+                "description": "Reference image URLs (for image-to-video)",
                 "example": []
               },
               "duration": {
