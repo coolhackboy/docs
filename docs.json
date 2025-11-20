@@ -23,6 +23,7 @@
     "/openapi.json",
     "/api-manual/image-series/gpt-4o-image.json",
     "/api-manual/image-series/nano-banana.json",
+    "/api-manual/image-series/nano-banana-2.json",
     "/api-manual/video-series/sora-2.json",
     "/api-manual/video-series/sora-2-pro.json",
     "/api-manual/video-series/veo-3-1.json"
@@ -53,7 +54,8 @@
             "group": "Image Series",
             "pages": [
               "api-manual/image-series/gpt-4o-image",
-              "api-manual/image-series/nano-banana"
+              "api-manual/image-series/nano-banana",
+              "api-manual/image-series/nano-banana-2"
             ]
           },
           {
