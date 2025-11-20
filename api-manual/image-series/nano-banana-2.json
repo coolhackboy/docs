@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Nano Banana 2 API",
-    "description": "Fast Image Generation powered by Gemini 2.5 Flash",
+    "description": "Next-generation AI image generation powered by Gemini 3 Pro",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Nano Banana 2 Generation Task",
-        "description": "Fast image generation and editing using Gemini 2.5 Flash",
+        "description": "Next-generation AI image generation and editing powered by Gemini 3 Pro with 2K native resolution",
         "operationId": "submitNanoBanana2Task",
         "tags": ["Nano Banana 2"],
         "requestBody": {
