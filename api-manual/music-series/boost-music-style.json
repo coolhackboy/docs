@@ -1,0 +1,210 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Boost Music Style API",
+    "description": "Generate enhanced music style descriptions using AI",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Boost Music Style Task",
+        "description": "Generate enhanced music style descriptions based on your input",
+        "operationId": "submitBoostMusicStyleTask",
+        "tags": ["Music Style"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "pop-mysterious": {
+                  "summary": "Pop and Mysterious Style",
+                  "value": {
+                    "model": "boost-music-style",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "content": "Pop, Mysterious"
+                    }
+                  }
+                },
+                "cinematic-epic": {
+                  "summary": "Cinematic Epic Style",
+                  "value": {
+                    "model": "boost-music-style",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "content": "Cinematic, Epic, Orchestral"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `boost-music-style` for this endpoint.",
+            "enum": ["boost-music-style"],
+            "example": "boost-music-style"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["content"],
+            "description": "Input parameters for style generation",
+            "properties": {
+              "content": {
+                "type": "string",
+                "description": "Style description.\n\nDescribe in concise and clear language the music style you expect to generate.\n\nCan include genre, mood, instruments, or any musical characteristics.",
+                "example": "Pop, Mysterious"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

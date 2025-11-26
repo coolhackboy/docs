@@ -1,0 +1,271 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Add Instrumental API",
+    "description": "Generate musical accompaniment for uploaded audio files",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Add Instrumental Task",
+        "description": "Generate musical accompaniment for uploaded audio files, typically vocal stems or melodies",
+        "operationId": "submitAddInstrumentalTask",
+        "tags": ["Music Generation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic Instrumental Generation",
+                  "value": {
+                    "model": "add-instrumental",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/vocals.mp3",
+                      "title": "Relaxing Piano",
+                      "tags": "relaxing, piano, soothing",
+                      "negative_tags": "heavy metal, fast drums"
+                    }
+                  }
+                },
+                "advanced": {
+                  "summary": "Advanced with Style Controls",
+                  "value": {
+                    "model": "add-instrumental",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/vocals.mp3",
+                      "model": "V5",
+                      "title": "Epic Orchestral Background",
+                      "tags": "orchestral, cinematic, epic",
+                      "negative_tags": "electronic, synth",
+                      "vocal_gender": "m",
+                      "style_weight": 0.7,
+                      "weirdness_constraint": 0.3,
+                      "audio_weight": 0.65
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `add-instrumental` for this endpoint.",
+            "enum": ["add-instrumental"],
+            "example": "add-instrumental"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["upload_url", "title", "tags", "negative_tags"],
+            "description": "Input parameters for instrumental generation",
+            "properties": {
+              "upload_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the audio file (typically vocals or melody) for processing.",
+                "example": "https://storage.example.com/vocals.mp3"
+              },
+              "title": {
+                "type": "string",
+                "description": "Name for the generated music.\n\nMaximum 100 characters.",
+                "maxLength": 100,
+                "example": "Relaxing Piano"
+              },
+              "tags": {
+                "type": "string",
+                "description": "Desired musical styles for the instrumental.\n\nSpecify genres, moods, or instruments to include.",
+                "example": "relaxing, piano, soothing"
+              },
+              "negative_tags": {
+                "type": "string",
+                "description": "Music styles or characteristics to exclude from generation.\n\nSpecify unwanted genres, moods, or instruments to avoid in the output.",
+                "example": "heavy metal, fast drums"
+              },
+              "model": {
+                "type": "string",
+                "description": "AI model version for instrumental generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n\nDefault: V4_5PLUS",
+                "enum": ["V4_5PLUS", "V5"],
+                "example": "V4_5PLUS"
+              },
+              "vocal_gender": {
+                "type": "string",
+                "description": "Preferred vocal gender if vocals are generated.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
+                "enum": ["m", "f"],
+                "example": "m"
+              },
+              "style_weight": {
+                "type": "number",
+                "description": "Controls how strongly the specified style influences the generation.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "weirdness_constraint": {
+                "type": "number",
+                "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional music\n- Higher values: More experimental and unique outputs",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "audio_weight": {
+                "type": "number",
+                "description": "Balances audio characteristics against other generation factors.\n\nRange: 0-1, up to 2 decimals.\n\nAdjusts the emphasis on audio quality and sonic features in the final output.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

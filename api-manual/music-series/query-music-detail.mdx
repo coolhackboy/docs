@@ -1,0 +1,40 @@
+---
+title: "Query Music Detail"
+description: "Query detailed results of music generation tasks"
+openapi: "/api-manual/music-series/query-music-detail.json GET /api/generate/detail/music"
+---
+
+## Usage Guide
+
+- This endpoint retrieves the detailed results and status of a music generation task
+- Use the `task_id` returned from any music generation submission endpoint to query results
+- Optionally filter results by `audio_id` to get a specific audio file
+
+## Parameter Details
+
+- `task_id` (required): The unique task identifier returned from the music generation submission endpoint
+
+- `audio_id` (optional): Filter results to return only the specified audio file
+
+## Developer Notes
+
+- Poll this endpoint to check task completion status
+- The `files` array will be empty until the task status is `finished`
+- When a task fails, check the `error_message` field for details
+- Multiple audio files may be returned for a single task as variations are generated
+
+## Response Fields
+
+- `status` (string): Current task status
+  - `not_started`: Task is queued but not yet processing
+  - `in_progress`: Task is currently being processed
+  - `finished`: Task completed successfully with results in `files`
+  - `failed`: Task failed, check `error_message` for details
+
+- `files` (array): Generated audio files with the following properties:
+  - `audio_id`: Unique identifier for the audio file
+  - `audio_url`: Direct download URL for the audio file
+  - `image_url`: Cover image URL for the audio
+  - `title`: Track title
+  - `tags`: Style tags
+  - `duration`: Audio duration in seconds

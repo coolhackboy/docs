@@ -26,7 +26,24 @@
     "/api-manual/image-series/nano-banana-2.json",
     "/api-manual/video-series/sora-2.json",
     "/api-manual/video-series/sora-2-pro.json",
-    "/api-manual/video-series/veo-3-1.json"
+    "/api-manual/video-series/veo-3-1.json",
+    "/api-manual/music-series/generate-music.json",
+    "/api-manual/music-series/extend-music.json",
+    "/api-manual/music-series/upload-and-cover-audio.json",
+    "/api-manual/music-series/upload-and-extend-audio.json",
+    "/api-manual/music-series/add-instrumental.json",
+    "/api-manual/music-series/add-vocals.json",
+    "/api-manual/music-series/get-timestamped-lyrics.json",
+    "/api-manual/music-series/boost-music-style.json",
+    "/api-manual/music-series/generate-music-cover.json",
+    "/api-manual/music-series/replace-section.json",
+    "/api-manual/music-series/generate-persona.json",
+    "/api-manual/music-series/generate-lyrics.json",
+    "/api-manual/music-series/convert-to-wav.json",
+    "/api-manual/music-series/separate-vocals.json",
+    "/api-manual/music-series/generate-midi.json",
+    "/api-manual/music-series/create-music-video.json",
+    "/api-manual/music-series/query-music-detail.json"
   ],
   "navigation": {
     "tabs": [
@@ -64,6 +81,28 @@
               "api-manual/video-series/sora-2",
               "api-manual/video-series/sora-2-pro",
               "api-manual/video-series/veo-3-1"
+            ]
+          },
+          {
+            "group": "Music Series",
+            "pages": [
+              "api-manual/music-series/generate-music",
+              "api-manual/music-series/extend-music",
+              "api-manual/music-series/upload-and-cover-audio",
+              "api-manual/music-series/upload-and-extend-audio",
+              "api-manual/music-series/add-instrumental",
+              "api-manual/music-series/add-vocals",
+              "api-manual/music-series/get-timestamped-lyrics",
+              "api-manual/music-series/boost-music-style",
+              "api-manual/music-series/generate-music-cover",
+              "api-manual/music-series/replace-section",
+              "api-manual/music-series/generate-persona",
+              "api-manual/music-series/generate-lyrics",
+              "api-manual/music-series/convert-to-wav",
+              "api-manual/music-series/separate-vocals",
+              "api-manual/music-series/generate-midi",
+              "api-manual/music-series/create-music-video",
+              "api-manual/music-series/query-music-detail"
             ]
           },
           {

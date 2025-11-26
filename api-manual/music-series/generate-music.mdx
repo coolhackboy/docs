@@ -1,0 +1,51 @@
+---
+title: "Generate Music"
+description: "AI-powered music generation with customizable styles and vocals"
+openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint creates music based on your text prompt
+- Multiple variations will be generated for each request
+- You can control detail level with custom mode and instrumental settings
+
+## Parameter Details
+
+- In Custom Mode ( `custom_mode: true` ):
+
+  - If `instrumental: true` : `style` and `title` are required
+
+  - If `instrumental: false` : `style` and `title` are required
+
+  - Character limits vary by model:
+
+    - **V3_5 & V4**: `prompt` 3000 characters, `style` 200 characters
+
+    - **V4_5 & V4_5PLUS**: `prompt` 5000 characters, `style` 1000 characters
+
+    - **V5**: `prompt` 5000 characters, `style` 1000 characters
+
+  - `title` length limit: 80 characters (all models)
+
+- In Non-custom Mode ( `custom_mode: false` ):
+
+  - `prompt` length limit: 500 characters
+
+  - Other parameters should be left empty
+
+## Developer Notes
+
+- Recommendation for new users: Start with `custom_mode: false` for simpler usage
+
+## Optional parameters
+
+- `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter is only effective when `custom_mode` is `true` . Based on practice, this parameter can only increase the probability but cannot guarantee adherence to male/female voice instructions.
+
+- `style_weight` (number): Strength of adherence to style. Range 0-1, up to 2 decimals. Example: `0.65` .
+
+- `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals. Example: `0.65` .
+
+- `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals. Example: `0.65` .
+
+- `persona_id` (string): Persona ID to apply to the generated music. Use this to apply a specific persona style to your music generation. Only available when Custom Mode is enabled.

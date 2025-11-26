@@ -1,0 +1,278 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Add Vocals API",
+    "description": "Layer AI-generated vocals on top of an existing instrumental",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Add Vocals Task",
+        "description": "Layer AI-generated vocals on top of an existing instrumental track",
+        "operationId": "submitAddVocalsTask",
+        "tags": ["Music Generation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic Vocal Generation",
+                  "value": {
+                    "model": "add-vocals",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/instrumental.mp3",
+                      "prompt": "A heartfelt ballad about love and memories",
+                      "title": "Memories of You",
+                      "style": "Pop Ballad",
+                      "negative_tags": "rap, heavy metal"
+                    }
+                  }
+                },
+                "advanced": {
+                  "summary": "Advanced with Style Controls",
+                  "value": {
+                    "model": "add-vocals",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/instrumental.mp3",
+                      "model": "V5",
+                      "prompt": "Upbeat lyrics about summer adventures and freedom",
+                      "title": "Summer Freedom",
+                      "style": "Pop, Upbeat, Energetic",
+                      "negative_tags": "sad, slow, melancholic",
+                      "vocal_gender": "f",
+                      "style_weight": 0.7,
+                      "weirdness_constraint": 0.2,
+                      "audio_weight": 0.6
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `add-vocals` for this endpoint.",
+            "enum": ["add-vocals"],
+            "example": "add-vocals"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["upload_url", "prompt", "title", "style", "negative_tags"],
+            "description": "Input parameters for vocal generation",
+            "properties": {
+              "upload_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the instrumental audio file to add vocals to.",
+                "example": "https://storage.example.com/instrumental.mp3"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Lyrics or description for the generated vocals.\n\nThis will be used as the content for the AI-generated vocals.",
+                "example": "A heartfelt ballad about love and memories"
+              },
+              "title": {
+                "type": "string",
+                "description": "Name for the generated music.\n\nMaximum 100 characters.",
+                "maxLength": 100,
+                "example": "Memories of You"
+              },
+              "style": {
+                "type": "string",
+                "description": "Music style specification defining genre, mood, or artistic direction.\n\nGuides the vocal style and delivery.",
+                "example": "Pop Ballad"
+              },
+              "negative_tags": {
+                "type": "string",
+                "description": "Music styles or characteristics to exclude from generation.\n\nSpecify unwanted genres, moods, or vocal styles to avoid in the output.",
+                "example": "rap, heavy metal"
+              },
+              "model": {
+                "type": "string",
+                "description": "AI model version for vocal generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n\nDefault: V4_5PLUS",
+                "enum": ["V4_5PLUS", "V5"],
+                "example": "V4_5PLUS"
+              },
+              "vocal_gender": {
+                "type": "string",
+                "description": "Preferred vocal gender for the generated vocals.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
+                "enum": ["m", "f"],
+                "example": "f"
+              },
+              "style_weight": {
+                "type": "number",
+                "description": "Controls how strongly the specified style influences the generation.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "weirdness_constraint": {
+                "type": "number",
+                "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional vocals\n- Higher values: More experimental and unique vocal outputs",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "audio_weight": {
+                "type": "number",
+                "description": "Balances audio characteristics against other generation factors.\n\nRange: 0-1, up to 2 decimals.\n\nAdjusts the emphasis on audio quality and sonic features in the final output.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

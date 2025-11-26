@@ -1,0 +1,24 @@
+---
+title: "Generate MIDI"
+description: "Generate MIDI files from separated audio tracks"
+openapi: "/api-manual/music-series/generate-midi.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint generates MIDI files from completed vocal separation tasks
+- MIDI output includes detailed note information for each detected instrument
+- Includes pitch, timing, and velocity data for professional music production
+
+## Parameter Details
+
+- `task_id` (required): Task ID from a completed vocal separation
+  - Must be from the Separate Vocals endpoint
+  - The vocal separation must have completed successfully before MIDI generation
+
+## Developer Notes
+
+- MIDI generation requires a completed vocal separation as a prerequisite
+- The callback delivers detailed note information for each detected instrument
+- Callback endpoints must accept POST requests with JSON payloads
+- You can also poll for results using the task status endpoint as an alternative to callbacks

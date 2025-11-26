@@ -1,0 +1,23 @@
+---
+title: "Generate Music Cover"
+description: "Generate cover versions of existing music tracks"
+openapi: "/api-manual/music-series/generate-music-cover.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint creates a cover version of an existing music track
+- Requires a valid task_id from a previously generated music task
+- The cover will be a new interpretation of the original track
+
+## Parameter Details
+
+- `task_id` (required): The task ID from a completed music generation task
+  - Must be a valid task_id returned from the Generate Music or Extend Music endpoints
+  - The original task must have completed successfully
+
+## Developer Notes
+
+- A cover can only be generated once per original task
+- If a cover has already been generated, the API will return error code 400 or 409
+- Results are delivered via the callback URL when processing is complete

@@ -1,0 +1,23 @@
+---
+title: "Convert to WAV"
+description: "Convert generated music tracks to high-quality WAV format"
+openapi: "/api-manual/music-series/convert-to-wav.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint converts generated music tracks to high-quality WAV format
+- WAV files provide lossless audio quality for professional use
+- The download URL for the WAV file is delivered via the callback
+
+## Parameter Details
+
+- `task_id` (required): Task ID from a completed music generation (Generate Music or Extend Music)
+- `audio_id` (required): Specific audio track identifier from the callback data
+
+## Developer Notes
+
+- Each audio track can only be converted to WAV once
+- If a WAV conversion already exists, the API returns error code 409
+- The callback will include a download URL for the high-quality WAV file
+- WAV files are significantly larger than compressed formats - plan storage accordingly

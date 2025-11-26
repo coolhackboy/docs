@@ -1,0 +1,62 @@
+---
+title: "Upload and Cover Audio"
+description: "Transform audio tracks into new styles while preserving the original melody"
+openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint transforms an uploaded audio track into a new style while preserving the original melody
+- Upload your audio file and specify the desired transformation style
+- The original melody and structure are maintained while applying new musical characteristics
+
+## Parameter Details
+
+- **Audio Upload Requirement**:
+
+  - The uploaded audio must not exceed **2 minutes** in duration
+
+  - Provide a valid URL pointing to your audio file via `upload_url`
+
+- In Custom Mode ( `custom_mode: true` ):
+
+  - `style` and `title` are **required**
+
+  - `prompt` is **required** if `instrumental` is `false`
+
+  - `prompt` character limits vary by model:
+    - **V3_5 & V4**: Maximum 500 characters
+    - **V4_5 & V4_5PLUS**: Maximum 3000 characters
+    - **V5**: Maximum 5000 characters
+
+  - `style` length limit: 200 characters
+
+  - `title` length limit: 80 characters
+
+- In Non-custom Mode ( `custom_mode: false` ):
+
+  - `prompt` is **required** to describe the desired transformation (max 500 characters)
+
+  - `style` and `title` should be left empty
+
+## Developer Notes
+
+- Ensure your audio URL is publicly accessible and the file is under 2 minutes
+
+- For best results, use high-quality source audio with clear melody lines
+
+- The `audio_weight` parameter can help balance between preserving the original and applying the new style
+
+## Optional parameters
+
+- `negative_tags` (string): Music styles or characteristics to exclude from the cover.
+
+- `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter increases the probability but cannot guarantee adherence.
+
+- `style_weight` (number): Strength of adherence to the new style. Range 0-1, up to 2 decimals.
+
+- `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals.
+
+- `audio_weight` (number): Balance weight for preserving original audio features. Range 0-1, up to 2 decimals.
+
+- `persona_id` (string): Persona ID to apply to the covered track.

@@ -1,0 +1,310 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Upload and Cover Audio API",
+    "description": "Transform audio tracks into new styles while preserving the original melody",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Upload and Cover Audio Task",
+        "description": "Transform audio tracks into new styles while preserving the original melody",
+        "operationId": "submitUploadCoverAudioTask",
+        "tags": ["Audio Cover"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "custom-mode": {
+                  "summary": "Custom Mode - Full Control",
+                  "value": {
+                    "model": "upload-and-cover-audio",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://example.com/audio/my-track.mp3",
+                      "prompt": "Transform into an upbeat electronic dance version",
+                      "style": "EDM, Electronic",
+                      "title": "Dance Remix",
+                      "custom_mode": true,
+                      "instrumental": false,
+                      "model": "V5",
+                      "negative_tags": "Slow, Sad",
+                      "style_weight": 0.8
+                    }
+                  }
+                },
+                "simple-mode": {
+                  "summary": "Simple Mode - Basic Cover",
+                  "value": {
+                    "model": "upload-and-cover-audio",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://example.com/audio/my-track.mp3",
+                      "prompt": "Create a jazz version of this track",
+                      "custom_mode": false,
+                      "instrumental": false,
+                      "model": "V4_5PLUS"
+                    }
+                  }
+                },
+                "instrumental": {
+                  "summary": "Instrumental Cover",
+                  "value": {
+                    "model": "upload-and-cover-audio",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://example.com/audio/my-track.mp3",
+                      "prompt": "Epic orchestral transformation",
+                      "style": "Orchestral, Cinematic",
+                      "title": "Epic Orchestra Version",
+                      "custom_mode": true,
+                      "instrumental": true,
+                      "model": "V5"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `upload-and-cover-audio` for this endpoint.",
+            "enum": ["upload-and-cover-audio"],
+            "example": "upload-and-cover-audio"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications.\n\nEndpoint that receives task completion updates.",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["upload_url", "prompt", "custom_mode", "instrumental", "model"],
+            "description": "Input parameters for audio cover generation",
+            "properties": {
+              "upload_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URL of the audio file to transform.\n\n**Important**: Ensure the uploaded audio does not exceed 2 minutes in duration.",
+                "example": "https://example.com/audio/my-track.mp3"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation.\n\nCharacter limits by model:\n- **V3_5 & V4**: Maximum 500 characters\n- **V4_5 & V4_5PLUS**: Maximum 3000 characters\n- **V5**: Maximum 5000 characters",
+                "maxLength": 5000,
+                "example": "Transform into an upbeat electronic dance version"
+              },
+              "style": {
+                "type": "string",
+                "description": "Music style specification for the cover version.\n\nRequired when `custom_mode` is `true`.\n\nMaximum 200 characters.",
+                "maxLength": 200,
+                "example": "EDM, Electronic"
+              },
+              "title": {
+                "type": "string",
+                "description": "Title for the covered track.\n\nRequired when `custom_mode` is `true`.\n\nMaximum 80 characters.",
+                "maxLength": 80,
+                "example": "Dance Remix"
+              },
+              "custom_mode": {
+                "type": "boolean",
+                "description": "Enable advanced parameter customization mode.\n\n- When `true`: Enables full control over style, title, and other parameters. `style` and `title` become required fields.\n\n- When `false`: Simplified mode where only `prompt` is needed for style transformation.",
+                "example": true
+              },
+              "instrumental": {
+                "type": "boolean",
+                "description": "Specifies whether the output should be instrumental (no vocals).\n\n- When `true`: Produces pure instrumental track without any vocals.\n\n- When `false`: Generates music with vocals based on the original track.",
+                "example": false
+              },
+              "model": {
+                "type": "string",
+                "description": "AI model version for audio cover generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration\n- **V3_5**: Better song structure, max 4 min duration",
+                "enum": ["V3_5", "V4", "V4_5", "V4_5PLUS", "V5"],
+                "example": "V5"
+              },
+              "negative_tags": {
+                "type": "string",
+                "description": "Music styles or characteristics to exclude from the cover.\n\nSpecify unwanted genres, moods, or instruments to avoid in the output.",
+                "example": "Slow, Sad"
+              },
+              "vocal_gender": {
+                "type": "string",
+                "description": "Preferred vocal gender for the cover version.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\nOnly effective when `instrumental` is `false`.\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
+                "enum": ["m", "f"],
+                "example": "f"
+              },
+              "style_weight": {
+                "type": "number",
+                "description": "Controls how strongly the specified style influences the cover.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.8
+              },
+              "weirdness_constraint": {
+                "type": "number",
+                "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional music\n- Higher values: More experimental and unique outputs",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.5
+              },
+              "audio_weight": {
+                "type": "number",
+                "description": "Balances how much the original audio characteristics are preserved.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values preserve more of the original melody and structure.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.7
+              },
+              "persona_id": {
+                "type": "string",
+                "description": "Persona ID to apply to the covered track.\n\nOnly available when Custom Mode ( `custom_mode: true` ) is enabled.\n\nUse this to apply a specific persona style to your audio cover.",
+                "example": "persona_456"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

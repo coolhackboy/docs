@@ -1,0 +1,25 @@
+---
+title: "Generate Lyrics"
+description: "AI-powered lyrics generation based on themes and descriptions"
+openapi: "/api-manual/music-series/generate-lyrics.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint generates song lyrics based on your theme or description
+- Multiple lyric variations may be generated for each request
+- Use the generated lyrics with the Generate Music endpoint in Custom Mode
+
+## Parameter Details
+
+- `prompt` (required): Description of the desired lyrics content
+  - Be specific about theme, mood, style, or story elements
+  - Maximum length: 200 words
+  - Include details like genre feel, emotional tone, and narrative elements
+
+## Developer Notes
+
+- Results are delivered via the callback URL when generation is complete
+- Error code 413 indicates the prompt exceeds the 200-word limit
+- Error code 430 indicates rate limiting - retry after a short delay
+- The generated lyrics can be used directly as the `prompt` parameter in Generate Music with `custom_mode: true`

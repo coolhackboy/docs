@@ -1,0 +1,228 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Generate Lyrics API",
+    "description": "AI-powered lyrics generation based on themes and descriptions",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Generate Lyrics Task",
+        "description": "Generate song lyrics based on a theme or description",
+        "operationId": "submitGenerateLyricsTask",
+        "tags": ["Lyrics"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "nostalgic-song": {
+                  "summary": "Nostalgic Childhood Song",
+                  "value": {
+                    "model": "generate-lyrics",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A nostalgic song about childhood memories and growing up in a small town"
+                    }
+                  }
+                },
+                "love-song": {
+                  "summary": "Romantic Love Song",
+                  "value": {
+                    "model": "generate-lyrics",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A romantic ballad about finding love unexpectedly in the city"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Prompt exceeds length limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 413,
+                  "error": {
+                    "message": "Prompt exceeds maximum length of 200 words",
+                    "type": "payload_too_large"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "callback_url", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `generate-lyrics` for this endpoint.",
+            "enum": ["generate-lyrics"],
+            "example": "generate-lyrics"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications.\n\nThe endpoint will receive POST requests when generation completes, including results and variations.",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters for lyrics generation",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Description of the desired lyrics content.\n\nBe specific about theme, mood, style, or story elements.\n\nMaximum 200 words.",
+                "maxLength": 1500,
+                "example": "A nostalgic song about childhood memories and growing up in a small town"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

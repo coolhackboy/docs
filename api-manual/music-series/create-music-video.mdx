@@ -1,0 +1,28 @@
+---
+title: "Create Music Video"
+description: "Generate visualized music videos from audio tracks"
+openapi: "/api-manual/music-series/create-music-video.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint generates visualized music videos from audio tracks
+- Creates MP4 videos with audio visualization and optional branding
+- Useful for social media content, promotional materials, or music sharing
+
+## Parameter Details
+
+- `task_id` (required): Task ID from a completed music generation (Generate Music or Extend Music)
+- `audio_id` (required): Specific audio track identifier from the callback data
+
+## Developer Notes
+
+- Each audio track can only have one music video generated
+- If a video already exists, the API returns error code 409
+- The callback includes a download URL for the generated MP4 video
+- Video generation may take longer than audio processing tasks
+
+## Optional parameters
+
+- `author` (string): Artist or creator name displayed on the video cover. Maximum 50 characters.
+- `domain_name` (string): Website or brand watermark displayed at the bottom of the video. Maximum 50 characters.

@@ -1,0 +1,319 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Upload and Extend Audio API",
+    "description": "Extend audio tracks while preserving the original style",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Upload and Extend Audio Task",
+        "description": "Upload an audio file and extend it while preserving the original style",
+        "operationId": "submitUploadExtendTask",
+        "tags": ["Music Generation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "default-params": {
+                  "summary": "Default Parameters - Simple Extension",
+                  "value": {
+                    "model": "upload-and-extend-audio",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/audio.mp3",
+                      "default_param_flag": true,
+                      "instrumental": true,
+                      "continue_at": 60,
+                      "model": "V5"
+                    }
+                  }
+                },
+                "custom-params": {
+                  "summary": "Custom Parameters - Full Control",
+                  "value": {
+                    "model": "upload-and-extend-audio",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/audio.mp3",
+                      "default_param_flag": false,
+                      "instrumental": false,
+                      "prompt": "Extend the music with more relaxing notes",
+                      "style": "Classical",
+                      "title": "Peaceful Piano Extended",
+                      "continue_at": 60,
+                      "model": "V4_5PLUS",
+                      "negative_tags": "Heavy Metal, Fast Drums",
+                      "vocal_gender": "f",
+                      "style_weight": 0.65
+                    }
+                  }
+                },
+                "instrumental-extension": {
+                  "summary": "Instrumental Track Extension",
+                  "value": {
+                    "model": "upload-and-extend-audio",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/instrumental.mp3",
+                      "default_param_flag": false,
+                      "instrumental": true,
+                      "style": "Cinematic, Orchestral",
+                      "title": "Epic Journey Extended",
+                      "continue_at": 90,
+                      "model": "V5",
+                      "style_weight": 0.7,
+                      "weirdness_constraint": 0.3
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `upload-and-extend-audio` for this endpoint.",
+            "enum": ["upload-and-extend-audio"],
+            "example": "upload-and-extend-audio"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["upload_url", "default_param_flag", "instrumental", "continue_at", "model"],
+            "description": "Input parameters for audio extension",
+            "properties": {
+              "upload_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the audio file to upload and extend.\n\n**Note**: The uploaded audio file must not exceed 2 minutes in length.",
+                "example": "https://storage.example.com/audio.mp3"
+              },
+              "default_param_flag": {
+                "type": "boolean",
+                "description": "Enable or disable custom parameter mode.\n\n- When `true`: Uses default parameters, simpler configuration.\n\n- When `false`: Enables full control over style, title, and other parameters.",
+                "example": true
+              },
+              "instrumental": {
+                "type": "boolean",
+                "description": "Specifies whether the audio is instrumental (no lyrics).\n\n- When `true`: Produces pure instrumental track without any vocals.\n\n- When `false`: Generates music with vocals. `prompt` is required and will be used as lyrics.",
+                "example": true
+              },
+              "continue_at": {
+                "type": "number",
+                "description": "The timestamp (in seconds) from which to start extending the audio.\n\nThis defines where the original audio ends and the AI-generated extension begins.",
+                "example": 60
+              },
+              "model": {
+                "type": "string",
+                "description": "AI model version for audio extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n- **V4_5**: Improved prompt intelligence and faster generation\n- **V4**: Improved vocal quality\n- **V3_5**: Better song structure",
+                "enum": ["V3_5", "V4", "V4_5", "V4_5PLUS", "V5"],
+                "example": "V5"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Description or lyrics for the extended audio.\n\nRequired when `default_param_flag` is `false` and `instrumental` is `false`.\n\nCharacter limits by model:\n- **V3_5 & V4**: Maximum 3000 characters\n- **V4_5, V4_5PLUS & V5**: Maximum 5000 characters",
+                "maxLength": 5000,
+                "example": "Extend the music with more relaxing notes"
+              },
+              "style": {
+                "type": "string",
+                "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `default_param_flag` is `false`.\n\nCharacter limits by model:\n- **V3_5 & V4**: Maximum 200 characters\n- **V4_5, V4_5PLUS & V5**: Maximum 1000 characters",
+                "maxLength": 1000,
+                "example": "Classical"
+              },
+              "title": {
+                "type": "string",
+                "description": "Track title displayed in player and used for file naming.\n\nMaximum 100 characters.",
+                "maxLength": 100,
+                "example": "Peaceful Piano Extended"
+              },
+              "negative_tags": {
+                "type": "string",
+                "description": "Music styles or characteristics to exclude from generation.\n\nSpecify unwanted genres, moods, or instruments to avoid in the output.",
+                "example": "Heavy Metal, Fast Drums"
+              },
+              "vocal_gender": {
+                "type": "string",
+                "description": "Preferred vocal gender for the generated music.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\nOnly effective when `instrumental` is `false`.\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
+                "enum": ["m", "f"],
+                "example": "f"
+              },
+              "style_weight": {
+                "type": "number",
+                "description": "Controls how strongly the specified style influences the generation.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "weirdness_constraint": {
+                "type": "number",
+                "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional music\n- Higher values: More experimental and unique outputs",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "audio_weight": {
+                "type": "number",
+                "description": "Balances audio characteristics against other generation factors.\n\nRange: 0-1, up to 2 decimals.\n\nAdjusts the emphasis on audio quality and sonic features in the final output.",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "persona_id": {
+                "type": "string",
+                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation.",
+                "example": "persona_123"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

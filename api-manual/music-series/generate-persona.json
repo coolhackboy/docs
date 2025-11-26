@@ -1,0 +1,248 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Generate Persona API",
+    "description": "Create reusable musical personas from existing audio tracks",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Generate Persona Task",
+        "description": "Create a reusable musical persona from an existing audio track",
+        "operationId": "submitGeneratePersonaTask",
+        "tags": ["Persona"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "jazz-persona": {
+                  "summary": "Create Jazz Singer Persona",
+                  "value": {
+                    "model": "generate-persona",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "task_id": "5c79xxxxbe8e",
+                      "audio_id": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc",
+                      "name": "Smooth Jazz Singer",
+                      "description": "A sultry jazz vocalist with smooth, mellow tones. Specializes in late-night jazz ballads with piano accompaniment and warm, intimate delivery."
+                    }
+                  }
+                },
+                "rock-persona": {
+                  "summary": "Create Rock Band Persona",
+                  "value": {
+                    "model": "generate-persona",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "task_id": "5c79xxxxbe8e",
+                      "audio_id": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc",
+                      "name": "Electric Rock Band",
+                      "description": "High-energy rock band with powerful guitar riffs, driving drums, and passionate vocals. Perfect for anthemic rock songs and energetic performances."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Persona already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 409,
+                  "error": {
+                    "message": "Persona already exists for this audio",
+                    "type": "conflict_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API model identifier.\n\nMust be `generate-persona` for this endpoint.",
+            "enum": ["generate-persona"],
+            "example": "generate-persona"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["task_id", "audio_id", "name", "description"],
+            "description": "Input parameters for persona generation",
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "description": "Unique identifier of the original music generation task.\n\nCan be from Generate Music, Extend Music, Upload Cover, or Upload Extend endpoints.",
+                "example": "5c79xxxxbe8e"
+              },
+              "audio_id": {
+                "type": "string",
+                "description": "Unique identifier of the audio track to create Persona for.\n\nThis ID is returned in the callback data after music generation completes.",
+                "example": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc"
+              },
+              "name": {
+                "type": "string",
+                "description": "Descriptive name for the persona.\n\nShould capture the musical style or character of the persona.",
+                "example": "Smooth Jazz Singer"
+              },
+              "description": {
+                "type": "string",
+                "description": "Detailed description of the Persona's musical characteristics, style, and personality.\n\nInclude details about genre, mood, instrumentation, vocal style, and any unique characteristics.",
+                "example": "A sultry jazz vocalist with smooth, mellow tones. Specializes in late-night jazz ballads with piano accompaniment."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

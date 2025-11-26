@@ -1,0 +1,61 @@
+---
+title: "Upload and Extend Audio"
+description: "Extend audio tracks while preserving the original style"
+openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint extends uploaded audio files while preserving the original style
+- Upload an existing audio track and specify where to continue from
+- The AI generates additional content that seamlessly blends with the original
+- Uploaded audio files must not exceed 2 minutes in length
+
+## Parameter Details
+
+- When `default_param_flag: true` (Default Parameters Mode):
+
+  - Simpler configuration with automatic style detection
+
+  - Only `upload_url`, `instrumental`, `continue_at`, and `model` are required
+
+- When `default_param_flag: false` (Custom Parameters Mode):
+
+  - Full control over style, title, and other parameters
+
+  - `style` becomes required
+
+  - If `instrumental: false`: `prompt` is required for lyrics
+
+  - Character limits vary by model:
+
+    - **V3_5 & V4**: `prompt` 3000 characters, `style` 200 characters
+
+    - **V4_5, V4_5PLUS & V5**: `prompt` 5000 characters, `style` 1000 characters
+
+  - `title` length limit: 100 characters (all models)
+
+## Developer Notes
+
+- Recommendation: Use `default_param_flag: true` for quick extensions that maintain the original style
+- The `continue_at` parameter determines where the extension begins - set it to the point where you want new content to start
+
+## Optional parameters
+
+- `prompt` (string): Description or lyrics for the extended audio. Required when `default_param_flag` is `false` and `instrumental` is `false`.
+
+- `style` (string): Music style specification. Required when `default_param_flag` is `false`.
+
+- `title` (string): Track title for the extended audio. Maximum 100 characters.
+
+- `negative_tags` (string): Music styles to exclude from generation.
+
+- `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter can only increase the probability but cannot guarantee the specified gender.
+
+- `style_weight` (number): Strength of adherence to style. Range 0-1, up to 2 decimals.
+
+- `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals.
+
+- `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.
+
+- `persona_id` (string): Persona ID to apply to the generated music.
