@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:docs.kie.ai)",
       "Bash(tree:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

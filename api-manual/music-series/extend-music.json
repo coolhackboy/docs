@@ -147,7 +147,7 @@
             "properties": {
               "default_param_flag": {
                 "type": "boolean",
-                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `prompt`, `style`, `title`, and `continue_at` become required.\n\n- When `false`: Only `audio_id` and `model` are required.",
+                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `prompt`, `style`, `title`, and `continue_at` become required.\n\n- When `false`: Only `audio_id` and `mv` are required.",
                 "example": true
               },
               "audio_id": {
