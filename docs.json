@@ -40,7 +40,9 @@
     "/api-manual/music-series/generate-persona.json",
     "/api-manual/music-series/generate-lyrics.json",
     "/api-manual/music-series/convert-to-wav.json",
-    "/api-manual/music-series/separate-vocals.json",
+    "/api-manual/music-series/vocal-remover/separate-vocals.json",
+    "/api-manual/music-series/vocal-remover/stem-split.json",
+    "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
     "/api-manual/music-series/generate-midi.json",
     "/api-manual/music-series/create-music-video.json",
     "/api-manual/music-series/query-music-detail.json"
@@ -99,7 +101,14 @@
               "api-manual/music-series/generate-persona",
               "api-manual/music-series/generate-lyrics",
               "api-manual/music-series/convert-to-wav",
-              "api-manual/music-series/separate-vocals",
+              {
+                "group": "Vocal Remover",
+                "pages": [
+                  "api-manual/music-series/vocal-remover/separate-vocals",
+                  "api-manual/music-series/vocal-remover/stem-split",
+                  "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                ]
+              },
               "api-manual/music-series/generate-midi",
               "api-manual/music-series/create-music-video",
               "api-manual/music-series/query-music-detail"

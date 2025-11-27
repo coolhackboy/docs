@@ -1,0 +1,26 @@
+---
+title: "Stem Split"
+description: "Split music tracks into multiple instrument stems"
+openapi: "/api-manual/music-series/vocal-remover/stem-split.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+<Note>
+This endpoint does not support separating uploaded audio files. For uploading and separating audio, please use the [Upload and Separate Vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals) endpoint.
+</Note>
+
+- This endpoint splits music tracks into multiple instrument stems
+- Creates separate tracks for backing vocals, bass, brass, drums, fx, guitar, keyboard, percussion, strings, synth, vocals, woodwinds, and piano
+- Useful for detailed remixing or isolating specific instruments
+
+## Parameter Details
+
+- `task_id` (required): Task ID from a completed music generation (Generate Music or Extend Music)
+- `audio_id` (required): Specific audio track identifier from the callback data
+
+## Developer Notes
+
+- Stem split can only be performed once per audio track
+- If stem split already exists, the API returns error code 409
+- The callback includes download URLs for each separated stem

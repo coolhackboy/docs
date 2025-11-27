@@ -38,20 +38,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "task_id": "5c79xxxxbe8e",
-                      "audio_id": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc",
-                      "type": "separate_vocal"
-                    }
-                  }
-                },
-                "split-stem": {
-                  "summary": "Split into Multiple Instrument Tracks",
-                  "value": {
-                    "model": "separate-vocals",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "task_id": "5c79xxxxbe8e",
-                      "audio_id": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc",
-                      "type": "split_stem"
+                      "audio_id": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc"
                     }
                   }
                 }
@@ -153,7 +140,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["task_id", "audio_id", "type"],
+            "required": ["task_id", "audio_id"],
             "description": "Input parameters for vocal separation",
             "properties": {
               "task_id": {
@@ -165,12 +152,6 @@
                 "type": "string",
                 "description": "Unique identifier of the specific audio track to process for vocal separation.\n\nThis ID is returned in the callback data after music generation completes.",
                 "example": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc"
-              },
-              "type": {
-                "type": "string",
-                "description": "Separation method.\n\n- `separate_vocal`: Separates into vocals and accompaniment (2 tracks)\n\n- `split_stem`: Splits into multiple instrument tracks (drums, bass, vocals, other)",
-                "enum": ["separate_vocal", "split_stem"],
-                "example": "separate_vocal"
               }
             }
           }

@@ -1,0 +1,28 @@
+---
+title: "Upload and Separate Vocals"
+description: "Upload audio and separate it into multiple stems"
+openapi: "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json POST /api/generate/submit"
+---
+
+## Usage Guide
+
+- This endpoint uploads audio and separates it into multiple stems
+- Creates separate tracks for bass, drums, piano, guitar, vocals, and other
+- Useful for remixing or isolating specific instruments from uploaded audio
+
+## Parameter Details
+
+- `audio_url` (required): URL of the audio file to upload and separate
+- `title` (optional): Title for the separation task
+- `model_name` (optional): Separation model to use. Default: `base`
+  - `base`: Standard separation quality
+  - `enhanced`: Higher quality separation with better accuracy
+  - `instrumental`: Optimized for instrumental tracks
+- `output_type` (optional): Type of output stems to generate. Default: `general`
+  - `general`: All available stems
+  - `bass`: Bass track only
+  - `drums`: Drums track only
+  - `other`: Other instruments
+  - `piano`: Piano track only
+  - `guitar`: Guitar track only
+  - `vocals`: Vocals track only

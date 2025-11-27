@@ -137,7 +137,7 @@
                         "status": "finished",
                         "files": [
                           {
-                            "image_url": "https://storage.poyo.ai/covers/8FDN1I7M7Q68DDG8/cover.jpeg"
+                            "generate_cover": "[{\"file_url\": \"https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/20250825120409_4L9H4h_tmp1_taa0e1_cover_1.png\", \"file_type\": \"image\"}, {\"file_url\": \"https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/20250825120412_8v52pC_tmpwirqh4m6_cover_2.png\", \"file_type\": \"image\"}]"
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",
@@ -188,7 +188,7 @@
                         "status": "finished",
                         "files": [
                           {
-                            "vocal_removal": "{\"vocal_url\": \"https://storage.poyo.ai/audio/vocals.mp3\", \"instrumental_url\": \"https://storage.poyo.ai/audio/instrumental.mp3\"}"
+                            "separate_vocals": "{\"vocal_url\": \"xx\", \"instrumental_url\": \"yy\"}"
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",
@@ -222,7 +222,7 @@
                         "status": "finished",
                         "files": [
                           {
-                            "vocal_removal": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\", \"brass_url\": \"\", \"drums_url\": \"\", \"fx_url\": \"\", \"guitar_url\": \"\", \"keyboard_url\": \"\", \"percussion_url\": \"\", \"strings_url\": \"\", \"synth_url\": \"\", \"vocal_url\": \"\", \"woodwinds_url\": \"\", \"piano_url\": \"\"}"
+                            "stem_split": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\", \"brass_url\": \"\", \"drums_url\": \"\", \"fx_url\": \"\", \"guitar_url\": \"\", \"keyboard_url\": \"\", \"percussion_url\": \"\", \"strings_url\": \"\", \"synth_url\": \"\", \"vocal_url\": \"\", \"woodwinds_url\": \"\", \"piano_url\": \"\"}"
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",

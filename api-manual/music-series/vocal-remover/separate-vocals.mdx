@@ -1,26 +1,26 @@
 ---
 title: "Separate Vocals"
 description: "Separate vocals and instruments from music tracks"
-openapi: "/api-manual/music-series/separate-vocals.json POST /api/generate/submit"
+openapi: "/api-manual/music-series/vocal-remover/separate-vocals.json POST /api/generate/submit"
 ---
 
 ## Usage Guide
 
+<Note>
+This endpoint does not support separating uploaded audio files. For uploading and separating audio, please use the [Upload and Separate Vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals) endpoint.
+</Note>
+
 - This endpoint separates vocals and instruments from music tracks
-- Choose between simple vocal/accompaniment separation or full stem splitting
 - Useful for remixing, karaoke tracks, or isolating specific instruments
 
 ## Parameter Details
 
 - `task_id` (required): Task ID from a completed music generation (Generate Music or Extend Music)
 - `audio_id` (required): Specific audio track identifier from the callback data
-- `type` (required): Separation method
-  - `separate_vocal`: Creates 2 tracks - vocals and accompaniment
-  - `split_stem`: Creates multiple tracks - drums, bass, vocals, and other instruments
 
 ## Developer Notes
 
-- Separation can only be performed once per audio track with the same type
+- Separation can only be performed once per audio track
 - If separation already exists, the API returns error code 409
 - The callback includes download URLs for each separated track
 - The task_id from vocal separation is required for the Generate MIDI endpoint

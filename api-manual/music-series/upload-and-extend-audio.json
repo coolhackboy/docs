@@ -41,7 +41,7 @@
                       "default_param_flag": true,
                       "instrumental": true,
                       "continue_at": 60,
-                      "model": "V5"
+                      "mv": "V5"
                     }
                   }
                 },
@@ -58,7 +58,7 @@
                       "style": "Classical",
                       "title": "Peaceful Piano Extended",
                       "continue_at": 60,
-                      "model": "V4_5PLUS",
+                      "mv": "V4_5PLUS",
                       "negative_tags": "Heavy Metal, Fast Drums",
                       "vocal_gender": "f",
                       "style_weight": 0.65
@@ -77,7 +77,7 @@
                       "style": "Cinematic, Orchestral",
                       "title": "Epic Journey Extended",
                       "continue_at": 90,
-                      "model": "V5",
+                      "mv": "V5",
                       "style_weight": 0.7,
                       "weirdness_constraint": 0.3
                     }
@@ -164,7 +164,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["upload_url", "default_param_flag", "instrumental", "continue_at", "model"],
+            "required": ["upload_url", "default_param_flag", "instrumental", "continue_at", "mv"],
             "description": "Input parameters for audio extension",
             "properties": {
               "upload_url": {
@@ -188,7 +188,7 @@
                 "description": "The timestamp (in seconds) from which to start extending the audio.\n\nThis defines where the original audio ends and the AI-generated extension begins.",
                 "example": 60
               },
-              "model": {
+              "mv": {
                 "type": "string",
                 "description": "AI model version for audio extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n- **V4_5**: Improved prompt intelligence and faster generation\n- **V4**: Improved vocal quality\n- **V3_5**: Better song structure",
                 "enum": ["V3_5", "V4", "V4_5", "V4_5PLUS", "V5"],

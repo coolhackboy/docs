@@ -37,10 +37,10 @@ The `files` array content varies depending on which model created the task.
 | ↑ | `text` | string | Complete lyrics content |
 | `boost-music-style` | `style` | string | Enhanced music style |
 | `convert-to-wav` | `wav_url` | string | URL to converted WAV file |
-| `separate-vocals` | `vocal_removal` | string (JSON) | JSON string containing separated audio URLs. [See details](#separate-vocals) |
+| `separate-vocals` | `separate_vocals` | string (JSON) | JSON string containing separated audio URLs. [See details](#separate-vocals) |
 | `upload-and-separate-vocals` | `vocal_removal` | string (JSON) | JSON string containing separated stem URLs. [See details](#upload-and-separate-vocals) |
-| `stem-split` | `vocal_removal` | string (JSON) | JSON string containing full stem separation URLs. [See details](#stem-split) |
-| `generate-music-cover` | `image_url` | string | Generated cover image URL |
+| `stem-split` | `stem_split` | string (JSON) | JSON string containing full stem separation URLs. [See details](#stem-split) |
+| `generate-music-cover` | `generate_cover` | string (JSON) | JSON string containing generated cover images. [See details](#generate-music-cover) |
 | `generate-persona` | `persona_id` | string | Generated persona identifier |
 | `generate-midi` | `midi_data` | string (JSON) | JSON string containing MIDI data. [See details](#generate-midi) |
 | `create-music-video` | `video_url` | string | Generated video URL |
@@ -49,7 +49,7 @@ The `files` array content varies depending on which model created the task.
 
 #### separate-vocals
 
-`vocal_removal` fields:
+`separate_vocals` fields:
 - `vocal_url` - URL to the extracted vocal track
 - `instrumental_url` - URL to the instrumental track
 
@@ -65,7 +65,7 @@ The `files` array content varies depending on which model created the task.
 
 #### stem-split
 
-`vocal_removal` fields:
+`stem_split` fields:
 - `backing_vocals_url` - URL to backing vocals
 - `bass_url` - URL to bass track
 - `brass_url` - URL to brass instruments
@@ -79,6 +79,12 @@ The `files` array content varies depending on which model created the task.
 - `vocal_url` - URL to main vocals
 - `woodwinds_url` - URL to woodwinds track
 - `piano_url` - URL to piano track
+
+#### generate-music-cover
+
+`generate_cover` is a JSON array containing cover image objects:
+- `file_url` - URL to the generated cover image
+- `file_type` - File type (e.g., "image")
 
 #### generate-midi
 

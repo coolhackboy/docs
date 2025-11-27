@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:docs.kie.ai)"
+      "WebFetch(domain:docs.kie.ai)",
+      "Bash(tree:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

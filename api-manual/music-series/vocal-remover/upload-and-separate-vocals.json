@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Add Vocals API",
-    "description": "Layer AI-generated vocals on top of an existing instrumental",
+    "title": "PoYo AI - Upload and Separate Vocals API",
+    "description": "Upload audio and separate it into multiple stems",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Add Vocals Task",
-        "description": "Layer AI-generated vocals on top of an existing instrumental track",
-        "operationId": "submitAddVocalsTask",
-        "tags": ["Music Generation"],
+        "summary": "Submit Upload and Separate Vocals Task",
+        "description": "Upload an audio file and separate it into multiple stems",
+        "operationId": "submitUploadAndSeparateVocalsTask",
+        "tags": ["Audio Processing"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,36 +31,42 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "basic": {
-                  "summary": "Basic Vocal Generation",
+                "basic-general": {
+                  "summary": "Basic Mode - General Output",
                   "value": {
-                    "model": "add-vocals",
+                    "model": "upload-and-separate-vocals",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "upload_url": "https://storage.example.com/instrumental.mp3",
-                      "prompt": "A heartfelt ballad about love and memories",
-                      "title": "Memories of You",
-                      "style": "Pop Ballad",
-                      "negative_tags": "rap, heavy metal"
+                      "title": "My Audio Track",
+                      "audio_url": "https://example.com/audio/my-track.mp3",
+                      "model_name": "base",
+                      "output_type": "general"
                     }
                   }
                 },
-                "advanced": {
-                  "summary": "Advanced with Style Controls",
+                "enhanced-vocals": {
+                  "summary": "Enhanced Mode - Vocals Only",
                   "value": {
-                    "model": "add-vocals",
+                    "model": "upload-and-separate-vocals",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "upload_url": "https://storage.example.com/instrumental.mp3",
-                      "mv": "V5",
-                      "prompt": "Upbeat lyrics about summer adventures and freedom",
-                      "title": "Summer Freedom",
-                      "style": "Pop, Upbeat, Energetic",
-                      "negative_tags": "sad, slow, melancholic",
-                      "vocal_gender": "f",
-                      "style_weight": 0.7,
-                      "weirdness_constraint": 0.2,
-                      "audio_weight": 0.6
+                      "title": "My Audio Track",
+                      "audio_url": "https://example.com/audio/my-track.mp3",
+                      "model_name": "enhanced",
+                      "output_type": "vocals"
+                    }
+                  }
+                },
+                "instrumental-drums": {
+                  "summary": "Instrumental Mode - Drums Only",
+                  "value": {
+                    "model": "upload-and-separate-vocals",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "title": "My Audio Track",
+                      "audio_url": "https://example.com/audio/my-track.mp3",
+                      "model_name": "instrumental",
+                      "output_type": "drums"
                     }
                   }
                 }
@@ -112,6 +118,23 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Separation already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 409,
+                  "error": {
+                    "message": "Separation already exists for this audio",
+                    "type": "conflict_error"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -129,84 +152,47 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": ["model", "callback_url", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "API model identifier.\n\nMust be `add-vocals` for this endpoint.",
-            "enum": ["add-vocals"],
-            "example": "add-vocals"
+            "description": "API model identifier.\n\nMust be `upload-and-separate-vocals` for this endpoint.",
+            "enum": ["upload-and-separate-vocals"],
+            "example": "upload-and-separate-vocals"
           },
           "callback_url": {
             "type": "string",
             "format": "uri",
-            "description": "Webhook callback URL for result notifications",
+            "description": "Webhook callback URL for result notifications.\n\nThe endpoint will receive POST requests with separation completion status and download URLs for each track.",
             "example": "https://your-domain.com/callback"
           },
           "input": {
             "type": "object",
-            "required": ["upload_url", "prompt", "title", "style", "negative_tags"],
-            "description": "Input parameters for vocal generation",
+            "required": ["audio_url"],
+            "description": "Input parameters for upload and vocal separation",
             "properties": {
-              "upload_url": {
-                "type": "string",
-                "format": "uri",
-                "description": "URL of the instrumental audio file to add vocals to.",
-                "example": "https://storage.example.com/instrumental.mp3"
-              },
-              "prompt": {
-                "type": "string",
-                "description": "Lyrics or description for the generated vocals.\n\nThis will be used as the content for the AI-generated vocals.",
-                "example": "A heartfelt ballad about love and memories"
-              },
               "title": {
                 "type": "string",
-                "description": "Name for the generated music.\n\nMaximum 100 characters.",
-                "maxLength": 100,
-                "example": "Memories of You"
+                "description": "Title for the separation task (optional).\n\nUsed to identify and organize your separated audio files.",
+                "example": "My Audio Track"
               },
-              "style": {
+              "audio_url": {
                 "type": "string",
-                "description": "Music style specification defining genre, mood, or artistic direction.\n\nGuides the vocal style and delivery.",
-                "example": "Pop Ballad"
+                "format": "uri",
+                "description": "URL of the audio file to upload and separate.\n\nMust be a publicly accessible URL to the audio file.",
+                "example": "https://example.com/audio/my-track.mp3"
               },
-              "negative_tags": {
+              "model_name": {
                 "type": "string",
-                "description": "Music styles or characteristics to exclude from generation.\n\nSpecify unwanted genres, moods, or vocal styles to avoid in the output.",
-                "example": "rap, heavy metal"
+                "description": "Separation model to use.\n\n- `base`: Standard separation quality (default)\n- `enhanced`: Higher quality separation with better accuracy\n- `instrumental`: Optimized for instrumental tracks\n\nDefault: `base`",
+                "enum": ["base", "enhanced", "instrumental"],
+                "example": "base"
               },
-              "mv": {
+              "output_type": {
                 "type": "string",
-                "description": "AI model version for vocal generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n\nDefault: V4_5PLUS",
-                "enum": ["V4_5PLUS", "V5"],
-                "example": "V4_5PLUS"
-              },
-              "vocal_gender": {
-                "type": "string",
-                "description": "Preferred vocal gender for the generated vocals.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
-                "enum": ["m", "f"],
-                "example": "f"
-              },
-              "style_weight": {
-                "type": "number",
-                "description": "Controls how strongly the specified style influences the generation.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
-                "minimum": 0,
-                "maximum": 1,
-                "example": 0.65
-              },
-              "weirdness_constraint": {
-                "type": "number",
-                "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional vocals\n- Higher values: More experimental and unique vocal outputs",
-                "minimum": 0,
-                "maximum": 1,
-                "example": 0.65
-              },
-              "audio_weight": {
-                "type": "number",
-                "description": "Balances audio characteristics against other generation factors.\n\nRange: 0-1, up to 2 decimals.\n\nAdjusts the emphasis on audio quality and sonic features in the final output.",
-                "minimum": 0,
-                "maximum": 1,
-                "example": 0.65
+                "description": "Type of output stems to generate.\n\n- `general`: All available stems (default)\n- `bass`: Bass track only\n- `drums`: Drums track only\n- `other`: Other instruments\n- `piano`: Piano track only\n- `guitar`: Guitar track only\n- `vocals`: Vocals track only\n\nDefault: `general`",
+                "enum": ["general", "bass", "drums", "other", "piano", "guitar", "vocals"],
+                "example": "general"
               }
             }
           }

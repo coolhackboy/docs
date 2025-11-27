@@ -43,7 +43,7 @@
                       "title": "Dance Remix",
                       "custom_mode": true,
                       "instrumental": false,
-                      "model": "V5",
+                      "mv": "V5",
                       "negative_tags": "Slow, Sad",
                       "style_weight": 0.8
                     }
@@ -59,7 +59,7 @@
                       "prompt": "Create a jazz version of this track",
                       "custom_mode": false,
                       "instrumental": false,
-                      "model": "V4_5PLUS"
+                      "mv": "V4_5PLUS"
                     }
                   }
                 },
@@ -75,7 +75,7 @@
                       "title": "Epic Orchestra Version",
                       "custom_mode": true,
                       "instrumental": true,
-                      "model": "V5"
+                      "mv": "V5"
                     }
                   }
                 }
@@ -160,7 +160,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["upload_url", "prompt", "custom_mode", "instrumental", "model"],
+            "required": ["upload_url", "prompt", "custom_mode", "instrumental", "mv"],
             "description": "Input parameters for audio cover generation",
             "properties": {
               "upload_url": {
@@ -197,7 +197,7 @@
                 "description": "Specifies whether the output should be instrumental (no vocals).\n\n- When `true`: Produces pure instrumental track without any vocals.\n\n- When `false`: Generates music with vocals based on the original track.",
                 "example": false
               },
-              "model": {
+              "mv": {
                 "type": "string",
                 "description": "AI model version for audio cover generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration\n- **V3_5**: Better song structure, max 4 min duration",
                 "enum": ["V3_5", "V4", "V4_5", "V4_5PLUS", "V5"],
