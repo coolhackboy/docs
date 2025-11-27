@@ -6,15 +6,12 @@ openapi: "/api-manual/music-series/generate-midi.json POST /api/generate/submit"
 
 ## Usage Guide
 
+<Note>
+The `task_id` parameter must be obtained from [Separate Vocals](/api-manual/music-series/vocal-remover/separate-vocals) or [Stem Split](/api-manual/music-series/vocal-remover/stem-split) endpoints.
+</Note>
+
 - This endpoint generates MIDI files from completed vocal separation tasks
 - MIDI output includes detailed note information for each detected instrument
-- Includes pitch, timing, and velocity data for professional music production
-
-## Parameter Details
-
-- `task_id` (required): Task ID from a completed vocal separation
-  - Must be from the Separate Vocals endpoint
-  - The vocal separation must have completed successfully before MIDI generation
 
 ## Developer Notes
 
