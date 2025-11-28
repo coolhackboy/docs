@@ -14,7 +14,9 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 
 - **Audio Upload Requirement**:
 
-  - The uploaded audio must not exceed **2 minutes** in duration
+  - The uploaded audio must not exceed **8 minutes** in length
+
+  - **Note**: For the V4_5ALL model, the uploaded audio must not exceed **1 minute** in length
 
   - Provide a valid URL pointing to your audio file via `upload_url`
 
@@ -24,14 +26,11 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 
   - `prompt` is **required** if `instrumental` is `false`
 
-  - `prompt` character limits vary by model:
-    - **V3_5 & V4**: Maximum 500 characters
-    - **V4_5 & V4_5PLUS**: Maximum 3000 characters
-    - **V5**: Maximum 5000 characters
-
-  - `style` length limit: 200 characters
-
-  - `title` length limit: 80 characters
+  - Character limits vary by model:
+    - **V4**: `prompt` 3000 characters, `style` 200 characters, `title` 80 characters
+    - **V4_5 & V4_5PLUS**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
+    - **V4_5ALL**: `prompt` 5000 characters, `style` 1000 characters, `title` 80 characters
+    - **V5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
 
 - In Non-custom Mode ( `custom_mode: false` ):
 
@@ -41,7 +40,7 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 
 ## Developer Notes
 
-- Ensure your audio URL is publicly accessible and the file is under 2 minutes
+- Ensure your audio URL is publicly accessible and the file is under 8 minutes (1 minute for V4_5ALL)
 
 - For best results, use high-quality source audio with clear melody lines
 
@@ -59,4 +58,4 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 
 - `audio_weight` (number): Balance weight for preserving original audio features. Range 0-1, up to 2 decimals.
 
-- `persona_id` (string): Persona ID to apply to the covered track.
+- `persona_id` (string): Persona ID to apply to the covered track. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).

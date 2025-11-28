@@ -6,6 +6,13 @@ openapi: "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json
 
 ## Usage Guide
 
+<Note>
+**Vocal Separation Options:**
+- [separate-vocals](/api-manual/music-series/vocal-remover/separate-vocals): Does not support uploading audio, 2-stem split, based on Suno
+- [stem-split](/api-manual/music-series/vocal-remover/stem-split): Does not support uploading audio, 12-stem split, based on Suno
+- [upload-and-separate-vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals): Supports uploading audio, 7-stem split
+</Note>
+
 - This endpoint uploads audio and separates it into multiple stems
 - Creates separate tracks for bass, drums, piano, guitar, vocals, and other
 - Useful for remixing or isolating specific instruments from uploaded audio

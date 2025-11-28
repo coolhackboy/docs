@@ -157,19 +157,19 @@
               },
               "prompt": {
                 "type": "string",
-                "description": "Description of how you want to extend the music.\n\nRequired when `default_param_flag` is `true`.\n\nMaximum 3000 characters.",
+                "description": "Description of how you want to extend the music.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters",
                 "maxLength": 3000,
                 "example": "Continue with an energetic chorus section"
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nMaximum 200 characters.",
+                "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters",
                 "maxLength": 200,
                 "example": "Pop, Upbeat"
               },
               "title": {
                 "type": "string",
-                "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nMaximum 80 characters.",
+                "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters",
                 "maxLength": 80,
                 "example": "Summer Vibes Extended"
               },
@@ -218,7 +218,7 @@
               },
               "persona_id": {
                 "type": "string",
-                "description": "Persona ID to apply to the extended music.\n\nOnly available when Custom Mode ( `default_param_flag: true` ) is enabled.\n\nUse this to apply a specific persona style to your music extension.",
+                "description": "Persona ID to apply to the extended music.\n\nOnly available when Custom Mode ( `default_param_flag: true` ) is enabled.\n\nUse this to apply a specific persona style to your music extension.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_123"
               }
             }

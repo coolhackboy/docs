@@ -42,7 +42,6 @@ The `files` array content varies depending on which model created the task.
 | `stem-split` | `stem_split` | string (JSON) | JSON string containing full stem separation URLs. [See details](#stem-split) |
 | `generate-music-cover` | `generate_cover` | string (JSON) | JSON string containing generated cover images. [See details](#generate-music-cover) |
 | `generate-persona` | `persona_id` | string | Generated persona identifier |
-| `generate-midi` | `midi_data` | string (JSON) | JSON string containing MIDI data. [See details](#generate-midi) |
 | `create-music-video` | `video_url` | string | Generated video URL |
 
 ### JSON Field Details
@@ -85,15 +84,3 @@ The `files` array content varies depending on which model created the task.
 `generate_cover` is a JSON array containing cover image objects:
 - `file_url` - URL to the generated cover image
 - `file_type` - File type (e.g., "image")
-
-#### generate-midi
-
-`midi_data` fields:
-- `state` - Processing state (e.g., "complete")
-- `instruments` - Array of instrument objects, each containing:
-  - `name` - Instrument name (e.g., "Drums", "Electric Bass (finger)")
-  - `notes` - Array of note objects:
-    - `pitch` - MIDI pitch value
-    - `start` - Note start time in seconds
-    - `end` - Note end time in seconds
-    - `velocity` - Note velocity (0-1)

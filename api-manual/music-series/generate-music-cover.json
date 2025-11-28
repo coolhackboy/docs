@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Generate Music Cover API",
-    "description": "Generate cover versions of existing music tracks",
+    "description": "Create cover images for generated music.",
     "version": "1.0.0"
   },
   "servers": [

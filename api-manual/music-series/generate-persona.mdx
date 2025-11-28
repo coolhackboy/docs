@@ -12,7 +12,7 @@ openapi: "/api-manual/music-series/generate-persona.json POST /api/generate/subm
 
 ## Parameter Details
 
-- `task_id` (required): Task ID from a completed music generation (Generate, Extend, Upload Cover, or Upload Extend)
+- `task_id` (required): Task ID from a completed music generation ([Generate](/api-manual/music-series/generate-music), [Extend](/api-manual/music-series/extend-music), [Upload Cover](/api-manual/music-series/upload-and-cover-audio), or [Upload Extend](/api-manual/music-series/upload-and-extend-audio))
 - `audio_id` (required): Specific audio track identifier from the callback data
 - `name` (required): A descriptive name that captures the musical style or character
 - `description` (required): Detailed description including:
@@ -25,5 +25,9 @@ openapi: "/api-manual/music-series/generate-persona.json POST /api/generate/subm
 
 - Each audio track can only have one persona created from it
 - If a persona already exists for the audio, the API returns error code 409
-- The returned `persona_id` can be used in subsequent Generate Music requests when Custom Mode is enabled
+- You can apply the `persona_id` to the following endpoints:
+  - [Generate Music](/api-manual/music-series/generate-music)
+  - [Extend Music](/api-manual/music-series/extend-music)
+  - [Upload And Cover Audio](/api-manual/music-series/upload-and-cover-audio)
+  - [Upload And Extend Audio](/api-manual/music-series/upload-and-extend-audio)
 - Provide detailed descriptions for best results when using the persona

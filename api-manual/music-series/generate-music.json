@@ -162,7 +162,7 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "A description of the desired audio content.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be strictly used as the lyrics and sung in the generated track.\n  Character limits by model:\n  - **V3_5 & V4**: Maximum 3000 characters\n  - **V4_5 & V4_5PLUS**: Maximum 5000 characters\n  - **V5**: Maximum 5000 characters\n    Example: \"A calm and relaxing piano track with soft melodies\"\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea, and lyrics will be automatically generated based on it (not strictly matching the input). Maximum 500 characters.\n  Example: \"A short relaxing piano tune\"",
+                "description": "A description of the desired audio content.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be strictly used as the lyrics and sung in the generated track.\n  Character limits by model:\n  - **V4**: Maximum 3000 characters\n  - **V4_5 & V4_5PLUS**: Maximum 5000 characters\n  - **V4_5ALL**: Maximum 5000 characters\n  - **V5**: Maximum 5000 characters\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea, and lyrics will be automatically generated based on it (not strictly matching the input). Maximum 500 characters.\n  Example: \"A short relaxing piano tune\"",
                 "maxLength": 5000,
                 "example": "A calm and relaxing piano track with soft melodies"
               },
@@ -173,12 +173,12 @@
               },
               "instrumental": {
                 "type": "boolean",
-                "description": "Specifies whether to generate instrumental music without vocals.\n\n- When `true`: Produces pure instrumental track without any vocals. Only `style` and `title` are needed.\n\n- When `false`: Generates music with vocals. `prompt` is required and will be used as the exact lyrics content.",
+                "description": "Specifies whether to generate instrumental music without vocals.\n\n- When `true`: Produces pure instrumental track without any vocals. Only `style` and `title` are needed.\n\n- When `false`: `style`, `prompt`, and `title` are required.",
                 "example": true
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V3_5 & V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters",
+                "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters",
                 "maxLength": 1000,
                 "example": "Classical"
               },
@@ -190,7 +190,7 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for music generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration\n- **V3_5**: Better song structure, max 4 min duration",
+                "description": "AI model version for music generation.\n\n- **V5**: Superior musical expression, faster generation.\n- **V4_5PLUS**: V4.5+ delivers richer sound, new ways to create, max 8 min.\n- **V4_5**: V4.5 enables smarter prompts, faster generations, max 8 min.\n- **V4_5ALL**: V4.5ALL enables smarter prompts, faster generations, max 8 min.\n- **V4**: V4 improves vocal quality, max 4 min.",
                 "enum": ["V3_5", "V4", "V4_5", "V4_5PLUS", "V5"],
                 "example": "V5"
               },
@@ -228,7 +228,7 @@
               },
               "persona_id": {
                 "type": "string",
-                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation. Persona IDs are obtained through the persona creation endpoint.\n\nOnly available when Custom Mode is enabled.",
+                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation. Persona IDs are obtained through the persona creation endpoint.\n\nOnly available when Custom Mode is enabled.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_123"
               }
             }

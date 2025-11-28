@@ -230,23 +230,6 @@
                       }
                     }
                   },
-                  "generate-midi": {
-                    "summary": "MIDI Generation",
-                    "value": {
-                      "code": 200,
-                      "data": {
-                        "task_id": "8FDN1I7M7Q68DDG8",
-                        "status": "finished",
-                        "files": [
-                          {
-                            "midi_data": "{\"state\": \"complete\", \"instruments\": [{\"name\": \"Drums\", \"notes\": [{\"pitch\": 73, \"start\": 0.036, \"end\": 0.182, \"velocity\": 1}]}, {\"name\": \"Electric Bass (finger)\", \"notes\": [{\"pitch\": 44, \"start\": 7.687, \"end\": 7.911, \"velocity\": 1}]}]}"
-                          }
-                        ],
-                        "created_time": "2025-11-25T08:50:13",
-                        "error_message": null
-                      }
-                    }
-                  },
                   "create-music-video": {
                     "summary": "Music Video Generation",
                     "value": {

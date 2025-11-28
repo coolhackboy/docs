@@ -7,7 +7,10 @@ openapi: "/api-manual/music-series/vocal-remover/stem-split.json POST /api/gener
 ## Usage Guide
 
 <Note>
-This endpoint does not support separating uploaded audio files. For uploading and separating audio, please use the [Upload and Separate Vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals) endpoint.
+**Vocal Separation Options:**
+- [separate-vocals](/api-manual/music-series/vocal-remover/separate-vocals): Does not support uploading audio, 2-stem split, based on Suno
+- [stem-split](/api-manual/music-series/vocal-remover/stem-split): Does not support uploading audio, 12-stem split, based on Suno
+- [upload-and-separate-vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals): Supports uploading audio, 7-stem split
 </Note>
 
 - This endpoint splits music tracks into multiple instrument stems
@@ -22,5 +25,4 @@ This endpoint does not support separating uploaded audio files. For uploading an
 ## Developer Notes
 
 - Stem split can only be performed once per audio track
-- If stem split already exists, the API returns error code 409
 - The callback includes download URLs for each separated stem

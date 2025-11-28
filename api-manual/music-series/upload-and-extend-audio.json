@@ -170,17 +170,17 @@
               "upload_url": {
                 "type": "string",
                 "format": "uri",
-                "description": "URL of the audio file to upload and extend.\n\n**Note**: The uploaded audio file must not exceed 2 minutes in length.",
+                "description": "The URL for uploading audio files, required regardless of whether `default_param_flag` is true or false.\n\nEnsure the uploaded audio does not exceed 8 minutes in length.\n\n**Note**: For the V4_5ALL model, the uploaded audio must not exceed 1 minute in length.",
                 "example": "https://storage.example.com/audio.mp3"
               },
               "default_param_flag": {
                 "type": "boolean",
-                "description": "Enable or disable custom parameter mode.\n\n- When `true`: Uses default parameters, simpler configuration.\n\n- When `false`: Enables full control over style, title, and other parameters.",
+                "description": "Enable or disable custom parameter mode.\n\n- When `true`: Enables custom mode with full control over style, title, and other parameters.\n\n- When `false`: Only `upload_url` is required.",
                 "example": true
               },
               "instrumental": {
                 "type": "boolean",
-                "description": "Specifies whether the audio is instrumental (no lyrics).\n\n- When `true`: Produces pure instrumental track without any vocals.\n\n- When `false`: Generates music with vocals. `prompt` is required and will be used as lyrics.",
+                "description": "Determines whether the audio is instrumental (without lyrics).\n\n- In custom parameter mode (`default_param_flag: true`):\n  - If `true`: only `style`, `title`, and `upload_url` are required.\n  - If `false`: `style`, `title`, `prompt` (prompt will be used as exact lyrics), and `upload_url` are required.\n\n- In non-custom parameter mode (`default_param_flag: false`): does not affect required fields (only `upload_url` needed). If `false`, lyrics will be automatically generated.",
                 "example": true
               },
               "continue_at": {
@@ -190,25 +190,25 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for audio extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n- **V4_5**: Improved prompt intelligence and faster generation\n- **V4**: Improved vocal quality\n- **V3_5**: Better song structure",
-                "enum": ["V3_5", "V4", "V4_5", "V4_5PLUS", "V5"],
+                "description": "AI model version for audio extension.\n\n- **V5**: Superior musical expression, faster generation.\n- **V4_5PLUS**: V4.5+ delivers richer sound, new ways to create, max 8 min.\n- **V4_5**: V4.5 enables smarter prompts, faster generations, max 8 min.\n- **V4_5ALL**: V4.5ALL enables smarter prompts, faster generations, max 8 min.\n- **V4**: V4 improves vocal quality, max 4 min.",
+                "enum": ["V4", "V4_5", "V4_5ALL", "V4_5PLUS", "V5"],
                 "example": "V5"
               },
               "prompt": {
                 "type": "string",
-                "description": "Description or lyrics for the extended audio.\n\nRequired when `default_param_flag` is `false` and `instrumental` is `false`.\n\nCharacter limits by model:\n- **V3_5 & V4**: Maximum 3000 characters\n- **V4_5, V4_5PLUS & V5**: Maximum 5000 characters",
+                "description": "Description or lyrics for the extended audio.\n\nRequired when `default_param_flag` is `true` and `instrumental` is `false`. The prompt will be used strictly as lyrics.\n\nWhen `default_param_flag` is `false`, lyrics will be automatically generated based on the prompt.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters",
                 "maxLength": 5000,
                 "example": "Extend the music with more relaxing notes"
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `default_param_flag` is `false`.\n\nCharacter limits by model:\n- **V3_5 & V4**: Maximum 200 characters\n- **V4_5, V4_5PLUS & V5**: Maximum 1000 characters",
+                "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters",
                 "maxLength": 1000,
                 "example": "Classical"
               },
               "title": {
                 "type": "string",
-                "description": "Track title displayed in player and used for file naming.\n\nMaximum 100 characters.",
+                "description": "Track title displayed in player and used for file naming.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters",
                 "maxLength": 100,
                 "example": "Peaceful Piano Extended"
               },
@@ -246,7 +246,7 @@
               },
               "persona_id": {
                 "type": "string",
-                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation.",
+                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_123"
               }
             }
