@@ -65,7 +65,8 @@
           {
             "group": "Overview",
             "pages": [
-              "api-manual/overview"
+              "api-manual/overview",
+              "api-manual/error-codes"
             ]
           },
           {
@@ -109,7 +110,8 @@
                 ]
               },
               "api-manual/music-series/create-music-video",
-              "api-manual/music-series/query-music-detail"
+              "api-manual/music-series/query-music-detail",
+              "api-manual/music-series/music-webhook"
             ]
           },
           {
