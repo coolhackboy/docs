@@ -112,7 +112,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["task_id", "audio_id", "prompt", "tags", "title", "infill_start_s", "infill_end_s"],
+            "required": ["task_id", "audio_id", "prompt", "tags", "title", "infill_start_s", "infill_end_s", "full_lyrics"],
             "description": "Input parameters for section replacement",
             "properties": {
               "task_id": {
