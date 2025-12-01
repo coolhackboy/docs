@@ -24,9 +24,11 @@
     "/api-manual/image-series/gpt-4o-image.json",
     "/api-manual/image-series/nano-banana.json",
     "/api-manual/image-series/nano-banana-2.json",
+    "/api-manual/image-series/flux-2.json",
     "/api-manual/video-series/sora-2.json",
     "/api-manual/video-series/sora-2-pro.json",
     "/api-manual/video-series/veo-3-1.json",
+    "/api-manual/video-series/wan-animate.json",
     "/api-manual/music-series/generate-music.json",
     "/api-manual/music-series/extend-music.json",
     "/api-manual/music-series/upload-and-cover-audio.json",
@@ -74,7 +76,8 @@
             "pages": [
               "api-manual/image-series/gpt-4o-image",
               "api-manual/image-series/nano-banana",
-              "api-manual/image-series/nano-banana-2"
+              "api-manual/image-series/nano-banana-2",
+              "api-manual/image-series/flux-2"
             ]
           },
           {
@@ -82,7 +85,8 @@
             "pages": [
               "api-manual/video-series/sora-2",
               "api-manual/video-series/sora-2-pro",
-              "api-manual/video-series/veo-3-1"
+              "api-manual/video-series/veo-3-1",
+              "api-manual/video-series/wan-animate"
             ]
           },
           {

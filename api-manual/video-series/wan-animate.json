@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Nano Banana 2 API",
-    "description": "Next-generation AI image generation powered by Gemini 3 Pro Image Preview",
+    "title": "PoYo AI - Wan Animate API",
+    "description": "AI-powered character animation and replacement based on Alibaba's Wan2.2-Animate model",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Nano Banana 2 Generation Task",
-        "description": "Next-generation AI image generation and editing powered by Gemini 3 Pro Image Preview with 2K native resolution",
-        "operationId": "submitNanoBanana2Task",
-        "tags": ["Nano Banana 2"],
+        "summary": "Submit Wan Animate Task",
+        "description": "AI-powered character animation and replacement. Accurately captures facial expressions and body movements from reference video and applies them to a target image",
+        "operationId": "submitWanAnimateTask",
+        "tags": ["Wan Animate"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,26 +31,31 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "nano-banana-2": {
-                  "summary": "Nano Banana Pro(Nano Banana 2) Image Generation",
+                "wan-animate-replace": {
+                  "summary": "Wan Animate Replace",
                   "value": {
-                    "model": "nano-banana-2",
+                    "model": "wan-animate-replace",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A cyberpunk street scene with neon signs and rain",
-                      "size": "16:9"
+                      "video_url": "https://example.com/source.mp4",
+                      "image_urls": [
+                        "https://example.com/replace.jpg"
+                      ],
+                      "resolution": "480p"
                     }
                   }
                 },
-                "nano-banana-2-edit": {
-                  "summary": "Nano Banana 2 Image Edit",
+                "wan-animate-move": {
+                  "summary": "Wan Animate Move",
                   "value": {
-                    "model": "nano-banana-2-edit",
+                    "model": "wan-animate-move",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Add colorful flowers in the foreground",
-                      "image_urls": ["https://example.com/landscape.jpg"],
-                      "size": "16:9"
+                      "video_url": "https://example.com/source.mp4",
+                      "image_urls": [
+                        "https://example.com/move.jpg"
+                      ],
+                      "resolution": "480p"
                     }
                   }
                 }
@@ -65,40 +70,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SubmitResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 400,
-                  "error": {
-                    "message": "Invalid request parameters",
-                    "type": "invalid_request_error"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 401,
-                  "error": {
-                    "message": "Unauthorized - Invalid API key",
-                    "type": "authentication_error"
-                  }
                 }
               }
             }
@@ -119,14 +90,14 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Nano Banana 2 model identifier",
+            "description": "Wan Animate model identifier",
             "enum": [
-              "nano-banana-2",
-              "nano-banana-2-edit"
+              "wan-animate-replace",
+              "wan-animate-move"
             ]
           },
           "callback_url": {
@@ -137,14 +108,14 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
-            "description": "Input parameters for generation",
+            "required": ["video_url", "image_urls"],
+            "description": "Input parameters for animation",
             "properties": {
-              "prompt": {
+              "video_url": {
                 "type": "string",
-                "description": "Generation prompt describing the desired output",
-                "maxLength": 1000,
-                "example": "A beautiful sunset over the ocean"
+                "format": "uri",
+                "description": "Source video URL to extract motion from",
+                "example": "https://example.com/source.mp4"
               },
               "image_urls": {
                 "type": "array",
@@ -152,14 +123,17 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Reference image URLs (for image editing)",
-                "example": []
+                "minItems": 1,
+                "maxItems": 1,
+                "description": "Target image URL to animate (only 1 image allowed)",
+                "example": ["https://example.com/target.jpg"]
               },
-              "size": {
+              "resolution": {
                 "type": "string",
-                "description": "Image size ratio",
-                "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
-                "example": "16:9"
+                "description": "Output video resolution",
+                "enum": ["480p", "580p", "720p"],
+                "default": "480p",
+                "example": "480p"
               }
             }
           }
@@ -194,33 +168,6 @@
                 "format": "date-time",
                 "example": "2025-11-12T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
-              }
-            }
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "required": ["code", "error"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 400,
-            "description": "HTTP status code"
-          },
-          "error": {
-            "type": "object",
-            "required": ["message", "type"],
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "Invalid request parameters",
-                "description": "Error message describing what went wrong"
-              },
-              "type": {
-                "type": "string",
-                "example": "invalid_request_error",
-                "description": "Error type identifier"
               }
             }
           }

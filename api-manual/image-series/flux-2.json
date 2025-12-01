@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Nano Banana 2 API",
-    "description": "Next-generation AI image generation powered by Gemini 3 Pro Image Preview",
+    "title": "PoYo AI - Flux 2 API",
+    "description": "32B parameter image generation model from Black Forest Labs with multi-reference support and superior text rendering",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Nano Banana 2 Generation Task",
-        "description": "Next-generation AI image generation and editing powered by Gemini 3 Pro Image Preview with 2K native resolution",
-        "operationId": "submitNanoBanana2Task",
-        "tags": ["Nano Banana 2"],
+        "summary": "Submit Flux 2 Generation Task",
+        "description": "32B parameter image generation and editing model from Black Forest Labs. Combines text-to-image and multi-image editing with superior text rendering and multi-reference support",
+        "operationId": "submitFlux2Task",
+        "tags": ["Flux 2"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,26 +31,59 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "nano-banana-2": {
-                  "summary": "Nano Banana Pro(Nano Banana 2) Image Generation",
+                "flux-2-pro": {
+                  "summary": "Flux 2 Pro Image Generation",
                   "value": {
-                    "model": "nano-banana-2",
+                    "model": "flux-2-pro",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A cyberpunk street scene with neon signs and rain",
-                      "size": "16:9"
+                      "prompt": "The jar in image 1 is filled with capsules exactly same as image 2 with the exact logo",
+                      "size": "1:1",
+                      "resolution": "1K"
                     }
                   }
                 },
-                "nano-banana-2-edit": {
-                  "summary": "Nano Banana 2 Image Edit",
+                "flux-2-pro-edit": {
+                  "summary": "Flux 2 Pro Image Edit",
                   "value": {
-                    "model": "nano-banana-2-edit",
+                    "model": "flux-2-pro-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Add colorful flowers in the foreground",
-                      "image_urls": ["https://example.com/landscape.jpg"],
-                      "size": "16:9"
+                      "image_urls": [
+                        "https://example.com/1.jpg",
+                        "https://example.com/2.jpg"
+                      ],
+                      "size": "1:1",
+                      "resolution": "1K"
+                    }
+                  }
+                },
+                "flux-2-flex": {
+                  "summary": "Flux 2 Flex Image Generation",
+                  "value": {
+                    "model": "flux-2-flex",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "The jar in image 1 is filled with capsules exactly same as image 2 with the exact logo",
+                      "size": "1:1",
+                      "resolution": "1K"
+                    }
+                  }
+                },
+                "flux-2-flex-edit": {
+                  "summary": "Flux 2 Flex Image Edit",
+                  "value": {
+                    "model": "flux-2-flex-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Add colorful flowers in the foreground",
+                      "image_urls": [
+                        "https://example.com/1.jpg",
+                        "https://example.com/2.jpg"
+                      ],
+                      "size": "1:1",
+                      "resolution": "1K"
                     }
                   }
                 }
@@ -65,40 +98,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SubmitResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 400,
-                  "error": {
-                    "message": "Invalid request parameters",
-                    "type": "invalid_request_error"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 401,
-                  "error": {
-                    "message": "Unauthorized - Invalid API key",
-                    "type": "authentication_error"
-                  }
                 }
               }
             }
@@ -119,14 +118,16 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Nano Banana 2 model identifier",
+            "description": "Flux 2 model identifier",
             "enum": [
-              "nano-banana-2",
-              "nano-banana-2-edit"
+              "flux-2-pro",
+              "flux-2-pro-edit",
+              "flux-2-flex",
+              "flux-2-flex-edit"
             ]
           },
           "callback_url": {
@@ -137,7 +138,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": ["prompt", "size", "resolution"],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
@@ -152,14 +153,22 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Reference image URLs (for image editing)",
-                "example": []
+                "minItems": 1,
+                "maxItems": 8,
+                "description": "Input reference images (1-8 images). Required for edit models (flux-2-pro-edit, flux-2-flex-edit)",
+                "example": ["https://example.com/1.jpg", "https://example.com/2.jpg"]
               },
               "size": {
                 "type": "string",
-                "description": "Image size ratio",
-                "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
-                "example": "16:9"
+                "description": "Image size ratio. Use 'auto' to automatically detect based on first input image",
+                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3", "auto"],
+                "example": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output image resolution",
+                "enum": ["1K", "2K"],
+                "example": "1K"
               }
             }
           }

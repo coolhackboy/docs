@@ -197,24 +197,24 @@ payload = {
 }
 ```
 
-## Next Steps
+## Step 5: Try Music Generation
 
-Now that you've made your first API calls, explore the detailed documentation:
+Generate music with customizable styles and vocals:
 
-<CardGroup cols={2}>
-  <Card title="Image Generation" icon="image" href="/api-manual/image-series/gpt-4o-image">
-    Learn about image models and advanced features
-  </Card>
-  <Card title="Video Generation" icon="video" href="/api-manual/video-series/sora-2">
-    Explore video generation capabilities
-  </Card>
-  <Card title="Webhook Callbacks" icon="webhook" href="/api-manual/task-management/webhooks">
-    Set up automatic notifications instead of polling
-  </Card>
-  <Card title="API Overview" icon="book" href="/api-manual/overview">
-    Complete API reference and architecture
-  </Card>
-</CardGroup>
+```python
+payload = {
+    "model": "generate-music",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+        "prompt": "A calm and relaxing piano track with soft melodies",
+        "style": "Classical",
+        "title": "Peaceful Piano Meditation",
+        "custom_mode": True,
+        "instrumental": True,
+        "mv": "V5"
+    }
+}
+```
 
 ## Support
 
