@@ -43,18 +43,6 @@
                     }
                   }
                 },
-                "seedream-4-5-multi": {
-                  "summary": "Seedream-4.5 Multiple Images Generation",
-                  "value": {
-                    "model": "seedream-4.5",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A futuristic cityscape at sunset",
-                      "size": "16:9",
-                      "n": 4
-                    }
-                  }
-                },
                 "seedream-4-5-edit": {
                   "summary": "Seedream-4.5 Image Editing with References",
                   "value": {
