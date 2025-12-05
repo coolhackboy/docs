@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Kling 2.6 API",
-    "description": "Advanced Video Generation with Native Audio Support",
+    "title": "PoYo AI - Z-Image API",
+    "description": "Z-Image Generation",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Kling 2.6 Video Generation Task",
-        "description": "Generate high-quality videos with native audio support using Kling 2.6",
-        "operationId": "submitKling26Task",
-        "tags": ["Kling 2.6"],
+        "summary": "Submit Z-Image Generation Task",
+        "description": "Generate images using Z-Image model",
+        "operationId": "submitZImageTask",
+        "tags": ["Z-Image"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,16 +31,14 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "kling-2.6": {
-                  "summary": "Kling 2.6 Video Generation",
+                "z-image": {
+                  "summary": "Z-Image Generation",
                   "value": {
-                    "model": "kling-2.6",
+                    "model": "z-image",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A young woman walking through a bustling city street, talking on her phone with a cheerful expression",
-                      "sound": true,
-                      "aspect_ratio": "16:9",
-                      "duration": 5
+                      "prompt": "A serene mountain landscape at sunset with vibrant colors",
+                      "size": "1:1"
                     }
                   }
                 }
@@ -79,9 +77,9 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Kling 2.6 model identifier",
+            "description": "Z-Image model identifier",
             "enum": [
-              "kling-2.6"
+              "z-image"
             ]
           },
           "callback_url": {
@@ -99,33 +97,13 @@
                 "type": "string",
                 "description": "Generation prompt describing the desired output",
                 "maxLength": 1000,
-                "example": "A cinematic video scene"
+                "example": "A beautiful sunset over the ocean"
               },
-              "image_urls": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uri"
-                },
-                "description": "Reference image URLs (for image-to-video)",
-                "example": []
-              },
-              "sound": {
-                "type": "boolean",
-                "description": "When true: generated video contains sound",
-                "example": true
-              },
-              "aspect_ratio": {
+              "size": {
                 "type": "string",
-                "description": "Video aspect ratio (text-to-video only)",
-                "enum": ["1:1", "16:9", "9:16"],
-                "example": "16:9"
-              },
-              "duration": {
-                "type": "integer",
-                "description": "Video duration in seconds",
-                "enum": [5, 10],
-                "example": 5
+                "description": "Image size ratio",
+                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16"],
+                "example": "1:1"
               }
             }
           }
