@@ -1,0 +1,243 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Hailuo 02 API",
+    "description": "Advanced Video Generation with Hailuo 02",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Hailuo 02 Video Generation Task",
+        "description": "Generate high-quality videos using Hailuo 02 models",
+        "operationId": "submitHailuo02Task",
+        "tags": ["Hailuo 02"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "hailuo-02-text-to-video": {
+                  "summary": "Hailuo 02 Text-to-Video",
+                  "value": {
+                    "model": "hailuo-02",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A llama and a raccoon battle in an intense table tennis match inside a roaring Olympic stadium",
+                      "duration": 6,
+                      "prompt_optimizer": true
+                    }
+                  }
+                },
+                "hailuo-02-image-to-video": {
+                  "summary": "Hailuo 02 Image-to-Video",
+                  "value": {
+                    "model": "hailuo-02",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Epic aerial shot: samurai stands atop mountain peak as storm of sakura petals sweeps across wind",
+                      "image_urls": ["https://example.com/image.png"],
+                      "end_image_url": "https://example.com/end_image.png",
+                      "duration": 10,
+                      "resolution": "768P",
+                      "prompt_optimizer": true
+                    }
+                  }
+                },
+                "hailuo-02-pro-text-to-video": {
+                  "summary": "Hailuo 02 Pro Text-to-Video",
+                  "value": {
+                    "model": "hailuo-02-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "High angle tracking shot flying over prehistoric landscape with young boy in Superman pose",
+                      "prompt_optimizer": true
+                    }
+                  }
+                },
+                "hailuo-02-pro-image-to-video": {
+                  "summary": "Hailuo 02 Pro Image-to-Video",
+                  "value": {
+                    "model": "hailuo-02-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "The camera slowly pans across the landscape",
+                      "image_urls": ["https://example.com/image.png"],
+                      "end_image_url": "https://example.com/end_image.png",
+                      "prompt_optimizer": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Hailuo 02 model identifier",
+            "enum": [
+              "hailuo-02",
+              "hailuo-02-pro"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters for generation",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Generation prompt describing the desired video",
+                "maxLength": 1500,
+                "example": "A cinematic video scene"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 1,
+                "description": "Reference image URLs for image-to-video generation (required for image-to-video)",
+                "example": []
+              },
+              "end_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional URL of the image to use as the last frame (image-to-video only)",
+                "example": "https://example.com/end_image.png"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Video duration in seconds (hailuo-02 only)",
+                "enum": [6, 10],
+                "example": 6
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution (hailuo-02 image-to-video only)",
+                "enum": ["512P", "768P"],
+                "example": "768P"
+              },
+              "prompt_optimizer": {
+                "type": "boolean",
+                "description": "Enable AI-powered prompt optimization",
+                "example": true
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

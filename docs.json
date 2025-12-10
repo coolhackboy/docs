@@ -27,11 +27,15 @@
     "/api-manual/image-series/flux-2.json",
     "/api-manual/image-series/seedream-4-5.json",
     "/api-manual/image-series/z-image.json",
+    "/api-manual/image-series/grok-imagine-image.json",
     "/api-manual/video-series/sora-2.json",
     "/api-manual/video-series/sora-2-pro.json",
     "/api-manual/video-series/veo-3-1.json",
     "/api-manual/video-series/wan-animate.json",
     "/api-manual/video-series/kling-2-6.json",
+    "/api-manual/video-series/grok-imagine.json",
+    "/api-manual/video-series/hailuo-02.json",
+    "/api-manual/video-series/seedance-1.0-pro.json",
     "/api-manual/music-series/generate-music.json",
     "/api-manual/music-series/extend-music.json",
     "/api-manual/music-series/upload-and-cover-audio.json",
@@ -82,7 +86,8 @@
               "api-manual/image-series/nano-banana-2",
               "api-manual/image-series/flux-2",
               "api-manual/image-series/seedream-4-5",
-              "api-manual/image-series/z-image"
+              "api-manual/image-series/z-image",
+              "api-manual/image-series/grok-imagine-image"
             ]
           },
           {
@@ -92,7 +97,10 @@
               "api-manual/video-series/sora-2-pro",
               "api-manual/video-series/veo-3-1",
               "api-manual/video-series/wan-animate",
-              "api-manual/video-series/kling-2-6"
+              "api-manual/video-series/kling-2-6",
+              "api-manual/video-series/grok-imagine",
+              "api-manual/video-series/hailuo-02",
+              "api-manual/video-series/seedance-1.0-pro"
             ]
           },
           {
