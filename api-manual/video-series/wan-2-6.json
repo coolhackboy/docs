@@ -127,7 +127,7 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for video generation (Chinese and English supported)",
+                "description": "Text prompt for video generation",
                 "maxLength": 5000,
                 "example": "A cinematic video scene"
               },
