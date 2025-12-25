@@ -38,6 +38,7 @@
     "/api-manual/video-series/grok-imagine.json",
     "/api-manual/video-series/hailuo-02.json",
     "/api-manual/video-series/seedance-1.0-pro.json",
+    "/api-manual/video-series/seedance-1-5-pro.json",
     "/api-manual/music-series/generate-music.json",
     "/api-manual/music-series/extend-music.json",
     "/api-manual/music-series/upload-and-cover-audio.json",
@@ -105,7 +106,8 @@
               "api-manual/video-series/kling-2-6",
               "api-manual/video-series/grok-imagine",
               "api-manual/video-series/hailuo-02",
-              "api-manual/video-series/seedance-1.0-pro"
+              "api-manual/video-series/seedance-1.0-pro",
+              "api-manual/video-series/seedance-1-5-pro"
             ]
           },
           {
