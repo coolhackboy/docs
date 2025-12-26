@@ -39,14 +39,3 @@ Control the visual aesthetic of your generated videos with predefined styles:
 ### Storyboard
 
 Enable storyboard mode for finer control over video generation details. Set to `true` to enable or `false` to disable.
-
-### Character Reuse
-
-Reuse characters from existing videos in your generated content:
-
-- **character_url** - Reference video URL for character extraction
-- **character_timestamps** - Time range where the character appears in the reference video (format: `"start_second,end_second"`, only supports 2-second segments)
-
-<Warning>
-When using `character_url` or `character_timestamps`, the generated video duration will be reduced by 1 second.
-</Warning>
