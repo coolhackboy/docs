@@ -62,17 +62,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "guides/getting-started/quickstart"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "API Manual",
         "groups": [
           {
@@ -150,6 +139,17 @@
             "group": "Account Management",
             "pages": [
               "api-manual/account-management/user-balance"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "guides/getting-started/quickstart"
             ]
           }
         ]
