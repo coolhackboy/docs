@@ -132,7 +132,7 @@
             ]
           },
           {
-            "group": "File Series",
+            "group": "File Management",
             "pages": [
               "api-manual/file-series/upload-url",
               "api-manual/file-series/upload-base64",
