@@ -6,6 +6,7 @@ add-instrumental
 add-vocals
 replace-section
 
+```json
 {
   "code": 200,
   "data": {
@@ -27,7 +28,7 @@ replace-section
         "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113631_3MTe5V_tmp98wzcx2m_cover_8e755734-a840-4c13-beac-b9f1044979ca.jpeg",
         "title": "Peaceful Piano Meditation",
         "tags": "Classical",
-        "duration": 130，
+        "duration": 130,
          "prompt": ""
       }
     ],
@@ -35,10 +36,12 @@ replace-section
     "error_message": null
   }
 }
+```
 
 
 get-timestamped-lyrics
 
+```json
 {
   "code": 200,
   "data": {
@@ -53,9 +56,11 @@ get-timestamped-lyrics
     "error_message": null
   }
 }
+```
 
 boost-music-style
 
+```json
 {
   "code": 200,
   "data": {
@@ -70,9 +75,11 @@ boost-music-style
     "error_message": null
   }
 }
+```
 
 generate-music-cover
 
+```json
 {
   "code": 200,
   "data": {
@@ -87,9 +94,11 @@ generate-music-cover
     "error_message": null
   }
 }
+```
 
 generate-persona
 
+```json
 {
   "code": 200,
   "data": {
@@ -104,8 +113,10 @@ generate-persona
     "error_message": null
   }
 }
+```
 
 generate-lyrics
+```json
 {
   "code": 200,
   "data": {
@@ -122,9 +133,11 @@ generate-lyrics
     "error_message": null
   }
 }
+```
 
 convert-to-wav
 
+```json
 {
   "code": 200,
   "data": {
@@ -132,16 +145,18 @@ convert-to-wav
     "status": "finished",
     "files": [
       {
-       "wav_url": "", 
+       "wav_url": "",
       }
     ],
     "created_time": "2025-11-25T08:50:13",
     "error_message": null
   }
 }
+```
 
 separate-vocals
 
+```json
 {
   "code": 200,
   "data": {
@@ -156,9 +171,11 @@ separate-vocals
     "error_message": null
   }
 }
+```
 
 stem-split
 
+```json
 {
   "code": 200,
   "data": {
@@ -173,9 +190,11 @@ stem-split
     "error_message": null
   }
 }
+```
 
 upload-and-separate-vocals
 
+```json
 {
   "code": 200,
   "data": {
@@ -190,8 +209,10 @@ upload-and-separate-vocals
     "error_message": null
   }
 }
+```
 
 generate-midi
+```json
 {
   "code": 200,
   "data": {
@@ -238,9 +259,11 @@ generate-midi
     "error_message": null
   }
 }
+```
 
 create-music-video
 
+```json
 {
   "code": 200,
   "data": {
@@ -255,3 +278,4 @@ create-music-video
     "error_message": null
   }
 }
+```

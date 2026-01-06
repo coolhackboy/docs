@@ -1,0 +1,220 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling 2.6 Motion Control API",
+    "description": "Advanced Motion Transfer with Character Animation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Kling 2.6 Motion Control Task",
+        "description": "Transfer motion from reference videos to character images with precise motion control",
+        "operationId": "submitKling26MotionControlTask",
+        "tags": ["Kling 2.6 Motion Control"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "kling-2.6-motion-control": {
+                  "summary": "Kling 2.6 Motion Control",
+                  "value": {
+                    "model": "kling-2.6-motion-control",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "The cartoon character is dancing gracefully in a studio",
+                      "image_urls": [
+                        "https://example.com/character-image.jpg"
+                      ],
+                      "video_urls": [
+                        "https://example.com/dance-reference.mp4"
+                      ],
+                      "resolution": "1080p"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful submission",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "not_started",
+                        "created_time": "2025-11-12T10:30:00"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling 2.6 Motion Control model identifier",
+            "enum": [
+              "kling-2.6-motion-control"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt", "image_urls", "video_urls", "resolution"],
+            "description": "Input parameters for motion control generation",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text description of the desired output scene",
+                "maxLength": 2500,
+                "example": "The cartoon character is dancing gracefully in a studio"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 1,
+                "description": "Single character image URL (JPEG, PNG, WEBP, max 10MB). Must clearly show the subject's head, shoulders, and torso",
+                "example": [
+                  "https://example.com/character-image.jpg"
+                ]
+              },
+              "video_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 1,
+                "description": "Single reference video URL for motion transfer (MP4, MOV, MKV, max 100MB, 3-30 seconds). Must clearly show the subject's head, shoulders, and torso",
+                "example": [
+                  "https://example.com/dance-reference.mp4"
+                ]
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output video resolution. 720p for standard quality, 1080p for higher visual quality",
+                "enum": ["720p", "1080p"],
+                "example": "1080p"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
