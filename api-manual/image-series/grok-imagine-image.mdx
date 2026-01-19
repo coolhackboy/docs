@@ -11,9 +11,11 @@ openapi: "/api-manual/image-series/grok-imagine-image.json POST /api/generate/su
 
 # Grok Imagine Image Generation
 
-Generate high-quality images using the Grok Imagine model. Supports text-to-image and image-to-image generation with flexible aspect ratios.
+Generate high-quality images using the Grok Imagine model. Supports text-to-image and image-to-image generation with optional aspect ratios.
 
-For image-to-image, provide a single reference image in `input.image_urls` (JPEG/PNG/WEBP, up to 10MB).
+For image-to-image, `input.image_urls` is required and must be an array containing a single URL string pointing to the reference image. Please provide the URL of the uploaded file; accepted types: image/jpeg, image/png, image/webp; max size: 10.0MB.
+
+`input.size` is optional for both modes. Supported values: `2:3`, `3:2`, `1:1`, `9:16`, `16:9`.
 
 ## Available Models
 
