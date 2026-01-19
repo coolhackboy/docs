@@ -160,7 +160,7 @@
               },
               "generation_type": {
                 "type": "string",
-                "description": "Video generation type.\n\n- `frame`: Frame-to-video (two images).\n\n- `reference`: Reference image video (three images).\n\n- If omitted, inferred by `image_urls` count: 2 for `frame`, 3 for `reference`.\n\n**Note**: `reference` is not supported by `veo3.1-quality`.",
+                "description": "Video generation type.\n\n- `frame`: Frame-to-video (two images).\n\n- `reference`: Reference image video (three images).\n\n- If omitted, inferred by `image_urls` count: 2 for `frame`, 3 for `reference`.",
                 "enum": ["frame", "reference"],
                 "example": "frame"
               },
@@ -182,12 +182,6 @@
                 "enum": ["720p", "1080p", "4k"],
                 "default": "720p",
                 "example": "1080p"
-              },
-              "enable_gif": {
-                "type": "boolean",
-                "description": "Enable GIF output.\n\n**Note**: GIF output cannot be used with `1080p` or `4k` resolution.",
-                "default": false,
-                "example": false
               }
             }
           }
