@@ -1,0 +1,89 @@
+---
+title: "Query Music Detail"
+description: "Query detailed results of music generation tasks"
+openapi: "/api-manual/music-series/query-music-detail.json GET /api/generate/detail/music"
+---
+
+## Usage Guide
+
+* All POST submission requests in the Music Series can query their results through this endpoint. Different models will return different [response fields](#response-fields-files-data).
+
+## Parameter Details
+
+* `task_id` (required): The unique task identifier returned from the music generation submission endpoint
+
+## Developer Notes
+
+* Poll this endpoint to check task completion status
+* The `files` array will be empty until the task status is `finished`
+* When a task fails, check the `error_message` field for details
+* Multiple audio files may be returned for a single task as variations are generated
+
+## Response Fields (files data)
+
+The `files` array content varies depending on which model created the task.
+
+| Model                                                                                                                                      | Field               | Type          | Description                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `audio_id`          | string        | Unique identifier for the audio file                                                   |
+| ↑                                                                                                                                          | `audio_url`         | string        | Direct download URL for the audio file                                                 |
+| ↑                                                                                                                                          | `image_url`         | string        | Cover image URL                                                                        |
+| ↑                                                                                                                                          | `title`             | string        | Track title                                                                            |
+| ↑                                                                                                                                          | `tags`              | string        | Style tags                                                                             |
+| ↑                                                                                                                                          | `duration`          | number        | Audio duration in seconds                                                              |
+| ↑                                                                                                                                          | `prompt`            | string        | Generation prompt used                                                                 |
+| `get-timestamped-lyrics`                                                                                                                   | `timestampe_lyrics` | string        | Lyrics with timestamps                                                                 |
+| `generate-lyrics`                                                                                                                          | `title`             | string        | Lyrics title                                                                           |
+| ↑                                                                                                                                          | `text`              | string        | Complete lyrics content                                                                |
+| `boost-music-style`                                                                                                                        | `style`             | string        | Enhanced music style                                                                   |
+| `convert-to-wav`                                                                                                                           | `wav_url`           | string        | URL to converted WAV file                                                              |
+| `separate-vocals`                                                                                                                          | `separate_vocals`   | string (JSON) | JSON string containing separated audio URLs. [See details](#separate-vocals)           |
+| `upload-and-separate-vocals`                                                                                                               | `vocal_removal`     | string (JSON) | JSON string containing separated stem URLs. [See details](#upload-and-separate-vocals) |
+| `stem-split`                                                                                                                               | `stem_split`        | string (JSON) | JSON string containing full stem separation URLs. [See details](#stem-split)           |
+| `generate-music-cover`                                                                                                                     | `generate_cover`    | string (JSON) | JSON string containing generated cover images. [See details](#generate-music-cover)    |
+| `generate-persona`                                                                                                                         | `persona_id`        | string        | Generated persona identifier                                                           |
+| `create-music-video`                                                                                                                       | `video_url`         | string        | Generated video URL                                                                    |
+
+### JSON Field Details
+
+#### separate-vocals
+
+`separate_vocals` fields:
+
+* `vocal_url` - URL to the extracted vocal track
+* `instrumental_url` - URL to the instrumental track
+
+#### upload-and-separate-vocals
+
+`vocal_removal` fields:
+
+* `bass` - URL to the bass track
+* `drums` - URL to the drums track
+* `piano` - URL to the piano track
+* `guitar` - URL to the guitar track
+* `vocals` - URL to the vocals track
+* `other` - URL to other audio elements
+
+#### stem-split
+
+`stem_split` fields:
+
+* `backing_vocals_url` - URL to backing vocals
+* `bass_url` - URL to bass track
+* `brass_url` - URL to brass instruments
+* `drums_url` - URL to drums track
+* `fx_url` - URL to sound effects
+* `guitar_url` - URL to guitar track
+* `keyboard_url` - URL to keyboard track
+* `percussion_url` - URL to percussion track
+* `strings_url` - URL to strings track
+* `synth_url` - URL to synthesizer track
+* `vocal_url` - URL to main vocals
+* `woodwinds_url` - URL to woodwinds track
+
+#### generate-music-cover
+
+`generate_cover` is a JSON array containing cover image objects:
+
+* `file_url` - URL to the generated cover image
+* `file_type` - File type (e.g., "image")

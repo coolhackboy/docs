@@ -1,0 +1,158 @@
+{
+  "theme": "mint",
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "PoYo AI",
+  "colors": {
+    "primary": "#3B82F6",
+    "light": "#60A5FA",
+    "dark": "#1E40AF"
+  },
+  "favicon": "/favicon.ico",
+  "api": {
+    "playground": {}
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Console",
+        "href": "https://poyo.ai"
+      },
+      {
+        "label": "Discord",
+        "href": "https://discord.gg/F8JNuUPB3j"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get API Key",
+      "href": "https://poyo.ai/dashboard/api-key"
+    }
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Support",
+          "icon": "envelope",
+          "href": "mailto:support@poyo.ai"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "API Manual",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-manual/overview",
+              "api-manual/error-codes"
+            ]
+          },
+          {
+            "group": "Image Series",
+            "pages": [
+              "api-manual/image-series/gpt-4o-image",
+              "api-manual/image-series/gpt-image-1.5",
+              "api-manual/image-series/nano-banana",
+              "api-manual/image-series/nano-banana-2",
+              "api-manual/image-series/flux-2",
+              "api-manual/image-series/seedream-4-5",
+              "api-manual/image-series/z-image",
+              "api-manual/image-series/grok-imagine-image"
+            ]
+          },
+          {
+            "group": "Video Series",
+            "pages": [
+              "api-manual/video-series/sora-2",
+              "api-manual/video-series/sora-2-pro",
+              "api-manual/video-series/veo-3-1",
+              "api-manual/video-series/wan-animate",
+              "api-manual/video-series/wan-2-6",
+              "api-manual/video-series/kling-2-6",
+              "api-manual/video-series/kling-2.6-motion-control",
+              "api-manual/video-series/grok-imagine",
+              "api-manual/video-series/hailuo-02",
+              "api-manual/video-series/seedance-1.0-pro",
+              "api-manual/video-series/seedance-1-5-pro"
+            ]
+          },
+          {
+            "group": "Music Series",
+            "pages": [
+              "api-manual/music-series/generate-music",
+              "api-manual/music-series/extend-music",
+              "api-manual/music-series/upload-and-cover-audio",
+              "api-manual/music-series/upload-and-extend-audio",
+              "api-manual/music-series/add-instrumental",
+              "api-manual/music-series/add-vocals",
+              "api-manual/music-series/get-timestamped-lyrics",
+              "api-manual/music-series/boost-music-style",
+              "api-manual/music-series/generate-music-cover",
+              "api-manual/music-series/replace-section",
+              "api-manual/music-series/generate-persona",
+              "api-manual/music-series/generate-lyrics",
+              "api-manual/music-series/convert-to-wav",
+              {
+                "group": "Vocal Remover",
+                "pages": [
+                  "api-manual/music-series/vocal-remover/separate-vocals",
+                  "api-manual/music-series/vocal-remover/stem-split",
+                  "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                ]
+              },
+              "api-manual/music-series/create-music-video",
+              "api-manual/music-series/query-music-detail",
+              "api-manual/music-series/music-webhook"
+            ]
+          },
+          {
+            "group": "File Management",
+            "pages": [
+              "api-manual/file-series/upload-url",
+              "api-manual/file-series/upload-base64",
+              "api-manual/file-series/upload-stream"
+            ]
+          },
+          {
+            "group": "Task Management",
+            "pages": [
+              "api-manual/task-management/status",
+              "api-manual/task-management/webhooks"
+            ]
+          },
+          {
+            "group": "Account Management",
+            "pages": [
+              "api-manual/account-management/user-balance"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "guides/getting-started/quickstart"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  }
+}

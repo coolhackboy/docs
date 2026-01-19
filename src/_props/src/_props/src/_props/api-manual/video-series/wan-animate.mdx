@@ -1,0 +1,25 @@
+---
+title: "Wan Animate Video Generation"
+description: "AI-powered character animation and replacement based on Alibaba's Wan2.2-Animate model"
+openapi: "/api-manual/video-series/wan-animate.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Wan Animate Video Generation
+
+Wan Animate is powered by Alibaba's Wan2.2-Animate model, a 14B parameter open-source model for digital human video generation. It accurately captures facial expressions and body movements from a reference video and applies them to a target image, enabling seamless character animation and replacement with realistic lighting and color preservation.
+
+## Available Models
+
+* **wan-animate-replace** - Replace a character in a video with one from a source image while preserving expressions and movements
+* **wan-animate-move** - Animate a character image using motion from a reference video
+
+## Resolution Options
+
+* **480p** - Standard definition (default)
+* **580p** - Enhanced definition
+* **720p** - HD quality

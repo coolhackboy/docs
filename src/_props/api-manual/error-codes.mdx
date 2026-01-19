@@ -1,0 +1,263 @@
+---
+title: "Error Codes"
+description: "API error codes and response formats"
+---
+
+# Error Codes
+
+This page documents all possible API response codes and error types.
+
+## Response Format
+
+### Success Response
+
+When a request is successful, the API returns a response with `code: 200`:
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "not_started",
+    "created_time": "2025-11-12T10:30:00"
+  }
+}
+```
+
+### Error Response
+
+When an error occurs, the API returns a response with the corresponding error code:
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "task_id is required",
+    "type": "validation_error"
+  }
+}
+```
+
+### Task Failed Response
+
+When a task fails during processing, the response includes `status: "failed"` with an error message:
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "8FDN1I7M7Q68DDG8",
+    "status": "failed",
+    "files": [],
+    "created_time": "2025-11-25T08:50:13",
+    "error_message": "The prompt violates our content policy"
+  }
+}
+```
+
+## Business Status Codes
+
+### 200 - Success
+
+Request completed successfully. Check the `status` field in the response to determine task state.
+
+### 400 - Bad Request
+
+The request contains invalid parameters or data.
+
+| Type                       | Description                    |
+| -------------------------- | ------------------------------ |
+| `validation_error`         | Parameter validation error     |
+| `content_moderation_error` | Content moderation error       |
+| `content_too_long_error`   | Content exceeds maximum length |
+| `file_format_error`        | Invalid file format            |
+
+**Example:**
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "task_id is required",
+    "type": "validation_error"
+  }
+}
+```
+
+### 402 - Payment Required
+
+Insufficient account balance or credits.
+
+| Type                         | Description          |
+| ---------------------------- | -------------------- |
+| `insufficient_credits_error` | Insufficient credits |
+
+**Example:**
+
+```json
+{
+  "code": 402,
+  "error": {
+    "message": "Insufficient credits to complete this request",
+    "type": "insufficient_credits_error"
+  }
+}
+```
+
+### 403 - Forbidden
+
+Access denied due to permission restrictions.
+
+| Type                      | Description       |
+| ------------------------- | ----------------- |
+| `permission_denied_error` | Permission denied |
+
+**Example:**
+
+```json
+{
+  "code": 403,
+  "error": {
+    "message": "You do not have permission to access this resource",
+    "type": "permission_denied_error"
+  }
+}
+```
+
+### 404 - Not Found
+
+The requested resource does not exist.
+
+| Type                       | Description        |
+| -------------------------- | ------------------ |
+| `resource_not_found_error` | Resource not found |
+
+**Example:**
+
+```json
+{
+  "code": 404,
+  "error": {
+    "message": "Task not found",
+    "type": "resource_not_found_error"
+  }
+}
+```
+
+### 408 - Request Timeout
+
+The request took too long to process.
+
+| Type            | Description     |
+| --------------- | --------------- |
+| `timeout_error` | Request timeout |
+
+**Example:**
+
+```json
+{
+  "code": 408,
+  "error": {
+    "message": "Request timed out",
+    "type": "timeout_error"
+  }
+}
+```
+
+### 429 - Too Many Requests
+
+Rate limit exceeded.
+
+| Type               | Description         |
+| ------------------ | ------------------- |
+| `rate_limit_error` | Rate limit exceeded |
+
+**Example:**
+
+```json
+{
+  "code": 429,
+  "error": {
+    "message": "Rate limit exceeded. Please try again later.",
+    "type": "rate_limit_error"
+  }
+}
+```
+
+### 500 - Internal Server Error
+
+An unexpected server error occurred.
+
+| Type             | Description           |
+| ---------------- | --------------------- |
+| `internal_error` | Internal server error |
+
+**Example:**
+
+```json
+{
+  "code": 500,
+  "error": {
+    "message": "An internal error occurred. Please try again later.",
+    "type": "internal_error"
+  }
+}
+```
+
+### 502 - Bad Gateway
+
+Upstream service error.
+
+| Type             | Description            |
+| ---------------- | ---------------------- |
+| `upstream_error` | Upstream service error |
+
+**Example:**
+
+```json
+{
+  "code": 502,
+  "error": {
+    "message": "Upstream service unavailable",
+    "type": "upstream_error"
+  }
+}
+```
+
+### 503 - Service Unavailable
+
+The service is temporarily unavailable.
+
+| Type            | Description         |
+| --------------- | ------------------- |
+| `service_error` | Service unavailable |
+
+**Example:**
+
+```json
+{
+  "code": 503,
+  "error": {
+    "message": "The server is busy. Please try again later.",
+    "type": "service_error"
+  }
+}
+```
+
+## Error Handling Best Practices
+
+<Tip>
+  **Implement retry logic**: For 500, 502, and 503 errors, implement exponential backoff retry logic.
+</Tip>
+
+<Tip>
+  **Handle rate limits**: When receiving 429 errors, wait before retrying. Consider implementing request queuing.
+</Tip>
+
+<Tip>
+  **Validate inputs**: Check your request parameters before sending to avoid 400 errors.
+</Tip>
+
+<Tip>
+  **Monitor credits**: Keep track of your credit balance to avoid 402 errors during critical operations.
+</Tip>

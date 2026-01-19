@@ -1,0 +1,27 @@
+---
+title: "Generate Music Cover"
+description: "Create cover images for generated music."
+openapi: "/api-manual/music-series/generate-music-cover.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+* This endpoint creates a cover version of an existing music track
+* Requires a valid task\_id from a previously generated music task
+* The cover will be a new interpretation of the original track
+
+## Parameter Details
+
+* `task_id` (required): The task ID from a completed music generation task
+  * Must be a valid task\_id returned from the Generate Music or Extend Music endpoints
+  * The original task must have completed successfully
+
+## Developer Notes
+
+* A cover can only be generated once per original task
+* Results are delivered via the callback URL when processing is complete

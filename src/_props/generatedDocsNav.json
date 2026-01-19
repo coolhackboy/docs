@@ -1,0 +1,345 @@
+{
+  "global": {
+    "anchors": [
+      {
+        "anchor": "Support",
+        "icon": "envelope",
+        "href": "mailto:support@poyo.ai"
+      }
+    ]
+  },
+  "tabs": [
+    {
+      "tab": "API Manual",
+      "groups": [
+        {
+          "group": "Overview",
+          "pages": [
+            {
+              "title": "API Overview",
+              "description": "Complete API reference and architecture",
+              "href": "/api-manual/overview"
+            },
+            {
+              "title": "Error Codes",
+              "description": "API error codes and response formats",
+              "href": "/api-manual/error-codes"
+            }
+          ]
+        },
+        {
+          "group": "Image Series",
+          "pages": [
+            {
+              "title": "GPT-4o Image Generation",
+              "description": "High-quality image generation and editing with GPT-4o",
+              "openapi": "api-manual/image-series/gpt-4o-image.json post /api/generate/submit",
+              "href": "/api-manual/image-series/gpt-4o-image"
+            },
+            {
+              "title": "GPT Image 1.5 Generation",
+              "description": "High-quality image generation and editing with GPT Image 1.5",
+              "openapi": "api-manual/image-series/gpt-image-1.5.json post /api/generate/submit",
+              "href": "/api-manual/image-series/gpt-image-1.5"
+            },
+            {
+              "title": "Nano Banana Image Generation",
+              "description": "Fast image generation powered by Gemini 2.5 Flash",
+              "openapi": "api-manual/image-series/nano-banana.json post /api/generate/submit",
+              "href": "/api-manual/image-series/nano-banana"
+            },
+            {
+              "title": "Nano Banana Pro(Nano Banana 2) Image Generation",
+              "description": "Next-generation AI image generation powered by Gemini 3 Pro Image Preview",
+              "openapi": "api-manual/image-series/nano-banana-2.json post /api/generate/submit",
+              "href": "/api-manual/image-series/nano-banana-2"
+            },
+            {
+              "title": "Flux.2 Image Generation",
+              "description": "32B parameter image generation model from Black Forest Labs with multi-reference support and superior text rendering",
+              "openapi": "api-manual/image-series/flux-2.json post /api/generate/submit",
+              "href": "/api-manual/image-series/flux-2"
+            },
+            {
+              "title": "Seedream-4.5 Image Generation",
+              "description": "Advanced image generation model with support for text-to-image, image-to-image, and multi-image reference capabilities",
+              "openapi": "api-manual/image-series/seedream-4-5.json post /api/generate/submit",
+              "href": "/api-manual/image-series/seedream-4-5"
+            },
+            {
+              "title": "Z-Image Generation",
+              "description": "High-quality image generation with Z-Image",
+              "openapi": "api-manual/image-series/z-image.json post /api/generate/submit",
+              "href": "/api-manual/image-series/z-image"
+            },
+            {
+              "title": "Grok Imagine Image Generation",
+              "description": "High-quality image generation with Grok Imagine",
+              "openapi": "api-manual/image-series/grok-imagine-image.json post /api/generate/submit",
+              "href": "/api-manual/image-series/grok-imagine-image"
+            }
+          ]
+        },
+        {
+          "group": "Video Series",
+          "pages": [
+            {
+              "title": "Sora 2 Video Generation",
+              "description": "Standard quality video generation",
+              "openapi": "api-manual/video-series/sora-2.json post /api/generate/submit",
+              "href": "/api-manual/video-series/sora-2"
+            },
+            {
+              "title": "Sora 2 Pro Video Generation",
+              "description": "Premium HD quality video generation",
+              "openapi": "api-manual/video-series/sora-2-pro.json post /api/generate/submit",
+              "href": "/api-manual/video-series/sora-2-pro"
+            },
+            {
+              "title": "VEO 3.1 Video Generation",
+              "description": "Fast video generation with Google's VEO 3.1 technology",
+              "openapi": "api-manual/video-series/veo-3-1.json post /api/generate/submit",
+              "href": "/api-manual/video-series/veo-3-1"
+            },
+            {
+              "title": "Wan Animate Video Generation",
+              "description": "AI-powered character animation and replacement based on Alibaba's Wan2.2-Animate model",
+              "openapi": "api-manual/video-series/wan-animate.json post /api/generate/submit",
+              "href": "/api-manual/video-series/wan-animate"
+            },
+            {
+              "title": "Wan 2.6 Video Generation",
+              "description": "Multi-shot 1080p video generation with Alibaba Wan 2.6",
+              "openapi": "api-manual/video-series/wan-2-6.json post /api/generate/submit",
+              "href": "/api-manual/video-series/wan-2-6"
+            },
+            {
+              "title": "Kling 2.6 Video Generation",
+              "description": "Advanced video generation with native audio support",
+              "openapi": "api-manual/video-series/kling-2-6.json post /api/generate/submit",
+              "href": "/api-manual/video-series/kling-2-6"
+            },
+            {
+              "title": "Kling 2.6 Motion Control",
+              "description": "Advanced motion transfer with character animation",
+              "openapi": "api-manual/video-series/kling-2.6-motion-control.json post /api/generate/submit",
+              "href": "/api-manual/video-series/kling-2.6-motion-control"
+            },
+            {
+              "title": "Grok Imagine Video Generation",
+              "description": "High-quality video generation with Grok Imagine",
+              "openapi": "api-manual/video-series/grok-imagine.json post /api/generate/submit",
+              "href": "/api-manual/video-series/grok-imagine"
+            },
+            {
+              "title": "Hailuo 02 Video Generation",
+              "description": "Advanced video generation with Hailuo 02",
+              "openapi": "api-manual/video-series/hailuo-02.json post /api/generate/submit",
+              "href": "/api-manual/video-series/hailuo-02"
+            },
+            {
+              "title": "Seedance 1.0 Pro Video Generation",
+              "description": "High-quality image-to-video generation with Seedance 1.0 Pro",
+              "openapi": "api-manual/video-series/seedance-1.0-pro.json post /api/generate/submit",
+              "href": "/api-manual/video-series/seedance-1.0-pro"
+            },
+            {
+              "title": "Seedance 1.5 Pro Video Generation",
+              "description": "High-quality image-to-video generation with Seedance 1.5 Pro",
+              "openapi": "api-manual/video-series/seedance-1-5-pro.json post /api/generate/submit",
+              "href": "/api-manual/video-series/seedance-1-5-pro"
+            }
+          ]
+        },
+        {
+          "group": "Music Series",
+          "pages": [
+            {
+              "title": "Generate Music",
+              "description": "AI-powered music generation with customizable styles and vocals",
+              "openapi": "api-manual/music-series/generate-music.json post /api/generate/submit",
+              "href": "/api-manual/music-series/generate-music"
+            },
+            {
+              "title": "Extend Music",
+              "description": "Extend or modify existing music by creating a continuation based on a source audio track",
+              "openapi": "api-manual/music-series/extend-music.json post /api/generate/submit",
+              "href": "/api-manual/music-series/extend-music"
+            },
+            {
+              "title": "Upload and Cover Audio",
+              "description": "Transform audio tracks into new styles while preserving the original melody",
+              "openapi": "api-manual/music-series/upload-and-cover-audio.json post /api/generate/submit",
+              "href": "/api-manual/music-series/upload-and-cover-audio"
+            },
+            {
+              "title": "Upload and Extend Audio",
+              "description": "Extend audio tracks while preserving the original style",
+              "openapi": "api-manual/music-series/upload-and-extend-audio.json post /api/generate/submit",
+              "href": "/api-manual/music-series/upload-and-extend-audio"
+            },
+            {
+              "title": "Add Instrumental",
+              "description": "Generate musical accompaniment for uploaded audio files",
+              "openapi": "api-manual/music-series/add-instrumental.json post /api/generate/submit",
+              "href": "/api-manual/music-series/add-instrumental"
+            },
+            {
+              "title": "Add Vocals",
+              "description": "Layer AI-generated vocals on top of an existing instrumental",
+              "openapi": "api-manual/music-series/add-vocals.json post /api/generate/submit",
+              "href": "/api-manual/music-series/add-vocals"
+            },
+            {
+              "title": "Get Timestamped Lyrics",
+              "description": "Retrieve synchronized lyrics with precise timestamps",
+              "openapi": "api-manual/music-series/get-timestamped-lyrics.json post /api/generate/submit",
+              "href": "/api-manual/music-series/get-timestamped-lyrics"
+            },
+            {
+              "title": "Boost Music Style",
+              "description": "Generate enhanced music style descriptions using AI",
+              "openapi": "api-manual/music-series/boost-music-style.json post /api/generate/submit",
+              "href": "/api-manual/music-series/boost-music-style"
+            },
+            {
+              "title": "Generate Music Cover",
+              "description": "Create cover images for generated music.",
+              "openapi": "api-manual/music-series/generate-music-cover.json post /api/generate/submit",
+              "href": "/api-manual/music-series/generate-music-cover"
+            },
+            {
+              "title": "Replace Section",
+              "description": "Replace specific sections of generated music tracks",
+              "openapi": "api-manual/music-series/replace-section.json post /api/generate/submit",
+              "href": "/api-manual/music-series/replace-section"
+            },
+            {
+              "title": "Generate Persona",
+              "description": "Create reusable musical personas from existing audio tracks",
+              "openapi": "api-manual/music-series/generate-persona.json post /api/generate/submit",
+              "href": "/api-manual/music-series/generate-persona"
+            },
+            {
+              "title": "Generate Lyrics",
+              "description": "AI-powered lyrics generation based on themes and descriptions",
+              "openapi": "api-manual/music-series/generate-lyrics.json post /api/generate/submit",
+              "href": "/api-manual/music-series/generate-lyrics"
+            },
+            {
+              "title": "Convert to WAV",
+              "description": "Convert generated music tracks to high-quality WAV format",
+              "openapi": "api-manual/music-series/convert-to-wav.json post /api/generate/submit",
+              "href": "/api-manual/music-series/convert-to-wav"
+            },
+            {
+              "group": "Vocal Remover",
+              "pages": [
+                {
+                  "title": "Separate Vocals",
+                  "description": "Separate vocals and instruments from music tracks",
+                  "openapi": "api-manual/music-series/vocal-remover/separate-vocals.json post /api/generate/submit",
+                  "href": "/api-manual/music-series/vocal-remover/separate-vocals"
+                },
+                {
+                  "title": "Stem Split",
+                  "description": "Split music tracks into multiple instrument stems",
+                  "openapi": "api-manual/music-series/vocal-remover/stem-split.json post /api/generate/submit",
+                  "href": "/api-manual/music-series/vocal-remover/stem-split"
+                },
+                {
+                  "title": "Upload and Separate Vocals",
+                  "description": "Upload audio and separate it into multiple stems",
+                  "openapi": "api-manual/music-series/vocal-remover/upload-and-separate-vocals.json post /api/generate/submit",
+                  "href": "/api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                }
+              ]
+            },
+            {
+              "title": "Create Music Video",
+              "description": "Generate visualized music videos from audio tracks",
+              "openapi": "api-manual/music-series/create-music-video.json post /api/generate/submit",
+              "href": "/api-manual/music-series/create-music-video"
+            },
+            {
+              "title": "Query Music Detail",
+              "description": "Query detailed results of music generation tasks",
+              "openapi": "api-manual/music-series/query-music-detail.json get /api/generate/detail/music",
+              "href": "/api-manual/music-series/query-music-detail"
+            },
+            {
+              "title": "Music Webhook",
+              "description": "Receive automatic callback notifications when music generation tasks complete",
+              "href": "/api-manual/music-series/music-webhook"
+            }
+          ]
+        },
+        {
+          "group": "File Management",
+          "pages": [
+            {
+              "title": "Upload File from URL",
+              "description": "Upload files to PoYo AI by providing a remote URL",
+              "openapi": "api-manual/file-series/upload-url.json post /api/common/upload/url",
+              "href": "/api-manual/file-series/upload-url"
+            },
+            {
+              "title": "Upload File from Base64",
+              "description": "Upload files to PoYo AI using Base64-encoded data or Data URL format",
+              "openapi": "api-manual/file-series/upload-base64.json post /api/common/upload/base64",
+              "href": "/api-manual/file-series/upload-base64"
+            },
+            {
+              "title": "Upload File Stream",
+              "description": "Upload files to PoYo AI using multipart/form-data format for direct file uploads",
+              "openapi": "api-manual/file-series/upload-stream.json post /api/common/upload/stream",
+              "href": "/api-manual/file-series/upload-stream"
+            }
+          ]
+        },
+        {
+          "group": "Task Management",
+          "pages": [
+            {
+              "title": "Get Task Status",
+              "description": "Query task execution status and retrieve generation results",
+              "openapi": "GET /api/generate/status/{task_id}",
+              "href": "/api-manual/task-management/status"
+            },
+            {
+              "title": "Webhook Callbacks",
+              "description": "Receive automatic notifications when tasks complete",
+              "href": "/api-manual/task-management/webhooks"
+            }
+          ]
+        },
+        {
+          "group": "Account Management",
+          "pages": [
+            {
+              "title": "Query User Balance",
+              "description": "Query the credit balance of your user account",
+              "openapi": "api-manual/account-management/user-balance.json get /api/user/balance",
+              "href": "/api-manual/account-management/user-balance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "Guides",
+      "groups": [
+        {
+          "group": "Getting started",
+          "pages": [
+            {
+              "title": "Quick Start",
+              "description": "Get started with PoYo AI in minutes",
+              "href": "/guides/getting-started/quickstart"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

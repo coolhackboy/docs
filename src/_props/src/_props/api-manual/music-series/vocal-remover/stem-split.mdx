@@ -1,0 +1,34 @@
+---
+title: "Stem Split"
+description: "Split music tracks into multiple instrument stems"
+openapi: "/api-manual/music-series/vocal-remover/stem-split.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+<Note>
+  **Vocal Separation Options:**
+
+  * [separate-vocals](/api-manual/music-series/vocal-remover/separate-vocals): Does not support uploading audio, 2-stem split, based on Suno
+  * [stem-split](/api-manual/music-series/vocal-remover/stem-split): Does not support uploading audio, 12-stem split, based on Suno
+  * [upload-and-separate-vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals): Supports uploading audio, 7-stem split
+</Note>
+
+* This endpoint splits music tracks into multiple instrument stems
+* Creates separate tracks for backing vocals, bass, brass, drums, fx, guitar, keyboard, percussion, strings, synth, vocals, woodwinds, and piano
+* Useful for detailed remixing or isolating specific instruments
+
+## Parameter Details
+
+* `task_id` (required): Task ID from a completed music generation (Generate Music or Extend Music)
+* `audio_id` (required): Specific audio track identifier from the callback data
+
+## Developer Notes
+
+* Stem split can only be performed once per audio track
+* The callback includes download URLs for each separated stem

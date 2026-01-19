@@ -1,0 +1,66 @@
+---
+title: "Upload and Cover Audio"
+description: "Transform audio tracks into new styles while preserving the original melody"
+openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+* This endpoint transforms an uploaded audio track into a new style while preserving the original melody
+* Upload your audio file and specify the desired transformation style
+* The original melody and structure are maintained while applying new musical characteristics
+
+## Parameter Details
+
+* **Audio Upload Requirement**:
+
+  * The uploaded audio must not exceed **8 minutes** in length
+
+  * **Note**: For the V4\_5ALL model, the uploaded audio must not exceed **1 minute** in length
+
+  * Provide a valid URL pointing to your audio file via `upload_url`
+
+* In Custom Mode ( `custom_mode: true` ):
+
+  * `style` and `title` are **required**
+
+  * `prompt` is **required** if `instrumental` is `false`
+
+  * Character limits vary by model:
+    * **V4**: `prompt` 3000 characters, `style` 200 characters, `title` 80 characters
+    * **V4\_5 & V4\_5PLUS**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
+    * **V4\_5ALL**: `prompt` 5000 characters, `style` 1000 characters, `title` 80 characters
+    * **V5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
+
+* In Non-custom Mode ( `custom_mode: false` ):
+
+  * `prompt` is **required** to describe the desired transformation (max 500 characters)
+
+  * `style` and `title` should be left empty
+
+## Developer Notes
+
+* Ensure your audio URL is publicly accessible and the file is under 8 minutes (1 minute for V4\_5ALL)
+
+* For best results, use high-quality source audio with clear melody lines
+
+* The `audio_weight` parameter can help balance between preserving the original and applying the new style
+
+## Optional parameters
+
+* `negative_tags` (string): Music styles or characteristics to exclude from the cover.
+
+* `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter increases the probability but cannot guarantee adherence.
+
+* `style_weight` (number): Strength of adherence to the new style. Range 0-1, up to 2 decimals.
+
+* `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals.
+
+* `audio_weight` (number): Balance weight for preserving original audio features. Range 0-1, up to 2 decimals.
+
+* `persona_id` (string): Persona ID to apply to the covered track. How to generate persona\_id, visit [generate-persona](/api-manual/music-series/generate-persona).

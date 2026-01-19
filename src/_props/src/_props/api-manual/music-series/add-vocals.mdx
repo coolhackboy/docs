@@ -1,0 +1,54 @@
+---
+title: "Add Vocals"
+description: "Layer AI-generated vocals on top of an existing instrumental"
+openapi: "/api-manual/music-series/add-vocals.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+* This endpoint adds AI-generated vocals to an existing instrumental track
+* Upload an instrumental file and provide lyrics or a description for the vocals
+* Perfect for transforming instrumental tracks into complete songs
+
+## Parameter Details
+
+* Required parameters:
+
+  * `upload_url`: URL of the instrumental audio file
+
+  * `prompt`: Lyrics or description for the vocals
+
+  * `title`: Name for the generated track
+
+  * `style`: Music style to guide vocal delivery
+
+  * `negative_tags`: Styles to exclude from generation
+
+* Model selection:
+
+  * **V5**: Superior musical expressiveness with faster generation
+
+  * **V4\_5PLUS**: Enhanced tonal richness (default)
+
+## Developer Notes
+
+* The `prompt` parameter serves as both lyrics and creative direction for the vocals
+* Use `style` to specify the vocal delivery style (e.g., "Pop Ballad", "Rock", "R\&B")
+* Combine with `vocal_gender` for more control over the vocal output
+
+## Optional parameters
+
+* `model` (string): AI model version. Options: `V4_5PLUS` (default), `V5`.
+
+* `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter can only increase the probability but cannot guarantee the specified gender.
+
+* `style_weight` (number): Strength of adherence to style. Range 0-1, up to 2 decimals.
+
+* `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals.
+
+* `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.

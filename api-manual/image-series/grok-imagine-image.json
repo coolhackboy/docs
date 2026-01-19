@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Grok Imagine Image API",
-    "description": "Grok Imagine Image Generation",
+    "description": "Grok Imagine Image Generation with text-to-image and image-to-image support",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Grok Imagine Image Generation Task",
-        "description": "Generate images using Grok Imagine model",
+        "description": "Generate images using Grok Imagine model with text-to-image and image-to-image support",
         "operationId": "submitGrokImagineImageTask",
         "tags": ["Grok Imagine Image"],
         "requestBody": {
@@ -38,6 +38,18 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A serene mountain landscape at sunset with vibrant colors",
+                      "size": "1:1"
+                    }
+                  }
+                },
+                "grok-imagine-image-to-image": {
+                  "summary": "Grok Imagine Image-to-Image",
+                  "value": {
+                    "model": "grok-imagine-image",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Add warm sunset lighting with golden highlights",
+                      "image_urls": ["https://example.com/reference-image.png"],
                       "size": "1:1"
                     }
                   }
@@ -98,6 +110,16 @@
                 "description": "Generation prompt describing the desired output",
                 "maxLength": 5000,
                 "example": "A beautiful sunset over the ocean"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 1,
+                "description": "Reference image URLs for image-to-image generation (single image). Supported formats: JPEG, PNG, WEBP. Max file size: 10MB",
+                "example": ["https://example.com/reference-image.png"]
               },
               "size": {
                 "type": "string",

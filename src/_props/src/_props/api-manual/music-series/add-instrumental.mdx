@@ -1,0 +1,52 @@
+---
+title: "Add Instrumental"
+description: "Generate musical accompaniment for uploaded audio files"
+openapi: "/api-manual/music-series/add-instrumental.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+* This endpoint generates musical accompaniment for uploaded audio files
+* Typically used with vocal stems or melodies to create backing tracks
+* Perfect for adding instrumental layers to existing recordings without needing a producer
+
+## Parameter Details
+
+* Required parameters:
+
+  * `upload_url`: URL of the audio file to process
+
+  * `title`: Name for the generated track
+
+  * `tags`: Desired musical styles (e.g., "relaxing, piano, soothing")
+
+  * `negative_tags`: Styles to exclude (e.g., "heavy metal, fast drums")
+
+* Model selection:
+
+  * **V5**: Superior musical expressiveness with faster generation
+
+  * **V4\_5PLUS**: Enhanced tonal richness (default)
+
+## Developer Notes
+
+* Use descriptive tags to guide the style of the instrumental
+* Combine positive and negative tags for precise control over the output
+* The callback mechanism sends notifications at three stages: text generation, first track completion, and all tracks completed
+
+## Optional parameters
+
+* `model` (string): AI model version. Options: `V4_5PLUS` (default), `V5`.
+
+* `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter can only increase the probability but cannot guarantee the specified gender.
+
+* `style_weight` (number): Strength of adherence to style. Range 0-1, up to 2 decimals.
+
+* `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals.
+
+* `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.

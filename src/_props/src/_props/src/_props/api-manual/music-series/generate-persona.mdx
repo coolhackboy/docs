@@ -1,0 +1,38 @@
+---
+title: "Generate Persona"
+description: "Create reusable musical personas from existing audio tracks"
+openapi: "/api-manual/music-series/generate-persona.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+* This endpoint creates a reusable musical persona from an existing audio track
+* Personas capture the vocal style, genre characteristics, and musical personality
+* Once created, personas can be used with the Generate Music endpoint via the `persona_id` parameter
+
+## Parameter Details
+
+* `task_id` (required): Task ID from a completed music generation ([Generate](/api-manual/music-series/generate-music), [Extend](/api-manual/music-series/extend-music), [Upload Cover](/api-manual/music-series/upload-and-cover-audio), or [Upload Extend](/api-manual/music-series/upload-and-extend-audio))
+* `audio_id` (required): Specific audio track identifier from the callback data
+* `name` (required): A descriptive name that captures the musical style or character
+* `description` (required): Detailed description including:
+  * Genre and mood
+  * Instrumentation preferences
+  * Vocal characteristics
+  * Unique musical personality traits
+
+## Developer Notes
+
+* Each audio track can only have one persona created from it
+* If a persona already exists for the audio, the API returns error code 409
+* You can apply the `persona_id` to the following endpoints:
+  * [Generate Music](/api-manual/music-series/generate-music)
+  * [Extend Music](/api-manual/music-series/extend-music)
+  * [Upload And Cover Audio](/api-manual/music-series/upload-and-cover-audio)
+  * [Upload And Extend Audio](/api-manual/music-series/upload-and-extend-audio)
+* Provide detailed descriptions for best results when using the persona

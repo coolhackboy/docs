@@ -1,0 +1,38 @@
+---
+title: "Replace Section"
+description: "Replace specific sections of generated music tracks"
+openapi: "/api-manual/music-series/replace-section.json POST /api/generate/submit"
+---
+
+<Tip>
+  1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+  2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+## Usage Guide
+
+* This endpoint replaces a specific time range of an existing music track with new content
+* Useful for editing verses, choruses, or any specific part of a generated track
+* The replacement content is generated based on your prompt and style tags
+
+## Parameter Details
+
+* `task_id` (required): The original task ID from a completed music generation
+* `audio_id` (required): The specific audio track identifier from the callback data
+* `prompt` (required): Description of the replacement content (lyrics or musical description)
+* `tags` (required): Style tags for the replacement section
+* `title` (required): Title for the resulting track
+* `infill_start_s` (required): Start time in seconds (minimum 0, up to 2 decimals)
+* `infill_end_s` (required): End time in seconds (must be greater than start time)
+
+## Developer Notes
+
+* Ensure `infill_end_s` is always greater than `infill_start_s`
+* The time range should be within the duration of the original track
+* Use `full_lyrics` when you want to maintain lyrical consistency across the entire track
+
+## Optional parameters
+
+* `negative_tags` (string): Styles to exclude from the replacement section
+* `full_lyrics` (string): Complete lyrics for the entire track after modification
+* `callback_url` (string): Webhook URL for receiving completion notifications
