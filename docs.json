@@ -2,6 +2,10 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "PoYo AI",
+  "logo": {
+    "light": "https://storage.poyo.ai/logo.webp",
+    "dark": "https://storage.poyo.ai/logo.webp"
+  },
   "colors": {
     "primary": "#3B82F6",
     "light": "#60A5FA",
@@ -182,18 +186,14 @@
   "navbar": {
     "links": [
       {
-        "label": "Console",
-        "href": "https://poyo.ai"
-      },
-      {
-        "label": "Discord",
+        "icon": "discord",
         "href": "https://discord.gg/F8JNuUPB3j"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Get API Key",
-      "href": "https://poyo.ai/dashboard/api-key"
+      "label": "Market",
+      "href": "https://poyo.ai/models"
     }
   },
   "contextual": {
