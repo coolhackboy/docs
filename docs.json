@@ -186,6 +186,7 @@
   "navbar": {
     "links": [
       {
+        "label": "Discord",
         "icon": "discord",
         "href": "https://discord.gg/F8JNuUPB3j"
       }
