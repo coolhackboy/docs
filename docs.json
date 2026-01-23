@@ -141,8 +141,27 @@
           {
             "group": "Task Management",
             "pages": [
-              "api-manual/task-management/status",
-              "api-manual/task-management/webhooks"
+              {
+                "group": "Music",
+                "pages": [
+                  "api-manual/music-series/query-music-detail",
+                  "api-manual/music-series/music-webhook"
+                ]
+              },
+              {
+                "group": "Image",
+                "pages": [
+                  "api-manual/task-management/status",
+                  "api-manual/task-management/webhooks"
+                ]
+              },
+              {
+                "group": "Video",
+                "pages": [
+                  "api-manual/task-management/status",
+                  "api-manual/task-management/webhooks"
+                ]
+              }
             ]
           }
         ]
