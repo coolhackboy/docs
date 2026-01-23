@@ -1,6 +1,7 @@
 ---
 title: "Generate Music"
 description: "AI-powered music generation with customizable styles and vocals"
+icon: "music"
 openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit"
 ---
 
@@ -56,3 +57,4 @@ openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals. Example: `0.65` .
 
 - `persona_id` (string): Persona ID to apply to the generated music. Use this to apply a specific persona style to your music generation. Only available when Custom Mode is enabled. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+
