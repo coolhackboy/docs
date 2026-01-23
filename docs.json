@@ -2,10 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "PoYo AI",
-  "logo": {
-    "light": "https://storage.poyo.ai/logo.webp",
-    "dark": "https://storage.poyo.ai/logo.webp"
-  },
+  "logo": "https://storage.poyo.ai/logo.webp",
   "colors": {
     "primary": "#3B82F6",
     "light": "#60A5FA",
@@ -177,30 +174,35 @@
           {
             "group": "Music Model",
             "pages": [
-              "api-manual/music-series/generate-music",
-              "api-manual/music-series/extend-music",
-              "api-manual/music-series/upload-and-cover-audio",
-              "api-manual/music-series/upload-and-extend-audio",
-              "api-manual/music-series/add-instrumental",
-              "api-manual/music-series/add-vocals",
-              "api-manual/music-series/get-timestamped-lyrics",
-              "api-manual/music-series/boost-music-style",
-              "api-manual/music-series/generate-music-cover",
-              "api-manual/music-series/replace-section",
-              "api-manual/music-series/generate-persona",
-              "api-manual/music-series/generate-lyrics",
-              "api-manual/music-series/convert-to-wav",
               {
-                "group": "Vocal Remover",
+                "group": "Suno AI",
                 "pages": [
-                  "api-manual/music-series/vocal-remover/separate-vocals",
-                  "api-manual/music-series/vocal-remover/stem-split",
-                  "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                  "api-manual/music-series/generate-music",
+                  "api-manual/music-series/extend-music",
+                  "api-manual/music-series/upload-and-cover-audio",
+                  "api-manual/music-series/upload-and-extend-audio",
+                  "api-manual/music-series/add-instrumental",
+                  "api-manual/music-series/add-vocals",
+                  "api-manual/music-series/get-timestamped-lyrics",
+                  "api-manual/music-series/boost-music-style",
+                  "api-manual/music-series/generate-music-cover",
+                  "api-manual/music-series/replace-section",
+                  "api-manual/music-series/generate-persona",
+                  "api-manual/music-series/generate-lyrics",
+                  "api-manual/music-series/convert-to-wav",
+                  {
+                    "group": "Vocal Remover",
+                    "pages": [
+                      "api-manual/music-series/vocal-remover/separate-vocals",
+                      "api-manual/music-series/vocal-remover/stem-split",
+                      "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                    ]
+                  },
+                  "api-manual/music-series/create-music-video",
+                  "api-manual/music-series/query-music-detail",
+                  "api-manual/music-series/music-webhook"
                 ]
-              },
-              "api-manual/music-series/create-music-video",
-              "api-manual/music-series/query-music-detail",
-              "api-manual/music-series/music-webhook"
+              }
             ]
           },
           {
