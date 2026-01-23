@@ -75,12 +75,13 @@
           {
             "group": "Overview",
             "pages": [
+              "index",
               "api-manual/overview",
               "api-manual/error-codes"
             ]
           },
           {
-            "group": "Image Series",
+            "group": "Image Model",
             "pages": [
               "api-manual/image-series/gpt-4o-image",
               "api-manual/image-series/gpt-image-1.5",
@@ -93,7 +94,7 @@
             ]
           },
           {
-            "group": "Video Series",
+            "group": "Video Model",
             "pages": [
               "api-manual/video-series/sora-2",
               "api-manual/video-series/sora-2-pro",
@@ -109,7 +110,7 @@
             ]
           },
           {
-            "group": "Music Series",
+            "group": "Music Model",
             "pages": [
               "api-manual/music-series/generate-music",
               "api-manual/music-series/extend-music",
@@ -138,18 +139,23 @@
             ]
           },
           {
+            "group": "Task Management",
+            "pages": [
+              "api-manual/task-management/status",
+              "api-manual/task-management/webhooks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Common API",
+        "groups": [
+          {
             "group": "File Management",
             "pages": [
               "api-manual/file-series/upload-url",
               "api-manual/file-series/upload-base64",
               "api-manual/file-series/upload-stream"
-            ]
-          },
-          {
-            "group": "Task Management",
-            "pages": [
-              "api-manual/task-management/status",
-              "api-manual/task-management/webhooks"
             ]
           },
           {
@@ -159,28 +165,9 @@
             ]
           }
         ]
-      },
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "guides/getting-started/quickstart"
-            ]
-          }
-        ]
       }
     ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Support",
-          "href": "mailto:support@poyo.ai",
-          "icon": "envelope"
-        }
-      ]
-    }
+    "global": {}
   },
   
   "navbar": {
