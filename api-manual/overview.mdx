@@ -28,44 +28,6 @@ Authorization: Bearer YOUR_API_KEY
   Visit the API Console to generate your API key
 </Card>
 
-## Available Models
-
-### Image Generation
-
-<CardGroup cols={2}>
-  <Card title="GPT-4o Image" icon="image" href="/api-manual/image-series/gpt-4o-image">
-    High-quality text-to-image, image-to-image, and editing
-  </Card>
-  <Card title="Nano Banana" icon="sparkles" href="/api-manual/image-series/nano-banana">
-    Fast generation powered by Gemini 2.5 Flash
-  </Card>
-</CardGroup>
-
-**Models:**
-- `gpt-4o-image` - Premium image generation
-- `gpt-4o-image-edit` - Advanced image editing with masks
-- `nano-banana` - Fast text-to-image
-- `nano-banana-edit` - Fast image editing
-
-### Video Generation
-
-<CardGroup cols={2}>
-  <Card title="Sora 2" icon="video" href="/api-manual/video-series/sora-2">
-    Professional video with multiple quality tiers
-  </Card>
-  <Card title="VEO 3.1" icon="film" href="/api-manual/video-series/veo3">
-    Fast 8-second videos with Google's VEO
-  </Card>
-</CardGroup>
-
-**Models:**
-- `sora-2` - Standard quality (10s, 15s)
-- `sora-2-pro` - Professional quality (15s, 25s)
-- `sora-2-private` - Private standard deployment
-- `sora-2-pro-private` - Private professional deployment
-- `veo3.1-fast` - Fast 8-second generation
-- `veo3.1-quality` - High-quality 8-second generation
-
 ## API Architecture
 
 ### Unified Endpoints
@@ -249,25 +211,3 @@ status_response = requests.get(
 print(status_response.json())
 ```
 
-## Next Steps
-
-<CardGroup cols={2}>
-  <Card title="Quick Start" icon="rocket" href="/guides/getting-started/quickstart">
-    Step-by-step tutorial for beginners
-  </Card>
-  <Card title="Image Models" icon="image" href="/api-manual/image-series/gpt-4o-image">
-    Explore image generation capabilities
-  </Card>
-  <Card title="Video Models" icon="video" href="/api-manual/video-series/sora-2">
-    Explore video generation capabilities
-  </Card>
-  <Card title="Webhooks" icon="webhook" href="/api-manual/task-management/webhooks">
-    Set up automatic notifications
-  </Card>
-</CardGroup>
-
-## Support
-
-- **Email**: [support@poyo.ai](mailto:support@poyo.ai)
-- **Console**: [poyo.ai](https://poyo.ai)
-- **Status**: [Task Management](/api-manual/task-management/status)
