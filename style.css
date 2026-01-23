@@ -1,0 +1,14 @@
+/* Add brand text next to the logo in the header. */
+#navbar .nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#navbar .nav-logo::after {
+  content: "PoYo";
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: currentColor;
+}
