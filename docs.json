@@ -18,6 +18,13 @@
     },
     "playground": {
       "mode": "simple"
+    },
+    "mdx": {
+      "server": "https://api.poyo.ai",
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
     }
   },
   "openapi": [
@@ -59,6 +66,9 @@
     "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
     "/api-manual/music-series/create-music-video.json",
     "/api-manual/music-series/query-music-detail.json",
+    "/api-manual/text-series/chat-completions.json",
+    "/api-manual/text-series/claude-messages.json",
+    "/api-manual/text-series/gemini-native-format.json",
     "/api-manual/account-management/user-balance.json",
     "/api-manual/file-series/upload-url.json",
     "/api-manual/file-series/upload-base64.json",
@@ -203,6 +213,14 @@
                   "api-manual/music-series/music-webhook"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Text Series",
+            "pages": [
+              "api-manual/text-series/chat-completions",
+              "api-manual/text-series/claude-messages",
+              "api-manual/text-series/gemini-native-format"
             ]
           },
           {

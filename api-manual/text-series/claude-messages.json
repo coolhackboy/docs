@@ -1,0 +1,370 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Claude Messages API",
+    "description": "Anthropic Messages-compatible endpoint for Claude models.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.apimart.ai",
+      "description": "APIMart server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": [],
+      "AnthropicVersion": []
+    }
+  ],
+  "paths": {
+    "/v1/messages": {
+      "post": {
+        "summary": "Claude Messages API",
+        "description": "Send requests in the Claude Messages format.",
+        "operationId": "createClaudeMessage",
+        "tags": [
+          "Text Series"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaudeMessageRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic Claude message",
+                  "value": {
+                    "model": "claude-sonnet-4-5-20250929",
+                    "max_tokens": 1024,
+                    "messages": [
+                      {
+                        "role": "user",
+                        "content": "Hello, world"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaudeMessageResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful response",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "id": "msg_013zva2CMHNLnXJNN3QKQ2EF",
+                        "type": "message",
+                        "role": "assistant",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "Hello! I'm Claude. Nice to meet you."
+                          }
+                        ],
+                        "model": "claude-sonnet-4-5-20250929",
+                        "stop_reason": "end_turn",
+                        "stop_sequence": null,
+                        "usage": {
+                          "input_tokens": 10,
+                          "output_tokens": 13
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API key for authentication.\n\nVisit the API Key Management Page to get your API Key\n\nAdd to the request header:\n\n```\nx-api-key: YOUR_API_KEY\n```"
+      },
+      "AnthropicVersion": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "anthropic-version",
+        "description": "API version. Example: `2025-10-01`."
+      }
+    },
+    "schemas": {
+      "ClaudeMessageRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "max_tokens",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Claude model name.",
+            "example": "claude-sonnet-4-5-20250929"
+          },
+          "messages": {
+            "type": "array",
+            "description": "Conversation messages in order. Example: [{\"role\": \"user\", \"content\": \"Hello\"}].",
+            "items": {
+              "$ref": "#/components/schemas/ClaudeMessage"
+            }
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum tokens to generate.",
+            "example": 1024
+          },
+          "system": {
+            "description": "System prompt for the assistant.",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "You are a professional AI assistant."
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ClaudeContentBlock"
+                }
+              }
+            ]
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Sampling temperature. Higher values are more random.",
+            "example": 1
+          },
+          "top_p": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Nucleus sampling parameter. Higher values are more random.",
+            "example": 1
+          },
+          "top_k": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Top-k sampling parameter.",
+            "example": 40
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "Enable streaming responses.",
+            "example": false
+          },
+          "stop_sequences": {
+            "type": "array",
+            "description": "Stop sequences. The model stops when it encounters any of these strings.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata such as `user_id`.",
+            "additionalProperties": true
+          },
+          "tools": {
+            "type": "array",
+            "description": "Tool definitions available to the model.",
+            "items": {
+              "$ref": "#/components/schemas/ClaudeTool"
+            }
+          },
+          "tool_choice": {
+            "description": "Controls tool usage behavior.",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "auto"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          }
+        }
+      },
+      "ClaudeMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "description": "Role of the message author.",
+            "example": "user"
+          },
+          "content": {
+            "description": "Message content. Supports text or structured blocks.",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "Hello, world"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ClaudeContentBlock"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "ClaudeTool": {
+        "type": "object",
+        "required": [
+          "name",
+          "input_schema"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "get_weather"
+          },
+          "description": {
+            "type": "string",
+            "example": "Fetch the weather by city name."
+          },
+          "input_schema": {
+            "type": "object",
+            "description": "JSON Schema for tool inputs.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ClaudeMessageResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "$ref": "#/components/schemas/ClaudeMessageResult"
+          }
+        }
+      },
+      "ClaudeMessageResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "msg_013zva2CMHNLnXJNN3QKQ2EF"
+          },
+          "type": {
+            "type": "string",
+            "example": "message"
+          },
+          "role": {
+            "type": "string",
+            "example": "assistant"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClaudeContentBlock"
+            }
+          },
+          "model": {
+            "type": "string",
+            "example": "claude-sonnet-4-5-20250929"
+          },
+          "stop_reason": {
+            "type": "string",
+            "example": "end_turn"
+          },
+          "stop_sequence": {
+            "nullable": true,
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/ClaudeUsage"
+          }
+        }
+      },
+      "ClaudeContentBlock": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "text"
+          },
+          "text": {
+            "type": "string",
+            "description": "Text content for text blocks.",
+            "example": "Hello! I'm Claude. Nice to meet you."
+          },
+          "source": {
+            "type": "object",
+            "description": "Source for image blocks.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "base64"
+              },
+              "media_type": {
+                "type": "string",
+                "example": "image/png"
+              },
+              "data": {
+                "type": "string",
+                "description": "Base64-encoded image data."
+              },
+              "url": {
+                "type": "string",
+                "description": "Image URL (if using URL source)."
+              }
+            }
+          }
+        }
+      },
+      "ClaudeUsage": {
+        "type": "object",
+        "properties": {
+          "input_tokens": {
+            "type": "integer",
+            "example": 10
+          },
+          "output_tokens": {
+            "type": "integer",
+            "example": 13
+          }
+        }
+      }
+    }
+  }
+}

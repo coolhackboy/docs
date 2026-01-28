@@ -1,0 +1,519 @@
+---
+title: "Gemini Native Format"
+description: "Call Gemini models using Google Native API format"
+api: "POST https://api.poyo.ai/v1beta/models/{model}:{method}"
+playground: "interactive"
+authMethod: "bearer"
+---
+
+- Call Gemini models using Google Native API format
+- Synchronous processing mode with real-time response
+- Minimal parameters for quick start
+
+<RequestExample>
+  ```bash cURL theme={null}
+  curl --request POST \
+    --url https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent \
+    --header 'Authorization: Bearer <token>' \
+    --header 'Content-Type: application/json' \
+    --data '{
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {"text": "Hello, please introduce yourself"}
+          ]
+        }
+      ]
+    }'
+  ```
+
+  ```python Python theme={null}
+  import requests
+
+  url = "https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent"
+
+  payload = {
+      "contents": [
+          {
+              "role": "user",
+              "parts": [
+                  {"text": "Hello, please introduce yourself"}
+              ]
+          }
+      ]
+  }
+
+  headers = {
+      "Authorization": "Bearer <token>",
+      "Content-Type": "application/json"
+  }
+
+  response = requests.post(url, json=payload, headers=headers)
+  print(response.json())
+  ```
+
+  ```javascript JavaScript theme={null}
+  const url = "https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent";
+
+  const payload = {
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { text: "Hello, please introduce yourself" }
+        ]
+      }
+    ]
+  };
+
+  const headers = {
+    "Authorization": "Bearer <token>",
+    "Content-Type": "application/json"
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload)
+  })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error("Error:", error));
+  ```
+
+  ```go Go theme={null}
+  package main
+
+  import (
+      "bytes"
+      "encoding/json"
+      "fmt"
+      "io/ioutil"
+      "net/http"
+  )
+
+  func main() {
+      url := "https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent"
+
+      payload := map[string]interface{}{
+          "contents": []map[string]interface{}{
+              {
+                  "role": "user",
+                  "parts": []map[string]string{
+                      {"text": "Hello, please introduce yourself"},
+                  },
+              },
+          },
+      }
+
+      jsonData, _ := json.Marshal(payload)
+
+      req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+      req.Header.Set("Authorization", "Bearer <token>")
+      req.Header.Set("Content-Type", "application/json")
+
+      client := &http.Client{}
+      resp, err := client.Do(req)
+      if err != nil {
+          panic(err)
+      }
+      defer resp.Body.Close()
+
+      body, _ := ioutil.ReadAll(resp.Body)
+      fmt.Println(string(body))
+  }
+  ```
+
+  ```java Java theme={null}
+  import java.net.http.HttpClient;
+  import java.net.http.HttpRequest;
+  import java.net.http.HttpResponse;
+  import java.net.URI;
+
+  public class Main {
+      public static void main(String[] args) throws Exception {
+          String url = "https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent";
+
+          String payload = """
+          {
+            "contents": [
+              {
+                "role": "user",
+                "parts": [
+                  {"text": "Hello, please introduce yourself"}
+                ]
+              }
+            ]
+          }
+          """;
+
+          HttpClient client = HttpClient.newHttpClient();
+          HttpRequest request = HttpRequest.newBuilder()
+              .uri(URI.create(url))
+              .header("Authorization", "Bearer <token>")
+              .header("Content-Type", "application/json")
+              .POST(HttpRequest.BodyPublishers.ofString(payload))
+              .build();
+
+          HttpResponse<String> response = client.send(request,
+              HttpResponse.BodyHandlers.ofString());
+
+          System.out.println(response.body());
+      }
+  }
+  ```
+
+  ```php PHP theme={null}
+  <?php
+
+  $url = "https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent";
+
+  $payload = [
+      "contents" => [
+          [
+              "role" => "user",
+              "parts" => [
+                  ["text" => "Hello, please introduce yourself"]
+              ]
+          ]
+      ]
+  ];
+
+  $ch = curl_init($url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      "Authorization: Bearer <token>",
+      "Content-Type: application/json"
+  ]);
+
+  $response = curl_exec($ch);
+  curl_close($ch);
+
+  echo $response;
+  ?>
+  ```
+
+  ```ruby Ruby theme={null}
+  require 'net/http'
+  require 'json'
+  require 'uri'
+
+  url = URI("https://api.apimart.ai/v1beta/models/gemini-2.5-pro:generateContent")
+
+  payload = {
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { text: "Hello, please introduce yourself" }
+        ]
+      }
+    ]
+  }
+
+  http = Net::HTTP.new(url.host, url.port)
+  http.use_ssl = true
+
+  request = Net::HTTP::Post.new(url)
+  request["Authorization"] = "Bearer <token>"
+  request["Content-Type"] = "application/json"
+  request.body = payload.to_json
+
+  response = http.request(request)
+  puts response.body
+  ```
+</RequestExample>
+
+<ResponseExample>
+  ```json 200 theme={null}
+  {
+    "code": 200,
+    "data": {
+      "candidates": [
+        {
+          "content": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "Hello! I'm pleased to introduce myself."
+              }
+            ]
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "promptFeedback": {
+        "safetyRatings": [
+          {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "probability": "NEGLIGIBLE"
+          }
+        ]
+      }
+    },
+    "usageMetadata": {
+      "promptTokenCount": 15,
+      "candidatesTokenCount": 29,
+      "totalTokenCount": 44,
+      "thoughtsTokenCount": 0,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 15
+        }
+      ]
+    }
+  }
+  ```
+
+  ```json 400 theme={null}
+  {
+    "error": {
+      "code": 400,
+      "message": "Invalid request parameters",
+      "type": "invalid_request_error"
+    }
+  }
+  ```
+
+  ```json 401 theme={null}
+  {
+    "error": {
+      "code": 401,
+      "message": "Authentication failed, please check your API key",
+      "type": "authentication_error"
+    }
+  }
+  ```
+
+  ```json 402 theme={null}
+  {
+    "error": {
+      "code": 402,
+      "message": "Insufficient account balance, please recharge",
+      "type": "payment_required"
+    }
+  }
+  ```
+
+  ```json 403 theme={null}
+  {
+    "error": {
+      "code": 403,
+      "message": "Access forbidden, you don't have permission to access this resource",
+      "type": "permission_error"
+    }
+  }
+  ```
+
+  ```json 404 theme={null}
+  {
+    "error": {
+      "code": 404,
+      "message": "Resource not found",
+      "type": "not_found_error"
+    }
+  }
+  ```
+
+  ```json 429 theme={null}
+  {
+    "error": {
+      "code": 429,
+      "message": "Too many requests, please try again later",
+      "type": "rate_limit_error"
+    }
+  }
+  ```
+
+  ```json 500 theme={null}
+  {
+    "error": {
+      "code": 500,
+      "message": "Internal server error, please try again later",
+      "type": "server_error"
+    }
+  }
+  ```
+
+  ```json 502 theme={null}
+  {
+    "error": {
+      "code": 502,
+      "message": "Bad gateway, service temporarily unavailable",
+      "type": "bad_gateway"
+    }
+  }
+  ```
+
+  ```json 503 theme={null}
+  {
+    "error": {
+      "code": 503,
+      "message": "Service temporarily unavailable",
+      "type": "service_unavailable"
+    }
+  }
+  ```
+</ResponseExample>
+
+## Authorizations
+
+<ParamField header="Authorization" type="string" required>
+  All API endpoints require Bearer Token authentication
+
+  Get your API Key:
+
+  Visit the API Key Management Page to get your API Key
+
+  Add it to the request header:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="model" type="string" required>
+  Gemini model name
+</ParamField>
+
+<ParamField path="method" type="enum<string>" required>
+  Request method
+
+  * `generateContent`
+  * `streamGenerateContent`
+</ParamField>
+
+## Body
+
+<ParamField body="contents" type="array" required>
+  Conversation contents with roles and parts
+
+  <Expandable title="Content object structure">
+    <ParamField body="role" type="enum<string>">
+      Role type
+
+      * `user` - User input
+      * `model` - Model output
+    </ParamField>
+
+    <ParamField body="parts" type="array" required>
+      Parts list (text or inline data)
+    </ParamField>
+  </Expandable>
+
+  **Example:**
+
+  ```json  theme={null}
+  [
+    {
+      "role": "user",
+      "parts": [{"text": "Hello"}]
+    }
+  ]
+  ```
+</ParamField>
+
+<ParamField body="generationConfig" type="object">
+  Generation configuration
+
+  <Expandable title="Properties">
+    <ParamField body="temperature" type="number">
+      Controls output randomness
+    </ParamField>
+
+    <ParamField body="topP" type="number">
+      Nucleus sampling parameter
+    </ParamField>
+
+    <ParamField body="topK" type="integer">
+      Top-k sampling parameter
+    </ParamField>
+
+    <ParamField body="maxOutputTokens" type="integer">
+      Maximum output tokens
+    </ParamField>
+
+    <ParamField body="stopSequences" type="array">
+      Stop sequences
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="safetySettings" type="array">
+  Safety settings
+
+  <Expandable title="Safety setting object">
+    <ParamField body="category" type="string">
+      Safety category
+    </ParamField>
+
+    <ParamField body="threshold" type="string">
+      Blocking threshold
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Response
+
+<ResponseField name="candidates" type="array">
+  Generated candidates
+
+  <Expandable title="Properties">
+    <ResponseField name="content" type="object">
+      Output content
+    </ResponseField>
+
+    <ResponseField name="finishReason" type="string">
+      Reason for completion
+    </ResponseField>
+
+    <ResponseField name="index" type="integer">
+      Candidate index
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="promptFeedback" type="object">
+  Prompt safety feedback
+</ResponseField>
+
+<ResponseField name="usageMetadata" type="object">
+  Token usage metadata
+
+  <Expandable title="Properties">
+    <ResponseField name="promptTokenCount" type="integer">
+      Tokens in prompt
+    </ResponseField>
+
+    <ResponseField name="candidatesTokenCount" type="integer">
+      Tokens in candidates
+    </ResponseField>
+
+    <ResponseField name="totalTokenCount" type="integer">
+      Total tokens
+    </ResponseField>
+
+    <ResponseField name="thoughtsTokenCount" type="integer">
+      Thoughts tokens
+    </ResponseField>
+  </Expandable>
+</ResponseField>

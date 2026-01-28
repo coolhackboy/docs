@@ -1,0 +1,307 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "General Chat API",
+    "description": "Unified chat API interface supporting all text generation models.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.apimart.ai",
+      "description": "APIMart server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/chat/completions": {
+      "post": {
+        "summary": "General Chat API",
+        "description": "OpenAI-compatible chat completions endpoint.",
+        "operationId": "createChatCompletion",
+        "tags": [
+          "Text Series"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic chat completion",
+                  "value": {
+                    "model": "gpt-4o",
+                    "messages": [
+                      {
+                        "role": "system",
+                        "content": "You are a professional AI assistant."
+                      },
+                      {
+                        "role": "user",
+                        "content": "Tell me about the history of artificial intelligence."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completion created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful response",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "id": "chatcmpl-9876543210",
+                        "object": "chat.completion",
+                        "created": 1677652288,
+                        "model": "gpt-4o",
+                        "choices": [
+                          {
+                            "index": 0,
+                            "message": {
+                              "role": "assistant",
+                              "content": "The history of artificial intelligence (AI) dates back to the 1950s..."
+                            },
+                            "finish_reason": "stop"
+                          }
+                        ],
+                        "usage": {
+                          "prompt_tokens": 28,
+                          "completion_tokens": 320,
+                          "total_tokens": 348
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key:\n\nVisit the API Key Management Page to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "ChatCompletionRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model name.",
+            "example": "gpt-4o"
+          },
+          "messages": {
+            "type": "array",
+            "description": "List of conversation messages. Example: [{\"role\": \"user\", \"content\": \"Hello, please introduce yourself\"}].",
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "description": "Controls output randomness, range 0-2. Default: 1.0.",
+            "example": 1.0
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum number of tokens to generate. Model limits vary.",
+            "example": 256
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "Whether to use streaming output (SSE). Default: false.",
+            "example": false
+          },
+          "top_p": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Nucleus sampling parameter, range 0-1. Default: 1.0.",
+            "example": 1.0
+          },
+          "frequency_penalty": {
+            "type": "number",
+            "minimum": -2,
+            "maximum": 2,
+            "description": "Frequency penalty, range -2.0 to 2.0. Default: 0.",
+            "example": 0
+          },
+          "presence_penalty": {
+            "type": "number",
+            "minimum": -2,
+            "maximum": 2,
+            "description": "Presence penalty, range -2.0 to 2.0. Default: 0.",
+            "example": 0
+          },
+          "stop": {
+            "description": "Stop sequences (up to 4).",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "\n\nHuman:"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of completions to generate. Default: 1.",
+            "example": 1
+          }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant"
+            ],
+            "description": "Message role. Default is `user`.",
+            "default": "user",
+            "example": "user"
+          },
+          "content": {
+            "type": "string",
+            "description": "Message content.",
+            "example": "Hello, please introduce yourself"
+          }
+        }
+      },
+      "ChatCompletionResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "$ref": "#/components/schemas/ChatCompletion"
+          }
+        }
+      },
+      "ChatCompletion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the response.",
+            "example": "chatcmpl-9876543210"
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type.",
+            "example": "chat.completion"
+          },
+          "created": {
+            "type": "integer",
+            "description": "Creation timestamp.",
+            "example": 1677652288
+          },
+          "model": {
+            "type": "string",
+            "description": "The actual model name used.",
+            "example": "gpt-4o"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatCompletionChoice"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        }
+      },
+      "ChatCompletionChoice": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "example": 0
+          },
+          "message": {
+            "$ref": "#/components/schemas/ChatMessage"
+          },
+          "finish_reason": {
+            "type": "string",
+            "description": "Reason for completion.",
+            "enum": [
+              "stop",
+              "length",
+              "content_filter",
+              "function_call"
+            ],
+            "example": "stop"
+          }
+        }
+      },
+      "Usage": {
+        "type": "object",
+        "properties": {
+          "prompt_tokens": {
+            "type": "integer",
+            "description": "Number of tokens in the input messages.",
+            "example": 28
+          },
+          "completion_tokens": {
+            "type": "integer",
+            "description": "Number of tokens in the generated content.",
+            "example": 320
+          },
+          "total_tokens": {
+            "type": "integer",
+            "description": "Total number of tokens.",
+            "example": 348
+          }
+        }
+      }
+    }
+  }
+}
