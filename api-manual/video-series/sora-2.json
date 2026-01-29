@@ -144,7 +144,6 @@
               "prompt": {
                 "type": "string",
                 "description": "Generation prompt describing the desired output",
-                "maxLength": 1000,
                 "example": "A cinematic video scene"
               },
               "image_urls": {
