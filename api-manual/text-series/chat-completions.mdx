@@ -13,7 +13,7 @@ authMethod: "bearer"
 <RequestExample>
   ```bash cURL theme={null}
   curl --request POST \
-    --url https://api.apimart.ai/v1/chat/completions \
+    --url https://api.poyo.ai/v1/chat/completions \
     --header 'Authorization: Bearer <token>' \
     --header 'Content-Type: application/json' \
     --data '{
@@ -34,7 +34,7 @@ authMethod: "bearer"
   ```python Python theme={null}
   import requests
 
-  url = "https://api.apimart.ai/v1/chat/completions"
+  url = "https://api.poyo.ai/v1/chat/completions"
 
   payload = {
       "model": "gpt-4o",  # Can be replaced with any supported model ID
@@ -61,7 +61,7 @@ authMethod: "bearer"
   ```
 
   ```javascript JavaScript theme={null}
-  const url = "https://api.apimart.ai/v1/chat/completions";
+  const url = "https://api.poyo.ai/v1/chat/completions";
 
   const payload = {
     model: "gpt-4o",  // Can be replaced with any supported model ID
@@ -104,7 +104,7 @@ authMethod: "bearer"
   )
 
   func main() {
-      url := "https://api.apimart.ai/v1/chat/completions"
+      url := "https://api.poyo.ai/v1/chat/completions"
 
       payload := map[string]interface{}{
           "model": "gpt-4o",  // Can be replaced with any supported model ID
@@ -146,7 +146,7 @@ authMethod: "bearer"
 
   public class Main {
       public static void main(String[] args) throws Exception {
-          String url = "https://api.apimart.ai/v1/chat/completions";
+          String url = "https://api.poyo.ai/v1/chat/completions";
 
           // Can be replaced with any supported model ID
           String payload = """
@@ -184,7 +184,7 @@ authMethod: "bearer"
   ```php PHP theme={null}
   <?php
 
-  $url = "https://api.apimart.ai/v1/chat/completions";
+  $url = "https://api.poyo.ai/v1/chat/completions";
 
   // Can be replaced with any supported model ID
   $payload = [
@@ -222,7 +222,7 @@ authMethod: "bearer"
   require 'json'
   require 'uri'
 
-  url = URI("https://api.apimart.ai/v1/chat/completions")
+  url = URI("https://api.poyo.ai/v1/chat/completions")
 
   # Can be replaced with any supported model ID
   payload = {
@@ -254,7 +254,7 @@ authMethod: "bearer"
   ```swift Swift theme={null}
   import Foundation
 
-  let url = URL(string: "https://api.apimart.ai/v1/chat/completions")!
+  let url = URL(string: "https://api.poyo.ai/v1/chat/completions")!
 
   let payload: [String: Any] = [
       "model": "gpt-4o",  // Can be replaced with any supported model ID
@@ -300,7 +300,7 @@ authMethod: "bearer"
   {
       static async Task Main(string[] args)
       {
-          var url = "https://api.apimart.ai/v1/chat/completions";
+          var url = "https://api.poyo.ai/v1/chat/completions";
 
           // Can be replaced with any supported model ID
           var payload = @"{
@@ -341,7 +341,7 @@ authMethod: "bearer"
       curl = curl_easy_init();
 
       if(curl) {
-          const char *url = "https://api.apimart.ai/v1/chat/completions";
+          const char *url = "https://api.poyo.ai/v1/chat/completions";
           // Can be replaced with any supported model ID
           const char *payload = "{"
               "\"model\":\"gpt-4o\","
@@ -377,7 +377,7 @@ authMethod: "bearer"
 
   int main(int argc, const char * argv[]) {
       @autoreleasepool {
-          NSURL *url = [NSURL URLWithString:@"https://api.apimart.ai/v1/chat/completions"];
+          NSURL *url = [NSURL URLWithString:@"https://api.poyo.ai/v1/chat/completions"];
 
           NSDictionary *payload = @{
               @"model": @"gpt-4o",  // Can be replaced with any supported model ID
@@ -429,7 +429,7 @@ authMethod: "bearer"
   open Cohttp
   open Cohttp_lwt_unix
 
-  let url = "https://api.apimart.ai/v1/chat/completions"
+  let url = "https://api.poyo.ai/v1/chat/completions"
 
   (* Can be replaced with any supported model ID *)
   let payload = {|{
@@ -465,7 +465,7 @@ authMethod: "bearer"
   import 'package:http/http.dart' as http;
 
   void main() async {
-    final url = Uri.parse('https://api.apimart.ai/v1/chat/completions');
+    final url = Uri.parse('https://api.poyo.ai/v1/chat/completions');
 
     // Can be replaced with any supported model ID
     final payload = {
@@ -499,7 +499,7 @@ authMethod: "bearer"
   library(httr)
   library(jsonlite)
 
-  url <- "https://api.apimart.ai/v1/chat/completions"
+  url <- "https://api.poyo.ai/v1/chat/completions"
 
   # Can be replaced with any supported model ID
   payload <- list(

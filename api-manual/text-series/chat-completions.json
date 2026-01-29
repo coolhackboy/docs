@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://api.apimart.ai",
+      "url": "https://api.poyo.ai",
       "description": "APIMart server"
     }
   ],
