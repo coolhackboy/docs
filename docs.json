@@ -66,9 +66,9 @@
     "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
     "/api-manual/music-series/create-music-video.json",
     "/api-manual/music-series/query-music-detail.json",
-    "/api-manual/text-series/chat-completions.json",
-    "/api-manual/text-series/claude-messages.json",
-    "/api-manual/text-series/gemini-native-format.json",
+    "/api-manual/chat-series/chat-completions.json",
+    "/api-manual/chat-series/claude-messages.json",
+    "/api-manual/chat-series/gemini-native-format.json",
     "/api-manual/account-management/user-balance.json",
     "/api-manual/file-series/upload-url.json",
     "/api-manual/file-series/upload-base64.json",
@@ -216,11 +216,26 @@
             ]
           },
           {
-            "group": "Text Series",
+            "group": "Chat Model",
             "pages": [
-              "api-manual/text-series/chat-completions",
-              "api-manual/text-series/claude-messages",
-              "api-manual/text-series/gemini-native-format"
+              {
+                "group": "OpenAI",
+                "pages": [
+                  "api-manual/chat-series/chat-completions"
+                ]
+              },
+              {
+                "group": "Claude",
+                "pages": [
+                  "api-manual/chat-series/claude-messages"
+                ]
+              },
+              {
+                "group": "Gemini",
+                "pages": [
+                  "api-manual/chat-series/gemini-native-format"
+                ]
+              }
             ]
           },
           {

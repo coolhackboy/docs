@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://api.apimart.ai",
-      "description": "APIMart server"
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
     }
   ],
   "security": [
@@ -42,7 +42,7 @@
                     "messages": [
                       {
                         "role": "user",
-                        "content": "Hello, world"
+                        "content": "Rewrite the following product announcement to be more gentle and user-friendly: We will have maintenance for 2 hours this weekend, services will be unavailable during this time."
                       }
                     ]
                   }
@@ -123,7 +123,7 @@
           },
           "messages": {
             "type": "array",
-            "description": "Conversation messages in order. Example: [{\"role\": \"user\", \"content\": \"Hello\"}].",
+            "description": "Conversation messages in order. Example: [{\"role\": \"user\", \"content\": \"Summarize the purpose of feature canary releases in two sentences.\"}].",
             "items": {
               "$ref": "#/components/schemas/ClaudeMessage"
             }
@@ -139,7 +139,7 @@
             "oneOf": [
               {
                 "type": "string",
-                "example": "You are a professional AI assistant."
+                "example": "You are a product announcement editor, keep it objective and concise."
               },
               {
                 "type": "array",
@@ -229,7 +229,7 @@
             "oneOf": [
               {
                 "type": "string",
-                "example": "Hello, world"
+                "example": "Summarize the purpose of feature canary releases in two sentences."
               },
               {
                 "type": "array",

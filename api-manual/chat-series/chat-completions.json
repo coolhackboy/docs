@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://api.apimart.ai",
-      "description": "APIMart server"
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
     }
   ],
   "security": [
@@ -36,15 +36,15 @@
                 "basic": {
                   "summary": "Basic chat completion",
                   "value": {
-                    "model": "gpt-4o",
+                    "model": "gpt-5.2",
                     "messages": [
                       {
                         "role": "system",
-                        "content": "You are a professional AI assistant."
+                        "content": "You are a structured output assistant. Reply with JSON only."
                       },
                       {
                         "role": "user",
-                        "content": "Tell me about the history of artificial intelligence."
+                        "content": "Generate a paginated list response example with fields items, page, page_size, total and sample values."
                       }
                     ]
                   }
@@ -70,7 +70,7 @@
                         "id": "chatcmpl-9876543210",
                         "object": "chat.completion",
                         "created": 1677652288,
-                        "model": "gpt-4o",
+                        "model": "gpt-5.2",
                         "choices": [
                           {
                             "index": 0,
@@ -103,7 +103,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "API Key",
-        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key:\n\nVisit the API Key Management Page to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
       }
     },
     "schemas": {
@@ -117,11 +117,11 @@
           "model": {
             "type": "string",
             "description": "Model name.",
-            "example": "gpt-4o"
+            "example": "gpt-5.2"
           },
           "messages": {
             "type": "array",
-            "description": "List of conversation messages. Example: [{\"role\": \"user\", \"content\": \"Hello, please introduce yourself\"}].",
+            "description": "List of conversation messages. Example: [{\"role\": \"user\", \"content\": \"Explain vector databases in one sentence.\"}].",
             "items": {
               "$ref": "#/components/schemas/ChatMessage"
             }
@@ -209,7 +209,7 @@
           "content": {
             "type": "string",
             "description": "Message content.",
-            "example": "Hello, please introduce yourself"
+            "example": "Explain vector databases in one sentence."
           }
         }
       },
@@ -246,7 +246,7 @@
           "model": {
             "type": "string",
             "description": "The actual model name used.",
-            "example": "gpt-4o"
+            "example": "gpt-5.2"
           },
           "choices": {
             "type": "array",

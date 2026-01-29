@@ -1,0 +1,273 @@
+---
+title: "Claude Messages API"
+description: "Fully compatible with Claude Messages API format"
+icon: "message"
+openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
+---
+
+- Fully compatible with Claude Messages API format
+- Supports multi-turn conversations and single queries
+- Supports multimodal content including text and images
+
+## Authorizations
+
+<ParamField header="x-api-key" type="string" required>
+  API key for authentication
+
+  Visit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key
+
+  Add to the request header:
+
+  ```
+  x-api-key: PoYo_API_KEY
+  ```
+</ParamField>
+
+<ParamField header="anthropic-version" type="string" required>
+  API version
+
+  Example: `2025-10-01`
+</ParamField>
+
+## Body
+
+<ParamField body="model" type="string" required>
+  Model name. Example: `claude-sonnet-4-5-20250929`
+</ParamField>
+
+<ParamField body="messages" type="array" required>
+  List of conversation messages
+
+  <Expandable title="Message object structure">
+    <ParamField body="role" type="enum<string>" required>
+      Role type
+
+      * `user` - User message
+      * `assistant` - AI response (for multi-turn)
+    </ParamField>
+
+    <ParamField body="content" type="string" required>
+      Message content
+
+      Your question or message
+    </ParamField>
+  </Expandable>
+
+  **Example:**
+
+  ```json  theme={null}
+  [{"role": "user", "content": "Summarize the purpose of feature canary releases in two sentences."}]
+  ```
+
+  **Multi-turn conversation:**
+
+  ```json  theme={null}
+  [
+    {"role": "user", "content": "Help me polish this sentence: This feature is still in testing."},
+    {"role": "assistant", "content": "How about: This feature is currently in internal beta testing."},
+    {"role": "user", "content": "Give me a more formal version."}
+  ]
+  ```
+</ParamField>
+
+<ParamField body="max_tokens" type="integer" required>
+  Maximum number of tokens to generate
+</ParamField>
+
+<ParamField body="system" type="string or array">
+  System prompt (string or structured blocks)
+
+  **String example:**
+
+  ```json  theme={null}
+"You are a product announcement editor, keep it objective and concise."
+  ```
+
+  **Structured example:**
+
+  ```json  theme={null}
+[{"type": "text", "text": "You are a product announcement editor, keep it objective and concise."}]
+  ```
+</ParamField>
+
+<ParamField body="temperature" type="number">
+  Controls output randomness, range 0-1
+</ParamField>
+
+<ParamField body="top_p" type="number">
+  Nucleus sampling parameter, range 0-1
+</ParamField>
+
+<ParamField body="top_k" type="integer">
+  Top-k sampling parameter
+</ParamField>
+
+<ParamField body="stream" type="boolean">
+  Whether to use streaming output
+</ParamField>
+
+<ParamField body="stop_sequences" type="array">
+  Stop sequences where generation stops
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Additional metadata such as `user_id`
+</ParamField>
+
+<ParamField body="tools" type="array">
+  Tool definitions available to the model
+
+  ```json  theme={null}
+  [
+    {
+      "name": "get_weather",
+      "description": "Get weather by city",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "city": {"type": "string"}
+        },
+        "required": ["city"]
+      }
+    }
+  ]
+  ```
+</ParamField>
+
+<ParamField body="tool_choice" type="string or object">
+  Controls tool usage behavior
+
+  Examples: `"auto"`, `{"type": "tool", "name": "get_weather"}`
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">
+  Unique identifier for the response
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  Object type, fixed as `message`
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  Role type, fixed as `assistant`
+</ResponseField>
+
+<ResponseField name="content" type="array">
+  Content blocks
+
+  <Expandable title="Properties">
+    <ResponseField name="type" type="string">
+      Block type (e.g., `text`)
+    </ResponseField>
+
+    <ResponseField name="text" type="string">
+      Text content
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  The actual model name used
+</ResponseField>
+
+<ResponseField name="stop_reason" type="string">
+  Reason for completion
+</ResponseField>
+
+<ResponseField name="stop_sequence" type="string">
+  Stop sequence that triggered completion (if any)
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token usage statistics
+
+  <Expandable title="Properties">
+    <ResponseField name="input_tokens" type="integer">
+      Number of tokens in the input messages
+    </ResponseField>
+
+    <ResponseField name="output_tokens" type="integer">
+      Number of tokens in the generated content
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Usage Examples
+
+### Basic Conversation
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "messages": [
+    {"role": "user", "content": "Explain the meaning of 'rate limiting' in three sentences."}
+  ]
+}
+```
+
+### Streaming Response
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "stream": true,
+  "messages": [
+    {"role": "user", "content": "Write a product update announcement under 80 words, professional yet friendly."}
+  ]
+}
+```
+
+### Tool Use
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Get weather by city",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "city": {"type": "string"}
+        },
+        "required": ["city"]
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "messages": [
+    {"role": "user", "content": "Check the weather in Tokyo and provide a one-sentence travel suggestion."}
+  ]
+}
+```
+
+### Vision Understanding
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {"type": "text", "text": "Describe the main subject and scene in the image, and provide an alt text for it."},
+        {
+          "type": "image",
+          "source": {
+            "type": "base64",
+            "media_type": "image/png",
+            "data": "BASE64_IMAGE_DATA"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

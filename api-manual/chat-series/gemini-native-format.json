@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://api.apimart.ai",
-      "description": "APIMart server"
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
     }
   ],
   "security": [
@@ -32,7 +32,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "gemini-2.5-pro"
+              "example": "gemini-3-flash-preview"
             },
             "description": "Gemini model name."
           },
@@ -67,7 +67,7 @@
                         "role": "user",
                         "parts": [
                           {
-                            "text": "Hello, please introduce yourself"
+                            "text": "Summarize the 'new night mode' requirements in 3 points and provide next steps."
                           }
                         ]
                       }
