@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://api.poyo.ai",
+      "url": "https://dev-api.poyo.ai",
       "description": "Production server"
     }
   ],

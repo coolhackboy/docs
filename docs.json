@@ -10,7 +10,7 @@
   },
   "favicon": "/favicon.ico",
   "api": {
-    "baseUrl": "https://api.poyo.ai",
+    "baseUrl": "https://dev-api.poyo.ai",
     "auth": {
       "method": "bearer",
       "name": "Authorization",
@@ -20,7 +20,7 @@
       "mode": "simple"
     },
     "mdx": {
-      "server": "https://api.poyo.ai",
+      "server": "https://dev-api.poyo.ai",
       "auth": {
         "method": "key",
         "name": "x-api-key"

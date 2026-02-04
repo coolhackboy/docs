@@ -89,7 +89,7 @@ api-manual/{series-name}/
     "description": "{简短描述}",
     "version": "1.0.0"
   },
-  "servers": [{ "url": "https://api.poyo.ai" }],
+  "servers": [{ "url": "https://dev-api.poyo.ai" }],
   "security": [{ "BearerAuth": [] }],
   "paths": { ... },
   "components": { ... }

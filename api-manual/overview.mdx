@@ -13,7 +13,7 @@ PoYo AI provides state-of-the-art image and video generation APIs with a unified
 All API requests should be made to:
 
 ```
-https://api.poyo.ai
+https://dev-api.poyo.ai
 ```
 
 ## Authentication
@@ -36,14 +36,14 @@ PoYo AI uses a simple two-endpoint architecture for all generation types:
 
 #### Submit Task
 ```http
-POST https://api.poyo.ai/api/generate/submit
+POST https://dev-api.poyo.ai/api/generate/submit
 ```
 
 Submit image or video generation requests. Returns immediately with a `task_id`.
 
 #### Query Status
 ```http
-GET https://api.poyo.ai/api/generate/status/{task_id}
+GET https://dev-api.poyo.ai/api/generate/status/{task_id}
 ```
 
 Check task progress and retrieve results.
@@ -188,7 +188,7 @@ payload = {
 import requests
 
 API_KEY = "your-api-key-here"
-BASE_URL = "https://api.poyo.ai"
+BASE_URL = "https://dev-api.poyo.ai"
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
 # Submit task

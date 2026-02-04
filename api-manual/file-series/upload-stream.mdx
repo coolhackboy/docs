@@ -88,7 +88,7 @@ openapi: "/api-manual/file-series/upload-stream.json POST /api/common/upload/str
 ### cURL Example
 
 ```bash
-curl -X POST "https://api.poyo.ai/api/common/upload/stream" \
+curl -X POST "https://dev-api.poyo.ai/api/common/upload/stream" \
   -H "Authorization: Bearer PoYo_API_KEY" \
   -F "file=@/path/to/image.png" \
   -F "file_name=my-image.png"
@@ -99,7 +99,7 @@ curl -X POST "https://api.poyo.ai/api/common/upload/stream" \
 ```python
 import requests
 
-url = "https://api.poyo.ai/api/common/upload/stream"
+url = "https://dev-api.poyo.ai/api/common/upload/stream"
 headers = {"Authorization": "Bearer PoYo_API_KEY"}
 
 files = {"file": open("/path/to/image.png", "rb")}
@@ -120,7 +120,7 @@ const form = new FormData();
 form.append('file', fs.createReadStream('/path/to/image.png'));
 form.append('file_name', 'my-image.png');
 
-axios.post('https://api.poyo.ai/api/common/upload/stream', form, {
+axios.post('https://dev-api.poyo.ai/api/common/upload/stream', form, {
   headers: {
     'Authorization': 'Bearer PoYo_API_KEY',
     ...form.getHeaders()
