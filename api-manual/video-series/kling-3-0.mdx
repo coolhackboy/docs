@@ -17,7 +17,7 @@ openapi: "/api-manual/video-series/kling-3-0.json POST /api/generate/submit"
 
 ## Key Features
 
-- **Native Audio**: Synchronized speech, singing, sound effects, and ambient sounds. In multi-shot mode, sound is always enabled
+- **Native Audio**: Controlled by `input.sound`. Set `true` to enable sound effects and `false` to disable them. When `multi_shots` is `true`, `sound` must be `true`
 - **Flexible Duration**: 3 to 15 seconds
 - **Aspect Ratios**: 1:1 (square), 16:9 (landscape), and 9:16 (portrait)
 - **Modes**: Text-to-video and image-to-video (start and end frames)

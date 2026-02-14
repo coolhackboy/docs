@@ -108,7 +108,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["image_urls", "duration", "multi_shots"],
+            "required": ["image_urls", "duration", "multi_shots", "sound"],
             "description": "Input parameters for generation",
             "properties": {
               "image_urls": {
@@ -172,7 +172,7 @@
               },
               "sound": {
                 "type": "boolean",
-                "description": "Enable sound generation. Default is true. When multi_shots is true, sound must be true (required by upstream API)",
+                "description": "Whether to enable sound effects. true enables sound effects, false disables them. When multi_shots is true, this field must be true.",
                 "default": true,
                 "example": true
               },
