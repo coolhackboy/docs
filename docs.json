@@ -44,6 +44,7 @@
     "/api-manual/video-series/wan-2-6.json",
     "/api-manual/video-series/kling-2-6.json",
     "/api-manual/video-series/kling-2.6-motion-control.json",
+    "/api-manual/video-series/kling-3-0.json",
     "/api-manual/video-series/grok-imagine.json",
     "/api-manual/video-series/hailuo-02.json",
     "/api-manual/video-series/seedance-1.0-pro.json",
@@ -156,6 +157,7 @@
               {
                 "group": "Kling",
                 "pages": [
+                  "api-manual/video-series/kling-3-0",
                   "api-manual/video-series/kling-2-6",
                   "api-manual/video-series/kling-2.6-motion-control"
                 ]

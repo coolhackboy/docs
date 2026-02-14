@@ -109,9 +109,9 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "maxItems": 1,
-                "description": "Reference image URL for video generation. File URL after upload, not file content; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
-                "example": ["https://example.com/image.jpg"]
+                "maxItems": 2,
+                "description": "Reference image URLs for video generation (1st image as the first frame, 2nd image as the last frame). File URL after upload, not file content; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
+                "example": ["https://example.com/first-frame.jpg", "https://example.com/last-frame.jpg"]
               },
               "aspect_ratio": {
                 "type": "string",
@@ -121,8 +121,8 @@
               },
               "resolution": {
                 "type": "string",
-                "description": "Output video resolution",
-                "enum": ["480p", "720p"],
+                "description": "Standard (480p) / High (720p) / Ultra (1080p)",
+                "enum": ["480p", "720p", "1080p"],
                 "example": "720p"
               },
               "duration": {
