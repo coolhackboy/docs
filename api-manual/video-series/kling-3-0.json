@@ -117,7 +117,7 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Array of image URLs. For single shot mode (multi_shots: false), provide start and end frame URLs. For multi-shot mode (multi_shots: true), provide only the start frame URL. Required when elements are referenced in the prompt (using @element_name syntax)",
+                "description": "Array of image URLs. For single shot mode (multi_shots: false), provide start and end frame URLs. For multi-shot mode (multi_shots: true), provide only the start frame URL. **Required** when `kling_elements` is provided",
                 "example": ["https://example.com/start-frame.png"]
               },
               "prompt": {
@@ -172,7 +172,7 @@
               },
               "sound": {
                 "type": "boolean",
-                "description": "Enable sound generation. Only available in single shot mode (multi_shots: false). Default is true",
+                "description": "Enable sound generation. Default is true. When multi_shots is true, sound must be true (required by upstream API)",
                 "default": true,
                 "example": true
               },
@@ -208,7 +208,7 @@
                     }
                   }
                 },
-                "description": "Array of element objects that can be referenced in prompts using @element_name syntax. Elements can be defined using images (2-4 images) or a single video",
+                "description": "Array of element objects that can be referenced in prompts using @element_name syntax. Elements can be defined using images (2-4 images) or a single video. When provided, `image_urls` is required",
                 "example": [
                   {
                     "name": "element_robot",

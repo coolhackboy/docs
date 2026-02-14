@@ -17,9 +17,9 @@ openapi: "/api-manual/video-series/kling-3-0.json POST /api/generate/submit"
 
 ## Key Features
 
-- **Native Audio**: Synchronized speech, singing, sound effects, and ambient sounds (single shot mode only)
+- **Native Audio**: Synchronized speech, singing, sound effects, and ambient sounds. In multi-shot mode, sound is always enabled
 - **Flexible Duration**: 3 to 15 seconds
 - **Aspect Ratios**: 1:1 (square), 16:9 (landscape), and 9:16 (portrait)
 - **Modes**: Text-to-video and image-to-video (start and end frames)
 - **Multi-Shot**: Multi-shot storytelling with per-shot prompts and durations
-- **Element References**: Define reusable elements (via images or video) and reference them in prompts using `@element_name` syntax
+- **Element References**: Define reusable elements (via images or video) and reference them in prompts using `@element_name` syntax. `image_urls` is required when using element references
