@@ -43,6 +43,10 @@
     "/api-manual/video-series/sora-2-pro.json",
     "/api-manual/video-series/veo-3-1.json",
     "/api-manual/video-series/wan-animate.json",
+    "/api-manual/video-series/wan2.2-text-to-video-fast.json",
+    "/api-manual/video-series/wan2.2-image-to-video-fast.json",
+    "/api-manual/video-series/wan2.5-image-to-video.json",
+    "/api-manual/video-series/wan2.5-text-to-video.json",
     "/api-manual/video-series/wan-2-6.json",
     "/api-manual/video-series/kling-2-6.json",
     "/api-manual/video-series/kling-2.6-motion-control.json",
@@ -155,6 +159,10 @@
                 "group": "Wan",
                 "pages": [
                   "api-manual/video-series/wan-animate",
+                  "api-manual/video-series/wan2.2-text-to-video-fast",
+                  "api-manual/video-series/wan2.2-image-to-video-fast",
+                  "api-manual/video-series/wan2.5-image-to-video",
+                  "api-manual/video-series/wan2.5-text-to-video",
                   "api-manual/video-series/wan-2-6"
                 ]
               },
