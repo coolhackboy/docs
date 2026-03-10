@@ -42,7 +42,6 @@
                         "https://example.com/start-image.jpg"
                       ],
                       "resolution": "480p",
-                      "acceleration": true,
                       "seed": 224
                     }
                   }
@@ -120,12 +119,6 @@
                 "enum": ["480p", "720p"],
                 "default": "480p",
                 "example": "480p"
-              },
-              "acceleration": {
-                "type": "boolean",
-                "description": "Enable fast acceleration mode",
-                "default": true,
-                "example": true
               },
               "seed": {
                 "type": "integer",

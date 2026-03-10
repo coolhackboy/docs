@@ -40,7 +40,6 @@
                       "prompt": "A cinematic panda walking through neon rain in Shanghai at night",
                       "aspect_ratio": "16:9",
                       "resolution": "480p",
-                      "acceleration": true,
                       "seed": 123
                     }
                   }
@@ -114,12 +113,6 @@
                 "enum": ["480p", "720p"],
                 "default": "720p",
                 "example": "480p"
-              },
-              "acceleration": {
-                "type": "boolean",
-                "description": "Enable fast acceleration mode",
-                "default": true,
-                "example": true
               },
               "seed": {
                 "type": "integer",

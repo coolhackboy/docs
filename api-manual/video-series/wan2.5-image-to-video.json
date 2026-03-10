@@ -138,11 +138,6 @@
                 "description": "Optional negative prompt",
                 "example": "blurry, low quality"
               },
-              "enable_prompt_expansion": {
-                "type": "boolean",
-                "description": "Enable prompt expansion",
-                "example": true
-              },
               "seed": {
                 "type": "integer",
                 "description": "Optional random seed for reproducibility",
