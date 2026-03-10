@@ -20,6 +20,8 @@ Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your d
 npm i -g mint
 ```
 
+Use Node.js 22 LTS for local development. `mint dev` does not support Node 25+.
+
 Run the following command at the root of your documentation, where your `docs.json` is located:
 
 ```
