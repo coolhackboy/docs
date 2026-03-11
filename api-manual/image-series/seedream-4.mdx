@@ -1,8 +1,8 @@
 ---
-title: "Seedream-v4 Image Generation"
+title: "Seedream-4 Image Generation"
 description: "Image generation model powered by ByteDance Seedream-4 with support for text-to-image and image editing"
 icon: "image"
-openapi: "/api-manual/image-series/seedream-v4.json POST /api/generate/submit"
+openapi: "/api-manual/image-series/seedream-4.json POST /api/generate/submit"
 ---
 
 <Tip>
@@ -10,14 +10,14 @@ openapi: "/api-manual/image-series/seedream-v4.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Seedream-v4 Image Generation
+# Seedream-4 Image Generation
 
-Seedream-v4 is backed by ByteDance Seedream-4 on Replicate. It supports both text-to-image generation and image editing through the same unified submit endpoint.
+Seedream-4 is powered by ByteDance Seedream-4. It supports both text-to-image generation and image editing through the same unified submit endpoint.
 
 ## Available Models
 
-- **seedream-v4** - Text-to-image generation, optionally with reference images
-- **seedream-v4-edit** - Image editing mode. `image_urls` is required
+- **seedream-4** - Text-to-image generation, optionally with reference images
+- **seedream-4-edit** - Image editing mode. `image_urls` is required
 
 ## Notes
 
@@ -25,4 +25,4 @@ Seedream-v4 is backed by ByteDance Seedream-4 on Replicate. It supports both tex
 - `resolution` supports `1K`, `2K`, `4K`, with default `2K`
 - `n` supports `1-15`
 - The total of `image_urls` plus `n` must not exceed `15`
-- Credits are pre-deducted as `base credits * n`. If the provider returns fewer images than requested, the unused portion is refunded automatically
+- Credits are pre-deducted as `base credits * n`. If fewer images are returned than requested, the unused portion is refunded automatically
