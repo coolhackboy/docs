@@ -36,6 +36,7 @@
     "/api-manual/image-series/nano-banana-2-new.json",
     "/api-manual/image-series/flux-2.json",
     "/api-manual/image-series/seedream-4-5.json",
+    "/api-manual/image-series/seedream-v4.json",
     "/api-manual/image-series/seedream-5-0-lite.json",
     "/api-manual/image-series/z-image.json",
     "/api-manual/image-series/grok-imagine-image.json",
@@ -128,6 +129,7 @@
                 "group": "Seedream",
                 "pages": [
                   "api-manual/image-series/seedream-4-5",
+                  "api-manual/image-series/seedream-v4",
                   "api-manual/image-series/seedream-5-0-lite"
                 ]
               },
@@ -319,7 +321,6 @@
     ],
     "global": {}
   },
-  
   "navbar": {
     "links": [
       {
@@ -336,14 +337,14 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   }
 }
