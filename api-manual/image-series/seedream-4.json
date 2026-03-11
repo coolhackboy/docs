@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Seedream-v4 API",
+    "title": "PoYo AI - Seedream-4 API",
     "description": "Image generation model powered by ByteDance Seedream-4 with support for text-to-image and image editing",
     "version": "1.0.0"
   },
@@ -19,11 +19,11 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Seedream-v4 Generation Task",
+        "summary": "Submit Seedream-4 Generation Task",
         "description": "Generate or edit images with ByteDance Seedream-4 through a unified submit endpoint",
-        "operationId": "submitSeedreamV4Task",
+        "operationId": "submitSeedream4Task",
         "tags": [
-          "Seedream-v4"
+          "Seedream-4"
         ],
         "requestBody": {
           "required": true,
@@ -33,10 +33,10 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "seedream-v4": {
-                  "summary": "Seedream-v4 Text-to-Image Generation",
+                "seedream-4": {
+                  "summary": "Seedream-4 Text-to-Image Generation",
                   "value": {
-                    "model": "seedream-v4",
+                    "model": "seedream-4",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A minimalist product photo of a ceramic mug on a clean studio background",
@@ -46,10 +46,10 @@
                     }
                   }
                 },
-                "seedream-v4-edit": {
-                  "summary": "Seedream-v4 Image Editing",
+                "seedream-4-edit": {
+                  "summary": "Seedream-4 Image Editing",
                   "value": {
-                    "model": "seedream-v4-edit",
+                    "model": "seedream-4-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Transform this scene into a polished ecommerce product photo with clean studio lighting",
@@ -134,10 +134,10 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Seedream-v4 model identifier",
+            "description": "Seedream-4 model identifier",
             "enum": [
-              "seedream-v4",
-              "seedream-v4-edit"
+              "seedream-4",
+              "seedream-4-edit"
             ]
           },
           "callback_url": {
@@ -167,7 +167,7 @@
                 },
                 "minItems": 1,
                 "maxItems": 10,
-                "description": "Reference image URLs for image editing. Required for seedream-v4-edit. The total of image_urls plus n must not exceed 15.",
+                "description": "Reference image URLs for image editing. Required for seedream-4-edit. The total of image_urls plus n must not exceed 15.",
                 "example": [
                   "https://example.com/reference1.jpg"
                 ]
