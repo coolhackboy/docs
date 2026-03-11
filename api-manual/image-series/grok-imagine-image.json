@@ -38,7 +38,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A serene mountain landscape at sunset with vibrant colors",
-                      "size": "1:1"
+                      "size": "16:9"
                     }
                   }
                 },
@@ -50,7 +50,7 @@
                     "input": {
                       "prompt": "Add warm sunset lighting with golden highlights",
                       "image_urls": ["https://example.com/reference-image.png"],
-                      "size": "1:1"
+                      "size": "9:16"
                     }
                   }
                 }

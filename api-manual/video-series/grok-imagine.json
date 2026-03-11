@@ -125,8 +125,8 @@
               "aspect_ratio": {
                 "type": "string",
                 "description": "Video aspect ratio (text-to-video only)",
-                "enum": ["1:1", "2:3", "3:2"],
-                "example": "2:3"
+                "enum": ["1:1", "2:3", "3:2", "16:9", "9:16"],
+                "example": "16:9"
               },
               "mode": {
                 "type": "string",
