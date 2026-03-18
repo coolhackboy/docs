@@ -38,7 +38,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "An astronaut riding a horse across the surface of Mars, red dust blowing in the wind, dramatic sunset on the horizon, cinematic wide shot, slow motion, ultra realistic textures, detailed space suit reflections, epic atmosphere, 8k cinematic film, volumetric lighting, smooth camera tracking.",
-                      "duration": 12,
+                      "duration": 20,
                       "aspect_ratio": "16:9"
                     }
                   }
@@ -99,9 +99,9 @@
               "duration": {
                 "type": "integer",
                 "description": "Output duration in seconds",
-                "enum": [4, 8, 12],
+                "enum": [4, 8, 12, 16, 20],
                 "default": 4,
-                "example": 12
+                "example": 20
               },
               "aspect_ratio": {
                 "type": "string",
