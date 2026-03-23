@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Grok Imagine Image API",
-    "description": "Grok Imagine Image Generation with text-to-image and image-to-image support",
+    "title": "PoYo AI - Wan 2.5 Text-to-Video API",
+    "description": "Text-to-video generation with Alibaba Wan 2.5",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Grok Imagine Image Generation Task",
-        "description": "Generate images using Grok Imagine model with text-to-image and image-to-image support",
-        "operationId": "submitGrokImagineImageTask",
-        "tags": ["Grok Imagine Image"],
+        "summary": "Submit Wan 2.5 Text-to-Video Task",
+        "description": "Generate videos from text prompts with Wan 2.5",
+        "operationId": "submitWan25TextToVideoTask",
+        "tags": ["Wan 2.5"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,26 +31,16 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "grok-imagine-image": {
-                  "summary": "Grok Imagine Image Generation",
+                "wan2.5-text-to-video": {
+                  "summary": "Wan 2.5 Text-to-Video",
                   "value": {
-                    "model": "grok-imagine-image",
+                    "model": "wan2.5-text-to-video",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A serene mountain landscape at sunset with vibrant colors",
-                      "size": "16:9"
-                    }
-                  }
-                },
-                "grok-imagine-image-to-image": {
-                  "summary": "Grok Imagine Image-to-Image",
-                  "value": {
-                    "model": "grok-imagine-image",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "Add warm sunset lighting with golden highlights",
-                      "image_urls": ["https://example.com/reference-image.png"],
-                      "size": "9:16"
+                      "prompt": "A cinematic time-lapse of a bustling city street transitioning from day to night.",
+                      "aspect_ratio": "832*480",
+                      "duration": 5,
+                      "seed": 426
                     }
                   }
                 }
@@ -85,13 +75,13 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Grok Imagine Image model identifier",
+            "description": "Wan 2.5 text-to-video model identifier",
             "enum": [
-              "grok-imagine-image"
+              "wan2.5-text-to-video"
             ]
           },
           "callback_url": {
@@ -103,29 +93,40 @@
           "input": {
             "type": "object",
             "required": ["prompt"],
-            "description": "Input parameters for generation. For image-to-image, input.image_urls is required.",
+            "description": "Input parameters for generation",
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Generation prompt describing the desired output",
-                "maxLength": 5000,
-                "example": "A beautiful sunset over the ocean"
+                "description": "Text prompt for video generation",
+                "example": "A cinematic video scene"
               },
-              "image_urls": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uri"
-                },
-                "maxItems": 1,
-                "description": "Required for image-to-image. An array containing a single URL string pointing to the reference image. Please provide the URL of the uploaded file; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
-                "example": ["https://example.com/reference-image.png"]
-              },
-              "size": {
+              "aspect_ratio": {
                 "type": "string",
-                "description": "Optional image aspect ratio",
-                "enum": ["1:1", "2:3", "3:2", "9:16", "16:9"],
-                "example": "1:1"
+                "description": "Output size preset used by the upstream model",
+                "enum": ["832*480", "480*832", "1280*720", "720*1280", "1920*1080", "1080*1920"],
+                "example": "832*480"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Video duration in seconds",
+                "enum": [5, 10],
+                "default": 5,
+                "example": 5
+              },
+              "audio": {
+                "type": "string",
+                "description": "Optional audio setting string. Boolean values are not supported.",
+                "example": "background_music"
+              },
+              "negative_prompt": {
+                "type": "string",
+                "description": "Optional negative prompt",
+                "example": "blurry, low quality"
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Optional random seed for reproducibility",
+                "example": 426
               }
             }
           }
@@ -160,33 +161,6 @@
                 "format": "date-time",
                 "example": "2025-11-12T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
-              }
-            }
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "required": ["code", "error"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 400,
-            "description": "HTTP status code"
-          },
-          "error": {
-            "type": "object",
-            "required": ["message", "type"],
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "Invalid request parameters",
-                "description": "Error message describing what went wrong"
-              },
-              "type": {
-                "type": "string",
-                "example": "invalid_request_error",
-                "description": "Error type identifier"
               }
             }
           }

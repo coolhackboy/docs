@@ -45,7 +45,7 @@
                         "https://example.com/dance-reference.mp4"
                       ],
                       "character_orientation": "video",
-                      "mode": "1080p"
+                      "resolution": "1080p"
                     }
                   }
                 }
@@ -110,7 +110,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["image_urls", "video_urls", "character_orientation", "mode"],
+            "required": ["image_urls", "video_urls", "character_orientation", "resolution"],
             "description": "Input parameters for motion control generation",
             "properties": {
               "prompt": {
@@ -151,7 +151,7 @@
                 "enum": ["image", "video"],
                 "example": "video"
               },
-              "mode": {
+              "resolution": {
                 "type": "string",
                 "description": "Output video resolution. 720p for standard quality, 1080p for higher visual quality",
                 "enum": ["720p", "1080p"],

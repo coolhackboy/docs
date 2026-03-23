@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Sora 2 Standard API",
-    "description": "Sora 2 Standard Quality Video Generation",
+    "title": "PoYo AI - Seedream-4 API",
+    "description": "Image generation model powered by ByteDance Seedream-4 with support for text-to-image and image editing",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,12 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Sora 2 Standard Video Generation Task",
-        "description": "Generate standard quality videos using Sora 2",
-        "operationId": "submitSora2StandardTask",
-        "tags": ["Sora 2 Standard"],
+        "summary": "Submit Seedream-4 Generation Task",
+        "description": "Generate or edit images with ByteDance Seedream-4 through a unified submit endpoint",
+        "operationId": "submitSeedream4Task",
+        "tags": [
+          "Seedream-4"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,27 +33,32 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "sora-2": {
-                  "summary": "Sora 2 Video Generation",
+                "seedream-4": {
+                  "summary": "Seedream-4 Text-to-Image Generation",
                   "value": {
-                    "model": "sora-2",
+                    "model": "seedream-4",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A time-lapse of a bustling city street transitioning from day to night",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
+                      "prompt": "A minimalist product photo of a ceramic mug on a clean studio background",
+                      "size": "1:1",
+                      "resolution": "1K",
+                      "n": 1
                     }
                   }
                 },
-                "sora-2-private": {
-                  "summary": "Sora 2 Private Video Generation",
+                "seedream-4-edit": {
+                  "summary": "Seedream-4 Image Editing",
                   "value": {
-                    "model": "sora-2-private",
+                    "model": "seedream-4-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A peaceful sunset over a calm ocean with gentle waves",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
+                      "prompt": "Transform this scene into a polished ecommerce product photo with clean studio lighting",
+                      "image_urls": [
+                        "https://example.com/reference1.jpg"
+                      ],
+                      "size": "1:1",
+                      "resolution": "1K",
+                      "n": 1
                     }
                   }
                 }
@@ -120,14 +127,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Sora 2 Standard model identifier",
+            "description": "Seedream-4 model identifier",
             "enum": [
-              "sora-2",
-              "sora-2-private"
+              "seedream-4",
+              "seedream-4-edit"
             ]
           },
           "callback_url": {
@@ -138,13 +148,16 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
                 "type": "string",
                 "description": "Generation prompt describing the desired output",
-                "example": "A cinematic video scene"
+                "maxLength": 2000,
+                "example": "A beautiful sunset over the ocean"
               },
               "image_urls": {
                 "type": "array",
@@ -152,32 +165,47 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "maxItems": 1,
-                "description": "Reference image URL (for image-to-video). Only one image is supported. Maximum file size: 10MB. Supported formats: .jpeg, .jpg, .png, .webp",
-                "example": []
+                "minItems": 1,
+                "maxItems": 10,
+                "description": "Reference image URLs for image editing. Required for seedream-4-edit. The total of image_urls plus n must not exceed 15.",
+                "example": [
+                  "https://example.com/reference1.jpg"
+                ]
               },
-              "duration": {
-                "type": "integer",
-                "description": "Video duration in seconds (10 or 15)",
-                "enum": [10, 15],
-                "example": 15
-              },
-              "aspect_ratio": {
+              "size": {
                 "type": "string",
-                "description": "Video aspect ratio",
-                "enum": ["16:9", "9:16"],
+                "description": "Output aspect ratio. Supported values: 1:1, 3:4, 4:3, 16:9, 9:16, 3:2, 2:3, 21:9. For text-to-image requests, defaults to 1:1 when omitted.",
+                "enum": [
+                  "1:1",
+                  "3:4",
+                  "4:3",
+                  "16:9",
+                  "9:16",
+                  "3:2",
+                  "2:3",
+                  "21:9"
+                ],
+                "default": "1:1",
                 "example": "16:9"
               },
-              "style": {
+              "resolution": {
                 "type": "string",
-                "description": "Video style",
-                "enum": ["thanksgiving", "comic", "news", "selfie", "nostalgic", "anime"],
-                "example": "anime"
+                "description": "Output resolution preset.",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "2K",
+                "example": "1K"
               },
-              "storyboard": {
-                "type": "boolean",
-                "description": "Whether to use storyboard for finer control over video generation details. true: Enable storyboard feature, false: Do not use storyboard",
-                "example": true
+              "n": {
+                "type": "integer",
+                "description": "Number of images to generate. Credits are pre-deducted based on this count and partially refunded if the final number of generated images is smaller. The total of image_urls plus n must not exceed 15.",
+                "minimum": 1,
+                "maximum": 15,
+                "default": 1,
+                "example": 1
               }
             }
           }
@@ -185,7 +213,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -194,7 +225,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -203,7 +238,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -219,7 +256,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -228,7 +268,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

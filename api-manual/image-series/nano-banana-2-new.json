@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Sora 2 Standard API",
-    "description": "Sora 2 Standard Quality Video Generation",
+    "title": "PoYo AI - Nano Banana 2 (gemini-3.1-flash-image-preview) API",
+    "description": "Next-generation AI image generation powered by Gemini 3.1 Flash Image Preview",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Sora 2 Standard Video Generation Task",
-        "description": "Generate standard quality videos using Sora 2",
-        "operationId": "submitSora2StandardTask",
-        "tags": ["Sora 2 Standard"],
+        "summary": "Submit Nano Banana 2 (gemini-3.1-flash-image-preview) Generation Task",
+        "description": "Next-generation AI image generation and editing powered by Gemini 3.1 Flash Image Preview with native 2K / 4K resolution",
+        "operationId": "submitNanoBanana2NewTask",
+        "tags": ["Nano Banana 2 (gemini-3.1-flash-image-preview)"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,27 +31,28 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "sora-2": {
-                  "summary": "Sora 2 Video Generation",
+                "nano-banana-2-new": {
+                  "summary": "Nano Banana 2 (gemini-3.1-flash-image-preview) Image Generation",
                   "value": {
-                    "model": "sora-2",
+                    "model": "nano-banana-2-new",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A time-lapse of a bustling city street transitioning from day to night",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
+                      "prompt": "A cyberpunk street scene with neon signs and rain",
+                      "size": "16:9",
+                      "resolution": "2K"
                     }
                   }
                 },
-                "sora-2-private": {
-                  "summary": "Sora 2 Private Video Generation",
+                "nano-banana-2-new-edit": {
+                  "summary": "Nano Banana 2 (gemini-3.1-flash-image-preview) Image Edit",
                   "value": {
-                    "model": "sora-2-private",
+                    "model": "nano-banana-2-new-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A peaceful sunset over a calm ocean with gentle waves",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
+                      "prompt": "Add colorful flowers in the foreground",
+                      "image_urls": ["https://example.com/landscape.jpg"],
+                      "size": "16:9",
+                      "resolution": "2K"
                     }
                   }
                 }
@@ -124,10 +125,10 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Sora 2 Standard model identifier",
+            "description": "Nano Banana 2 (gemini-3.1-flash-image-preview) model identifier",
             "enum": [
-              "sora-2",
-              "sora-2-private"
+              "nano-banana-2-new",
+              "nano-banana-2-new-edit"
             ]
           },
           "callback_url": {
@@ -144,7 +145,8 @@
               "prompt": {
                 "type": "string",
                 "description": "Generation prompt describing the desired output",
-                "example": "A cinematic video scene"
+                "maxLength": 1000,
+                "example": "A beautiful sunset over the ocean"
               },
               "image_urls": {
                 "type": "array",
@@ -152,32 +154,26 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "maxItems": 1,
-                "description": "Reference image URL (for image-to-video). Only one image is supported. Maximum file size: 10MB. Supported formats: .jpeg, .jpg, .png, .webp",
+                "description": "Reference image URLs (for image editing, supports up to 14 images)",
                 "example": []
               },
-              "duration": {
-                "type": "integer",
-                "description": "Video duration in seconds (10 or 15)",
-                "enum": [10, 15],
-                "example": 15
-              },
-              "aspect_ratio": {
+              "size": {
                 "type": "string",
-                "description": "Video aspect ratio",
-                "enum": ["16:9", "9:16"],
+                "description": "Image size ratio",
+                "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
                 "example": "16:9"
               },
-              "style": {
+              "resolution": {
                 "type": "string",
-                "description": "Video style",
-                "enum": ["thanksgiving", "comic", "news", "selfie", "nostalgic", "anime"],
-                "example": "anime"
+                "description": "Output image resolution",
+                "enum": ["1K", "2K", "4K"],
+                "default": "1K",
+                "example": "1K"
               },
-              "storyboard": {
+              "google_search": {
                 "type": "boolean",
-                "description": "Whether to use storyboard for finer control over video generation details. true: Enable storyboard feature, false: Do not use storyboard",
-                "example": true
+                "description": "Use Google Web Search grounding to generate images based on real-time information",
+                "example": false
               }
             }
           }

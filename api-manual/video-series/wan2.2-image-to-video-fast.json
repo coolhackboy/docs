@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Grok Imagine Image API",
-    "description": "Grok Imagine Image Generation with text-to-image and image-to-image support",
+    "title": "PoYo AI - Wan 2.2 Image-to-Video Fast API",
+    "description": "Fast image-to-video generation with Alibaba Wan 2.2 Fast",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Grok Imagine Image Generation Task",
-        "description": "Generate images using Grok Imagine model with text-to-image and image-to-image support",
-        "operationId": "submitGrokImagineImageTask",
-        "tags": ["Grok Imagine Image"],
+        "summary": "Submit Wan 2.2 Image-to-Video Fast Task",
+        "description": "Animate one or two reference images with Wan 2.2 Fast",
+        "operationId": "submitWan22ImageToVideoFastTask",
+        "tags": ["Wan 2.2 Fast"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,26 +31,18 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "grok-imagine-image": {
-                  "summary": "Grok Imagine Image Generation",
+                "wan2.2-image-to-video-fast": {
+                  "summary": "Wan 2.2 Image-to-Video Fast",
                   "value": {
-                    "model": "grok-imagine-image",
+                    "model": "wan2.2-image-to-video-fast",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A serene mountain landscape at sunset with vibrant colors",
-                      "size": "16:9"
-                    }
-                  }
-                },
-                "grok-imagine-image-to-image": {
-                  "summary": "Grok Imagine Image-to-Image",
-                  "value": {
-                    "model": "grok-imagine-image",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "Add warm sunset lighting with golden highlights",
-                      "image_urls": ["https://example.com/reference-image.png"],
-                      "size": "9:16"
+                      "prompt": "A cinematic panda walking through neon rain in Shanghai at night",
+                      "image_urls": [
+                        "https://example.com/start-image.jpg"
+                      ],
+                      "resolution": "480p",
+                      "seed": 224
                     }
                   }
                 }
@@ -85,13 +77,13 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Grok Imagine Image model identifier",
+            "description": "Wan 2.2 Fast image-to-video model identifier",
             "enum": [
-              "grok-imagine-image"
+              "wan2.2-image-to-video-fast"
             ]
           },
           "callback_url": {
@@ -102,14 +94,13 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
-            "description": "Input parameters for generation. For image-to-image, input.image_urls is required.",
+            "required": ["prompt", "image_urls"],
+            "description": "Input parameters for generation",
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Generation prompt describing the desired output",
-                "maxLength": 5000,
-                "example": "A beautiful sunset over the ocean"
+                "description": "Text prompt for the motion and scene",
+                "example": "A cinematic video scene"
               },
               "image_urls": {
                 "type": "array",
@@ -117,15 +108,22 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "maxItems": 1,
-                "description": "Required for image-to-image. An array containing a single URL string pointing to the reference image. Please provide the URL of the uploaded file; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
-                "example": ["https://example.com/reference-image.png"]
+                "minItems": 1,
+                "maxItems": 2,
+                "description": "Reference image URLs. The first image is required; the optional second image is used as the last frame.",
+                "example": ["https://example.com/start-image.jpg"]
               },
-              "size": {
+              "resolution": {
                 "type": "string",
-                "description": "Optional image aspect ratio",
-                "enum": ["1:1", "2:3", "3:2", "9:16", "16:9"],
-                "example": "1:1"
+                "description": "Output video resolution",
+                "enum": ["480p", "720p"],
+                "default": "480p",
+                "example": "480p"
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Optional random seed for reproducibility",
+                "example": 224
               }
             }
           }
@@ -160,33 +158,6 @@
                 "format": "date-time",
                 "example": "2025-11-12T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
-              }
-            }
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "required": ["code", "error"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 400,
-            "description": "HTTP status code"
-          },
-          "error": {
-            "type": "object",
-            "required": ["message", "type"],
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "Invalid request parameters",
-                "description": "Error message describing what went wrong"
-              },
-              "type": {
-                "type": "string",
-                "example": "invalid_request_error",
-                "description": "Error type identifier"
               }
             }
           }

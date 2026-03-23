@@ -1,0 +1,262 @@
+---
+title: "General Chat API"
+description: "Unified chat API interface supporting all text generation models"
+icon: "message"
+openapi: "/api-manual/chat-series/chat-completions.json POST /v1/chat/completions"
+---
+
+- Unified chat API interface supporting all text generation models
+- Select different AI models via the model parameter
+- Compatible with OpenAI Chat Completions API format
+
+## Authorizations
+
+<ParamField header="Authorization" type="string" required>
+  All API endpoints require Bearer Token authentication
+
+  Get your API Key:
+
+  Visit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key
+
+  Add it to the request header:
+
+  ```
+  Authorization: Bearer PoYo_API_KEY
+  ```
+</ParamField>
+
+## Body
+
+<ParamField body="model" type="string" required>
+  Model name. Example: `gpt-5.2`, `claude-sonnet-4-5-20250929`, `gemini-3-flash-preview`
+</ParamField>
+
+<ParamField body="messages" type="array" required>
+  List of conversation messages
+
+  <Expandable title="Message object structure">
+    <ParamField body="role" type="enum<string>" required default="user">
+      Role type
+
+      * `user` - User message
+      * `assistant` - AI response (for multi-turn)
+      * `system` - System prompt
+    </ParamField>
+
+    <ParamField body="content" type="string" required>
+      Message content
+
+      Your question or message
+    </ParamField>
+  </Expandable>
+
+  **Example:**
+
+  ```json  theme={null}
+  [{"role": "user", "content": "Explain vector databases in one sentence."}]
+  ```
+
+  **Advanced usage:**
+
+  Add system prompt (to define AI behavior):
+
+  ```json  theme={null}
+  [
+    {"role": "system", "content": "You are an API design advisor. Respond with a short bullet list only."},
+    {"role": "user", "content": "Give 5 design suggestions for a file upload endpoint."}
+  ]
+  ```
+
+  Multi-turn conversation (with context):
+
+  ```json  theme={null}
+  [
+    {"role": "user", "content": "Name a feature that turns meeting notes into a weekly report."},
+    {"role": "assistant", "content": "Suggestions: Weekly Brief or AutoReport."},
+    {"role": "user", "content": "Provide 3 more formal names."}
+  ]
+  ```
+</ParamField>
+
+<ParamField body="temperature" type="number">
+  Controls output randomness, range 0-2
+
+  * Lower values (e.g., 0.2) make output more deterministic
+  * Higher values (e.g., 1.8) make output more random
+
+  Default: 1.0
+</ParamField>
+
+<ParamField body="max_tokens" type="integer">
+  Maximum number of tokens to generate
+
+  Different models have different maximum limits, please refer to specific model documentation
+</ParamField>
+
+<ParamField body="stream" type="boolean">
+  Whether to use streaming output
+
+  * `true`: Streaming response (SSE format)
+  * `false`: Complete response at once
+
+  Default: false
+</ParamField>
+
+<ParamField body="top_p" type="number">
+  Nucleus sampling parameter, range 0-1
+
+  Controls diversity of generated text, recommend using either this or temperature
+
+  Default: 1.0
+</ParamField>
+
+<ParamField body="frequency_penalty" type="number">
+  Frequency penalty, range -2.0 to 2.0
+
+  Positive values reduce the likelihood of repeating the same words
+
+  Default: 0
+</ParamField>
+
+<ParamField body="presence_penalty" type="number">
+  Presence penalty, range -2.0 to 2.0
+
+  Positive values increase the likelihood of talking about new topics
+
+  Default: 0
+</ParamField>
+
+<ParamField body="stop" type="string or array">
+  Stop sequences
+
+  Up to 4 sequences where generation will stop when encountered
+</ParamField>
+
+<ParamField body="n" type="integer">
+  Number of completions to generate
+
+  Default: 1
+
+  **Note:** Must enter a plain number (e.g., `1`), do not use quotes or it will cause an error
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">
+  Unique identifier for the response
+</ResponseField>
+
+<ResponseField name="object" type="string">
+  Object type, fixed as `chat.completion`
+</ResponseField>
+
+<ResponseField name="created" type="integer">
+  Creation timestamp
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  The actual model name used
+</ResponseField>
+
+<ResponseField name="choices" type="array">
+  List of generated responses
+
+  <Expandable title="Properties">
+    <ResponseField name="index" type="integer">
+      Choice index
+    </ResponseField>
+
+    <ResponseField name="message" type="object">
+      Message content
+
+      <Expandable title="Properties">
+        <ResponseField name="role" type="string">
+          Role type (assistant)
+        </ResponseField>
+
+        <ResponseField name="content" type="string">
+          Generated text content
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="finish_reason" type="string">
+      Reason for completion
+
+      Possible values:
+
+      * `stop` - Natural completion
+      * `length` - Maximum length reached
+      * `content_filter` - Content filtered
+      * `function_call` - Function call
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token usage statistics
+
+  <Expandable title="Properties">
+    <ResponseField name="prompt_tokens" type="integer">
+      Number of tokens in the input messages
+    </ResponseField>
+
+    <ResponseField name="completion_tokens" type="integer">
+      Number of tokens in the generated content
+    </ResponseField>
+
+    <ResponseField name="total_tokens" type="integer">
+      Total number of tokens
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Usage Examples
+
+### Basic Conversation
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "messages": [
+    {"role": "user", "content": "Explain vector databases in one sentence."}
+  ]
+}
+```
+
+### System Prompt
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "messages": [
+    {"role": "system", "content": "You are a technical editor. Improve clarity of product copy."},
+    {"role": "user", "content": "Rewrite the button text 'Submission failed' to be friendly and actionable."}
+  ]
+}
+```
+
+### Multi-turn Conversation
+
+```json  theme={null}
+{
+  "model": "gemini-3-flash-preview",
+  "messages": [
+    {"role": "user", "content": "Give me 3 customer support bot names."},
+    {"role": "assistant", "content": "1) HelpWave 2) CarePilot 3) SwiftSupport"},
+    {"role": "user", "content": "Add one style tag for each name."}
+  ]
+}
+```
+
+### Streaming Output
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "messages": [
+    {"role": "user", "content": "Generate 5 short titles (max 6 words) about AI video generation."}
+  ],
+  "stream": true
+}
+```

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Sora 2 Standard API",
-    "description": "Sora 2 Standard Quality Video Generation",
+    "title": "PoYo AI - Seedream-5.0-Lite API",
+    "description": "Advanced image generation model with support for text-to-image, image-to-image, and multi-image reference capabilities",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Sora 2 Standard Video Generation Task",
-        "description": "Generate standard quality videos using Sora 2",
-        "operationId": "submitSora2StandardTask",
-        "tags": ["Sora 2 Standard"],
+        "summary": "Submit Seedream-5.0-Lite Generation Task",
+        "description": "Advanced image generation and editing with multi-reference support and up to 3K resolution",
+        "operationId": "submitSeedream50LiteTask",
+        "tags": ["Seedream-5.0-Lite"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,27 +31,31 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "sora-2": {
-                  "summary": "Sora 2 Video Generation",
+                "seedream-5-0-lite": {
+                  "summary": "Seedream-5.0-Lite Text-to-Image Generation",
                   "value": {
-                    "model": "sora-2",
+                    "model": "seedream-5.0-lite",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A time-lapse of a bustling city street transitioning from day to night",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
+                      "prompt": "A serene Japanese garden with cherry blossoms and a koi pond",
+                      "size": "16:9",
+                      "n": 1
                     }
                   }
                 },
-                "sora-2-private": {
-                  "summary": "Sora 2 Private Video Generation",
+                "seedream-5-0-lite-edit": {
+                  "summary": "Seedream-5.0-Lite Image Editing with References",
                   "value": {
-                    "model": "sora-2-private",
+                    "model": "seedream-5.0-lite-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A peaceful sunset over a calm ocean with gentle waves",
-                      "duration": 15,
-                      "aspect_ratio": "16:9"
+                      "prompt": "Transform the scene to a winter wonderland with snow",
+                      "image_urls": [
+                        "https://example.com/reference1.jpg",
+                        "https://example.com/reference2.jpg"
+                      ],
+                      "size": "16:9",
+                      "n": 1
                     }
                   }
                 }
@@ -120,14 +124,14 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Sora 2 Standard model identifier",
+            "description": "Seedream-5.0-Lite model identifier",
             "enum": [
-              "sora-2",
-              "sora-2-private"
+              "seedream-5.0-lite",
+              "seedream-5.0-lite-edit"
             ]
           },
           "callback_url": {
@@ -144,7 +148,8 @@
               "prompt": {
                 "type": "string",
                 "description": "Generation prompt describing the desired output",
-                "example": "A cinematic video scene"
+                "maxLength": 2000,
+                "example": "A beautiful sunset over the ocean"
               },
               "image_urls": {
                 "type": "array",
@@ -152,32 +157,25 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "maxItems": 1,
-                "description": "Reference image URL (for image-to-video). Only one image is supported. Maximum file size: 10MB. Supported formats: .jpeg, .jpg, .png, .webp",
-                "example": []
+                "minItems": 1,
+                "maxItems": 10,
+                "description": "Reference image URLs for image-to-image or editing (1-10 images). Required for seedream-5.0-lite-edit model. Supported formats: JPEG, PNG",
+                "example": ["https://example.com/reference1.jpg", "https://example.com/reference2.jpg"]
               },
-              "duration": {
-                "type": "integer",
-                "description": "Video duration in seconds (10 or 15)",
-                "enum": [10, 15],
-                "example": 15
-              },
-              "aspect_ratio": {
+              "size": {
                 "type": "string",
-                "description": "Video aspect ratio",
-                "enum": ["16:9", "9:16"],
+                "description": "Specify the output image dimensions. Two methods are available, but they cannot be used at the same time.\n\nMethod 1: Specify the resolution of the generated image, and describe its aspect ratio, shape, or purpose in the prompt using natural language. You let the model determine the width and height. Optional values: 2K, 3K\n\nMethod 2: Specify the aspect ratio of the generated image. Optional values: 1:1, 4:3, 3:4, 16:9, 9:16, 3:2, 2:3, 21:9",
+                "enum": ["2K", "3K", "1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3", "21:9"],
+                "default": "1:1",
                 "example": "16:9"
               },
-              "style": {
-                "type": "string",
-                "description": "Video style",
-                "enum": ["thanksgiving", "comic", "news", "selfie", "nostalgic", "anime"],
-                "example": "anime"
-              },
-              "storyboard": {
-                "type": "boolean",
-                "description": "Whether to use storyboard for finer control over video generation details. true: Enable storyboard feature, false: Do not use storyboard",
-                "example": true
+              "n": {
+                "type": "integer",
+                "description": "Number of images to generate (1-15). Credits are pre-deducted based on this count",
+                "minimum": 1,
+                "maximum": 15,
+                "default": 1,
+                "example": 1
               }
             }
           }

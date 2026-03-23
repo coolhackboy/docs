@@ -1,0 +1,155 @@
+---
+title: "Gemini Native Format"
+description: "Call Gemini models using Google Native API format"
+icon: "message"
+openapi: "/api-manual/chat-series/gemini-native-format.json POST /v1beta/models/{model}:{method}"
+---
+
+- Call Gemini models using Google Native API format
+- Synchronous processing mode with real-time response
+- Minimal parameters for quick start
+
+## Authorizations
+
+<ParamField header="Authorization" type="string" required>
+  All API endpoints require Bearer Token authentication
+
+  Get your API Key:
+
+  Visit the API Key Management Page to get your API Key
+
+  Add it to the request header:
+
+  ```
+  Authorization: Bearer PoYo_API_KEY
+  ```
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="model" type="string" required>
+  Gemini model name. Example: `gemini-3-flash-preview`
+</ParamField>
+
+<ParamField path="method" type="enum<string>" required>
+  Request method
+
+  * `generateContent`
+  * `streamGenerateContent`
+</ParamField>
+
+## Body
+
+<ParamField body="contents" type="array" required>
+  Conversation contents with roles and parts
+
+  <Expandable title="Content object structure">
+    <ParamField body="role" type="enum<string>">
+      Role type
+
+      * `user` - User input
+      * `model` - Model output
+    </ParamField>
+
+    <ParamField body="parts" type="array" required>
+      Parts list (text or inline data)
+    </ParamField>
+  </Expandable>
+
+  **Example:**
+
+  ```json  theme={null}
+  [
+    {
+      "role": "user",
+      "parts": [{"text": "Summarize the goals of the new 'night mode' in one sentence."}]
+    }
+  ]
+  ```
+</ParamField>
+
+<ParamField body="generationConfig" type="object">
+  Generation configuration
+
+  <Expandable title="Properties">
+    <ParamField body="temperature" type="number">
+      Controls output randomness
+    </ParamField>
+
+    <ParamField body="topP" type="number">
+      Nucleus sampling parameter
+    </ParamField>
+
+    <ParamField body="topK" type="integer">
+      Top-k sampling parameter
+    </ParamField>
+
+    <ParamField body="maxOutputTokens" type="integer">
+      Maximum output tokens
+    </ParamField>
+
+    <ParamField body="stopSequences" type="array">
+      Stop sequences
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="safetySettings" type="array">
+  Safety settings
+
+  <Expandable title="Safety setting object">
+    <ParamField body="category" type="string">
+      Safety category
+    </ParamField>
+
+    <ParamField body="threshold" type="string">
+      Blocking threshold
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Response
+
+<ResponseField name="candidates" type="array">
+  Generated candidates
+
+  <Expandable title="Properties">
+    <ResponseField name="content" type="object">
+      Output content
+    </ResponseField>
+
+    <ResponseField name="finishReason" type="string">
+      Reason for completion
+    </ResponseField>
+
+    <ResponseField name="index" type="integer">
+      Candidate index
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="promptFeedback" type="object">
+  Prompt safety feedback
+</ResponseField>
+
+<ResponseField name="usageMetadata" type="object">
+  Token usage metadata
+
+  <Expandable title="Properties">
+    <ResponseField name="promptTokenCount" type="integer">
+      Tokens in prompt
+    </ResponseField>
+
+    <ResponseField name="candidatesTokenCount" type="integer">
+      Tokens in candidates
+    </ResponseField>
+
+    <ResponseField name="totalTokenCount" type="integer">
+      Total tokens
+    </ResponseField>
+
+    <ResponseField name="thoughtsTokenCount" type="integer">
+      Thoughts tokens
+    </ResponseField>
+  </Expandable>
+</ResponseField>
