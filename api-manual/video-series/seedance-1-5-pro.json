@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedance 1.5 Pro API",
-    "description": "High-quality Image-to-Video Generation with Seedance 1.5 Pro",
+    "description": "High-quality Video Generation with Seedance 1.5 Pro",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Seedance 1.5 Pro Video Generation Task",
-        "description": "Generate high-quality videos from images using Seedance 1.5 Pro",
+        "description": "Generate high-quality videos using Seedance 1.5 Pro with text-to-video and image-to-video support",
         "operationId": "submitSeedance15ProTask",
         "tags": ["Seedance 1.5 Pro"],
         "requestBody": {
@@ -31,7 +31,22 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "seedance-1.5-pro": {
+                "text-to-video": {
+                  "summary": "Seedance 1.5 Pro Text-to-Video",
+                  "value": {
+                    "model": "seedance-1.5-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "slow zoom over a futuristic city at sunset, cinematic lighting",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 4,
+                      "fixed_lens": false,
+                      "generate_audio": true
+                    }
+                  }
+                },
+                "image-to-video": {
                   "summary": "Seedance 1.5 Pro Image-to-Video",
                   "value": {
                     "model": "seedance-1.5-pro",
@@ -110,7 +125,7 @@
                   "format": "uri"
                 },
                 "maxItems": 1,
-                "description": "Reference image URL for video generation. File URL after upload, not file content; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
+                "description": "Reference image URL for image-to-video generation. File URL after upload, not file content; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
                 "example": ["https://example.com/image.jpg"]
               },
               "aspect_ratio": {

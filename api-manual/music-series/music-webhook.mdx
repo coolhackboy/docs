@@ -2,7 +2,6 @@
 title: "Music Webhook"
 description: "Receive automatic callback notifications when music generation tasks complete"
 icon: "music"
-description: "Receive automatic callback notifications when music generation tasks complete"
 ---
 
 # Music Webhook Callbacks
@@ -52,15 +51,15 @@ The `files` array content varies depending on which model created the task.
 | Model | Field | Type | Description |
 |-------|-------|------|-------------|
 | `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `audio_id` | string | Unique identifier for the audio file |
-| â†?| `audio_url` | string | Direct download URL for the audio file |
-| â†?| `image_url` | string | Cover image URL |
-| â†?| `title` | string | Track title |
-| â†?| `tags` | string | Style tags |
-| â†?| `duration` | number | Audio duration in seconds |
-| â†?| `prompt` | string | Generation prompt used |
+| éˆ«?| `audio_url` | string | Direct download URL for the audio file |
+| éˆ«?| `image_url` | string | Cover image URL |
+| éˆ«?| `title` | string | Track title |
+| éˆ«?| `tags` | string | Style tags |
+| éˆ«?| `duration` | number | Audio duration in seconds |
+| éˆ«?| `prompt` | string | Generation prompt used |
 | `get-timestamped-lyrics` | `timestampe_lyrics` | string | Lyrics with timestamps |
 | `generate-lyrics` | `title` | string | Lyrics title |
-| â†?| `text` | string | Complete lyrics content |
+| éˆ«?| `text` | string | Complete lyrics content |
 | `boost-music-style` | `style` | string | Enhanced music style |
 | `convert-to-wav` | `wav_url` | string | URL to converted WAV file |
 | `separate-vocals` | `separate_vocals` | string (JSON) | JSON string containing separated audio URLs. [See details](#separate-vocals) |
