@@ -43,6 +43,18 @@
                     }
                   }
                 },
+                "seedream-4-5-custom-size": {
+                  "summary": "Seedream-4.5 Text-to-Image with Custom Size",
+                  "value": {
+                    "model": "seedream-4.5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Seedream 4.5 API now Available on Poyo.ai",
+                      "size": "1920x4096",
+                      "n": 1
+                    }
+                  }
+                },
                 "seedream-4-5-edit": {
                   "summary": "Seedream-4.5 Image Editing with References",
                   "value": {
@@ -55,6 +67,21 @@
                         "https://example.com/reference2.jpg"
                       ],
                       "size": "16:9",
+                      "n": 1
+                    }
+                  }
+                },
+                "seedream-4-5-edit-custom-size": {
+                  "summary": "Seedream-4.5 Image Editing with Custom Size",
+                  "value": {
+                    "model": "seedream-4.5-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Transform the scene to a winter wonderland with snow",
+                      "image_urls": [
+                        "https://example.com/reference1.jpg"
+                      ],
+                      "size": "1920x4096",
                       "n": 1
                     }
                   }
@@ -159,13 +186,37 @@
                 },
                 "minItems": 1,
                 "maxItems": 10,
-                "description": "Reference image URLs for image-to-image or editing (1-10 images). Required for seedream-4.5-edit model. Supported formats: JPEG, PNG",
+                "description": "Reference image URLs for image-to-image or editing (1-10 images). Required for seedream-4.5-edit model. Supported formats: JPEG, PNG. Custom size is also supported in edit mode.",
                 "example": ["https://example.com/reference1.jpg", "https://example.com/reference2.jpg"]
               },
               "size": {
-                "type": "string",
-                "description": "Specify the output image dimensions. Two methods are available, but they cannot be used at the same time.\n\nMethod 1: Specify the resolution of the generated image, and describe its aspect ratio, shape, or purpose in the prompt using natural language. You let the model determine the width and height. Optional values: 2K, 4K\n\nMethod 2: Specify the aspect ratio of the generated image. Optional values: 1:1, 4:3, 3:4, 16:9, 9:16, 3:2, 2:3, 21:9",
-                "enum": ["2K", "4K", "1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3", "21:9"],
+                "description": "Output size for both text-to-image and edit mode. Supported forms:\n\n1. Resolution preset: `2K`, `4K`\n2. Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9`\n3. Custom string: `WIDTHxHEIGHT`, for example `1920x4096`\n4. Custom object: `{ \"width\": 2304, \"height\": 3072 }`\n\nIn edit mode, preset resolutions are handled automatically by the upstream model, while custom size uses the explicit width and height you provide.\n\nFor custom size on seedream-4.5:\n- `width` and `height` must both be between `1920` and `4096`\n- total pixels must be between `2560x1440` and `4096x4096`",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": ["2K", "4K", "1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3", "21:9"],
+                    "example": "16:9"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^\\s*\\d+\\s*[xX]\\s*\\d+\\s*$",
+                    "example": "1920x4096"
+                  },
+                  {
+                    "type": "object",
+                    "required": ["width", "height"],
+                    "properties": {
+                      "width": {
+                        "type": "integer",
+                        "example": 2304
+                      },
+                      "height": {
+                        "type": "integer",
+                        "example": 3072
+                      }
+                    }
+                  }
+                ],
                 "default": "1:1",
                 "example": "16:9"
               },

@@ -19,3 +19,99 @@ Seedream-4.5 is an advanced image generation model that supports text-to-image, 
 - **seedream-4.5** - High-quality text-to-image and image-to-image generation
 - **seedream-4.5-edit** - Advanced image editing with multi-image reference support (up to 10 images)
 
+## Size Parameter
+
+`input.size` supports these forms:
+
+- Resolution preset: `2K`, `4K`
+- Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9`
+- Custom string: `WIDTHxHEIGHT`, for example `1920x4096`
+- Custom object: `{ "width": 2304, "height": 3072 }`
+
+Custom `size` is supported in both text-to-image and `seedream-4.5-edit`.
+
+In edit mode:
+
+- Preset resolutions such as `2K` and `4K` are handled automatically by the upstream model
+- Custom size such as `1920x4096` or `{ "width": 2304, "height": 3072 }` uses the explicit width and height you provide
+
+Custom size rules for `seedream-4.5`:
+
+- `width` and `height` must both be between `1920` and `4096`
+- Total pixels must be between `2560x1440` and `4096x4096`
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Preset size example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-4.5",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A serene Japanese garden with cherry blossoms and a koi pond",
+      "size": "16:9",
+      "n": 1
+    }
+  }'
+```
+
+Custom size example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-4.5",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Seedream 4.5 API now Available on Poyo.ai",
+      "size": "1920x4096",
+      "n": 1
+    }
+  }'
+```
+
+Edit with custom size example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-4.5-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Transform the scene to a winter wonderland with snow",
+      "image_urls": ["https://example.com/reference1.jpg"],
+      "size": "1920x4096",
+      "n": 1
+    }
+  }'
+```
+
+Custom size object example:
+
+```json
+{
+  "model": "seedream-4.5",
+  "input": {
+    "prompt": "A fashion editorial portrait in a studio",
+    "size": {
+      "width": 2304,
+      "height": 3072
+    },
+    "n": 1
+  }
+}
+```
+
