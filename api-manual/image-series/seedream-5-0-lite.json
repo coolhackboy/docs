@@ -190,7 +190,7 @@
                 "example": ["https://example.com/reference1.jpg", "https://example.com/reference2.jpg"]
               },
               "size": {
-                "description": "Output size for both text-to-image and edit mode. Supported forms:\n\n1. Resolution preset: `2K`, `3K`\n2. Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9`\n3. Custom string: `WIDTHxHEIGHT`, for example `2304x1728`\n4. Custom object: `{ \"width\": 2304, \"height\": 1728 }`\n\nIn edit mode, preset resolutions are handled automatically by the upstream model, while custom size uses the explicit width and height you provide.\n\nFor custom size on seedream-5.0-lite:\n- total pixels must be between `2560x1440` and `3072x3072`",
+                "description": "Output size for both text-to-image and edit mode. Supported forms:\n\n1. Resolution preset: `2K`, `3K`\n2. Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9`\n3. Custom string: `WIDTHxHEIGHT`, for example `2304x1728`\n4. Custom object: `{ \"width\": 2304, \"height\": 1728 }`\n\nIn edit mode, preset resolutions are handled automatically by the upstream model, while custom size uses the explicit width and height you provide.",
                 "oneOf": [
                   {
                     "type": "string",
