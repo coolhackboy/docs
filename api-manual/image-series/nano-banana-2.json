@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Nano Banana 2 API",
-    "description": "Classic Nano Banana 2 and Fal-powered Nano Banana Pro image generation and editing",
+    "description": "Classic Nano Banana 2 and Nano Banana Pro image generation and editing",
     "version": "1.0.0"
   },
   "servers": [
