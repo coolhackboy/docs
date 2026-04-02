@@ -1,6 +1,6 @@
 ---
-title: "Nano Banana Pro(Nano Banana 2) Image Generation"
-description: "Next-generation AI image generation powered by Gemini 3 Pro Image Preview"
+title: "Nano Banana Pro / Nano Banana 2 Image Generation"
+description: "Image generation and editing for both classic Nano Banana 2 and the new Fal-powered Nano Banana Pro models"
 icon: "image"
 openapi: "/api-manual/image-series/nano-banana-2.json POST /api/generate/submit"
 ---
@@ -10,12 +10,25 @@ openapi: "/api-manual/image-series/nano-banana-2.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Nano Banana Pro(Nano Banana 2) Image Generation
+# Nano Banana Pro / Nano Banana 2 Image Generation
 
-Next-generation AI image generation powered by Google's Gemini 3 Pro Image Preview. Delivers 2K native resolution images in under 1 second with enhanced text rendering, character consistency, and designer-grade quality.
+This page documents both the legacy `nano-banana-2` models and the new `nano-banana-pro` models.
+
+- `nano-banana-2` / `nano-banana-2-edit`: classic Nano Banana 2 models
+- `nano-banana-pro` / `nano-banana-pro-edit`: Fal-powered Nano Banana Pro models with `output_format`, `enable_web_search`, and `size=auto`
 
 ## Available Models
 
 - **nano-banana-2** - Text-to-image and image-to-image generation
 - **nano-banana-2-edit** - Advanced image editing capabilities
+- **nano-banana-pro** - Text-to-image generation with `output_format`, `enable_web_search`, and `size=auto`
+- **nano-banana-pro-edit** - Image editing with up to 14 reference images, `output_format`, `enable_web_search`, and `size=auto`
+
+## Nano Banana Pro Notes
+
+- `size` supports `auto` and defaults to `auto`
+- `resolution` supports `1K`, `2K`, `4K`
+- `output_format` supports `png` and `jpg`
+- `enable_web_search` supports `true` / `false`
+- Pricing: `1K/2K = 18 credits ($0.09)`, `4K = 35 credits ($0.175)`
 

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Nano Banana 2 API",
-    "description": "Next-generation AI image generation powered by Gemini 3 Pro Image Preview",
+    "description": "Classic Nano Banana 2 and Fal-powered Nano Banana Pro image generation and editing",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Nano Banana 2 Generation Task",
-        "description": "Next-generation AI image generation and editing powered by Gemini 3 Pro Image Preview with 2K native resolution",
+        "summary": "Submit Nano Banana Generation Task",
+        "description": "Image generation and editing for both Nano Banana 2 and Nano Banana Pro model families",
         "operationId": "submitNanoBanana2Task",
-        "tags": ["Nano Banana 2"],
+        "tags": ["Nano Banana"],
         "requestBody": {
           "required": true,
           "content": {
@@ -32,7 +32,7 @@
               },
               "examples": {
                 "nano-banana-2": {
-                  "summary": "Nano Banana Pro(Nano Banana 2) Image Generation",
+                  "summary": "Nano Banana 2 Image Generation",
                   "value": {
                     "model": "nano-banana-2",
                     "callback_url": "https://your-domain.com/callback",
@@ -53,6 +53,37 @@
                       "image_urls": ["https://example.com/landscape.jpg"],
                       "size": "16:9",
                       "resolution": "2K"
+                    }
+                  }
+                },
+                "nano-banana-pro": {
+                  "summary": "Nano Banana Pro Image Generation",
+                  "value": {
+                    "model": "nano-banana-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "An action shot of a black lab swimming in an inground suburban swimming pool. The camera is placed meticulously on the water line, dividing the image in half, revealing both the dogs head above water holding a tennis ball in it's mouth, and it's paws paddling underwater.",
+                      "resolution": "1K",
+                      "size": "auto",
+                      "n": 1,
+                      "output_format": "png",
+                      "enable_web_search": false
+                    }
+                  }
+                },
+                "nano-banana-pro-edit": {
+                  "summary": "Nano Banana Pro Image Edit",
+                  "value": {
+                    "model": "nano-banana-pro-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Add cinematic ripples and sharpen the dog's motion trail while keeping the tennis ball intact",
+                      "image_urls": ["https://example.com/dog-in-pool.png"],
+                      "resolution": "1K",
+                      "size": "auto",
+                      "n": 1,
+                      "output_format": "png",
+                      "enable_web_search": false
                     }
                   }
                 }
@@ -125,10 +156,12 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Nano Banana 2 model identifier",
+            "description": "Nano Banana model identifier",
             "enum": [
               "nano-banana-2",
-              "nano-banana-2-edit"
+              "nano-banana-2-edit",
+              "nano-banana-pro",
+              "nano-banana-pro-edit"
             ]
           },
           "callback_url": {
@@ -154,14 +187,14 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Reference image URLs (for image editing)",
+                "description": "Reference image URLs (required for edit models, Nano Banana Pro edit supports up to 14 images)",
                 "example": []
               },
               "size": {
                 "type": "string",
-                "description": "Image size ratio",
-                "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
-                "example": "16:9"
+                "description": "Image size ratio. Nano Banana Pro also supports `auto` and defaults to `auto`.",
+                "enum": ["auto", "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
+                "example": "auto"
               },
               "resolution": {
                 "type": "string",
@@ -169,6 +202,26 @@
                 "enum": ["1K", "2K", "4K"],
                 "default": "1K",
                 "example": "1K"
+              },
+              "n": {
+                "type": "integer",
+                "description": "Number of output images. Current supported value is `1`.",
+                "enum": [1],
+                "default": 1,
+                "example": 1
+              },
+              "output_format": {
+                "type": "string",
+                "description": "Nano Banana Pro only. Output image format.",
+                "enum": ["png", "jpg"],
+                "default": "png",
+                "example": "png"
+              },
+              "enable_web_search": {
+                "type": "boolean",
+                "description": "Nano Banana Pro only. Enable web search before generation.",
+                "default": false,
+                "example": false
               }
             }
           }
