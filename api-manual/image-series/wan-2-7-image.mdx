@@ -1,6 +1,6 @@
 ---
 title: "Wan-2.7-Image"
-description: "Fal image generation with unified text-to-image and image editing support, including custom image sizes"
+description: "Image generation with unified text-to-image and image editing support, including custom image sizes"
 icon: "image"
 openapi: "/api-manual/image-series/wan-2-7-image.json POST /api/generate/submit"
 ---
@@ -12,7 +12,7 @@ openapi: "/api-manual/image-series/wan-2-7-image.json POST /api/generate/submit"
 
 # Wan-2.7-Image
 
-`wan-2.7-image` is a Fal-backed image model with unified text-to-image and image editing support.
+`wan-2.7-image` is an image model with unified text-to-image and image editing support.
 
 It uses a unified request shape:
 
@@ -25,29 +25,34 @@ It uses a unified request shape:
 
 ## Size Parameter
 
-`input.size` supports these forms:
+`input.size` supports these preset values:
 
-- Preset pixel strings: `512x512`, `1024x1024`, `768x1024`, `1024x768`, `576x1024`, `1024x576`
-- Custom string: `WIDTHxHEIGHT`, for example `1280x720`
-- Custom object: `{ "width": 1280, "height": 720 }`
+- `512x512`
+- `1024x1024`
+- `768x1024`
+- `1024x768`
+- `576x1024`
+- `1024x576`
 
-Preset values are mapped to Fal `image_size` automatically:
+Default value: `1024x1024`
 
-- `512x512` -> `square`
-- `1024x1024` -> `square_hd`
-- `768x1024` -> `portrait_4_3`
-- `1024x768` -> `landscape_4_3`
-- `576x1024` -> `portrait_16_9`
-- `1024x576` -> `landscape_16_9`
+### Custom Size
 
-If you pass a custom size, the upstream request uses explicit `width` and `height`.
+For custom image sizes, you can pass `width` and `height` as an object:
+
+```json
+"size": {
+  "width": 1280,
+  "height": 720
+}
+```
 
 ## Supported Parameters
 
 - `prompt` - Required prompt
 - `negative_prompt` - Optional negative prompt
-- `size` - Preset or custom output size
-- `n` - Number of images, `1-10`
+- `size` - Preset output size, or a custom `{ width, height }` object
+- `n` - Number of images, `1-4`
 - `seed` - Optional random seed
 - `enable_safety_checker` - Optional boolean, default `true`
 - `enable_prompt_expansion` - Optional boolean, default `true`

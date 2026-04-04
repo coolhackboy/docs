@@ -1,6 +1,6 @@
 ---
 title: "Wan-2.7-Image-Pro"
-description: "High-quality Fal image generation with unified text-to-image and image editing support"
+description: "High-quality image generation with unified text-to-image and image editing support, including custom image sizes"
 icon: "image"
 openapi: "/api-manual/image-series/wan-2-7-image-pro.json POST /api/generate/submit"
 ---
@@ -12,7 +12,7 @@ openapi: "/api-manual/image-series/wan-2-7-image-pro.json POST /api/generate/sub
 
 # Wan-2.7-Image-Pro
 
-`wan-2.7-image-pro` is a Fal-backed image model for high-quality image generation and editing.
+`wan-2.7-image-pro` is a high-quality image model for generation and editing.
 
 It uses a unified request shape:
 
@@ -25,23 +25,34 @@ It uses a unified request shape:
 
 ## Size Parameter
 
-`input.size` accepts Fal enum values only:
+`input.size` supports these preset values:
 
-- `square_hd`
-- `square`
-- `portrait_4_3`
-- `portrait_16_9`
-- `landscape_4_3`
-- `landscape_16_9`
+- `512x512`
+- `1024x1024`
+- `768x1024`
+- `1024x768`
+- `576x1024`
+- `1024x576`
 
-Default value: `square_hd`
+Default value: `1024x1024`
+
+### Custom Size
+
+For custom image sizes, you can pass `width` and `height` as an object:
+
+```json
+"size": {
+  "width": 1280,
+  "height": 720
+}
+```
 
 ## Supported Parameters
 
 - `prompt` - Required prompt
 - `negative_prompt` - Optional negative prompt
-- `size` - Output image size enum
-- `n` - Number of images, `1-10`
+- `size` - Output image size preset, or a custom `{ width, height }` object
+- `n` - Number of images, `1-4`
 - `seed` - Optional random seed
 - `enable_safety_checker` - Optional boolean, default `true`
 - `enable_prompt_expansion` - Optional boolean, default `true`
@@ -64,7 +75,7 @@ curl --request POST \
     "input": {
       "prompt": "A cinematic portrait of a traveler in golden sunset light",
       "negative_prompt": "blurry, low quality, distorted",
-      "size": "square_hd",
+      "size": "1024x1024",
       "n": 1,
       "seed": 12345,
       "enable_safety_checker": true,
@@ -87,10 +98,26 @@ curl --request POST \
       "prompt": "Turn the scene into a snowy night with neon reflections",
       "negative_prompt": "overexposed, washed out",
       "image_urls": ["https://example.com/reference1.jpg"],
-      "size": "landscape_16_9",
+      "size": "1024x576",
       "n": 2,
       "enable_safety_checker": true,
       "enable_prompt_expansion": false
     }
   }'
+```
+
+Custom size example:
+
+```json
+{
+  "model": "wan-2.7-image-pro",
+  "input": {
+    "prompt": "A dramatic fashion editorial scene",
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "n": 1
+  }
+}
 ```
