@@ -1,0 +1,258 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedance 2 API",
+    "description": "Video generation with Seedance 2",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Seedance 2 Video Generation Task",
+        "description": "Generate videos using Seedance 2 with text-to-video, first and last frame, and multimodal reference workflows.",
+        "operationId": "submitSeedance2Task",
+        "tags": ["Seedance 2"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Seedance 2 Text-to-Video",
+                  "value": {
+                    "model": "seedance-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic drone shot flying over a neon city after rain, reflections shimmering on the streets",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 5,
+                      "generate_audio": true,
+                      "return_last_frame": false,
+                      "web_search": false
+                    }
+                  }
+                },
+                "first-last-frame": {
+                  "summary": "Seedance 2 First and Last Frame",
+                  "value": {
+                    "model": "seedance-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A smooth transition from sunrise to golden afternoon over a mountain lake",
+                      "image_urls": [
+                        "https://example.com/first-frame.jpg",
+                        "https://example.com/last-frame.jpg"
+                      ],
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 10,
+                      "generate_audio": false,
+                      "return_last_frame": true
+                    }
+                  }
+                },
+                "multimodal-reference": {
+                  "summary": "Seedance 2 Multimodal Reference-to-Video",
+                  "value": {
+                    "model": "seedance-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A stylish character walks through a futuristic subway station with rhythmic motion and dramatic lighting",
+                      "reference_image_urls": [
+                        "https://example.com/reference-image.jpg"
+                      ],
+                      "reference_video_urls": [
+                        "https://example.com/reference-video.mp4"
+                      ],
+                      "reference_audio_urls": [
+                        "https://example.com/reference-audio.mp3"
+                      ],
+                      "aspect_ratio": "9:16",
+                      "resolution": "480p",
+                      "duration": 5,
+                      "generate_audio": true,
+                      "web_search": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Seedance 2 model identifier",
+            "enum": [
+              "seedance-2"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt", "aspect_ratio", "resolution", "duration"],
+            "description": "Input parameters for generation",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt describing the target video.",
+                "example": "A cinematic drone shot flying over a neon city after rain"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 2,
+                "description": "Optional first and last frame images. Index 0 is the first frame and index 1 is the last frame. Cannot be used together with any reference_*_urls fields.",
+                "example": ["https://example.com/first-frame.jpg", "https://example.com/last-frame.jpg"]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional reference image URLs for multimodal reference-to-video mode.",
+                "example": ["https://example.com/reference-image.jpg"]
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional reference video URLs for multimodal reference-to-video mode.",
+                "example": ["https://example.com/reference-video.mp4"]
+              },
+              "reference_audio_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional reference audio URLs for multimodal reference-to-video mode.",
+                "example": ["https://example.com/reference-audio.mp3"]
+              },
+              "return_last_frame": {
+                "type": "boolean",
+                "description": "Whether to request an additional last-frame image in the output when supported by the upstream provider.",
+                "example": false
+              },
+              "generate_audio": {
+                "type": "boolean",
+                "description": "Whether to generate an audio track.",
+                "example": true
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution. Current API supports 480p and 720p.",
+                "enum": ["480p", "720p"],
+                "example": "720p"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Output video aspect ratio.",
+                "enum": ["1:1", "21:9", "4:3", "3:4", "16:9", "9:16"],
+                "example": "16:9"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Video duration in seconds.",
+                "example": 5
+              },
+              "web_search": {
+                "type": "boolean",
+                "description": "Whether to enable web search enhancement when supported by the upstream provider.",
+                "example": false
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-04T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

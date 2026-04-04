@@ -1,0 +1,33 @@
+---
+title: "Create Asset"
+description: "Transfer a remote image, video, or audio URL into provider asset storage"
+openapi: "/api-manual/file-series/create-asset.json POST /api/generate/assets"
+---
+
+## Usage Guide
+
+- This endpoint creates an upstream asset task from a remote URL and returns an `asset_id`
+- It is suitable for preparing image, video, or audio materials in provider-managed asset storage
+- The current implementation is backed by the Kie / ByteDance asset transfer API
+- After creating an asset, use [Query Asset Status](/api-manual/file-series/query-asset) to check whether it is ready
+
+## Parameter Details
+
+- `url`
+  - Must be a publicly accessible remote URL
+  - The upstream provider needs to download the file directly from this URL
+- `asset_type`
+  - Use `Image`, `Video`, or `Audio`
+  - These values follow the upstream provider's asset API convention
+
+## Developer Notes
+
+- Only URL-based transfer is supported
+- The create API may return only an `asset_id` at first, so `status` may appear as `unknown`
+- If you need the final usable asset URL, query the asset status after submission
+
+## Related APIs
+
+- [Query Asset Status](/api-manual/file-series/query-asset)
+- [Seedance 2](/api-manual/video-series/seedance-2)
+- [Seedance 2 Fast](/api-manual/video-series/seedance-2-fast)

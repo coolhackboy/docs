@@ -9,7 +9,14 @@
       "Bash(cmd //c \"taskkill /PID 14420 /F\")",
       "Bash(git push)",
       "WebSearch",
-      "Bash(npm i:*)"
+      "Bash(npm i:*)",
+      "Bash(cmd /c \"rmdir /s /q C:\\Users\\Administrator\\.mintlify-last\" 2)",
+      "Bash($null)",
+      "Bash(cmd /c \"rmdir /s /q C:\\Users\\Administrator\\.mintlify\")",
+      "Bash(cmd //c \"rmdir /s /q C:\\Users\\Administrator\\.mintlify-last\")",
+      "Bash(cmd //c \"rmdir /s /q C:\\Users\\Administrator\\.mintlify\")",
+      "Bash(cmd //c \"tasklist /m Node.js\")",
+      "Bash(cmd //c \"tasklist\")"
     ],
     "deny": [],
     "ask": []

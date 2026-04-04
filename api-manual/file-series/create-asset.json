@@ -1,0 +1,143 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Create Asset API",
+    "description": "Transfer a remote image, video, or audio URL into provider asset storage",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/assets": {
+      "post": {
+        "summary": "Create Asset",
+        "description": "Transfer a remote image, video, or audio URL into upstream asset storage and return an asset identifier for later querying.",
+        "operationId": "createAsset",
+        "tags": ["Asset Management"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAssetRequest"
+              },
+              "examples": {
+                "image-asset": {
+                  "summary": "Create Image Asset",
+                  "value": {
+                    "url": "https://example.com/reference-image.jpg",
+                    "asset_type": "Image"
+                  }
+                },
+                "video-asset": {
+                  "summary": "Create Video Asset",
+                  "value": {
+                    "url": "https://example.com/reference-video.mp4",
+                    "asset_type": "Video"
+                  }
+                },
+                "audio-asset": {
+                  "summary": "Create Audio Asset",
+                  "value": {
+                    "url": "https://example.com/reference-audio.mp3",
+                    "asset_type": "Audio"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Asset creation task accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "CreateAssetRequest": {
+        "type": "object",
+        "required": ["url", "asset_type"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Publicly accessible remote file URL.",
+            "example": "https://example.com/reference-image.jpg"
+          },
+          "asset_type": {
+            "type": "string",
+            "description": "Asset type to transfer. Use provider-compatible values.",
+            "enum": ["Image", "Video", "Audio"],
+            "example": "Image"
+          }
+        }
+      },
+      "AssetResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["asset_id", "status"],
+            "properties": {
+              "asset_id": {
+                "type": "string",
+                "example": "task_1234567890abcdef",
+                "description": "Asset task identifier returned by the upstream asset service."
+              },
+              "status": {
+                "type": "string",
+                "example": "unknown",
+                "description": "Current asset status. The create API may return `unknown` if the upstream service only returns an ID immediately."
+              },
+              "url": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": null,
+                "description": "Resolved asset URL when already available."
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true,
+                "example": null,
+                "description": "Error message when asset creation fails."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

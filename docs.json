@@ -62,6 +62,8 @@
     "/api-manual/video-series/hailuo-2-3.json",
     "/api-manual/video-series/seedance-1.0-pro.json",
     "/api-manual/video-series/seedance-1-5-pro.json",
+    "/api-manual/video-series/seedance-2.json",
+    "/api-manual/video-series/seedance-2-fast.json",
     "/api-manual/video-series/runway-gen-4-5.json",
     "/api-manual/music-series/generate-music.json",
     "/api-manual/music-series/extend-music.json",
@@ -87,7 +89,9 @@
     "/api-manual/account-management/user-balance.json",
     "/api-manual/file-series/upload-url.json",
     "/api-manual/file-series/upload-base64.json",
-    "/api-manual/file-series/upload-stream.json"
+    "/api-manual/file-series/upload-stream.json",
+    "/api-manual/file-series/create-asset.json",
+    "/api-manual/file-series/query-asset.json"
   ],
   "navigation": {
     "tabs": [
@@ -211,7 +215,9 @@
                 "group": "Seedance",
                 "pages": [
                   "api-manual/video-series/seedance-1.0-pro",
-                  "api-manual/video-series/seedance-1-5-pro"
+                  "api-manual/video-series/seedance-1-5-pro",
+                  "api-manual/video-series/seedance-2",
+                  "api-manual/video-series/seedance-2-fast"
                 ]
               }
             ]
@@ -309,7 +315,9 @@
             "pages": [
               "api-manual/file-series/upload-url",
               "api-manual/file-series/upload-base64",
-              "api-manual/file-series/upload-stream"
+              "api-manual/file-series/upload-stream",
+              "api-manual/file-series/create-asset",
+              "api-manual/file-series/query-asset"
             ]
           },
           {

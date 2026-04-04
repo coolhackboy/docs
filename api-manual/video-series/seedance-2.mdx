@@ -1,0 +1,45 @@
+---
+title: "Seedance 2 Video Generation"
+description: "Video generation with Seedance 2"
+icon: "video"
+openapi: "/api-manual/video-series/seedance-2.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Seedance 2 Video Generation
+
+Generate videos using Seedance 2 by ByteDance. This model supports text-to-video, first and last frame guided generation, and multimodal reference-to-video with optional audio generation.
+
+## Available Model
+
+- **seedance-2** - Standard Seedance 2 video generation model
+
+## Key Features
+
+- **Text-to-Video**: Generate videos directly from prompt text
+- **First and Last Frame Control**: Use up to 2 images as the first and last frame
+- **Multimodal Reference**: Guide generation with reference images, videos, and audio
+- **Optional Audio**: Request generated audio together with the video
+- **Last Frame Return**: Optionally request an additional last-frame image result
+
+## Important Notes
+
+- `image_urls` supports up to 2 items only:
+  index `0` maps to the first frame and index `1` maps to the last frame.
+- `image_urls` and any `reference_*_urls` fields are mutually exclusive and cannot be used together in the same request.
+- All remote URLs should be publicly accessible and directly downloadable by the upstream provider.
+- When `return_last_frame` is `true`, the final result may include an additional `image` file if the upstream callback provides that field.
+
+## Credits Reference
+
+- Credits are calculated based on video duration and selected resolution.
+- If `reference_video_urls` is provided, the final credit cost may differ from requests without video references.
+
+## Related APIs
+
+- [Create Asset](/api-manual/file-series/create-asset): Optional helper API for transferring remote image, video, or audio URLs into provider asset storage.
+- [Query Asset Status](/api-manual/file-series/query-asset): Check whether a created asset is ready to use.
