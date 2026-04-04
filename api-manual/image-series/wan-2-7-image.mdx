@@ -1,0 +1,117 @@
+---
+title: "Wan-2.7-Image"
+description: "Fal image generation with unified text-to-image and image editing support, including custom image sizes"
+icon: "image"
+openapi: "/api-manual/image-series/wan-2-7-image.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Wan-2.7-Image
+
+`wan-2.7-image` is a Fal-backed image model with unified text-to-image and image editing support.
+
+It uses a unified request shape:
+
+- If `input.image_urls` is omitted, the request is handled as text-to-image
+- If `input.image_urls` is provided, the request is handled as edit mode automatically
+
+## Available Model
+
+- **wan-2.7-image** - Unified text-to-image and image editing model
+
+## Size Parameter
+
+`input.size` supports these forms:
+
+- Preset pixel strings: `512x512`, `1024x1024`, `768x1024`, `1024x768`, `576x1024`, `1024x576`
+- Custom string: `WIDTHxHEIGHT`, for example `1280x720`
+- Custom object: `{ "width": 1280, "height": 720 }`
+
+Preset values are mapped to Fal `image_size` automatically:
+
+- `512x512` -> `square`
+- `1024x1024` -> `square_hd`
+- `768x1024` -> `portrait_4_3`
+- `1024x768` -> `landscape_4_3`
+- `576x1024` -> `portrait_16_9`
+- `1024x576` -> `landscape_16_9`
+
+If you pass a custom size, the upstream request uses explicit `width` and `height`.
+
+## Supported Parameters
+
+- `prompt` - Required prompt
+- `negative_prompt` - Optional negative prompt
+- `size` - Preset or custom output size
+- `n` - Number of images, `1-10`
+- `seed` - Optional random seed
+- `enable_safety_checker` - Optional boolean, default `true`
+- `enable_prompt_expansion` - Optional boolean, default `true`
+- `image_urls` - Optional image array; when present, edit mode is used automatically
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Preset size example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2.7-image",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A clean product photo of wireless headphones on a soft background",
+      "negative_prompt": "low quality, blur",
+      "size": "1024x1024",
+      "n": 1,
+      "seed": 24680,
+      "enable_safety_checker": true,
+      "enable_prompt_expansion": true
+    }
+  }'
+```
+
+Edit example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2.7-image",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Replace the background with a modern neon city street",
+      "image_urls": ["https://example.com/reference1.jpg"],
+      "size": "1024x576",
+      "n": 1,
+      "enable_safety_checker": true,
+      "enable_prompt_expansion": false
+    }
+  }'
+```
+
+Custom size example:
+
+```json
+{
+  "model": "wan-2.7-image",
+  "input": {
+    "prompt": "A wide editorial fashion scene",
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "n": 1
+  }
+}
+```

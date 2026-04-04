@@ -1,0 +1,96 @@
+---
+title: "Wan-2.7-Image-Pro"
+description: "High-quality Fal image generation with unified text-to-image and image editing support"
+icon: "image"
+openapi: "/api-manual/image-series/wan-2-7-image-pro.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Wan-2.7-Image-Pro
+
+`wan-2.7-image-pro` is a Fal-backed image model for high-quality image generation and editing.
+
+It uses a unified request shape:
+
+- If `input.image_urls` is omitted, the request is handled as text-to-image
+- If `input.image_urls` is provided, the request is handled as edit mode automatically
+
+## Available Model
+
+- **wan-2.7-image-pro** - Unified text-to-image and image editing model
+
+## Size Parameter
+
+`input.size` accepts Fal enum values only:
+
+- `square_hd`
+- `square`
+- `portrait_4_3`
+- `portrait_16_9`
+- `landscape_4_3`
+- `landscape_16_9`
+
+Default value: `square_hd`
+
+## Supported Parameters
+
+- `prompt` - Required prompt
+- `negative_prompt` - Optional negative prompt
+- `size` - Output image size enum
+- `n` - Number of images, `1-10`
+- `seed` - Optional random seed
+- `enable_safety_checker` - Optional boolean, default `true`
+- `enable_prompt_expansion` - Optional boolean, default `true`
+- `image_urls` - Optional image array; when present, edit mode is used automatically
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Text-to-image example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2.7-image-pro",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A cinematic portrait of a traveler in golden sunset light",
+      "negative_prompt": "blurry, low quality, distorted",
+      "size": "square_hd",
+      "n": 1,
+      "seed": 12345,
+      "enable_safety_checker": true,
+      "enable_prompt_expansion": true
+    }
+  }'
+```
+
+Edit example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2.7-image-pro",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Turn the scene into a snowy night with neon reflections",
+      "negative_prompt": "overexposed, washed out",
+      "image_urls": ["https://example.com/reference1.jpg"],
+      "size": "landscape_16_9",
+      "n": 2,
+      "enable_safety_checker": true,
+      "enable_prompt_expansion": false
+    }
+  }'
+```

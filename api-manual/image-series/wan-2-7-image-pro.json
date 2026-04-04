@@ -1,0 +1,281 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Wan-2.7-Image-Pro API",
+    "description": "High-quality Fal image generation model with unified text-to-image and image editing support",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Wan-2.7-Image-Pro Generation Task",
+        "description": "Unified text-to-image and image editing via Fal. When `image_urls` is provided, the request is handled as edit mode automatically.",
+        "operationId": "submitWan27ImageProTask",
+        "tags": ["Wan-2.7-Image-Pro"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "wan-2-7-image-pro-text": {
+                  "summary": "Wan-2.7-Image-Pro Text-to-Image",
+                  "value": {
+                    "model": "wan-2.7-image-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic portrait of a traveler in golden sunset light",
+                      "negative_prompt": "blurry, low quality, distorted",
+                      "size": "square_hd",
+                      "n": 1,
+                      "seed": 12345,
+                      "enable_safety_checker": true,
+                      "enable_prompt_expansion": true
+                    }
+                  }
+                },
+                "wan-2-7-image-pro-edit": {
+                  "summary": "Wan-2.7-Image-Pro Image Editing",
+                  "value": {
+                    "model": "wan-2.7-image-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Turn the scene into a snowy night with neon reflections",
+                      "negative_prompt": "overexposed, washed out",
+                      "image_urls": [
+                        "https://example.com/reference1.jpg"
+                      ],
+                      "size": "landscape_16_9",
+                      "n": 2,
+                      "enable_safety_checker": true,
+                      "enable_prompt_expansion": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Wan-2.7-Image-Pro model identifier",
+            "enum": [
+              "wan-2.7-image-pro"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters for generation. When `image_urls` is present, the upstream Fal request is routed to edit mode automatically.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Prompt describing the desired output",
+                "maxLength": 2000,
+                "example": "A beautiful sunset over the ocean"
+              },
+              "negative_prompt": {
+                "type": "string",
+                "description": "Optional negative prompt used to suppress unwanted details",
+                "example": "blurry, low quality, distorted"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 10,
+                "description": "Optional reference image URLs. If provided, the request is treated as image editing.",
+                "example": ["https://example.com/reference1.jpg"]
+              },
+              "size": {
+                "type": "string",
+                "description": "Fal image size enum for Wan-2.7-Image-Pro",
+                "enum": [
+                  "square_hd",
+                  "square",
+                  "portrait_4_3",
+                  "portrait_16_9",
+                  "landscape_4_3",
+                  "landscape_16_9"
+                ],
+                "default": "square_hd",
+                "example": "landscape_16_9"
+              },
+              "n": {
+                "type": "integer",
+                "description": "Number of images to generate (1-10). Credits are charged by image count.",
+                "minimum": 1,
+                "maximum": 10,
+                "default": 1,
+                "example": 1
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Optional random seed for reproducible output",
+                "example": 12345
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "description": "Whether to enable the upstream safety checker",
+                "default": true,
+                "example": true
+              },
+              "enable_prompt_expansion": {
+                "type": "boolean",
+                "description": "Whether to let the upstream model expand the prompt automatically",
+                "default": true,
+                "example": true
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
