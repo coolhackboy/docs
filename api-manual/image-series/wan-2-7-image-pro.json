@@ -183,8 +183,8 @@
                   "format": "uri"
                 },
                 "minItems": 1,
-                "maxItems": 10,
-                "description": "Optional reference image URLs. If provided, the request is treated as image editing.",
+                "maxItems": 4,
+                "description": "Reference images for editing (1-4 images required). Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt.",
                 "example": ["https://example.com/reference1.jpg"]
               },
               "size": {
