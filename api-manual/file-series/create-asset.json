@@ -113,7 +113,7 @@
             "properties": {
               "asset_id": {
                 "type": "string",
-                "example": "task_1234567890abcdef",
+                "example": "asset-20260404192559-z459s",
                 "description": "Asset task identifier returned by the upstream asset service."
               },
               "status": {

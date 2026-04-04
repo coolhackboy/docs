@@ -10,6 +10,7 @@ openapi: "/api-manual/file-series/create-asset.json POST /api/generate/assets"
 - It is suitable for preparing image, video, or audio materials in provider-managed asset storage
 - The current implementation is backed by the Kie / ByteDance asset transfer API
 - After creating an asset, use [Query Asset Status](/api-manual/file-series/query-asset) to check whether it is ready
+- The current response shape is `asset_id + status + url + error_message`
 
 ## Parameter Details
 
@@ -23,8 +24,22 @@ openapi: "/api-manual/file-series/create-asset.json POST /api/generate/assets"
 ## Developer Notes
 
 - Only URL-based transfer is supported
-- The create API may return only an `asset_id` at first, so `status` may appear as `unknown`
+- The create API currently returns an `asset_id`, with `status` usually shown as `unknown` at creation time
 - If you need the final usable asset URL, query the asset status after submission
+
+## Actual Response Example
+
+```json
+{
+  "code": 200,
+  "data": {
+    "asset_id": "asset-20260404192559-z459s",
+    "status": "unknown",
+    "url": null,
+    "error_message": null
+  }
+}
+```
 
 ## Related APIs
 
