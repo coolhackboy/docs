@@ -50,12 +50,9 @@ For custom image sizes, you can pass `width` and `height` as an object:
 ## Supported Parameters
 
 - `prompt` - Required prompt
-- `negative_prompt` - Optional negative prompt
 - `size` - Output image size preset, or a custom `{ width, height }` object
 - `n` - Number of images, `1-4`
 - `seed` - Optional random seed
-- `enable_safety_checker` - Optional boolean, default `true`
-- `enable_prompt_expansion` - Optional boolean, default `true`
 - `image_urls` - Reference images for editing, `1-4` images required. Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt
 
 ## How to Call
@@ -74,12 +71,9 @@ curl --request POST \
     "callback_url": "https://your-domain.com/callback",
     "input": {
       "prompt": "A cinematic portrait of a traveler in golden sunset light",
-      "negative_prompt": "blurry, low quality, distorted",
       "size": "1024x1024",
       "n": 1,
-      "seed": 12345,
-      "enable_safety_checker": true,
-      "enable_prompt_expansion": true
+      "seed": 12345
     }
   }'
 ```
@@ -96,12 +90,9 @@ curl --request POST \
     "callback_url": "https://your-domain.com/callback",
     "input": {
       "prompt": "Turn the scene into a snowy night with neon reflections",
-      "negative_prompt": "overexposed, washed out",
       "image_urls": ["https://example.com/reference1.jpg"],
       "size": "1024x576",
-      "n": 2,
-      "enable_safety_checker": true,
-      "enable_prompt_expansion": false
+      "n": 2
     }
   }'
 ```
@@ -121,3 +112,5 @@ Custom size example:
   }
 }
 ```
+
+

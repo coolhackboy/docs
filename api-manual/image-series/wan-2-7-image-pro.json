@@ -1,319 +1,325 @@
 {
-  "openapi": "3.0.0",
-  "info": {
-    "title": "PoYo AI - Wan-2.7-Image-Pro API",
-    "description": "High-quality image generation model with unified text-to-image and image editing support, including custom image sizes",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://api.poyo.ai",
-      "description": "Production server"
-    }
-  ],
-  "security": [
-    {
-      "BearerAuth": []
-    }
-  ],
-  "paths": {
-    "/api/generate/submit": {
-      "post": {
-        "summary": "Submit Wan-2.7-Image-Pro Generation Task",
-        "description": "Unified text-to-image and image editing. When `image_urls` is provided, the request is handled as edit mode automatically.",
-        "operationId": "submitWan27ImageProTask",
-        "tags": ["Wan-2.7-Image-Pro"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SubmitRequest"
-              },
-              "examples": {
-                "wan-2-7-image-pro-text": {
-                  "summary": "Wan-2.7-Image-Pro Text-to-Image",
-                  "value": {
-                    "model": "wan-2.7-image-pro",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A cinematic portrait of a traveler in golden sunset light",
-                      "negative_prompt": "blurry, low quality, distorted",
-                      "size": "1024x1024",
-                      "n": 1,
-                      "seed": 12345,
-                      "enable_safety_checker": true,
-                      "enable_prompt_expansion": true
+    "openapi":  "3.0.0",
+    "info":  {
+                 "title":  "PoYo AI - Wan-2.7-Image-Pro API",
+                 "description":  "High-quality image generation model with unified text-to-image and image editing support, including custom image sizes",
+                 "version":  "1.0.0"
+             },
+    "servers":  [
+                    {
+                        "url":  "https://api.poyo.ai",
+                        "description":  "Production server"
                     }
-                  }
-                },
-                "wan-2-7-image-pro-edit": {
-                  "summary": "Wan-2.7-Image-Pro Image Editing",
-                  "value": {
-                    "model": "wan-2.7-image-pro",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "Turn the scene into a snowy night with neon reflections",
-                      "negative_prompt": "overexposed, washed out",
-                      "image_urls": [
-                        "https://example.com/reference1.jpg"
-                      ],
-                      "size": "1024x576",
-                      "n": 2,
-                      "enable_safety_checker": true,
-                      "enable_prompt_expansion": false
-                    }
-                  }
-                },
-                "wan-2-7-image-pro-custom-size": {
-                  "summary": "Wan-2.7-Image-Pro with Custom Size",
-                  "value": {
-                    "model": "wan-2.7-image-pro",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A dramatic fashion editorial scene",
-                      "size": {
-                        "width": 1280,
-                        "height": 720
-                      },
-                      "n": 1
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Task submitted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SubmitResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 400,
-                  "error": {
-                    "message": "Invalid request parameters",
-                    "type": "invalid_request_error"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 401,
-                  "error": {
-                    "message": "Unauthorized - Invalid API key",
-                    "type": "authentication_error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "securitySchemes": {
-      "BearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "API Key",
-        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
-      }
-    },
-    "schemas": {
-      "SubmitRequest": {
-        "type": "object",
-        "required": ["model", "input"],
-        "properties": {
-          "model": {
-            "type": "string",
-            "description": "Wan-2.7-Image-Pro model identifier",
-            "enum": [
-              "wan-2.7-image-pro"
-            ]
-          },
-          "callback_url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Webhook callback URL for result notifications",
-            "example": "https://your-domain.com/callback"
-          },
-          "input": {
-            "type": "object",
-            "required": ["prompt"],
-            "description": "Input parameters for generation. When `image_urls` is present, the request is routed to edit mode automatically.",
-            "properties": {
-              "prompt": {
-                "type": "string",
-                "description": "Prompt describing the desired output",
-                "maxLength": 2000,
-                "example": "A beautiful sunset over the ocean"
-              },
-              "negative_prompt": {
-                "type": "string",
-                "description": "Optional negative prompt used to suppress unwanted details",
-                "example": "blurry, low quality, distorted"
-              },
-              "image_urls": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uri"
-                },
-                "minItems": 1,
-                "maxItems": 4,
-                "description": "Reference images for editing (1-4 images required). Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt.",
-                "example": ["https://example.com/reference1.jpg"]
-              },
-              "size": {
-                "description": "Output size. Supported preset values: `512x512`, `1024x1024`, `768x1024`, `1024x768`, `576x1024`, `1024x576`. For custom image sizes, you can pass `width` and `height` as an object: `{ \"width\": 1280, \"height\": 720 }`.",
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "enum": [
-                      "512x512",
-                      "1024x1024",
-                      "768x1024",
-                      "1024x768",
-                      "576x1024",
-                      "1024x576"
-                    ],
-                    "example": "1024x1024"
-                  },
-                  {
-                    "type": "object",
-                    "required": ["width", "height"],
-                    "properties": {
-                      "width": {
-                        "type": "integer",
-                        "example": 1280
-                      },
-                      "height": {
-                        "type": "integer",
-                        "example": 720
-                      }
-                    },
-                    "example": {
-                      "width": 1280,
-                      "height": 720
-                    }
-                  }
                 ],
-                "default": "1024x1024",
-                "example": "1024x1024"
+    "security":  [
+                     {
+                         "BearerAuth":  [
+
+                                        ]
+                     }
+                 ],
+    "paths":  {
+                  "/api/generate/submit":  {
+                                               "post":  {
+                                                            "summary":  "Submit Wan-2.7-Image-Pro Generation Task",
+                                                            "description":  "Unified text-to-image and image editing. When `image_urls` is provided, the request is handled as edit mode automatically.",
+                                                            "operationId":  "submitWan27ImageProTask",
+                                                            "tags":  [
+                                                                         "Wan-2.7-Image-Pro"
+                                                                     ],
+                                                            "requestBody":  {
+                                                                                "required":  true,
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/SubmitRequest"
+                                                                                                                                    },
+                                                                                                                         "examples":  {
+                                                                                                                                          "wan-2-7-image-pro-text":  {
+                                                                                                                                                                         "summary":  "Wan-2.7-Image-Pro Text-to-Image",
+                                                                                                                                                                         "value":  {
+                                                                                                                                                                                       "model":  "wan-2.7-image-pro",
+                                                                                                                                                                                       "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                                       "input":  {
+                                                                                                                                                                                                     "prompt":  "A cinematic portrait of a traveler in golden sunset light",
+                                                                                                                                                                                                     "size":  "1024x1024",
+                                                                                                                                                                                                     "n":  1,
+                                                                                                                                                                                                     "seed":  12345
+                                                                                                                                                                                                 }
+                                                                                                                                                                                   }
+                                                                                                                                                                     },
+                                                                                                                                          "wan-2-7-image-pro-edit":  {
+                                                                                                                                                                         "summary":  "Wan-2.7-Image-Pro Image Editing",
+                                                                                                                                                                         "value":  {
+                                                                                                                                                                                       "model":  "wan-2.7-image-pro",
+                                                                                                                                                                                       "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                                       "input":  {
+                                                                                                                                                                                                     "prompt":  "Turn the scene into a snowy night with neon reflections",
+                                                                                                                                                                                                     "image_urls":  [
+                                                                                                                                                                                                                        "https://example.com/reference1.jpg"
+                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                     "size":  "1024x576",
+                                                                                                                                                                                                     "n":  2
+                                                                                                                                                                                                 }
+                                                                                                                                                                                   }
+                                                                                                                                                                     },
+                                                                                                                                          "wan-2-7-image-pro-custom-size":  {
+                                                                                                                                                                                "summary":  "Wan-2.7-Image-Pro with Custom Size",
+                                                                                                                                                                                "value":  {
+                                                                                                                                                                                              "model":  "wan-2.7-image-pro",
+                                                                                                                                                                                              "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                                              "input":  {
+                                                                                                                                                                                                            "prompt":  "A dramatic fashion editorial scene",
+                                                                                                                                                                                                            "size":  {
+                                                                                                                                                                                                                         "width":  1280,
+                                                                                                                                                                                                                         "height":  720
+                                                                                                                                                                                                                     },
+                                                                                                                                                                                                            "n":  1
+                                                                                                                                                                                                        }
+                                                                                                                                                                                          }
+                                                                                                                                                                            }
+                                                                                                                                      }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                            "responses":  {
+                                                                              "200":  {
+                                                                                          "description":  "Task submitted successfully",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/SubmitResponse"
+                                                                                                                                              }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      },
+                                                                              "400":  {
+                                                                                          "description":  "Invalid request parameters",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                              },
+                                                                                                                                   "example":  {
+                                                                                                                                                   "code":  400,
+                                                                                                                                                   "error":  {
+                                                                                                                                                                 "message":  "Invalid request parameters",
+                                                                                                                                                                 "type":  "invalid_request_error"
+                                                                                                                                                             }
+                                                                                                                                               }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      },
+                                                                              "401":  {
+                                                                                          "description":  "Unauthorized - Invalid API key",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                              },
+                                                                                                                                   "example":  {
+                                                                                                                                                   "code":  401,
+                                                                                                                                                   "error":  {
+                                                                                                                                                                 "message":  "Unauthorized - Invalid API key",
+                                                                                                                                                                 "type":  "authentication_error"
+                                                                                                                                                             }
+                                                                                                                                               }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      }
+                                                                          }
+                                                        }
+                                           }
               },
-              "n": {
-                "type": "integer",
-                "description": "Number of images to generate (1-4). Credits are charged by image count.",
-                "minimum": 1,
-                "maximum": 4,
-                "default": 1,
-                "example": 1
-              },
-              "seed": {
-                "type": "integer",
-                "description": "Optional random seed for reproducible output",
-                "example": 12345
-              },
-              "enable_safety_checker": {
-                "type": "boolean",
-                "description": "Whether to enable the safety checker",
-                "default": true,
-                "example": true
-              },
-              "enable_prompt_expansion": {
-                "type": "boolean",
-                "description": "Whether to let the model expand the prompt automatically",
-                "default": true,
-                "example": true
-              }
-            }
-          }
-        }
-      },
-      "SubmitResponse": {
-        "type": "object",
-        "required": ["code", "data"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 200,
-            "description": "HTTP status code"
-          },
-          "data": {
-            "type": "object",
-            "required": ["task_id", "status", "created_time"],
-            "properties": {
-              "task_id": {
-                "type": "string",
-                "example": "task-unified-1757165031-uyujaw3d",
-                "description": "Unique task identifier for status tracking"
-              },
-              "status": {
-                "type": "string",
-                "enum": ["not_started"],
-                "example": "not_started",
-                "description": "Initial task status"
-              },
-              "created_time": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2025-11-12T10:30:00",
-                "description": "ISO 8601 timestamp when the task was created"
-              }
-            }
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "required": ["code", "error"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 400,
-            "description": "HTTP status code"
-          },
-          "error": {
-            "type": "object",
-            "required": ["message", "type"],
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "Invalid request parameters",
-                "description": "Error message describing what went wrong"
-              },
-              "type": {
-                "type": "string",
-                "example": "invalid_request_error",
-                "description": "Error type identifier"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+    "components":  {
+                       "securitySchemes":  {
+                                               "BearerAuth":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer",
+                                                                  "bearerFormat":  "API Key",
+                                                                  "description":  "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+                                                              }
+                                           },
+                       "schemas":  {
+                                       "SubmitRequest":  {
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "model",
+                                                                              "input"
+                                                                          ],
+                                                             "properties":  {
+                                                                                "model":  {
+                                                                                              "type":  "string",
+                                                                                              "description":  "Wan-2.7-Image-Pro model identifier",
+                                                                                              "enum":  [
+                                                                                                           "wan-2.7-image-pro"
+                                                                                                       ]
+                                                                                          },
+                                                                                "callback_url":  {
+                                                                                                     "type":  "string",
+                                                                                                     "format":  "uri",
+                                                                                                     "description":  "Webhook callback URL for result notifications",
+                                                                                                     "example":  "https://your-domain.com/callback"
+                                                                                                 },
+                                                                                "input":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "prompt"
+                                                                                                           ],
+                                                                                              "description":  "Input parameters for generation. When `image_urls` is present, the request is routed to edit mode automatically.",
+                                                                                              "properties":  {
+                                                                                                                 "prompt":  {
+                                                                                                                                "type":  "string",
+                                                                                                                                "description":  "Prompt describing the desired output",
+                                                                                                                                "maxLength":  2000,
+                                                                                                                                "example":  "A beautiful sunset over the ocean"
+                                                                                                                            },
+                                                                                                                 "image_urls":  {
+                                                                                                                                    "type":  "array",
+                                                                                                                                    "items":  {
+                                                                                                                                                  "type":  "string",
+                                                                                                                                                  "format":  "uri"
+                                                                                                                                              },
+                                                                                                                                    "minItems":  1,
+                                                                                                                                    "maxItems":  4,
+                                                                                                                                    "description":  "Reference images for editing (1-4 images required). Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt.",
+                                                                                                                                    "example":  [
+                                                                                                                                                    "https://example.com/reference1.jpg"
+                                                                                                                                                ]
+                                                                                                                                },
+                                                                                                                 "size":  {
+                                                                                                                              "description":  "Output size. Supported preset values: `512x512`, `1024x1024`, `768x1024`, `1024x768`, `576x1024`, `1024x576`. For custom image sizes, you can pass `width` and `height` as an object: `{ \"width\": 1280, \"height\": 720 }`.",
+                                                                                                                              "oneOf":  [
+                                                                                                                                            {
+                                                                                                                                                "type":  "string",
+                                                                                                                                                "enum":  [
+                                                                                                                                                             "512x512",
+                                                                                                                                                             "1024x1024",
+                                                                                                                                                             "768x1024",
+                                                                                                                                                             "1024x768",
+                                                                                                                                                             "576x1024",
+                                                                                                                                                             "1024x576"
+                                                                                                                                                         ],
+                                                                                                                                                "example":  "1024x1024"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "type":  "object",
+                                                                                                                                                "required":  [
+                                                                                                                                                                 "width",
+                                                                                                                                                                 "height"
+                                                                                                                                                             ],
+                                                                                                                                                "properties":  {
+                                                                                                                                                                   "width":  {
+                                                                                                                                                                                 "type":  "integer",
+                                                                                                                                                                                 "example":  1280
+                                                                                                                                                                             },
+                                                                                                                                                                   "height":  {
+                                                                                                                                                                                  "type":  "integer",
+                                                                                                                                                                                  "example":  720
+                                                                                                                                                                              }
+                                                                                                                                                               },
+                                                                                                                                                "example":  {
+                                                                                                                                                                "width":  1280,
+                                                                                                                                                                "height":  720
+                                                                                                                                                            }
+                                                                                                                                            }
+                                                                                                                                        ],
+                                                                                                                              "default":  "1024x1024",
+                                                                                                                              "example":  "1024x1024"
+                                                                                                                          },
+                                                                                                                 "n":  {
+                                                                                                                           "type":  "integer",
+                                                                                                                           "description":  "Number of images to generate (1-4). Credits are charged by image count.",
+                                                                                                                           "minimum":  1,
+                                                                                                                           "maximum":  4,
+                                                                                                                           "default":  1,
+                                                                                                                           "example":  1
+                                                                                                                       },
+                                                                                                                 "seed":  {
+                                                                                                                              "type":  "integer",
+                                                                                                                              "description":  "Optional random seed for reproducible output",
+                                                                                                                              "example":  12345
+                                                                                                                          }
+                                                                                                             }
+                                                                                          }
+                                                                            }
+                                                         },
+                                       "SubmitResponse":  {
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "code",
+                                                                               "data"
+                                                                           ],
+                                                              "properties":  {
+                                                                                 "code":  {
+                                                                                              "type":  "integer",
+                                                                                              "example":  200,
+                                                                                              "description":  "HTTP status code"
+                                                                                          },
+                                                                                 "data":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "task_id",
+                                                                                                               "status",
+                                                                                                               "created_time"
+                                                                                                           ],
+                                                                                              "properties":  {
+                                                                                                                 "task_id":  {
+                                                                                                                                 "type":  "string",
+                                                                                                                                 "example":  "task-unified-1757165031-uyujaw3d",
+                                                                                                                                 "description":  "Unique task identifier for status tracking"
+                                                                                                                             },
+                                                                                                                 "status":  {
+                                                                                                                                "type":  "string",
+                                                                                                                                "enum":  [
+                                                                                                                                             "not_started"
+                                                                                                                                         ],
+                                                                                                                                "example":  "not_started",
+                                                                                                                                "description":  "Initial task status"
+                                                                                                                            },
+                                                                                                                 "created_time":  {
+                                                                                                                                      "type":  "string",
+                                                                                                                                      "format":  "date-time",
+                                                                                                                                      "example":  "2025-11-12T10:30:00",
+                                                                                                                                      "description":  "ISO 8601 timestamp when the task was created"
+                                                                                                                                  }
+                                                                                                             }
+                                                                                          }
+                                                                             }
+                                                          },
+                                       "ErrorResponse":  {
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "code",
+                                                                              "error"
+                                                                          ],
+                                                             "properties":  {
+                                                                                "code":  {
+                                                                                             "type":  "integer",
+                                                                                             "example":  400,
+                                                                                             "description":  "HTTP status code"
+                                                                                         },
+                                                                                "error":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "message",
+                                                                                                               "type"
+                                                                                                           ],
+                                                                                              "properties":  {
+                                                                                                                 "message":  {
+                                                                                                                                 "type":  "string",
+                                                                                                                                 "example":  "Invalid request parameters",
+                                                                                                                                 "description":  "Error message describing what went wrong"
+                                                                                                                             },
+                                                                                                                 "type":  {
+                                                                                                                              "type":  "string",
+                                                                                                                              "example":  "invalid_request_error",
+                                                                                                                              "description":  "Error type identifier"
+                                                                                                                          }
+                                                                                                             }
+                                                                                          }
+                                                                            }
+                                                         }
+                                   }
+                   }
 }
