@@ -28,13 +28,23 @@ openapi: "/api-manual/image-series/kling-o3.json POST /api/generate/submit"
 
 - `prompt` - Required generation or editing prompt
 - `image_urls` - Optional reference image URLs, `1-10` images, used for image editing mode
-- `elements` - Optional array of element descriptors, passed through to the upstream model
+- `elements` - Optional array of element descriptors for character/object control. Reference them in prompt as `@Element1`, `@Element2`, etc. Recommended structure: `frontal_image_url` for the main face/object image, and optional `reference_image_urls` for additional reference views
 - `resolution` - `1K`, `2K`, `4K`
 - `result_type` - `single` or `series`
 - `size` - For `kling-o3-image`: `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`; for `kling-o3-image-edit`: `auto`, `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`
 - `output_format` - `jpeg`, `png`, `webp`
 - `n` - Output image count for `single`, `1-9`
 - `series_amount` - Output image count for `series`, `2-9`
+
+## Elements Notes
+
+- `elements` is intended for upstream face/object control
+- Recommended element fields:
+  - `frontal_image_url`: public image URL for the main character/object view
+  - `reference_image_urls`: optional array of additional public image URLs
+- In current upstream testing, `kling-o3-image` `series` mode should use real image-based `elements` when you want character consistency
+- Placeholder objects are not enough for this scenario
+- Even when image-based `elements` are provided, the upstream model may still return an empty `images` array for some `series` requests
 
 ## Billing Notes
 

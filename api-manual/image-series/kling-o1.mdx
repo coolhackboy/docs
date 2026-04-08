@@ -22,7 +22,7 @@ openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 
 - `prompt` - Required editing prompt
 - `image_urls` - Required reference image URLs, `1-10` images
-- `elements` - Optional array of element descriptors, passed through to the upstream model
+- `elements` - Optional array of element descriptors for character/object control. Reference them in prompt as `@Element1`, `@Element2`, etc. Recommended structure: `frontal_image_url` for the main face/object image, and optional `reference_image_urls` for additional reference views
 - `resolution` - `1K` or `2K`
 - `size` - `auto`, `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`
 - `output_format` - `jpeg`, `png`, `webp`
@@ -49,8 +49,8 @@ curl --request POST \
       "image_urls": ["https://example.com/reference1.png"],
       "elements": [
         {
-          "type": "subject",
-          "name": "product"
+          "frontal_image_url": "https://example.com/subject-front.png",
+          "reference_image_urls": ["https://example.com/subject-side.png"]
         }
       ],
       "resolution": "2K",
