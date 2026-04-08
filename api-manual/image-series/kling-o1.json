@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Kling-O1-Edit API",
+    "title": "PoYo AI - Kling-O1-Image-Edit API",
     "description": "Kling official image editing model with reference images, elements support, and flexible aspect ratios",
     "version": "1.0.0"
   },
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Kling-O1-Edit Generation Task",
+        "summary": "Submit Kling-O1-Image-Edit Generation Task",
         "description": "Image editing with reference images, optional elements, and `1K` / `2K` resolution presets",
-        "operationId": "submitKlingO1EditTask",
-        "tags": ["Kling-O1-Edit"],
+        "operationId": "submitKlingO1ImageEditTask",
+        "tags": ["Kling-O1-Image-Edit"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,10 +31,10 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "kling-o1-edit": {
-                  "summary": "Kling-O1-Edit Image Editing",
+                "kling-o1-image-edit": {
+                  "summary": "Kling-O1-Image-Edit Image Editing",
                   "value": {
-                    "model": "kling-o1-edit",
+                    "model": "kling-o1-image-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Transform the product shot into a premium studio campaign image",
@@ -123,8 +123,8 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Kling-O1-Edit model identifier",
-            "enum": ["kling-o1-edit"]
+            "description": "Kling-O1-Image-Edit model identifier",
+            "enum": ["kling-o1-image-edit"]
           },
           "callback_url": {
             "type": "string",
@@ -151,7 +151,7 @@
                 },
                 "minItems": 1,
                 "maxItems": 10,
-                "description": "Reference image URLs for editing. Required for kling-o1-edit.",
+                "description": "Reference image URLs for editing. Required for kling-o1-image-edit.",
                 "example": ["https://example.com/reference1.png"]
               },
               "elements": {
@@ -184,8 +184,8 @@
               },
               "output_format": {
                 "type": "string",
-                "description": "Output image format. `jpg` is normalized to `jpeg` by the service.",
-                "enum": ["jpg", "jpeg", "png", "webp"],
+                "description": "Output image format.",
+                "enum": ["jpeg", "png", "webp"],
                 "default": "png",
                 "example": "png"
               },

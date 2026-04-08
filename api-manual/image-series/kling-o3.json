@@ -1,7 +1,7 @@
-﻿{
+{
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Kling-O3 API",
+    "title": "PoYo AI - Kling-O3-Image API",
     "description": "Kling official generation and editing model with single and series modes, optional reference images, and flexible aspect ratios",
     "version": "1.0.0"
   },
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Kling-O3 Generation Task",
+        "summary": "Submit Kling-O3-Image Generation Task",
         "description": "Image generation and editing with optional reference images, `single` and `series` result modes, multiple resolutions, and element guidance",
-        "operationId": "submitKlingO3Task",
-        "tags": ["Kling-O3"],
+        "operationId": "submitKlingO3ImageTask",
+        "tags": ["Kling-O3-Image"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,10 +31,10 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "kling-o3-single": {
-                  "summary": "Kling-O3 Single Generation",
+                "kling-o3-image-single": {
+                  "summary": "Kling-O3-Image Single Generation",
                   "value": {
-                    "model": "kling-o3",
+                    "model": "kling-o3-image",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A cinematic futuristic alley with rain and neon reflections",
@@ -46,10 +46,10 @@
                     }
                   }
                 },
-                "kling-o3-series": {
-                  "summary": "Kling-O3 Series Generation",
+                "kling-o3-image-series": {
+                  "summary": "Kling-O3-Image Series Generation",
                   "value": {
-                    "model": "kling-o3",
+                    "model": "kling-o3-image",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Create a four-frame fashion storyboard of the same character entering a luxury hotel",
@@ -68,9 +68,9 @@
                   }
                 },
                 "kling-o3-image-edit": {
-                  "summary": "Kling-O3 Image Editing",
+                  "summary": "Kling-O3-Image-Edit Image Editing",
                   "value": {
-                    "model": "kling-o3-edit",
+                    "model": "kling-o3-image-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Turn the reference scene into a luxury night interior with dramatic window light",
@@ -154,8 +154,8 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Model identifier. Use `kling-o3` for prompt-only generation, or `kling-o3-edit` for image editing.",
-            "enum": ["kling-o3", "kling-o3-edit"]
+            "description": "Model identifier. Use `kling-o3-image` for prompt-only generation, or `kling-o3-image-edit` for image editing.",
+            "enum": ["kling-o3-image", "kling-o3-image-edit"]
           },
           "callback_url": {
             "type": "string",
@@ -182,7 +182,7 @@
                 },
                 "minItems": 1,
                 "maxItems": 10,
-                "description": "Reference image URLs. Required when `model` is `kling-o3-edit`.",
+                "description": "Reference image URLs. Required when `model` is `kling-o3-image-edit`.",
                 "example": ["https://example.com/reference1.png"]
               },
               "elements": {
@@ -215,15 +215,15 @@
               },
               "size": {
                 "type": "string",
-                "description": "Output aspect ratio preset. `auto` is only supported when `model` is `kling-o3-edit`; `kling-o3` only supports fixed aspect ratios.",
+                "description": "Output aspect ratio preset. `auto` is only supported when `model` is `kling-o3-image-edit`; `kling-o3-image` only supports fixed aspect ratios.",
                 "enum": ["auto", "16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "21:9"],
                 "default": "16:9",
                 "example": "16:9"
               },
               "output_format": {
                 "type": "string",
-                "description": "Output image format. `jpg` is normalized to `jpeg` by the service.",
-                "enum": ["jpg", "jpeg", "png", "webp"],
+                "description": "Output image format.",
+                "enum": ["jpeg", "png", "webp"],
                 "default": "png",
                 "example": "png"
               },

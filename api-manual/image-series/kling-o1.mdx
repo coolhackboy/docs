@@ -1,5 +1,5 @@
 ﻿---
-title: "Kling-O1-Edit Image Generation"
+title: "Kling-O1-Image-Edit Image Generation"
 description: "Kling official image editing model with reference images, elements support, and flexible aspect ratios"
 icon: "image"
 openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
@@ -10,13 +10,13 @@ openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Kling-O1-Edit Image Generation
+# Kling-O1-Image-Edit Image Generation
 
-`kling-o1-edit` is a Kling official image editing model for prompt-based image transformation.
+`kling-o1-image-edit` is a Kling official image editing model for prompt-based image transformation.
 
 ## Available Model
 
-- **kling-o1-edit** - Image editing with reference images and optional element guidance
+- **kling-o1-image-edit** - Image editing with reference images and optional element guidance
 
 ## Supported Parameters
 
@@ -25,7 +25,7 @@ openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 - `elements` - Optional array of element descriptors, passed through to the upstream model
 - `resolution` - `1K` or `2K`
 - `size` - `auto`, `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`
-- `output_format` - `jpg`, `jpeg`, `png`, `webp`
+- `output_format` - `jpeg`, `png`, `webp`
 - `n` - Number of output images, `1-9`
 
 ## Billing Notes
@@ -42,7 +42,7 @@ curl --request POST \
   --header 'Authorization: Bearer YOUR_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '{
-    "model": "kling-o1-edit",
+    "model": "kling-o1-image-edit",
     "callback_url": "https://your-domain.com/callback",
     "input": {
       "prompt": "Transform the product shot into a premium studio campaign image",
