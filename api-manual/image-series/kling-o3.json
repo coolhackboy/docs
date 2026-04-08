@@ -1,8 +1,8 @@
-{
+﻿{
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O3-Image API",
-    "description": "Kling official generation and editing model with single and series modes, optional reference images, and flexible aspect ratios",
+    "description": "Kling official generation and editing model with prompt-only and image-edit modes",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Kling-O3-Image Generation Task",
-        "description": "Image generation and editing with optional reference images, `single` and `series` result modes, multiple resolutions, and element guidance",
+        "description": "Image generation and editing with optional reference images, multiple resolutions, and element guidance",
         "operationId": "submitKlingO3ImageTask",
         "tags": ["Kling-O3-Image"],
         "requestBody": {
@@ -31,41 +31,17 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "kling-o3-image-single": {
-                  "summary": "Kling-O3-Image Single Generation",
+                "kling-o3-image": {
+                  "summary": "Kling-O3-Image Prompt-only Generation",
                   "value": {
                     "model": "kling-o3-image",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A cinematic futuristic alley with rain and neon reflections",
                       "resolution": "4K",
-                      "result_type": "single",
                       "size": "16:9",
                       "output_format": "png",
                       "n": 2
-                    }
-                  }
-                },
-                "kling-o3-image-series": {
-                  "summary": "Kling-O3-Image Series Generation",
-                  "value": {
-                    "model": "kling-o3-image",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "Create a four-frame fashion storyboard of the same character entering a luxury hotel",
-                      "elements": [
-                        {
-                          "frontal_image_url": "https://example.com/lead-model-front.png",
-                          "reference_image_urls": [
-                            "https://example.com/lead-model-side.png"
-                          ]
-                        }
-                      ],
-                      "resolution": "2K",
-                      "result_type": "series",
-                      "size": "9:16",
-                      "output_format": "jpeg",
-                      "series_amount": 4
                     }
                   }
                 },
@@ -80,7 +56,6 @@
                         "https://example.com/reference1.png"
                       ],
                       "resolution": "4K",
-                      "result_type": "single",
                       "size": "auto",
                       "output_format": "png",
                       "n": 1
@@ -189,7 +164,7 @@
               },
               "elements": {
                 "type": "array",
-                "description": "Optional array of element descriptors for character/object control. Reference them in prompt as @Element1, @Element2, etc. Recommended fields are `frontal_image_url` and optional `reference_image_urls`. In current upstream testing, `kling-o3-image` series mode should use real image-based elements, and the upstream may still return an empty images array in some requests.",
+                "description": "Optional array of element descriptors for character/object control. Reference them in prompt as @Element1, @Element2, etc. Recommended fields are `frontal_image_url` and optional `reference_image_urls`.",
                 "items": {
                   "type": "object",
                   "properties": {
@@ -225,13 +200,6 @@
                 "default": "1K",
                 "example": "4K"
               },
-              "result_type": {
-                "type": "string",
-                "description": "Output mode. Use `n` for `single`, and `series_amount` for `series`.",
-                "enum": ["single", "series"],
-                "default": "single",
-                "example": "single"
-              },
               "size": {
                 "type": "string",
                 "description": "Output aspect ratio preset. `auto` is only supported when `model` is `kling-o3-image-edit`; `kling-o3-image` only supports fixed aspect ratios.",
@@ -248,18 +216,11 @@
               },
               "n": {
                 "type": "integer",
-                "description": "Number of output images in `single` mode (1-9).",
+                "description": "Number of images to generate (1-9). Billing is based on the selected resolution and `n`.",
                 "minimum": 1,
                 "maximum": 9,
                 "default": 1,
                 "example": 2
-              },
-              "series_amount": {
-                "type": "integer",
-                "description": "Number of output images in `series` mode (2-9).",
-                "minimum": 2,
-                "maximum": 9,
-                "example": 4
               }
             }
           }
