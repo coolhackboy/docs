@@ -1,0 +1,62 @@
+﻿---
+title: "Kling-O1-Edit Image Generation"
+description: "Kling official image editing model with reference images, elements support, and flexible aspect ratios"
+icon: "image"
+openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Kling-O1-Edit Image Generation
+
+`kling-o1-edit` is a Kling official image editing model for prompt-based image transformation.
+
+## Available Model
+
+- **kling-o1-edit** - Image editing with reference images and optional element guidance
+
+## Supported Parameters
+
+- `prompt` - Required editing prompt
+- `image_urls` - Required reference image URLs, `1-10` images
+- `elements` - Optional array of element descriptors, passed through to the upstream model
+- `resolution` - `1K` or `2K`
+- `size` - `auto`, `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`
+- `output_format` - `jpg`, `jpeg`, `png`, `webp`
+- `n` - Number of output images, `1-9`
+
+## Billing Notes
+
+Billing is based on the selected resolution and the output count specified by `n`.
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "kling-o1-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Transform the product shot into a premium studio campaign image",
+      "image_urls": ["https://example.com/reference1.png"],
+      "elements": [
+        {
+          "type": "subject",
+          "name": "product"
+        }
+      ],
+      "resolution": "2K",
+      "size": "16:9",
+      "output_format": "png",
+      "n": 2
+    }
+  }'
+```

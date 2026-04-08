@@ -1,0 +1,93 @@
+﻿---
+title: "Kling-O3 Image Generation"
+description: "Kling official generation and editing model with single and series modes"
+icon: "image"
+openapi: "/api-manual/image-series/kling-o3.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Kling-O3 Image Generation
+
+`kling-o3` is a Kling official image model that supports both prompt-only generation and image editing with reference images.
+
+## Available Model
+
+- **kling-o3** - Prompt-only image generation with `single` and `series` result modes
+- **kling-o3-edit** - Image editing with reference images and `single` / `series` result modes
+
+## Result Modes
+
+- `single`: Generate one or more standalone images using `n`
+- `series`: Generate a connected image series using `series_amount`
+
+## Supported Parameters
+
+- `prompt` - Required generation or editing prompt
+- `image_urls` - Optional reference image URLs, `1-10` images, used for image editing mode
+- `elements` - Optional array of element descriptors, passed through to the upstream model
+- `resolution` - `1K`, `2K`, `4K`
+- `result_type` - `single` or `series`
+- `size` - For `kling-o3`: `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`; for `kling-o3-edit`: `auto`, `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`
+- `output_format` - `jpg`, `jpeg`, `png`, `webp`
+- `n` - Output image count for `single`, `1-9`
+- `series_amount` - Output image count for `series`, `2-9`
+
+## Billing Notes
+
+Billing is based on the selected resolution and actual output count:
+
+- The total charge depends on the selected resolution and the number of generated images
+- In `single` mode, billing is calculated based on `n`
+- In `series` mode, billing is calculated based on `series_amount`
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Single mode example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "kling-o3",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A cinematic futuristic alley with rain and neon reflections",
+      "resolution": "4K",
+      "result_type": "single",
+      "size": "16:9",
+      "output_format": "png",
+      "n": 2
+    }
+  }'
+```
+
+Image editing example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "kling-o3-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Turn the reference scene into a luxury night interior with dramatic window light",
+      "image_urls": ["https://example.com/reference1.png"],
+      "resolution": "4K",
+      "result_type": "single",
+      "size": "auto",
+      "output_format": "png",
+      "n": 1
+    }
+  }'
+```
+

@@ -1,0 +1,267 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling-O1-Edit API",
+    "description": "Kling official image editing model with reference images, elements support, and flexible aspect ratios",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Kling-O1-Edit Generation Task",
+        "description": "Image editing with reference images, optional elements, and `1K` / `2K` resolution presets",
+        "operationId": "submitKlingO1EditTask",
+        "tags": ["Kling-O1-Edit"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "kling-o1-edit": {
+                  "summary": "Kling-O1-Edit Image Editing",
+                  "value": {
+                    "model": "kling-o1-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Transform the product shot into a premium studio campaign image",
+                      "image_urls": [
+                        "https://example.com/reference1.png"
+                      ],
+                      "elements": [
+                        {
+                          "type": "subject",
+                          "name": "product"
+                        }
+                      ],
+                      "resolution": "2K",
+                      "size": "16:9",
+                      "output_format": "png",
+                      "n": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling-O1-Edit model identifier",
+            "enum": ["kling-o1-edit"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt", "image_urls"],
+            "description": "Input parameters for image editing",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Editing prompt describing the desired output",
+                "maxLength": 2000,
+                "example": "Transform the product shot into a premium studio campaign image"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 10,
+                "description": "Reference image URLs for editing. Required for kling-o1-edit.",
+                "example": ["https://example.com/reference1.png"]
+              },
+              "elements": {
+                "type": "array",
+                "description": "Optional array of element descriptors. The content is passed through to the upstream model as-is.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "example": [
+                  {
+                    "type": "subject",
+                    "name": "product"
+                  }
+                ]
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution preset",
+                "enum": ["1K", "2K"],
+                "default": "1K",
+                "example": "2K"
+              },
+              "size": {
+                "type": "string",
+                "description": "Output aspect ratio preset",
+                "enum": ["auto", "16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "21:9"],
+                "default": "auto",
+                "example": "16:9"
+              },
+              "output_format": {
+                "type": "string",
+                "description": "Output image format. `jpg` is normalized to `jpeg` by the service.",
+                "enum": ["jpg", "jpeg", "png", "webp"],
+                "default": "png",
+                "example": "png"
+              },
+              "n": {
+                "type": "integer",
+                "description": "Number of images to generate (1-9). Credits are charged by image count.",
+                "minimum": 1,
+                "maximum": 9,
+                "default": 1,
+                "example": 2
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
