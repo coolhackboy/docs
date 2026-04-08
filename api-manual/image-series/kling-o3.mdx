@@ -1,6 +1,6 @@
 ﻿---
-title: "Kling-O3-Image Image Generation"
-description: "Kling official generation and editing model with prompt-only and image-edit modes"
+title: "Kling-o3"
+description: "A high-expressiveness image generation model optimized for strong semantic understanding and scene composition, ideal for creative and narrative-driven visuals"
 icon: "image"
 openapi: "/api-manual/image-series/kling-o3.json POST /api/generate/submit"
 ---
@@ -9,10 +9,6 @@ openapi: "/api-manual/image-series/kling-o3.json POST /api/generate/submit"
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Kling-O3-Image Image Generation
-
-`kling-o3-image` is a Kling official image model that supports both prompt-only generation and image editing with reference images.
 
 ## Available Model
 
@@ -87,5 +83,3 @@ curl --request POST \
     }
   }'
 ```
-
-

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O3-Image API",
-    "description": "Kling official generation and editing model with prompt-only and image-edit modes",
+    "description": "A high-expressiveness image generation model optimized for strong semantic understanding and scene composition, ideal for creative and narrative-driven visuals",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Kling-O3-Image Generation Task",
-        "description": "Image generation and editing with optional reference images, multiple resolutions, and element guidance",
+        "description": "A high-expressiveness image generation model optimized for strong semantic understanding and scene composition, ideal for creative and narrative-driven visuals",
         "operationId": "submitKlingO3ImageTask",
         "tags": ["Kling-O3-Image"],
         "requestBody": {
@@ -131,7 +131,7 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Model identifier. Use `kling-o3-image` for prompt-only generation, or `kling-o3-image-edit` for image editing.",
+            "description": "Model identifier.",
             "enum": ["kling-o3-image", "kling-o3-image-edit"]
           },
           "callback_url": {
@@ -290,4 +290,3 @@
     }
   }
 }
-

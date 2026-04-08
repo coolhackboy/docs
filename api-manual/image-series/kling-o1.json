@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O1-Image-Edit API",
-    "description": "Kling official image editing model with reference images, elements support, and flexible aspect ratios",
+    "description": "A high-consistency image generation model optimized for precise reference alignment and fine detail control, ideal for character and product-focused use cases",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Kling-O1-Image-Edit Generation Task",
-        "description": "Image editing with reference images, optional elements, and `1K` / `2K` resolution presets",
+        "description": "A high-consistency image generation model optimized for precise reference alignment and fine detail control, ideal for character and product-focused use cases",
         "operationId": "submitKlingO1ImageEditTask",
         "tags": ["Kling-O1-Image-Edit"],
         "requestBody": {
@@ -284,4 +284,3 @@
     }
   }
 }
-

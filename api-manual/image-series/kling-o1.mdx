@@ -1,6 +1,6 @@
 ﻿---
-title: "Kling-O1-Image-Edit Image Generation"
-description: "Kling official image editing model with reference images, elements support, and flexible aspect ratios"
+title: "Kling-o1"
+description: "A high-consistency image generation model optimized for precise reference alignment and fine detail control, ideal for character and product-focused use cases"
 icon: "image"
 openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 ---
@@ -9,10 +9,6 @@ openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Kling-O1-Image-Edit Image Generation
-
-`kling-o1-image-edit` is a Kling official image editing model for prompt-based image transformation.
 
 ## Available Model
 
@@ -62,5 +58,3 @@ curl --request POST \
     }
   }'
 ```
-
-
