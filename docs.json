@@ -89,9 +89,7 @@
     "/api-manual/account-management/user-balance.json",
     "/api-manual/file-series/upload-url.json",
     "/api-manual/file-series/upload-base64.json",
-    "/api-manual/file-series/upload-stream.json",
-    "/api-manual/file-series/create-asset.json",
-    "/api-manual/file-series/query-asset.json"
+    "/api-manual/file-series/upload-stream.json"
   ],
   "navigation": {
     "tabs": [
@@ -315,9 +313,7 @@
             "pages": [
               "api-manual/file-series/upload-url",
               "api-manual/file-series/upload-base64",
-              "api-manual/file-series/upload-stream",
-              "api-manual/file-series/create-asset",
-              "api-manual/file-series/query-asset"
+              "api-manual/file-series/upload-stream"
             ]
           },
           {
