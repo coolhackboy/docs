@@ -1,6 +1,6 @@
 ---
 title: "Seedance 2 Video Generation"
-description: "Video generation with Seedance 2"
+description: "Video generation with Seedance 2 and Seedance 2 Fast"
 icon: "video"
 openapi: "/api-manual/video-series/seedance-2.json POST /api/generate/submit"
 ---
@@ -10,13 +10,10 @@ openapi: "/api-manual/video-series/seedance-2.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Seedance 2 Video Generation
-
-Generate videos using Seedance 2 by ByteDance. This model supports text-to-video, first and last frame guided generation, and multimodal reference-to-video with optional audio generation.
-
-## Available Model
+## Available Models
 
 - **seedance-2** - Standard Seedance 2 video generation model
+- **seedance-2-fast** - Faster, lower-cost Seedance 2 variant
 
 ## Key Features
 
@@ -24,6 +21,11 @@ Generate videos using Seedance 2 by ByteDance. This model supports text-to-video
 - **First and Last Frame Control**: Use up to 2 images as the first and last frame
 - **Multimodal Reference**: Guide generation with reference images, videos, and audio
 - **Optional Audio**: Request generated audio together with the video
+
+## Variant Notes
+
+- `seedance-2` is the default standard-quality variant
+- `seedance-2-fast` uses the same input schema but is optimized for lower latency and lower credit cost
 
 ## Important Notes
 
@@ -39,4 +41,3 @@ Generate videos using Seedance 2 by ByteDance. This model supports text-to-video
 
 - Credits are calculated based on video duration and selected resolution.
 - If `reference_video_urls` is provided, the final credit cost may differ from requests without video references.
-

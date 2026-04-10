@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedance 2 API",
-    "description": "Video generation with Seedance 2",
+    "description": "Video generation with Seedance 2 and Seedance 2 Fast",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Seedance 2 Video Generation Task",
-        "description": "Generate videos using Seedance 2 with text-to-video, first and last frame, and multimodal reference workflows.",
+        "description": "Generate videos using Seedance 2 or Seedance 2 Fast with text-to-video, first and last frame, and multimodal reference workflows.",
         "operationId": "submitSeedance2Task",
         "tags": ["Seedance 2"],
         "requestBody": {
@@ -31,7 +31,7 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "text-to-video": {
+                "seedance-2-text-to-video": {
                   "summary": "Seedance 2 Text-to-Video",
                   "value": {
                     "model": "seedance-2",
@@ -46,7 +46,22 @@
                     }
                   }
                 },
-                "first-last-frame": {
+                "seedance-2-fast-text-to-video": {
+                  "summary": "Seedance 2 Fast Text-to-Video",
+                  "value": {
+                    "model": "seedance-2-fast",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A fast-paced tracking shot through a cyberpunk alley with glowing signs and drifting mist",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 5,
+                      "generate_audio": true,
+                      "seed": 42
+                    }
+                  }
+                },
+                "seedance-2-first-last-frame": {
                   "summary": "Seedance 2 First and Last Frame",
                   "value": {
                     "model": "seedance-2",
@@ -65,13 +80,13 @@
                     }
                   }
                 },
-                "multimodal-reference": {
-                  "summary": "Seedance 2 Multimodal Reference-to-Video",
+                "seedance-2-fast-multimodal-reference": {
+                  "summary": "Seedance 2 Fast Multimodal Reference-to-Video",
                   "value": {
-                    "model": "seedance-2",
+                    "model": "seedance-2-fast",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A stylish character walks through a futuristic subway station with rhythmic motion and dramatic lighting",
+                      "prompt": "A stylish fashion short with energetic pacing, matching the movement rhythm of the reference clip",
                       "reference_image_urls": [
                         "https://example.com/reference-image.jpg"
                       ],
@@ -82,7 +97,7 @@
                         "https://example.com/reference-audio.mp3"
                       ],
                       "aspect_ratio": "9:16",
-                      "resolution": "480p",
+                      "resolution": "720p",
                       "duration": 5,
                       "generate_audio": true,
                       "seed": 42
@@ -124,9 +139,10 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Seedance 2 model identifier",
+            "description": "Seedance 2 model identifier. Use `seedance-2` for the standard variant or `seedance-2-fast` for faster, lower-cost generation.",
             "enum": [
-              "seedance-2"
+              "seedance-2",
+              "seedance-2-fast"
             ]
           },
           "callback_url": {
