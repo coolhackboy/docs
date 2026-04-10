@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Nano Banana 2 (gemini-3.1-flash-image-preview) Generation Task",
-        "description": "Next-generation AI image generation and editing powered by Gemini 3.1 Flash Image Preview with native 2K / 4K resolution",
+        "summary": "Submit Nano Banana 2 / Nano Banana 2 Official Generation Task",
+        "description": "Image generation and editing for both Gemini 3.1 Flash Image Preview and Fal official Nano Banana 2 model families",
         "operationId": "submitNanoBanana2NewTask",
-        "tags": ["Nano Banana 2 (gemini-3.1-flash-image-preview)"],
+        "tags": ["Nano Banana 2"],
         "requestBody": {
           "required": true,
           "content": {
@@ -53,6 +53,37 @@
                       "image_urls": ["https://example.com/landscape.jpg"],
                       "size": "16:9",
                       "resolution": "2K"
+                    }
+                  }
+                },
+                "nano-banana-2-official": {
+                  "summary": "Nano Banana 2 Official Image Generation",
+                  "value": {
+                    "model": "nano-banana-2-official",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A product hero shot of a transparent glass perfume bottle on reflective stone, soft daylight, premium editorial composition",
+                      "size": "auto",
+                      "resolution": "0.5K",
+                      "output_format": "webp",
+                      "google_search": true,
+                      "seed": 24680
+                    }
+                  }
+                },
+                "nano-banana-2-official-edit": {
+                  "summary": "Nano Banana 2 Official Image Edit",
+                  "value": {
+                    "model": "nano-banana-2-official-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Replace the background with a clean studio gradient and keep the product label sharp",
+                      "image_urls": ["https://example.com/perfume-bottle.png"],
+                      "size": "auto",
+                      "resolution": "1K",
+                      "output_format": "png",
+                      "google_search": false,
+                      "seed": 24680
                     }
                   }
                 }
@@ -125,10 +156,12 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Nano Banana 2 (gemini-3.1-flash-image-preview) model identifier",
+            "description": "Nano Banana 2 model identifier",
             "enum": [
               "nano-banana-2-new",
-              "nano-banana-2-new-edit"
+              "nano-banana-2-new-edit",
+              "nano-banana-2-official",
+              "nano-banana-2-official-edit"
             ]
           },
           "callback_url": {
@@ -140,7 +173,7 @@
           "input": {
             "type": "object",
             "required": ["prompt"],
-            "description": "Input parameters for generation",
+            "description": "Input parameters for generation. Supported fields vary by model family.",
             "properties": {
               "prompt": {
                 "type": "string",
@@ -154,26 +187,39 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Reference image URLs (for image editing, supports up to 14 images)",
+                "description": "Reference image URLs. Required for edit models and supports up to 14 images.",
                 "example": []
               },
               "size": {
                 "type": "string",
-                "description": "Image size ratio",
-                "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
+                "description": "Image size ratio. `nano-banana-2-new` supports standard aspect ratios. `nano-banana-2-official` also supports `auto`, `4:1`, `1:4`, `8:1`, and `1:8`.",
+                "enum": ["auto", "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9", "4:1", "1:4", "8:1", "1:8"],
                 "example": "16:9"
               },
               "resolution": {
                 "type": "string",
-                "description": "Output image resolution",
-                "enum": ["1K", "2K", "4K"],
+                "description": "Output image resolution. `nano-banana-2-new` supports `1K`, `2K`, `4K`. `nano-banana-2-official` also supports `0.5K`.",
+                "enum": ["0.5K", "1K", "2K", "4K"],
                 "default": "1K",
                 "example": "1K"
               },
+              "output_format": {
+                "type": "string",
+                "description": "Nano Banana 2 Official only. Output image format.",
+                "enum": ["png", "jpg", "jpeg", "webp"],
+                "default": "png",
+                "example": "png"
+              },
               "google_search": {
                 "type": "boolean",
-                "description": "Use Google Web Search grounding to generate images based on real-time information",
+                "description": "Use Google Web Search grounding to generate images based on real-time information. Supported by both model families; official models map it internally to `enable_web_search`.",
+                "default": false,
                 "example": false
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Nano Banana 2 Official only. Optional random seed for reproducible output.",
+                "example": 24680
               }
             }
           }
