@@ -1,175 +1,231 @@
-{
-  "openapi": "3.0.0",
-  "info": {
-    "title": "PoYo AI - Z-Image API",
-    "description": "Z-Image Generation",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://api.poyo.ai",
-      "description": "Production server"
-    }
-  ],
-  "security": [
-    {
-      "BearerAuth": []
-    }
-  ],
-  "paths": {
-    "/api/generate/submit": {
-      "post": {
-        "summary": "Submit Z-Image Generation Task",
-        "description": "Generate images using Z-Image model",
-        "operationId": "submitZImageTask",
-        "tags": ["Z-Image"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SubmitRequest"
-              },
-              "examples": {
-                "z-image": {
-                  "summary": "Z-Image Generation",
-                  "value": {
-                    "model": "z-image",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A serene mountain landscape at sunset with vibrant colors",
-                      "size": "1:1"
+﻿{
+    "openapi":  "3.0.0",
+    "info":  {
+                 "title":  "PoYo AI - Z-Image API",
+                 "description":  "Z-Image Generation with unified text-to-image and image editing support",
+                 "version":  "1.0.0"
+             },
+    "servers":  [
+                    {
+                        "url":  "https://api.poyo.ai",
+                        "description":  "Production server"
                     }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Task submitted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SubmitResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "securitySchemes": {
-      "BearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "API Key",
-        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
-      }
-    },
-    "schemas": {
-      "SubmitRequest": {
-        "type": "object",
-        "required": ["model"],
-        "properties": {
-          "model": {
-            "type": "string",
-            "description": "Z-Image model identifier",
-            "enum": [
-              "z-image"
-            ]
-          },
-          "callback_url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Webhook callback URL for result notifications",
-            "example": "https://your-domain.com/callback"
-          },
-          "input": {
-            "type": "object",
-            "required": ["prompt", "size"],
-            "description": "Input parameters for generation",
-            "properties": {
-              "prompt": {
-                "type": "string",
-                "description": "Generation prompt describing the desired output",
-                "maxLength": 1000,
-                "example": "A beautiful sunset over the ocean"
+                ],
+    "security":  [
+                     {
+                         "BearerAuth":  [
+
+                                        ]
+                     }
+                 ],
+    "paths":  {
+                  "/api/generate/submit":  {
+                                               "post":  {
+                                                            "summary":  "Submit Z-Image Generation Task",
+                                                            "description":  "Generate images using Z-Image model with unified text-to-image and image editing support",
+                                                            "operationId":  "submitZImageTask",
+                                                            "tags":  [
+                                                                         "Z-Image"
+                                                                     ],
+                                                            "requestBody":  {
+                                                                                "required":  true,
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/SubmitRequest"
+                                                                                                                                    },
+                                                                                                                         "examples":  {
+                                                                                                                                          "z-image-text":  {
+                                                                                                                                                               "summary":  "Z-Image Text-to-Image",
+                                                                                                                                                               "value":  {
+                                                                                                                                                                             "model":  "z-image",
+                                                                                                                                                                             "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                             "input":  {
+                                                                                                                                                                                           "prompt":  "A serene mountain landscape at sunset with vibrant colors",
+                                                                                                                                                                                           "size":  "1:1"
+                                                                                                                                                                                       }
+                                                                                                                                                                         }
+                                                                                                                                                           },
+                                                                                                                                          "z-image-edit":  {
+                                                                                                                                                               "summary":  "Z-Image Image Editing",
+                                                                                                                                                               "value":  {
+                                                                                                                                                                             "model":  "z-image",
+                                                                                                                                                                             "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                             "input":  {
+                                                                                                                                                                                           "prompt":  "Turn this product photo into a premium studio shot with soft rim lighting",
+                                                                                                                                                                                           "image_urls":  [
+                                                                                                                                                                                                              "https://example.com/reference-image.png"
+                                                                                                                                                                                                          ],
+                                                                                                                                                                                           "size":  "4:3"
+                                                                                                                                                                                       }
+                                                                                                                                                                         }
+                                                                                                                                                           }
+                                                                                                                                      }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                            "responses":  {
+                                                                              "200":  {
+                                                                                          "description":  "Task submitted successfully",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/SubmitResponse"
+                                                                                                                                              }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      }
+                                                                          }
+                                                        }
+                                           }
               },
-              "size": {
-                "type": "string",
-                "description": "Image size ratio",
-                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16"],
-                "example": "1:1"
-              }
-            }
-          }
-        }
-      },
-      "SubmitResponse": {
-        "type": "object",
-        "required": ["code", "data"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 200,
-            "description": "HTTP status code"
-          },
-          "data": {
-            "type": "object",
-            "required": ["task_id", "status", "created_time"],
-            "properties": {
-              "task_id": {
-                "type": "string",
-                "example": "task-unified-1757165031-uyujaw3d",
-                "description": "Unique task identifier for status tracking"
-              },
-              "status": {
-                "type": "string",
-                "enum": ["not_started"],
-                "example": "not_started",
-                "description": "Initial task status"
-              },
-              "created_time": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2025-11-12T10:30:00",
-                "description": "ISO 8601 timestamp when the task was created"
-              }
-            }
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "required": ["code", "error"],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 400,
-            "description": "HTTP status code"
-          },
-          "error": {
-            "type": "object",
-            "required": ["message", "type"],
-            "properties": {
-              "message": {
-                "type": "string",
-                "example": "Invalid request parameters",
-                "description": "Error message describing what went wrong"
-              },
-              "type": {
-                "type": "string",
-                "example": "invalid_request_error",
-                "description": "Error type identifier"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+    "components":  {
+                       "securitySchemes":  {
+                                               "BearerAuth":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer",
+                                                                  "bearerFormat":  "API Key",
+                                                                  "description":  "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+                                                              }
+                                           },
+                       "schemas":  {
+                                       "SubmitRequest":  {
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "model",
+                                                                              "input"
+                                                                          ],
+                                                             "properties":  {
+                                                                                "model":  {
+                                                                                              "type":  "string",
+                                                                                              "description":  "Z-Image model identifier",
+                                                                                              "enum":  [
+                                                                                                           "z-image"
+                                                                                                       ]
+                                                                                          },
+                                                                                "callback_url":  {
+                                                                                                     "type":  "string",
+                                                                                                     "format":  "uri",
+                                                                                                     "description":  "Webhook callback URL for result notifications",
+                                                                                                     "example":  "https://your-domain.com/callback"
+                                                                                                 },
+                                                                                "input":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "prompt"
+                                                                                                           ],
+                                                                                              "description":  "Input parameters for generation. `size` is required for text-to-image. When `image_urls` is present, the request is routed to image editing automatically and `size` becomes optional.",
+                                                                                              "properties":  {
+                                                                                                                 "prompt":  {
+                                                                                                                                "type":  "string",
+                                                                                                                                "description":  "Generation prompt describing the desired output",
+                                                                                                                                "maxLength":  1000,
+                                                                                                                                "example":  "A beautiful sunset over the ocean"
+                                                                                                                            },
+                                                                                                                 "image_urls":  {
+                                                                                                                                    "type":  "array",
+                                                                                                                                    "items":  {
+                                                                                                                                                  "type":  "string",
+                                                                                                                                                  "format":  "uri"
+                                                                                                                                              },
+                                                                                                                                    "maxItems":  1,
+                                                                                                                                    "description":  "Optional reference image array for editing. Must contain exactly 1 public image URL. Supported formats: JPEG, PNG, WEBP. Max size: 10MB.",
+                                                                                                                                    "example":  [
+                                                                                                                                                    "https://example.com/reference-image.png"
+                                                                                                                                                ]
+                                                                                                                                },
+                                                                                                                 "size":  {
+                                                                                                                              "type":  "string",
+                                                                                                                              "description":  "Image size ratio. Required for text-to-image and optional for image editing.",
+                                                                                                                              "enum":  [
+                                                                                                                                           "1:1",
+                                                                                                                                           "4:3",
+                                                                                                                                           "3:4",
+                                                                                                                                           "16:9",
+                                                                                                                                           "9:16"
+                                                                                                                                       ],
+                                                                                                                              "example":  "1:1"
+                                                                                                                          }
+                                                                                                             }
+                                                                                          }
+                                                                            }
+                                                         },
+                                       "SubmitResponse":  {
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "code",
+                                                                               "data"
+                                                                           ],
+                                                              "properties":  {
+                                                                                 "code":  {
+                                                                                              "type":  "integer",
+                                                                                              "example":  200,
+                                                                                              "description":  "HTTP status code"
+                                                                                          },
+                                                                                 "data":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "task_id",
+                                                                                                               "status",
+                                                                                                               "created_time"
+                                                                                                           ],
+                                                                                              "properties":  {
+                                                                                                                 "task_id":  {
+                                                                                                                                 "type":  "string",
+                                                                                                                                 "example":  "task-unified-1757165031-uyujaw3d",
+                                                                                                                                 "description":  "Unique task identifier for status tracking"
+                                                                                                                             },
+                                                                                                                 "status":  {
+                                                                                                                                "type":  "string",
+                                                                                                                                "enum":  [
+                                                                                                                                             "not_started"
+                                                                                                                                         ],
+                                                                                                                                "example":  "not_started",
+                                                                                                                                "description":  "Initial task status"
+                                                                                                                            },
+                                                                                                                 "created_time":  {
+                                                                                                                                      "type":  "string",
+                                                                                                                                      "format":  "date-time",
+                                                                                                                                      "example":  "2025-11-12T10:30:00",
+                                                                                                                                      "description":  "ISO 8601 timestamp when the task was created"
+                                                                                                                                  }
+                                                                                                             }
+                                                                                          }
+                                                                             }
+                                                          },
+                                       "ErrorResponse":  {
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "code",
+                                                                              "error"
+                                                                          ],
+                                                             "properties":  {
+                                                                                "code":  {
+                                                                                             "type":  "integer",
+                                                                                             "example":  400,
+                                                                                             "description":  "HTTP status code"
+                                                                                         },
+                                                                                "error":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "message",
+                                                                                                               "type"
+                                                                                                           ],
+                                                                                              "properties":  {
+                                                                                                                 "message":  {
+                                                                                                                                 "type":  "string",
+                                                                                                                                 "example":  "Invalid request parameters",
+                                                                                                                                 "description":  "Error message describing what went wrong"
+                                                                                                                             },
+                                                                                                                 "type":  {
+                                                                                                                              "type":  "string",
+                                                                                                                              "example":  "invalid_request_error",
+                                                                                                                              "description":  "Error type identifier"
+                                                                                                                          }
+                                                                                                             }
+                                                                                          }
+                                                                            }
+                                                         }
+                                   }
+                   }
 }

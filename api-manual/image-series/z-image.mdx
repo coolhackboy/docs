@@ -1,6 +1,6 @@
----
+﻿---
 title: "Z-Image Generation"
-description: "High-quality image generation with Z-Image"
+description: "High-quality image generation with unified text-to-image and image editing support"
 icon: "image"
 openapi: "/api-manual/image-series/z-image.json POST /api/generate/submit"
 ---
@@ -12,9 +12,66 @@ openapi: "/api-manual/image-series/z-image.json POST /api/generate/submit"
 
 # Z-Image Generation
 
-Generate high-quality images using the Z-Image model. Supports text-to-image generation with flexible aspect ratios.
+Generate high-quality images using the Z-Image model. Supports both text-to-image and image editing with a unified request shape.
 
-## Available Models
+`z-image` uses a unified request format:
 
-- **z-image** - Text-to-image generation
+- If `input.image_urls` is omitted, the request is handled as text-to-image
+- If `input.image_urls` is provided, the request is handled as image editing automatically
+
+## Available Model
+
+- **z-image** - Unified text-to-image and image editing model
+
+## Supported Parameters
+
+- `prompt` - Required prompt, max `1000` characters
+- `size` - Required for text-to-image, optional for image editing. Supported values: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`
+- `image_urls` - Optional reference image array for editing, must contain exactly `1` image URL
+
+## Notes
+
+- `input.image_urls[0]` is used as the edit reference image
+- When `image_urls` is present, `size` can be omitted
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Text-to-image example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "z-image",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A serene mountain landscape at sunset with vibrant colors",
+      "size": "1:1"
+    }
+  }'
+```
+
+Image editing example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "z-image",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Turn this product photo into a premium studio shot with soft rim lighting",
+      "image_urls": ["https://example.com/reference-image.png"],
+      "size": "4:3"
+    }
+  }'
+```
+
+
 
