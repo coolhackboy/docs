@@ -68,6 +68,7 @@
                                 "/api-manual/video-series/seedance-2.json",
                                 "/api-manual/video-series/runway-gen-4-5.json",
                                 "/api-manual/music-series/generate-music.json",
+                                "/api-manual/music-series/minimax-music-2.6.json",
                                 "/api-manual/music-series/extend-music.json",
                                 "/api-manual/music-series/upload-and-cover-audio.json",
                                 "/api-manual/music-series/upload-and-extend-audio.json",
@@ -267,6 +268,12 @@
                                                                                            "api-manual/music-series/query-music-detail",
                                                                                            "api-manual/music-series/music-webhook"
                                                                                        ]
+                                                                        },
+                                                                        {
+                                                                            "group":  "MiniMax",
+                                                                            "pages":  [
+                                                                                          "api-manual/music-series/minimax-music-2.6"
+                                                                                      ]
                                                                          }
                                                                      ]
                                                        },

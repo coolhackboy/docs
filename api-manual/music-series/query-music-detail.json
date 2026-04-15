@@ -76,6 +76,27 @@
                       }
                     }
                   },
+                  "minimax-music-2.6": {
+                    "summary": "MiniMax Music 2.6",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "finished",
+                        "files": [
+                          {
+                            "audio_id": "task-unified-1757165031-uyujaw3d_audio",
+                            "audio_url": "https://storage.poyo.ai/audios/task-unified-1757165031-uyujaw3d/output.mp3",
+                            "title": "City pop, 80s retro, groovy synth bass",
+                            "duration": 0,
+                            "prompt": "City pop, 80s retro, groovy synth bass"
+                          }
+                        ],
+                        "created_time": "2026-04-15T10:30:00",
+                        "error_message": null
+                      }
+                    }
+                  },
                   "get-timestamped-lyrics": {
                     "summary": "Timestamped Lyrics",
                     "value": {
@@ -327,7 +348,7 @@
       },
       "AudioFile": {
         "type": "object",
-        "required": ["audio_id", "audio_url", "image_url", "title", "tags", "duration"],
+        "description": "Superset of possible music result fields. Each model returns only the fields documented for that model.",
         "properties": {
           "audio_id": {
             "type": "string",
@@ -344,7 +365,7 @@
             "type": "string",
             "format": "uri",
             "example": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113628_4DfWp6_tmpz72j05o5_cover_62e4542a-73be-44e1-b397-7716ee7505c6.jpeg",
-            "description": "Direct URL to the cover image for this audio file"
+            "description": "Direct URL to the cover image for this audio file. Present only for models that return a cover image."
           },
           "title": {
             "type": "string",
@@ -359,7 +380,64 @@
           "duration": {
             "type": "number",
             "example": 240.0,
-            "description": "Duration of the audio file in seconds"
+            "description": "Duration of the audio file in seconds. Some models may return `0` when duration metadata is not available."
+          },
+          "prompt": {
+            "type": "string",
+            "example": "City pop, 80s retro, groovy synth bass",
+            "description": "Original prompt used for generation when available."
+          },
+          "text": {
+            "type": "string",
+            "example": "Peaceful Piano Meditation lyrics content...",
+            "description": "Lyrics or text content returned by text-oriented music endpoints."
+          },
+          "timestampe_lyrics": {
+            "type": "string",
+            "example": "[00:00.00] First line of lyrics\n[00:05.23] Second line of lyrics",
+            "description": "Lyrics with timestamps."
+          },
+          "style": {
+            "type": "string",
+            "example": "Enhanced music style result",
+            "description": "Style text returned by music style enhancement endpoints."
+          },
+          "wav_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/output.wav",
+            "description": "Converted WAV file URL."
+          },
+          "separate_vocals": {
+            "type": "string",
+            "example": "{\"vocal_url\": \"xx\", \"instrumental_url\": \"yy\"}",
+            "description": "JSON string containing separated vocal and instrumental URLs."
+          },
+          "vocal_removal": {
+            "type": "string",
+            "example": "{\"bass\": \"https://storage.poyo.ai/audio/bass.mp3\", \"drums\": \"https://storage.poyo.ai/audio/drums.mp3\"}",
+            "description": "JSON string containing separated stem URLs."
+          },
+          "stem_split": {
+            "type": "string",
+            "example": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\"}",
+            "description": "JSON string containing full stem separation URLs."
+          },
+          "generate_cover": {
+            "type": "string",
+            "example": "[{\"file_url\": \"https://storage.poyo.ai/audio/cover_1.png\", \"file_type\": \"image\"}]",
+            "description": "JSON string containing generated cover image objects."
+          },
+          "persona_id": {
+            "type": "string",
+            "example": "persona_abc123",
+            "description": "Generated persona identifier."
+          },
+          "video_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/video/8FDN1I7M7Q68DDG8/music_video.mp4",
+            "description": "Generated video URL."
           }
         }
       },
