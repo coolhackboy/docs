@@ -1,6 +1,6 @@
 ---
 title: "MiniMax Music 2.6"
-description: "Generate music tracks from a style prompt with optional lyrics or instrumental mode"
+description: "Generate complete music tracks from a style prompt, lyrics, or instrumental instructions"
 icon: "music"
 openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/submit"
 ---
@@ -12,8 +12,8 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
 
 ## Usage Guide
 
-- This endpoint generates a music track from a style prompt
-- You can provide custom lyrics for vocal generation or enable instrumental mode for music without vocals
+- This endpoint generates complete tracks with singing, backing music, and detailed arrangements from a style prompt
+- You can provide custom lyrics, let the model optimize lyrics from the prompt, or enable instrumental mode for music without vocals
 - Final results are returned asynchronously through `callback_url` or [Query Music Detail](/api-manual/music-series/query-music-detail)
 
 ## Parameter Details
@@ -23,12 +23,16 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
   - Be specific about the musical direction you want in the final track
 
 - `lyrics`: Optional lyrics content for vocal generation
-  - Required unless `is_instrumental` is `true`
+  - Required unless `is_instrumental` or `lyrics_optimizer` is `true`
   - Maximum length: `3500` characters
+
+- `lyrics_optimizer`: Optional boolean
+  - When `true` and `lyrics` is empty, the model auto-generates lyrics from the `prompt`
+  - Use this when you want a vocal song but do not want to provide exact lyrics
 
 - `is_instrumental`: Optional boolean
   - Set to `true` to generate instrumental-only music without vocals
-  - When `true`, omit `lyrics`
+  - When `true`, omit `lyrics` and do not enable `lyrics_optimizer`
 
 - `audio_setting`: Optional output audio settings object
   - `sample_rate`: `16000`, `24000`, `32000`, `44100`
@@ -38,5 +42,6 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
 
 ## Developer Notes
 
-- If `is_instrumental` is `false`, provide `lyrics` to avoid validation errors
+- If both `is_instrumental` and `lyrics_optimizer` are `false`, provide `lyrics` to avoid validation errors
+- `lyrics_optimizer` follows the upstream MiniMax Music 2.6 schema. If the upstream service rejects an optimized-lyrics request, retry with explicit `lyrics`
 - Query results for this model return `audio_id`, `audio_url`, `title`, `duration`, and `prompt`

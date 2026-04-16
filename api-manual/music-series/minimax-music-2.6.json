@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - MiniMax Music 2.6 API",
-    "description": "Generate music tracks from a style prompt with optional lyrics or instrumental mode",
+    "description": "Generate complete music tracks from a style prompt, lyrics, or instrumental instructions",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit MiniMax Music 2.6 Task",
-        "description": "Generate a music track from a style prompt with optional lyrics or instrumental mode.",
+        "description": "Generate a complete music track from a style prompt, optional lyrics, lyrics optimization, or instrumental mode.",
         "operationId": "submitMiniMaxMusic26Task",
         "tags": ["MiniMax Music 2.6"],
         "requestBody": {
@@ -32,13 +32,30 @@
               },
               "examples": {
                 "vocal-track": {
-                  "summary": "Vocal music generation",
+                  "summary": "Vocal music generation with lyrics",
                   "value": {
                     "model": "minimax-music-2.6",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "City pop, 80s retro, groovy synth bass, warm female vocal, nostalgic night drive",
                       "lyrics": "[Verse]\nStreetlights flicker in the rearview glow\n[Chorus]\nWe keep driving where the midnight winds blow",
+                      "is_instrumental": false,
+                      "audio_setting": {
+                        "sample_rate": 44100,
+                        "bitrate": 256000,
+                        "format": "mp3"
+                      }
+                    }
+                  }
+                },
+                "lyrics-optimize": {
+                  "summary": "Vocal music generation with lyrics optimization",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Modern cinematic pop ballad, emotional male vocal, piano intro, wide chorus, 92 BPM",
+                      "lyrics_optimizer": true,
                       "is_instrumental": false,
                       "audio_setting": {
                         "sample_rate": 44100,
@@ -112,24 +129,32 @@
           "input": {
             "type": "object",
             "required": ["prompt"],
-            "description": "Input parameters for music generation. `lyrics` is required unless `is_instrumental` is `true`.",
+            "description": "Input parameters for music generation. If `lyrics` is empty, set either `is_instrumental` or `lyrics_optimizer` to `true`.",
+            "additionalProperties": false,
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Required music prompt describing style, mood, genre, instrumentation, tempo, or scene.",
+                "description": "Required music prompt describing style, mood, genre, instrumentation, tempo, vocal direction, or scene.",
                 "minLength": 10,
                 "maxLength": 2000,
                 "example": "City pop, 80s retro, groovy synth bass, warm female vocal, nostalgic night drive"
               },
               "lyrics": {
                 "type": "string",
-                "description": "Optional lyrics for vocal generation. Required unless `is_instrumental` is `true`.",
+                "description": "Optional lyrics for vocal generation. Required unless `is_instrumental` or `lyrics_optimizer` is `true`.",
                 "maxLength": 3500,
                 "example": "[Verse]\nStreetlights flicker in the rearview glow\n[Chorus]\nWe keep driving where the midnight winds blow"
               },
+              "lyrics_optimizer": {
+                "type": "boolean",
+                "description": "When `true` and `lyrics` is empty, the model auto-generates lyrics from the prompt.",
+                "default": false,
+                "example": true
+              },
               "is_instrumental": {
                 "type": "boolean",
-                "description": "When `true`, generates instrumental-only music without vocals. When omitted or `false`, provide `lyrics`.",
+                "description": "When `true`, generates instrumental-only music without vocals.",
+                "default": false,
                 "example": false
               },
               "audio_setting": {
@@ -141,18 +166,21 @@
                     "type": "integer",
                     "description": "Output sample rate.",
                     "enum": [16000, 24000, 32000, 44100],
+                    "default": 44100,
                     "example": 44100
                   },
                   "bitrate": {
                     "type": "integer",
                     "description": "Output bitrate.",
                     "enum": [32000, 64000, 128000, 256000],
+                    "default": 256000,
                     "example": 256000
                   },
                   "format": {
                     "type": "string",
                     "description": "Output audio format.",
                     "enum": ["mp3", "wav", "pcm"],
+                    "default": "mp3",
                     "example": "mp3"
                   }
                 }
