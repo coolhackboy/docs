@@ -22,7 +22,9 @@
         "summary": "Submit Music Extension Task",
         "description": "Extend or modify existing music by creating a continuation based on a source audio track",
         "operationId": "submitExtendMusicTask",
-        "tags": ["Music Extension"],
+        "tags": [
+          "Music Extension"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -43,7 +45,7 @@
                       "style": "Pop, Upbeat",
                       "title": "Summer Vibes Extended",
                       "continue_at": 120,
-                      "mv": "V5",
+                      "mv": "V5_5",
                       "negative_tags": "Heavy Metal, Sad",
                       "style_weight": 0.7
                     }
@@ -92,12 +94,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "API model identifier.\n\nMust be `extend-music` for this endpoint.",
-            "enum": ["extend-music"],
+            "enum": [
+              "extend-music"
+            ],
             "example": "extend-music"
           },
           "callback_url": {
@@ -108,7 +115,11 @@
           },
           "input": {
             "type": "object",
-            "required": ["default_param_flag", "audio_id", "mv"],
+            "required": [
+              "default_param_flag",
+              "audio_id",
+              "mv"
+            ],
             "description": "Input parameters for music extension",
             "properties": {
               "default_param_flag": {
@@ -123,19 +134,19 @@
               },
               "prompt": {
                 "type": "string",
-                "description": "Description of how you want to extend the music.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters",
+                "description": "Description of how you want to extend the music.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
                 "maxLength": 3000,
                 "example": "Continue with an energetic chorus section"
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters",
+                "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters",
                 "maxLength": 200,
                 "example": "Pop, Upbeat"
               },
               "title": {
                 "type": "string",
-                "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters",
+                "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters",
                 "maxLength": 80,
                 "example": "Summer Vibes Extended"
               },
@@ -146,9 +157,16 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for music extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration",
-                "enum": ["V4", "V4_5", "V4_5ALL", "V4_5PLUS", "V5"],
-                "example": "V5"
+                "description": "AI model version for music extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration",
+                "enum": [
+                  "V4",
+                  "V4_5",
+                  "V4_5ALL",
+                  "V4_5PLUS",
+                  "V5",
+                  "V5_5"
+                ],
+                "example": "V5_5"
               },
               "negative_tags": {
                 "type": "string",
@@ -158,7 +176,10 @@
               "vocal_gender": {
                 "type": "string",
                 "description": "Preferred vocal gender for the extended section.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
-                "enum": ["m", "f"],
+                "enum": [
+                  "m",
+                  "f"
+                ],
                 "example": "m"
               },
               "style_weight": {
@@ -193,7 +214,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -202,7 +226,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -211,7 +239,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -227,7 +257,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -236,7 +269,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

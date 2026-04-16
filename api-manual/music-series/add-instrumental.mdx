@@ -1,4 +1,4 @@
----
+﻿---
 title: "Add Instrumental"
 description: "Generate musical accompaniment for uploaded audio files"
 icon: "music"
@@ -30,6 +30,8 @@ openapi: "/api-manual/music-series/add-instrumental.json POST /api/generate/subm
 
 - Model selection:
 
+  - **V5_5**: Personalized model tuned to your unique taste.
+
   - **V5**: Superior musical expressiveness with faster generation
 
   - **V4_5PLUS**: Enhanced tonal richness (default)
@@ -42,7 +44,7 @@ openapi: "/api-manual/music-series/add-instrumental.json POST /api/generate/subm
 
 ## Optional parameters
 
-- `model` (string): AI model version. Options: `V4_5PLUS` (default), `V5`.
+- `model` (string): AI model version. Options: `V4_5PLUS` (default), `V5`, `V5_5`.
 
 - `vocal_gender` (string): Vocal gender preference. Use `m` for male, `f` for female. Note: This parameter can only increase the probability but cannot guarantee the specified gender.
 
@@ -51,4 +53,5 @@ openapi: "/api-manual/music-series/add-instrumental.json POST /api/generate/subm
 - `weirdness_constraint` (number): Controls creative deviation. Range 0-1, up to 2 decimals.
 
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.
+
 

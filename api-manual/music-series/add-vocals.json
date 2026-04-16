@@ -22,7 +22,9 @@
         "summary": "Submit Add Vocals Task",
         "description": "Layer AI-generated vocals on top of an existing instrumental track",
         "operationId": "submitAddVocalsTask",
-        "tags": ["Music Generation"],
+        "tags": [
+          "Music Generation"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -52,7 +54,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "upload_url": "https://storage.example.com/instrumental.mp3",
-                      "mv": "V5",
+                      "mv": "V5_5",
                       "prompt": "Upbeat lyrics about summer adventures and freedom",
                       "title": "Summer Freedom",
                       "style": "Pop, Upbeat, Energetic",
@@ -95,12 +97,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "API model identifier.\n\nMust be `add-vocals` for this endpoint.",
-            "enum": ["add-vocals"],
+            "enum": [
+              "add-vocals"
+            ],
             "example": "add-vocals"
           },
           "callback_url": {
@@ -111,7 +118,13 @@
           },
           "input": {
             "type": "object",
-            "required": ["upload_url", "prompt", "title", "style", "negative_tags"],
+            "required": [
+              "upload_url",
+              "prompt",
+              "title",
+              "style",
+              "negative_tags"
+            ],
             "description": "Input parameters for vocal generation",
             "properties": {
               "upload_url": {
@@ -143,14 +156,21 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for vocal generation.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n\nDefault: V4_5PLUS",
-                "enum": ["V4_5PLUS", "V5"],
-                "example": "V4_5PLUS"
+                "description": "AI model version for vocal generation.\n\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V5**: Superior musical expressiveness with faster generation\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches\n\nDefault: V4_5PLUS",
+                "enum": [
+                  "V4_5PLUS",
+                  "V5",
+                  "V5_5"
+                ],
+                "example": "V5_5"
               },
               "vocal_gender": {
                 "type": "string",
                 "description": "Preferred vocal gender for the generated vocals.\n\n- `m`: Male vocals\n- `f`: Female vocals\n\n**Note**: This parameter increases the probability but cannot guarantee the specified gender.",
-                "enum": ["m", "f"],
+                "enum": [
+                  "m",
+                  "f"
+                ],
                 "example": "f"
               },
               "style_weight": {
@@ -180,7 +200,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -189,7 +212,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -198,7 +225,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -214,7 +243,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -223,7 +255,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

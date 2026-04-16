@@ -1,4 +1,4 @@
----
+﻿---
 title: "Upload and Cover Audio"
 description: "Transform audio tracks into new styles while preserving the original melody"
 icon: "music"
@@ -37,6 +37,7 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
     - **V4_5 & V4_5PLUS**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
     - **V4_5ALL**: `prompt` 5000 characters, `style` 1000 characters, `title` 80 characters
     - **V5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
+    - **V5_5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
 
 - In Non-custom Mode ( `custom_mode: false` ):
 
@@ -65,4 +66,5 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 - `audio_weight` (number): Balance weight for preserving original audio features. Range 0-1, up to 2 decimals.
 
 - `persona_id` (string): Persona ID to apply to the covered track. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+
 
