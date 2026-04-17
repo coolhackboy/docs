@@ -90,16 +90,24 @@ openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
   ```
 </ParamField>
 
-<ParamField body="temperature" type="number">
-  Controls output randomness, range 0-1
-</ParamField>
+<ParamField body="cache_control" type="object">
+  Top-level cache control. Automatically applies a cache marker to the last cacheable block in the request
 
-<ParamField body="top_p" type="number">
-  Nucleus sampling parameter, range 0-1
-</ParamField>
+  <Expandable title="Cache control structure">
+    <ParamField body="type" type="string" required>
+      Cache control type, fixed as `ephemeral`
+    </ParamField>
 
-<ParamField body="top_k" type="integer">
-  Top-k sampling parameter
+    <ParamField body="ttl" type="enum<string>">
+      Optional cache TTL: `5m` or `1h`. Defaults to `5m`
+    </ParamField>
+  </Expandable>
+
+  **Example:**
+
+  ```json  theme={null}
+{"type": "ephemeral", "ttl": "1h"}
+  ```
 </ParamField>
 
 <ParamField body="stream" type="boolean">
@@ -112,6 +120,56 @@ openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
 
 <ParamField body="metadata" type="object">
   Additional metadata such as `user_id`
+</ParamField>
+
+<ParamField body="output_config" type="object">
+  Configuration options for the model's output, such as output format and effort level
+
+  <Expandable title="Output config structure">
+    <ParamField body="effort" type="enum<string>">
+      Output effort level: `low`, `medium`, `high`, or `max`
+    </ParamField>
+
+    <ParamField body="format" type="object">
+      Structured output format configuration
+
+      **Example:**
+
+      ```json  theme={null}
+{"type": "json_schema", "schema": {"type": "object", "properties": {"summary": {"type": "string"}}, "required": ["summary"]}}
+      ```
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="thinking" type="object">
+  Configuration for Claude extended thinking. Thinking tokens count toward `max_tokens`
+
+  <Expandable title="Thinking structure">
+    <ParamField body="type" type="enum<string>" required>
+      Thinking mode: `enabled`, `adaptive`, or `disabled`
+    </ParamField>
+
+    <ParamField body="budget_tokens" type="integer">
+      Required when `type` is `enabled`. Must be at least `1024` and less than `max_tokens`
+    </ParamField>
+
+    <ParamField body="display" type="enum<string>">
+      Controls response visibility for thinking blocks: `summarized` or `omitted`
+    </ParamField>
+  </Expandable>
+
+  **Enabled example:**
+
+  ```json  theme={null}
+{"type": "enabled", "budget_tokens": 2048, "display": "summarized"}
+  ```
+
+  **Adaptive example:**
+
+  ```json  theme={null}
+{"type": "adaptive", "display": "omitted"}
+  ```
 </ParamField>
 
 <ParamField body="tools" type="array">
@@ -214,6 +272,11 @@ openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
 {
   "model": "claude-sonnet-4-5-20250929",
   "max_tokens": 256,
+  "thinking": {
+    "type": "enabled",
+    "budget_tokens": 2048,
+    "display": "summarized"
+  },
   "stream": true,
   "messages": [
     {"role": "user", "content": "Write a product update announcement under 80 words, professional yet friendly."}
@@ -243,6 +306,36 @@ openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
   "tool_choice": "auto",
   "messages": [
     {"role": "user", "content": "Check the weather in Tokyo and provide a one-sentence travel suggestion."}
+  ]
+}
+```
+
+### Structured Output With Cache
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "cache_control": {
+    "type": "ephemeral",
+    "ttl": "1h"
+  },
+  "output_config": {
+    "effort": "high",
+    "format": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "summary": {"type": "string"},
+          "tone": {"type": "string"}
+        },
+        "required": ["summary", "tone"]
+      }
+    }
+  },
+  "messages": [
+    {"role": "user", "content": "Summarize this release note and label its tone."}
   ]
 }
 ```
