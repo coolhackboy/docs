@@ -172,7 +172,7 @@
             "$ref": "#/components/schemas/ClaudeOutputConfig"
           },
           "thinking": {
-            "description": "Configuration for enabling Claude's extended thinking.",
+            "description": "Configuration for Claude extended thinking. Use this field with the `claude-opus-4-7-thinking` model.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ClaudeThinkingEnabled"
