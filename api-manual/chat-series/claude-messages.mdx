@@ -10,7 +10,7 @@ openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
 - Supports multimodal content including text and images
 
 <Note>
-For Claude Messages request parameters, please refer to the official Anthropic documentation:
+If you have questions about the request parameters, you can find more information in the official Anthropic documentation:
 https://platform.claude.com/docs/en/api/messages/create
 </Note>
 
@@ -75,7 +75,7 @@ https://platform.claude.com/docs/en/api/messages/create
   ```
 </ParamField>
 
-<ParamField body="max_tokens" type="integer" required>
+<ParamField body="max_tokens" type="integer">
   Maximum number of tokens to generate
 </ParamField>
 
@@ -99,7 +99,7 @@ https://platform.claude.com/docs/en/api/messages/create
   Top-level cache control. Automatically applies a cache marker to the last cacheable block in the request
 
   <Expandable title="Cache control structure">
-    <ParamField body="type" type="string" required>
+    <ParamField body="type" type="string">
       Cache control type, fixed as `ephemeral`
     </ParamField>
 
@@ -151,7 +151,7 @@ https://platform.claude.com/docs/en/api/messages/create
   Configuration for Claude extended thinking. Thinking tokens count toward `max_tokens`
 
   <Expandable title="Thinking structure">
-    <ParamField body="type" type="enum<string>" required>
+    <ParamField body="type" type="enum<string>">
       Thinking mode: `enabled`, `adaptive`, or `disabled`
     </ParamField>
 

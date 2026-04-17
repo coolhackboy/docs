@@ -112,7 +112,6 @@
         "type": "object",
         "required": [
           "model",
-          "max_tokens",
           "messages"
         ],
         "properties": {
@@ -266,9 +265,6 @@
       "ClaudeCacheControl": {
         "type": "object",
         "description": "Top-level cache control automatically applies a cache_control marker to the last cacheable block in the request.",
-        "required": [
-          "type"
-        ],
         "properties": {
           "type": {
             "type": "string",
@@ -336,7 +332,6 @@
         "type": "object",
         "description": "Enabled extended thinking. Requires `budget_tokens` >= 1024 and less than `max_tokens`.",
         "required": [
-          "type",
           "budget_tokens"
         ],
         "properties": {
@@ -367,9 +362,6 @@
       "ClaudeThinkingAdaptive": {
         "type": "object",
         "description": "Adaptive extended thinking configuration.",
-        "required": [
-          "type"
-        ],
         "properties": {
           "type": {
             "type": "string",
@@ -392,9 +384,6 @@
       "ClaudeThinkingDisabled": {
         "type": "object",
         "description": "Disable extended thinking.",
-        "required": [
-          "type"
-        ],
         "properties": {
           "type": {
             "type": "string",
