@@ -21,7 +21,7 @@
     "/v1/messages": {
       "post": {
         "summary": "Claude Messages API",
-        "description": "Send requests in the Claude Messages format.",
+        "description": "Send requests in the Claude Messages format. For the latest request parameter definitions, refer to the official Anthropic documentation: https://platform.claude.com/docs/en/api/messages/create",
         "operationId": "createClaudeMessage",
         "tags": [
           "Text Series"
