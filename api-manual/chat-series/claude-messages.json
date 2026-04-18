@@ -13,15 +13,14 @@
   ],
   "security": [
     {
-      "ApiKeyAuth": [],
-      "AnthropicVersion": []
+      "ApiKeyAuth": []
     }
   ],
   "paths": {
     "/v1/messages": {
       "post": {
         "summary": "Claude Messages API",
-        "description": "Send requests in the Claude Messages format.",
+        "description": "Send requests in the Claude Messages format. For the latest request parameter definitions, refer to the official Anthropic documentation: https://platform.claude.com/docs/en/api/messages/create",
         "operationId": "createClaudeMessage",
         "tags": [
           "Text Series"
@@ -104,7 +103,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "anthropic-version",
-        "description": "API version. Example: `2025-10-01`."
+        "description": "API version. Example: `2023-06-01`."
       }
     },
     "schemas": {
@@ -112,7 +111,6 @@
         "type": "object",
         "required": [
           "model",
-          "max_tokens",
           "messages"
         ],
         "properties": {
@@ -149,25 +147,8 @@
               }
             ]
           },
-          "temperature": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1,
-            "description": "Sampling temperature. Higher values are more random.",
-            "example": 1
-          },
-          "top_p": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1,
-            "description": "Nucleus sampling parameter. Higher values are more random.",
-            "example": 1
-          },
-          "top_k": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Top-k sampling parameter.",
-            "example": 40
+          "cache_control": {
+            "$ref": "#/components/schemas/ClaudeCacheControl"
           },
           "stream": {
             "type": "boolean",
@@ -185,6 +166,23 @@
             "type": "object",
             "description": "Additional metadata such as `user_id`.",
             "additionalProperties": true
+          },
+          "output_config": {
+            "$ref": "#/components/schemas/ClaudeOutputConfig"
+          },
+          "thinking": {
+            "description": "Configuration for Claude extended thinking. Use this field with the `claude-opus-4-7-thinking` model.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ClaudeThinkingEnabled"
+              },
+              {
+                "$ref": "#/components/schemas/ClaudeThinkingAdaptive"
+              },
+              {
+                "$ref": "#/components/schemas/ClaudeThinkingDisabled"
+              }
+            ]
           },
           "tools": {
             "type": "array",
@@ -260,6 +258,138 @@
             "type": "object",
             "description": "JSON Schema for tool inputs.",
             "additionalProperties": true
+          }
+        }
+      },
+      "ClaudeCacheControl": {
+        "type": "object",
+        "description": "Top-level cache control automatically applies a cache_control marker to the last cacheable block in the request.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ephemeral"
+            ],
+            "description": "Cache control type.",
+            "example": "ephemeral"
+          },
+          "ttl": {
+            "type": "string",
+            "enum": [
+              "5m",
+              "1h"
+            ],
+            "description": "Optional cache TTL. Defaults to `5m`.",
+            "example": "1h"
+          }
+        }
+      },
+      "ClaudeOutputConfig": {
+        "type": "object",
+        "description": "Configuration options for the model's output, such as the output format.",
+        "properties": {
+          "effort": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "description": "Output effort level.",
+            "example": "high"
+          },
+          "format": {
+            "$ref": "#/components/schemas/ClaudeOutputFormat"
+          }
+        }
+      },
+      "ClaudeOutputFormat": {
+        "type": "object",
+        "description": "Schema-based structured output configuration.",
+        "required": [
+          "type",
+          "schema"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "json_schema"
+            ],
+            "example": "json_schema"
+          },
+          "schema": {
+            "type": "object",
+            "description": "JSON Schema that defines the output format.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ClaudeThinkingEnabled": {
+        "type": "object",
+        "description": "Enabled extended thinking. Requires `budget_tokens` >= 1024 and less than `max_tokens`.",
+        "required": [
+          "budget_tokens"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "enabled"
+            ],
+            "example": "enabled"
+          },
+          "budget_tokens": {
+            "type": "integer",
+            "minimum": 1024,
+            "description": "Token budget for Claude's internal reasoning process.",
+            "example": 2048
+          },
+          "display": {
+            "type": "string",
+            "enum": [
+              "summarized",
+              "omitted"
+            ],
+            "description": "Controls how thinking content appears in the response. Defaults to `summarized`.",
+            "example": "summarized"
+          }
+        }
+      },
+      "ClaudeThinkingAdaptive": {
+        "type": "object",
+        "description": "Adaptive extended thinking configuration.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "adaptive"
+            ],
+            "example": "adaptive"
+          },
+          "display": {
+            "type": "string",
+            "enum": [
+              "summarized",
+              "omitted"
+            ],
+            "description": "Controls how thinking content appears in the response. Defaults to `summarized`.",
+            "example": "omitted"
+          }
+        }
+      },
+      "ClaudeThinkingDisabled": {
+        "type": "object",
+        "description": "Disable extended thinking.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "disabled"
+            ],
+            "example": "disabled"
           }
         }
       },

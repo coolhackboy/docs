@@ -1,0 +1,228 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - MiniMax Music 2.6 API",
+    "description": "Generate complete music tracks from a style prompt, lyrics, or instrumental instructions",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit MiniMax Music 2.6 Task",
+        "description": "Generate a complete music track from a style prompt, optional lyrics, lyrics optimization, or instrumental mode.",
+        "operationId": "submitMiniMaxMusic26Task",
+        "tags": ["MiniMax Music 2.6"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "vocal-track": {
+                  "summary": "Vocal music generation with lyrics",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "City pop, 80s retro, groovy synth bass, warm female vocal, nostalgic night drive",
+                      "lyrics": "[Verse]\nStreetlights flicker in the rearview glow\n[Chorus]\nWe keep driving where the midnight winds blow",
+                      "is_instrumental": false,
+                      "audio_setting": {
+                        "sample_rate": 44100,
+                        "bitrate": 256000,
+                        "format": "mp3"
+                      }
+                    }
+                  }
+                },
+                "lyrics-optimize": {
+                  "summary": "Vocal music generation with lyrics optimization",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Modern cinematic pop ballad, emotional male vocal, piano intro, wide chorus, 92 BPM",
+                      "lyrics_optimizer": true,
+                      "is_instrumental": false,
+                      "audio_setting": {
+                        "sample_rate": 44100,
+                        "bitrate": 256000,
+                        "format": "mp3"
+                      }
+                    }
+                  }
+                },
+                "instrumental-track": {
+                  "summary": "Instrumental music generation",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Minimal piano and soft strings for a quiet sunrise over the ocean",
+                      "is_instrumental": true,
+                      "audio_setting": {
+                        "sample_rate": 32000,
+                        "bitrate": 128000,
+                        "format": "wav"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model identifier.\n\nMust be `minimax-music-2.6` for this endpoint.",
+            "enum": ["minimax-music-2.6"],
+            "example": "minimax-music-2.6"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters for music generation. If `lyrics` is empty, set either `is_instrumental` or `lyrics_optimizer` to `true`.",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Required music prompt describing style, mood, genre, instrumentation, tempo, vocal direction, or scene.",
+                "minLength": 10,
+                "maxLength": 2000,
+                "example": "City pop, 80s retro, groovy synth bass, warm female vocal, nostalgic night drive"
+              },
+              "lyrics": {
+                "type": "string",
+                "description": "Optional lyrics for vocal generation. Required unless `is_instrumental` or `lyrics_optimizer` is `true`.",
+                "maxLength": 3500,
+                "example": "[Verse]\nStreetlights flicker in the rearview glow\n[Chorus]\nWe keep driving where the midnight winds blow"
+              },
+              "lyrics_optimizer": {
+                "type": "boolean",
+                "description": "When `true` and `lyrics` is empty, the model auto-generates lyrics from the prompt.",
+                "default": false,
+                "example": true
+              },
+              "is_instrumental": {
+                "type": "boolean",
+                "description": "When `true`, generates instrumental-only music without vocals.",
+                "default": false,
+                "example": false
+              },
+              "audio_setting": {
+                "type": "object",
+                "description": "Optional audio output settings. Only `sample_rate`, `bitrate`, and `format` are supported.",
+                "additionalProperties": false,
+                "properties": {
+                  "sample_rate": {
+                    "type": "integer",
+                    "description": "Output sample rate.",
+                    "enum": [16000, 24000, 32000, 44100],
+                    "default": 44100,
+                    "example": 44100
+                  },
+                  "bitrate": {
+                    "type": "integer",
+                    "description": "Output bitrate.",
+                    "enum": [32000, 64000, 128000, 256000],
+                    "default": 256000,
+                    "example": 256000
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "Output audio format.",
+                    "enum": ["mp3", "wav", "pcm"],
+                    "default": "mp3",
+                    "example": "mp3"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-15T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

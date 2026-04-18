@@ -28,19 +28,16 @@ Content-Type: application/json
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [...],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [...],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
 <Note>
-The `files` array content varies depending on which model created the task. See [Response Fields](#response-fields-files-data) below for details.
+The webhook body uses the same task-level shape as the music detail response body, without the outer `code` and `data` wrapper. The `files` array content varies depending on which model created the task. See [Response Fields](#response-fields-files-data) below for details.
 </Note>
 
 ## Response Fields (files data)
@@ -50,15 +47,20 @@ The `files` array content varies depending on which model created the task.
 | Model | Field | Type | Description |
 |-------|-------|------|-------------|
 | `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `audio_id` | string | Unique identifier for the audio file |
-| 鈫?| `audio_url` | string | Direct download URL for the audio file |
-| 鈫?| `image_url` | string | Cover image URL |
-| 鈫?| `title` | string | Track title |
-| 鈫?| `tags` | string | Style tags |
-| 鈫?| `duration` | number | Audio duration in seconds |
-| 鈫?| `prompt` | string | Generation prompt used |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `audio_url` | string | Direct download URL for the audio file |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `image_url` | string | Cover image URL |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `title` | string | Track title |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `tags` | string | Style tags |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `duration` | number | Audio duration in seconds |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `prompt` | string | Generation prompt used |
+| `minimax-music-2.6` | `audio_id` | string | Unique identifier for the generated audio file |
+| `minimax-music-2.6` | `audio_url` | string | Direct download URL for the generated audio file |
+| `minimax-music-2.6` | `title` | string | Track title derived from the submitted prompt |
+| `minimax-music-2.6` | `duration` | number | Audio duration in seconds |
+| `minimax-music-2.6` | `prompt` | string | Original prompt used for generation |
 | `get-timestamped-lyrics` | `timestampe_lyrics` | string | Lyrics with timestamps |
 | `generate-lyrics` | `title` | string | Lyrics title |
-| 鈫?| `text` | string | Complete lyrics content |
+| `generate-lyrics` | `text` | string | Complete lyrics content |
 | `boost-music-style` | `style` | string | Enhanced music style |
 | `convert-to-wav` | `wav_url` | string | URL to converted WAV file |
 | `separate-vocals` | `separate_vocals` | string (JSON) | JSON string containing separated audio URLs. [See details](#separate-vocals) |
@@ -106,7 +108,7 @@ The `files` array content varies depending on which model created the task.
 
 `generate_cover` is a JSON array containing cover image objects:
 - `file_url` - URL to the generated cover image
-- `file_type` - File type (e.g., "image")
+- `file_type` - File type (for example, `image`)
 
 ## Callback Examples
 
@@ -114,33 +116,50 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "audio_id": "62e4542a-73be-44e1-b397-7716ee7505c6",
-        "audio_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/audio_62e4542a.mp3",
-        "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/cover_62e4542a.jpeg",
-        "title": "Peaceful Piano Meditation",
-        "tags": "Classical",
-        "duration": 240.0,
-        "prompt": ""
-      },
-      {
-        "audio_id": "8e755734-a840-4c13-beac-b9f1044979ca",
-        "audio_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/audio_8e755734.mp3",
-        "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/cover_8e755734.jpeg",
-        "title": "Peaceful Piano Meditation",
-        "tags": "Classical",
-        "duration": 130.0,
-        "prompt": ""
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "audio_id": "62e4542a-73be-44e1-b397-7716ee7505c6",
+      "audio_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/audio_62e4542a.mp3",
+      "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/cover_62e4542a.jpeg",
+      "title": "Peaceful Piano Meditation",
+      "tags": "Classical",
+      "duration": 240.0,
+      "prompt": ""
+    },
+    {
+      "audio_id": "8e755734-a840-4c13-beac-b9f1044979ca",
+      "audio_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/audio_8e755734.mp3",
+      "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/cover_8e755734.jpeg",
+      "title": "Peaceful Piano Meditation",
+      "tags": "Classical",
+      "duration": 130.0,
+      "prompt": ""
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
+}
+```
+
+### MiniMax Music 2.6
+
+```json
+{
+  "task_id": "task-unified-1757165031-uyujaw3d",
+  "status": "finished",
+  "files": [
+    {
+      "audio_id": "task-unified-1757165031-uyujaw3d_audio",
+      "audio_url": "https://storage.poyo.ai/audios/task-unified-1757165031-uyujaw3d/output.mp3",
+      "title": "City pop, 80s retro, groovy synth bass",
+      "duration": 0,
+      "prompt": "City pop, 80s retro, groovy synth bass"
+    }
+  ],
+  "created_time": "2026-04-15T10:30:00",
+  "error_message": null
 }
 ```
 
@@ -148,18 +167,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "timestampe_lyrics": "[00:00.00] First line of lyrics\n[00:05.23] Second line of lyrics"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "timestampe_lyrics": "[00:00.00] First line of lyrics\n[00:05.23] Second line of lyrics"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -167,19 +183,16 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "title": "Peaceful Piano Meditation",
-        "text": "Peaceful Piano Meditation lyrics content..."
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "title": "Peaceful Piano Meditation",
+      "text": "Peaceful Piano Meditation lyrics content..."
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -187,18 +200,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "style": "Enhanced music style result"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "style": "Enhanced music style result"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -206,18 +216,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "wav_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/output.wav"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "wav_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/output.wav"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -225,18 +232,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "separate_vocals": "{\"vocal_url\": \"https://storage.poyo.ai/audio/vocals.mp3\", \"instrumental_url\": \"https://storage.poyo.ai/audio/instrumental.mp3\"}"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "separate_vocals": "{\"vocal_url\": \"https://storage.poyo.ai/audio/vocals.mp3\", \"instrumental_url\": \"https://storage.poyo.ai/audio/instrumental.mp3\"}"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -244,18 +248,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "vocal_removal": "{\"bass\": \"https://storage.poyo.ai/audio/bass.mp3\", \"drums\": \"https://storage.poyo.ai/audio/drums.mp3\", \"piano\": \"https://storage.poyo.ai/audio/piano.mp3\", \"guitar\": \"https://storage.poyo.ai/audio/guitar.mp3\", \"vocals\": \"https://storage.poyo.ai/audio/vocals.mp3\", \"other\": \"https://storage.poyo.ai/audio/other.mp3\"}"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "vocal_removal": "{\"bass\": \"https://storage.poyo.ai/audio/bass.mp3\", \"drums\": \"https://storage.poyo.ai/audio/drums.mp3\", \"piano\": \"https://storage.poyo.ai/audio/piano.mp3\", \"guitar\": \"https://storage.poyo.ai/audio/guitar.mp3\", \"vocals\": \"https://storage.poyo.ai/audio/vocals.mp3\", \"other\": \"https://storage.poyo.ai/audio/other.mp3\"}"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -263,18 +264,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "stem_split": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\", \"brass_url\": \"\", \"drums_url\": \"\", \"fx_url\": \"\", \"guitar_url\": \"\", \"keyboard_url\": \"\", \"percussion_url\": \"\", \"strings_url\": \"\", \"synth_url\": \"\", \"vocal_url\": \"\", \"woodwinds_url\": \"\"}"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "stem_split": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\", \"brass_url\": \"\", \"drums_url\": \"\", \"fx_url\": \"\", \"guitar_url\": \"\", \"keyboard_url\": \"\", \"percussion_url\": \"\", \"strings_url\": \"\", \"synth_url\": \"\", \"vocal_url\": \"\", \"woodwinds_url\": \"\"}"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -282,18 +280,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "generate_cover": "[{\"file_url\": \"https://storage.poyo.ai/audio/cover_1.png\", \"file_type\": \"image\"}, {\"file_url\": \"https://storage.poyo.ai/audio/cover_2.png\", \"file_type\": \"image\"}]"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "generate_cover": "[{\"file_url\": \"https://storage.poyo.ai/audio/cover_1.png\", \"file_type\": \"image\"}, {\"file_url\": \"https://storage.poyo.ai/audio/cover_2.png\", \"file_type\": \"image\"}]"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -301,18 +296,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "persona_id": "persona_abc123"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "persona_id": "persona_abc123"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -320,18 +312,15 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "finished",
-    "files": [
-      {
-        "video_url": "https://storage.poyo.ai/video/8FDN1I7M7Q68DDG8/music_video.mp4"
-      }
-    ],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": null
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "finished",
+  "files": [
+    {
+      "video_url": "https://storage.poyo.ai/video/8FDN1I7M7Q68DDG8/music_video.mp4"
+    }
+  ],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": null
 }
 ```
 
@@ -339,14 +328,11 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "8FDN1I7M7Q68DDG8",
-    "status": "failed",
-    "files": [],
-    "created_time": "2025-11-25T08:50:13",
-    "error_message": "The prompt violates our content policy"
-  }
+  "task_id": "8FDN1I7M7Q68DDG8",
+  "status": "failed",
+  "files": [],
+  "created_time": "2025-11-25T08:50:13",
+  "error_message": "The prompt violates our content policy"
 }
 ```
 
@@ -358,7 +344,7 @@ Your callback endpoint must meet the following requirements:
 - **Maximum URL length**: 2048 characters
 - **Response timeout**: Must respond within 10 seconds
 - **Success response**: Should return HTTP 200-299 status code
-- **No internal IPs**: Cannot use private/internal IP addresses (e.g., 192.168.x.x, 10.x.x.x)
+- **No internal IPs**: Cannot use private/internal IP addresses (for example, `192.168.x.x` and `10.x.x.x`)
 - **Public accessibility**: Must be publicly accessible from the internet
 
 ## Retry Policy
@@ -390,4 +376,3 @@ If all retry attempts fail, you can still retrieve the results by polling the [Q
 <Tip>
 **Logging**: Log all webhook requests for debugging and monitoring
 </Tip>
-
