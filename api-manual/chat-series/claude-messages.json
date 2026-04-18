@@ -13,8 +13,7 @@
   ],
   "security": [
     {
-      "ApiKeyAuth": [],
-      "AnthropicVersion": []
+      "ApiKeyAuth": []
     }
   ],
   "paths": {
@@ -104,7 +103,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "anthropic-version",
-        "description": "API version. Example: `2025-10-01`."
+        "description": "API version. Example: `2023-06-01`."
       }
     },
     "schemas": {
