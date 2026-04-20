@@ -12,7 +12,7 @@ openapi: "/api-manual/video-series/veo-3-1.json POST /api/generate/submit"
 
 # VEO 3.1 Video Generation
 
-Generate lite, fast, or high-quality 8-second videos with Google's VEO 3.1 model. Supports text-to-video and image-to-video generation.
+Generate lite, fast, or high-quality 8-second videos with Google's VEO 3.1 model. All models support text-to-video. `veo3.1-fast` and `veo3.1-quality` also support image-to-video.
 
 ## Available Models
 
@@ -27,7 +27,8 @@ Generate lite, fast, or high-quality 8-second videos with Google's VEO 3.1 model
 ## Key Features
 
 - Asynchronous processing that returns a `task_id` for status tracking
-- Supports text-to-video and image-to-video generation
+- All models support text-to-video
+- `veo3.1-fast` and `veo3.1-quality` support image-to-video
 - Supports up to 4k output resolution
 - Generated video URLs are valid for 24 hours
 
@@ -36,17 +37,20 @@ Generate lite, fast, or high-quality 8-second videos with Google's VEO 3.1 model
 ### Generation Type
 
 - `frame` - Frame-to-video (two images)
-- `reference` - Reference image video (three images)
+- `reference` - Reference image-to-video (three images)
 - If omitted, inferred by `image_urls` count: 2 images for `frame`, 3 images for `reference`
+- `veo3.1-quality` does not support `reference` mode
+- `veo3.1-lite` does not support this parameter; do not pass `generation_type`
 
 ### Image URLs
 
+- Reference image URLs for image-to-video generation on supported models
 - Supports up to 3 images
 - Frame mode: first image is the start frame, second image is the end frame
 - Maximum file size: 10MB
 - Supported formats: .jpeg, .jpg, .png, .webp
+- `veo3.1-lite` does not support this parameter; do not pass `image_urls`
 
 ### Resolution
 
 - `720p` (default), `1080p`, or `4k`
-
