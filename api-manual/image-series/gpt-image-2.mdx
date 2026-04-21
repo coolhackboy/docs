@@ -1,0 +1,26 @@
+---
+title: "GPT Image 2 Generation"
+description: "Text-to-image and single-image editing with GPT Image 2"
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-2.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# GPT Image 2 Generation
+
+Generate images from text prompts or edit a single reference image with natural-language instructions using GPT Image 2 models.
+
+## Available Models
+
+- **gpt-image-2** - Text-to-image generation, and optional reference-image-guided generation
+- **gpt-image-2-edit** - Single-image editing based on one reference image and a text instruction
+
+## Notes
+
+- `gpt-image-2-edit` requires `image_urls`.
+- If multiple `image_urls` are passed, only the first image is used.
+- Supported `size` values are only `1:1`, `2:3`, and `3:2`.
