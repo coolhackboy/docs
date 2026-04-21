@@ -38,8 +38,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
-                      "size": "1:1",
-                      "n": 1
+                      "size": "1:1"
                     }
                   }
                 },
@@ -53,8 +52,7 @@
                       "image_urls": [
                         "https://example.com/original-image.jpg"
                       ],
-                      "size": "1:1",
-                      "n": 1
+                      "size": "1:1"
                     }
                   }
                 }
@@ -166,12 +164,6 @@
                 "description": "Output image aspect ratio",
                 "enum": ["1:1", "2:3", "3:2"],
                 "example": "1:1"
-              },
-              "n": {
-                "type": "integer",
-                "description": "Requested number of images to generate",
-                "minimum": 1,
-                "example": 1
               }
             }
           }
