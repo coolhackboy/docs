@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - GPT Image 2 API",
-    "description": "GPT Image 2 generation and single-image editing",
+    "description": "GPT Image 2 generation and multi-image editing",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit GPT Image 2 Task",
-        "description": "Generate images from text or edit a single reference image using GPT Image 2 models",
+        "description": "Generate images from text or edit one or more reference images using GPT Image 2 models",
         "operationId": "submitGPTImage2Task",
         "tags": ["GPT Image 2"],
         "requestBody": {
@@ -48,9 +48,10 @@
                     "model": "gpt-image-2-edit",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Keep the flower subject, replace the background with a clean white studio backdrop, add a soft natural shadow, and improve product-photo clarity",
+                      "prompt": "Use these reference images together to create a polished product photo: keep the flower subject, use the vase shape from the second image, replace the background with a clean white studio backdrop, and add a soft natural shadow",
                       "image_urls": [
-                        "https://example.com/original-image.jpg"
+                        "https://example.com/flower.jpg",
+                        "https://example.com/vase.jpg"
                       ],
                       "size": "1:1"
                     }
@@ -154,9 +155,10 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Reference image URLs. Required for `gpt-image-2-edit`. If multiple URLs are provided, only the first image is used.",
+                "description": "Reference image URLs. Required for `gpt-image-2-edit`. Supports multiple input images.",
                 "example": [
-                  "https://example.com/original-image.jpg"
+                  "https://example.com/flower.jpg",
+                  "https://example.com/vase.jpg"
                 ]
               },
               "size": {

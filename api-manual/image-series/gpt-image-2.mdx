@@ -1,6 +1,6 @@
 ---
 title: "GPT Image 2 Generation"
-description: "Text-to-image and single-image editing with GPT Image 2"
+description: "Text-to-image and multi-image editing with GPT Image 2"
 icon: "image"
 openapi: "/api-manual/image-series/gpt-image-2.json POST /api/generate/submit"
 ---
@@ -12,16 +12,16 @@ openapi: "/api-manual/image-series/gpt-image-2.json POST /api/generate/submit"
 
 # GPT Image 2 Generation
 
-Generate images from text prompts or edit a single reference image with natural-language instructions using GPT Image 2 models.
+Generate images from text prompts or edit one or more reference images with natural-language instructions using GPT Image 2 models.
 
 ## Available Models
 
 - **gpt-image-2** - Text-to-image generation, and optional reference-image-guided generation
-- **gpt-image-2-edit** - Single-image editing based on one reference image and a text instruction
+- **gpt-image-2-edit** - Image editing based on one or more reference images and a text instruction
 
 ## Notes
 
 - `gpt-image-2-edit` requires `image_urls`.
-- If multiple `image_urls` are passed, only the first image is used.
+- `image_urls` supports uploading multiple reference images.
 - Each request returns a single image.
 - Supported `size` values: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
