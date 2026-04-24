@@ -1,0 +1,264 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling 3.0 4K API",
+    "description": "Native 4K Video Generation with Kling 3.0/4K",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Kling 3.0/4K Video Generation Task",
+        "description": "Generate native 4K videos using Kling 3.0/4K",
+        "operationId": "submitKling304KTask",
+        "tags": ["Kling 3.0/4K"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "kling-3.0/4K-text": {
+                  "summary": "Kling 3.0/4K - Text to Video",
+                  "value": {
+                    "model": "kling-3.0/4K",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A chef carefully plating a gourmet dish in a modern kitchen, steam rising from the food under warm lighting",
+                      "multi_shots": false,
+                      "duration": 5,
+                      "sound": true
+                    }
+                  }
+                },
+                "kling-3.0/4K-image": {
+                  "summary": "Kling 3.0/4K - Image to Video",
+                  "value": {
+                    "model": "kling-3.0/4K",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic push-in shot of the lighthouse as waves crash against the cliff under storm clouds",
+                      "image_urls": [
+                        "https://example.com/start-frame.png",
+                        "https://example.com/end-frame.png"
+                      ],
+                      "multi_shots": false,
+                      "duration": 8,
+                      "sound": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling 3.0 4K model identifier. Use `kling-3.0/4K` for native 4K video generation",
+            "enum": [
+              "kling-3.0/4K"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["duration", "multi_shots", "sound"],
+            "description": "Input parameters for generation",
+            "properties": {
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Array of image URLs. `image_urls[0]` is the start frame and `image_urls[1]` is the end frame. Up to 2 images are supported. Required when `kling_elements` is provided",
+                "example": ["https://example.com/start-frame.png"]
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Video generation prompt. Required when `multi_shots` is false",
+                "maxLength": 2500,
+                "example": "A street musician playing violin on a rainy evening, reflections shimmering on wet cobblestones"
+              },
+              "multi_prompt": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["prompt", "duration"],
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "description": "Prompt text for this shot",
+                      "maxLength": 2500
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "description": "Duration in seconds for this shot (1-12)",
+                      "minimum": 1,
+                      "maximum": 12
+                    }
+                  }
+                },
+                "description": "Array of prompt objects for multi-shot mode. Required when `multi_shots` is true. Total duration of all shots must be between 3 and 15 seconds",
+                "example": [
+                  {
+                    "prompt": "A surfer paddling out into the ocean as waves build on the horizon",
+                    "duration": 4
+                  },
+                  {
+                    "prompt": "The surfer catches a massive wave and rides it toward the shore at sunset",
+                    "duration": 5
+                  }
+                ]
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Video duration in seconds. Valid range is 3-15 seconds. In multi-shot mode, this is the total duration of all shots",
+                "minimum": 3,
+                "maximum": 15,
+                "example": 5
+              },
+              "multi_shots": {
+                "type": "boolean",
+                "description": "Enable multi-shot mode. When true, use `multi_prompt` instead of `prompt`. Default is false",
+                "default": false,
+                "example": false
+              },
+              "sound": {
+                "type": "boolean",
+                "description": "Whether to generate native audio. When `multi_shots` is true, this field must be true",
+                "example": true
+              },
+              "kling_elements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Element definition object passed through to Kling 3.0/4K"
+                },
+                "description": "Array of Kling element objects. Passed through to the upstream `elements` field. When provided, `image_urls` is required",
+                "example": [
+                  {
+                    "name": "element_robot",
+                    "description": "robot character",
+                    "element_input_urls": [
+                      "https://example.com/robot-front.jpeg",
+                      "https://example.com/robot-side.png"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

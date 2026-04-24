@@ -1,383 +1,387 @@
 {
-    "$schema":  "https://mintlify.com/docs.json",
-    "theme":  "mint",
-    "name":  "PoYo AI",
-    "logo":  "https://storage.poyo.ai/logo.webp",
-    "colors":  {
-                   "primary":  "#3B82F6",
-                   "light":  "#60A5FA",
-                   "dark":  "#1E40AF"
-               },
-    "favicon":  "/favicon.ico",
-    "api":  {
-                "baseUrl":  "https://api.poyo.ai",
-                "auth":  {
-                             "method":  "bearer",
-                             "name":  "Authorization",
-                             "inputPlaceholder":  "YOUR_API_KEY"
-                         },
-                "playground":  {
-                                   "mode":  "simple"
-                               },
-                "mdx":  {
-                            "server":  "https://api.poyo.ai",
-                            "auth":  {
-                                         "method":  "key",
-                                         "name":  "x-api-key"
-                                     }
-                        },
-                "openapi":  [
-                                "/openapi.json",
-                                "/api-manual/image-series/gpt-4o-image.json",
-                                "/api-manual/image-series/gpt-image-1.5.json",
-                                "/api-manual/image-series/gpt-image-2.json",
-                                "/api-manual/image-series/nano-banana.json",
-                                "/api-manual/image-series/nano-banana-2.json",
-                                "/api-manual/image-series/nano-banana-2-new.json",
-                                "/api-manual/image-series/flux-2.json",
-                                "/api-manual/image-series/flux-kontext.json",
-                                "/api-manual/image-series/seedream-4.json",
-                                "/api-manual/image-series/seedream-4-5.json",
-                                "/api-manual/image-series/seedream-5-0-lite.json",
-                                "/api-manual/image-series/wan-2-7-image-pro.json",
-                                "/api-manual/image-series/wan-2-7-image.json",
-                                "/api-manual/image-series/z-image.json",
-                                "/api-manual/image-series/grok-imagine-image.json",
-                                "/api-manual/image-series/kling-o1.json",
-                                "/api-manual/image-series/kling-o3.json",
-                                "/api-manual/video-series/sora-2.json",
-                                "/api-manual/video-series/sora-2-pro.json",
-                                "/api-manual/video-series/sora-2-official.json",
-                                "/api-manual/video-series/veo-3-1.json",
-                                "/api-manual/video-series/wan-animate.json",
-                                "/api-manual/video-series/wan2.2-text-to-video-fast.json",
-                                "/api-manual/video-series/wan2.2-image-to-video-fast.json",
-                                "/api-manual/video-series/wan2.5-image-to-video.json",
-                                "/api-manual/video-series/wan2.5-text-to-video.json",
-                                "/api-manual/video-series/wan-2-6.json",
-                                "/api-manual/video-series/kling-2-1.json",
-                                "/api-manual/video-series/kling-2-6.json",
-                                "/api-manual/video-series/kling-2.6-motion-control.json",
-                                "/api-manual/video-series/kling-3-0-motion-control.json",
-                                "/api-manual/video-series/kling-2-5-turbo-pro.json",
-                                "/api-manual/video-series/kling-3-0.json",
-                                "/api-manual/video-series/grok-imagine.json",
-                                "/api-manual/video-series/hailuo-02.json",
-                                "/api-manual/video-series/hailuo-2-3.json",
-                                "/api-manual/video-series/seedance-1.0-pro.json",
-                                "/api-manual/video-series/seedance-1-5-pro.json",
-                                "/api-manual/video-series/seedance-2.json",
-                                "/api-manual/video-series/runway-gen-4-5.json",
-                                "/api-manual/music-series/generate-music.json",
-                                "/api-manual/music-series/minimax-music-2.6.json",
-                                "/api-manual/music-series/extend-music.json",
-                                "/api-manual/music-series/upload-and-cover-audio.json",
-                                "/api-manual/music-series/upload-and-extend-audio.json",
-                                "/api-manual/music-series/add-instrumental.json",
-                                "/api-manual/music-series/add-vocals.json",
-                                "/api-manual/music-series/get-timestamped-lyrics.json",
-                                "/api-manual/music-series/boost-music-style.json",
-                                "/api-manual/music-series/generate-music-cover.json",
-                                "/api-manual/music-series/replace-section.json",
-                                "/api-manual/music-series/generate-persona.json",
-                                "/api-manual/music-series/generate-lyrics.json",
-                                "/api-manual/music-series/convert-to-wav.json",
-                                "/api-manual/music-series/vocal-remover/separate-vocals.json",
-                                "/api-manual/music-series/vocal-remover/stem-split.json",
-                                "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
-                                "/api-manual/music-series/create-music-video.json",
-                                "/api-manual/music-series/query-music-detail.json",
-                                "/api-manual/chat-series/chat-completions.json",
-                                "/api-manual/chat-series/claude-messages.json",
-                                "/api-manual/chat-series/gemini-native-format.json",
-                                "/api-manual/account-management/user-balance.json",
-                                "/api-manual/file-series/upload-url.json",
-                                "/api-manual/file-series/upload-base64.json",
-                                "/api-manual/file-series/upload-stream.json"
-                            ]
-            },
-    "navigation":  {
-                       "tabs":  [
-                                    {
-                                        "tab":  "Model API",
-                                        "groups":  [
-                                                       {
-                                                           "group":  "Overview",
-                                                           "pages":  [
-                                                                         "index",
-                                                                         "api-manual/overview",
-                                                                         "api-manual/error-codes"
-                                                                     ]
-                                                       },
-                                                       {
-                                                           "group":  "Image Model",
-                                                           "pages":  [
-                                                                         {
-                                                                             "group":  "OpenAI",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/gpt-4o-image",
-                                                                                           "api-manual/image-series/gpt-image-1.5",
-                                                                                           "api-manual/image-series/gpt-image-2"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Google",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/nano-banana",
-                                                                                           "api-manual/image-series/nano-banana-2",
-                                                                                           "api-manual/image-series/nano-banana-2-new"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Flux",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/flux-2",
-                                                                                           "api-manual/image-series/flux-kontext"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Seedream",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/seedream-4",
-                                                                                           "api-manual/image-series/seedream-4-5",
-                                                                                           "api-manual/image-series/seedream-5-0-lite"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Wan",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/wan-2-7-image-pro",
-                                                                                           "api-manual/image-series/wan-2-7-image"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Z-Image",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/z-image"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Grok (xAI)",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/grok-imagine-image"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Kling",
-                                                                             "pages":  [
-                                                                                           "api-manual/image-series/kling-o1",
-                                                                                           "api-manual/image-series/kling-o3"
-                                                                                       ]
-                                                                         }
-                                                                     ]
-                                                       },
-                                                       {
-                                                           "group":  "Video Model",
-                                                           "pages":  [
-                                                                         {
-                                                                             "group":  "OpenAI",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/sora-2",
-                                                                                           "api-manual/video-series/sora-2-pro",
-                                                                                           "api-manual/video-series/sora-2-official"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Google",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/veo-3-1"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Wan",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/wan-animate",
-                                                                                           "api-manual/video-series/wan2.2-text-to-video-fast",
-                                                                                           "api-manual/video-series/wan2.2-image-to-video-fast",
-                                                                                           "api-manual/video-series/wan2.5-image-to-video",
-                                                                                           "api-manual/video-series/wan2.5-text-to-video",
-                                                                                           "api-manual/video-series/wan-2-6"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Kling",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/kling-2-1",
-                                                                                           "api-manual/video-series/kling-2-5-turbo-pro",
-                                                                                           "api-manual/video-series/kling-2-6",
-                                                                                           "api-manual/video-series/kling-3-0",
-                                                                                           "api-manual/video-series/kling-2.6-motion-control",
-                                                                                           "api-manual/video-series/kling-3-0-motion-control"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Grok (xAI)",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/grok-imagine"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Hailuo",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/hailuo-02",
-                                                                                           "api-manual/video-series/hailuo-2-3"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Runway",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/runway-gen-4-5"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Seedance",
-                                                                             "pages":  [
-                                                                                           "api-manual/video-series/seedance-1.0-pro",
-                                                                                           "api-manual/video-series/seedance-1-5-pro",
-                                                                                           "api-manual/video-series/seedance-2"
-                                                                                       ]
-                                                                         }
-                                                                     ]
-                                                       },
-                                                       {
-                                                           "group":  "Music Model",
-                                                           "pages":  [
-                                                                         {
-                                                                             "group":  "Suno AI",
-                                                                             "pages":  [
-                                                                                           "api-manual/music-series/generate-music",
-                                                                                           "api-manual/music-series/extend-music",
-                                                                                           "api-manual/music-series/upload-and-cover-audio",
-                                                                                           "api-manual/music-series/upload-and-extend-audio",
-                                                                                           "api-manual/music-series/add-instrumental",
-                                                                                           "api-manual/music-series/add-vocals",
-                                                                                           "api-manual/music-series/get-timestamped-lyrics",
-                                                                                           "api-manual/music-series/boost-music-style",
-                                                                                           "api-manual/music-series/generate-music-cover",
-                                                                                           "api-manual/music-series/replace-section",
-                                                                                           "api-manual/music-series/generate-persona",
-                                                                                           "api-manual/music-series/generate-lyrics",
-                                                                                           "api-manual/music-series/convert-to-wav",
-                                                                                           {
-                                                                                               "group":  "Vocal Remover",
-                                                                                               "pages":  [
-                                                                                                             "api-manual/music-series/vocal-remover/separate-vocals",
-                                                                                                             "api-manual/music-series/vocal-remover/stem-split",
-                                                                                                             "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
-                                                                                                         ]
-                                                                                           },
-                                                                                           "api-manual/music-series/create-music-video",
-                                                                                           "api-manual/music-series/query-music-detail",
-                                                                                           "api-manual/music-series/music-webhook"
-                                                                                       ]
-                                                                        },
-                                                                        {
-                                                                            "group":  "MiniMax",
-                                                                            "pages":  [
-                                                                                          "api-manual/music-series/minimax-music-2.6"
-                                                                                      ]
-                                                                         }
-                                                                     ]
-                                                       },
-                                                       {
-                                                           "group":  "Chat Model",
-                                                           "pages":  [
-                                                                         {
-                                                                             "group":  "OpenAI",
-                                                                             "pages":  [
-                                                                                           "api-manual/chat-series/chat-completions"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Claude",
-                                                                             "pages":  [
-                                                                                           "api-manual/chat-series/claude-messages"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Gemini",
-                                                                             "pages":  [
-                                                                                           "api-manual/chat-series/gemini-native-format"
-                                                                                       ]
-                                                                         }
-                                                                     ]
-                                                       },
-                                                       {
-                                                           "group":  "Task Management",
-                                                           "pages":  [
-                                                                         {
-                                                                             "group":  "Image",
-                                                                             "pages":  [
-                                                                                           "api-manual/task-management/status",
-                                                                                           "api-manual/task-management/webhooks"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Video",
-                                                                             "pages":  [
-                                                                                           "api-manual/task-management/status",
-                                                                                           "api-manual/task-management/webhooks"
-                                                                                       ]
-                                                                         },
-                                                                         {
-                                                                             "group":  "Music",
-                                                                             "pages":  [
-                                                                                           "api-manual/music-series/query-music-detail",
-                                                                                           "api-manual/music-series/music-webhook"
-                                                                                       ]
-                                                                         }
-                                                                     ]
-                                                       }
-                                                   ]
-                                    },
-                                    {
-                                        "tab":  "Common API",
-                                        "groups":  [
-                                                       {
-                                                           "group":  "File Management",
-                                                           "pages":  [
-                                                                         "api-manual/file-series/upload-url",
-                                                                         "api-manual/file-series/upload-base64",
-                                                                         "api-manual/file-series/upload-stream"
-                                                                     ]
-                                                       },
-                                                       {
-                                                           "group":  "Account Management",
-                                                           "pages":  [
-                                                                         "api-manual/account-management/user-balance"
-                                                                     ]
-                                                       }
-                                                   ]
-                                    }
-                                ],
-                       "global":  {
-
-                                  }
-                   },
-    "navbar":  {
-                   "links":  [
-                                 {
-                                     "label":  "Discord",
-                                     "icon":  "discord",
-                                     "href":  "https://discord.gg/F8JNuUPB3j"
-                                 }
-                             ],
-                   "primary":  {
-                                   "type":  "button",
-                                   "label":  "Market",
-                                   "href":  "https://poyo.ai/models"
-                               }
-               },
-    "contextual":  {
-                       "options":  [
-                                       "copy",
-                                       "view",
-                                       "chatgpt",
-                                       "claude",
-                                       "perplexity",
-                                       "mcp",
-                                       "cursor",
-                                       "vscode"
-                                   ]
-                   }
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "PoYo AI",
+  "logo": "https://storage.poyo.ai/logo.webp",
+  "colors": {
+    "primary": "#3B82F6",
+    "light": "#60A5FA",
+    "dark": "#1E40AF"
+  },
+  "favicon": "/favicon.ico",
+  "api": {
+    "baseUrl": "https://api.poyo.ai",
+    "auth": {
+      "method": "bearer",
+      "name": "Authorization",
+      "inputPlaceholder": "YOUR_API_KEY"
+    },
+    "playground": {
+      "mode": "simple"
+    },
+    "mdx": {
+      "server": "https://api.poyo.ai",
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
+    },
+    "openapi": [
+      "/openapi.json",
+      "/api-manual/image-series/gpt-4o-image.json",
+      "/api-manual/image-series/gpt-image-1.5.json",
+      "/api-manual/image-series/gpt-image-2.json",
+      "/api-manual/image-series/nano-banana.json",
+      "/api-manual/image-series/nano-banana-2.json",
+      "/api-manual/image-series/nano-banana-2-new.json",
+      "/api-manual/image-series/flux-2.json",
+      "/api-manual/image-series/flux-kontext.json",
+      "/api-manual/image-series/seedream-4.json",
+      "/api-manual/image-series/seedream-4-5.json",
+      "/api-manual/image-series/seedream-5-0-lite.json",
+      "/api-manual/image-series/wan-2-7-image-pro.json",
+      "/api-manual/image-series/wan-2-7-image.json",
+      "/api-manual/image-series/z-image.json",
+      "/api-manual/image-series/grok-imagine-image.json",
+      "/api-manual/image-series/kling-o1.json",
+      "/api-manual/image-series/kling-o3.json",
+      "/api-manual/video-series/sora-2.json",
+      "/api-manual/video-series/sora-2-pro.json",
+      "/api-manual/video-series/sora-2-official.json",
+      "/api-manual/video-series/veo-3-1.json",
+      "/api-manual/video-series/wan-animate.json",
+      "/api-manual/video-series/wan2.2-text-to-video-fast.json",
+      "/api-manual/video-series/wan2.2-image-to-video-fast.json",
+      "/api-manual/video-series/wan2.5-image-to-video.json",
+      "/api-manual/video-series/wan2.5-text-to-video.json",
+      "/api-manual/video-series/wan-2-6.json",
+      "/api-manual/video-series/kling-2-1.json",
+      "/api-manual/video-series/kling-2-6.json",
+      "/api-manual/video-series/kling-2.6-motion-control.json",
+      "/api-manual/video-series/kling-3-0-motion-control.json",
+      "/api-manual/video-series/kling-2-5-turbo-pro.json",
+      "/api-manual/video-series/kling-3-0.json",
+      "/api-manual/video-series/kling-3-0-4k.json",
+      "/api-manual/video-series/kling-o3.json",
+      "/api-manual/video-series/kling-o3-4k.json",
+      "/api-manual/video-series/grok-imagine.json",
+      "/api-manual/video-series/hailuo-02.json",
+      "/api-manual/video-series/hailuo-2-3.json",
+      "/api-manual/video-series/seedance-1.0-pro.json",
+      "/api-manual/video-series/seedance-1-5-pro.json",
+      "/api-manual/video-series/seedance-2.json",
+      "/api-manual/video-series/runway-gen-4-5.json",
+      "/api-manual/music-series/generate-music.json",
+      "/api-manual/music-series/minimax-music-2.6.json",
+      "/api-manual/music-series/extend-music.json",
+      "/api-manual/music-series/upload-and-cover-audio.json",
+      "/api-manual/music-series/upload-and-extend-audio.json",
+      "/api-manual/music-series/add-instrumental.json",
+      "/api-manual/music-series/add-vocals.json",
+      "/api-manual/music-series/get-timestamped-lyrics.json",
+      "/api-manual/music-series/boost-music-style.json",
+      "/api-manual/music-series/generate-music-cover.json",
+      "/api-manual/music-series/replace-section.json",
+      "/api-manual/music-series/generate-persona.json",
+      "/api-manual/music-series/generate-lyrics.json",
+      "/api-manual/music-series/convert-to-wav.json",
+      "/api-manual/music-series/vocal-remover/separate-vocals.json",
+      "/api-manual/music-series/vocal-remover/stem-split.json",
+      "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
+      "/api-manual/music-series/create-music-video.json",
+      "/api-manual/music-series/query-music-detail.json",
+      "/api-manual/chat-series/chat-completions.json",
+      "/api-manual/chat-series/claude-messages.json",
+      "/api-manual/chat-series/gemini-native-format.json",
+      "/api-manual/account-management/user-balance.json",
+      "/api-manual/file-series/upload-url.json",
+      "/api-manual/file-series/upload-base64.json",
+      "/api-manual/file-series/upload-stream.json"
+    ]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Model API",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "index",
+              "api-manual/overview",
+              "api-manual/error-codes"
+            ]
+          },
+          {
+            "group": "Image Model",
+            "pages": [
+              {
+                "group": "OpenAI",
+                "pages": [
+                  "api-manual/image-series/gpt-4o-image",
+                  "api-manual/image-series/gpt-image-1.5",
+                  "api-manual/image-series/gpt-image-2"
+                ]
+              },
+              {
+                "group": "Google",
+                "pages": [
+                  "api-manual/image-series/nano-banana",
+                  "api-manual/image-series/nano-banana-2",
+                  "api-manual/image-series/nano-banana-2-new"
+                ]
+              },
+              {
+                "group": "Flux",
+                "pages": [
+                  "api-manual/image-series/flux-2",
+                  "api-manual/image-series/flux-kontext"
+                ]
+              },
+              {
+                "group": "Seedream",
+                "pages": [
+                  "api-manual/image-series/seedream-4",
+                  "api-manual/image-series/seedream-4-5",
+                  "api-manual/image-series/seedream-5-0-lite"
+                ]
+              },
+              {
+                "group": "Wan",
+                "pages": [
+                  "api-manual/image-series/wan-2-7-image-pro",
+                  "api-manual/image-series/wan-2-7-image"
+                ]
+              },
+              {
+                "group": "Z-Image",
+                "pages": [
+                  "api-manual/image-series/z-image"
+                ]
+              },
+              {
+                "group": "Grok (xAI)",
+                "pages": [
+                  "api-manual/image-series/grok-imagine-image"
+                ]
+              },
+              {
+                "group": "Kling",
+                "pages": [
+                  "api-manual/image-series/kling-o1",
+                  "api-manual/image-series/kling-o3"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Video Model",
+            "pages": [
+              {
+                "group": "OpenAI",
+                "pages": [
+                  "api-manual/video-series/sora-2",
+                  "api-manual/video-series/sora-2-pro",
+                  "api-manual/video-series/sora-2-official"
+                ]
+              },
+              {
+                "group": "Google",
+                "pages": [
+                  "api-manual/video-series/veo-3-1"
+                ]
+              },
+              {
+                "group": "Wan",
+                "pages": [
+                  "api-manual/video-series/wan-animate",
+                  "api-manual/video-series/wan2.2-text-to-video-fast",
+                  "api-manual/video-series/wan2.2-image-to-video-fast",
+                  "api-manual/video-series/wan2.5-image-to-video",
+                  "api-manual/video-series/wan2.5-text-to-video",
+                  "api-manual/video-series/wan-2-6"
+                ]
+              },
+              {
+                "group": "Kling",
+                "pages": [
+                  "api-manual/video-series/kling-2-1",
+                  "api-manual/video-series/kling-2-5-turbo-pro",
+                  "api-manual/video-series/kling-2-6",
+                  "api-manual/video-series/kling-3-0",
+                  "api-manual/video-series/kling-3-0-4k",
+                  "api-manual/video-series/kling-o3",
+                  "api-manual/video-series/kling-o3-4k",
+                  "api-manual/video-series/kling-2.6-motion-control",
+                  "api-manual/video-series/kling-3-0-motion-control"
+                ]
+              },
+              {
+                "group": "Grok (xAI)",
+                "pages": [
+                  "api-manual/video-series/grok-imagine"
+                ]
+              },
+              {
+                "group": "Hailuo",
+                "pages": [
+                  "api-manual/video-series/hailuo-02",
+                  "api-manual/video-series/hailuo-2-3"
+                ]
+              },
+              {
+                "group": "Runway",
+                "pages": [
+                  "api-manual/video-series/runway-gen-4-5"
+                ]
+              },
+              {
+                "group": "Seedance",
+                "pages": [
+                  "api-manual/video-series/seedance-1.0-pro",
+                  "api-manual/video-series/seedance-1-5-pro",
+                  "api-manual/video-series/seedance-2"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Music Model",
+            "pages": [
+              {
+                "group": "Suno AI",
+                "pages": [
+                  "api-manual/music-series/generate-music",
+                  "api-manual/music-series/extend-music",
+                  "api-manual/music-series/upload-and-cover-audio",
+                  "api-manual/music-series/upload-and-extend-audio",
+                  "api-manual/music-series/add-instrumental",
+                  "api-manual/music-series/add-vocals",
+                  "api-manual/music-series/get-timestamped-lyrics",
+                  "api-manual/music-series/boost-music-style",
+                  "api-manual/music-series/generate-music-cover",
+                  "api-manual/music-series/replace-section",
+                  "api-manual/music-series/generate-persona",
+                  "api-manual/music-series/generate-lyrics",
+                  "api-manual/music-series/convert-to-wav",
+                  {
+                    "group": "Vocal Remover",
+                    "pages": [
+                      "api-manual/music-series/vocal-remover/separate-vocals",
+                      "api-manual/music-series/vocal-remover/stem-split",
+                      "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                    ]
+                  },
+                  "api-manual/music-series/create-music-video",
+                  "api-manual/music-series/query-music-detail",
+                  "api-manual/music-series/music-webhook"
+                ]
+              },
+              {
+                "group": "MiniMax",
+                "pages": [
+                  "api-manual/music-series/minimax-music-2.6"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Chat Model",
+            "pages": [
+              {
+                "group": "OpenAI",
+                "pages": [
+                  "api-manual/chat-series/chat-completions"
+                ]
+              },
+              {
+                "group": "Claude",
+                "pages": [
+                  "api-manual/chat-series/claude-messages"
+                ]
+              },
+              {
+                "group": "Gemini",
+                "pages": [
+                  "api-manual/chat-series/gemini-native-format"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Task Management",
+            "pages": [
+              {
+                "group": "Image",
+                "pages": [
+                  "api-manual/task-management/status",
+                  "api-manual/task-management/webhooks"
+                ]
+              },
+              {
+                "group": "Video",
+                "pages": [
+                  "api-manual/task-management/status",
+                  "api-manual/task-management/webhooks"
+                ]
+              },
+              {
+                "group": "Music",
+                "pages": [
+                  "api-manual/music-series/query-music-detail",
+                  "api-manual/music-series/music-webhook"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Common API",
+        "groups": [
+          {
+            "group": "File Management",
+            "pages": [
+              "api-manual/file-series/upload-url",
+              "api-manual/file-series/upload-base64",
+              "api-manual/file-series/upload-stream"
+            ]
+          },
+          {
+            "group": "Account Management",
+            "pages": [
+              "api-manual/account-management/user-balance"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {}
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Discord",
+        "icon": "discord",
+        "href": "https://discord.gg/F8JNuUPB3j"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Market",
+      "href": "https://poyo.ai/models"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  }
 }

@@ -1,0 +1,26 @@
+---
+title: "Kling O3 Video Generation"
+description: "Next-generation video generation with Kling O3 standard and pro"
+icon: "video"
+openapi: "/api-manual/video-series/kling-o3.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+## Available Models
+
+- **kling-o3/standard** - Standard quality tier
+- **kling-o3/pro** - Higher-quality pro tier
+
+## Key Features
+
+- **Three Modes**: Supports text-to-video, image-to-video, and reference-to-video
+- **Reference Images**: Use `reference_image_urls` to enter reference-to-video mode, with up to 4 reference images
+- **Image Anchors**: `image_urls` supports up to 2 images. In image mode they map to the main image and optional end frame; in reference mode they act as optional start and end anchors
+- **Aspect Ratios**: `1:1`, `16:9`, and `9:16` are supported for text-to-video and reference-to-video. `aspect_ratio` is ignored in image-to-video
+- **Multi-Shot**: Multi-shot storytelling with per-shot prompts and durations. When `multi_shots` is `true`, `multi_prompt` is required and `sound` must be `true`
+- **Kling Elements**: `kling_elements` is only available in reference-to-video and is forwarded to the upstream `elements` field
+- **Credits**: `kling-o3/standard` costs 10 credits/s without audio or 13 credits/s with audio. `kling-o3/pro` costs 13 credits/s without audio or 16 credits/s with audio
