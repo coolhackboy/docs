@@ -32,13 +32,49 @@
               },
               "examples": {
                 "gpt-image-2": {
-                  "summary": "GPT Image 2 Generation",
+                  "summary": "GPT Image 2 Generation (1K)",
                   "value": {
                     "model": "gpt-image-2",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
                       "size": "1:1"
+                    }
+                  }
+                },
+                "gpt-image-2-2k": {
+                  "summary": "GPT Image 2 Generation (2K)",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "gpt-image-2-4k": {
+                  "summary": "GPT Image 2 Generation (4K)",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic landscape with dramatic lighting, ultra-high detail",
+                      "size": "16:9",
+                      "resolution": "4K"
+                    }
+                  }
+                },
+                "gpt-image-2-custom-size": {
+                  "summary": "GPT Image 2 with Custom Size",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine on a clean white studio background",
+                      "size": "2304x1536",
+                      "resolution": "2K"
                     }
                   }
                 },
@@ -163,9 +199,16 @@
               },
               "size": {
                 "type": "string",
-                "description": "Output image aspect ratio",
-                "enum": ["1:1", "2:3", "3:2", "4:3", "3:4", "4:5", "5:4", "16:9", "9:16", "21:9"],
+                "description": "Output image aspect ratio or custom pixel size. Preset values: `auto`, `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`. Custom size uses `WIDTHxHEIGHT` format (e.g., `2304x1536`) and requires `resolution` to be `2K` or `4K`. Images with `auto` or without a `size` parameter will always use 1K resolution.",
+                "default": "auto",
                 "example": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output image resolution. `1K` (default): standard resolution (1x credits). `2K`: high resolution (2x credits). `4K`: ultra-high resolution, true 4K billing (4x credits) applies only to `16:9`, `9:16`, `21:9`, or custom sizes with a 3840-pixel edge; other 4K selections are billed as 2K.",
+                "enum": ["1K", "2K", "4K"],
+                "default": "1K",
+                "example": "1K"
               }
             }
           }

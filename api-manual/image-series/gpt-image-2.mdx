@@ -24,4 +24,28 @@ Generate images from text prompts or edit one or more reference images with natu
 - `gpt-image-2-edit` requires `image_urls`.
 - `image_urls` supports uploading multiple reference images.
 - Each request returns a single image.
-- Supported `size` values: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
+- Supported `size` values: `auto`, `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`, or custom `WIDTHxHEIGHT`.
+
+## Resolution
+
+The `resolution` parameter controls the output image resolution and credits cost.
+
+| Resolution | Credits Multiplier | Description |
+|---|---|---|
+| `1K` (default) | 1x | Standard resolution |
+| `2K` | 2x | High resolution |
+| `4K` | 4x | Ultra-high resolution (true 4K sizes only) |
+
+### Resolution Rules
+
+- Images with `size` set to `auto` or without a `size` parameter will always use **1K** resolution, regardless of the `resolution` parameter.
+- Custom size (`WIDTHxHEIGHT`) requires `resolution` to be `2K` or `4K`.
+- **4K costs 4x credits only for** `16:9`, `9:16`, `21:9`, or custom sizes with a 3840-pixel edge. All other 4K selections are automatically downgraded to 2K billing (2x credits).
+
+### Custom Size Constraints
+
+Custom sizes use `WIDTHxHEIGHT` format (e.g., `2304x1536`) and must meet the following requirements:
+- Both dimensions must be divisible by 16
+- Maximum edge length: 3840 pixels
+- Aspect ratio: up to 3:1
+- Total pixels: between 655,360 and 8,294,400
