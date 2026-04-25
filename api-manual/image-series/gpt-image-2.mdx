@@ -24,6 +24,7 @@ Generate images from text prompts or edit one or more reference images with natu
 - `gpt-image-2-edit` requires `image_urls`.
 - `image_urls` supports uploading multiple reference images.
 - Each request returns a single image.
+- `quality` controls output image quality. Possible values: `low`, `medium`, `high`. Default: `low`.
 - Supported `size` values: `auto`, `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`, or custom `WIDTHxHEIGHT`.
 
 ## Resolution
@@ -49,3 +50,36 @@ Custom sizes use `WIDTHxHEIGHT` format (e.g., `2304x1536`) and must meet the fol
 - Maximum edge length: 3840 pixels
 - Aspect ratio: up to 3:1
 - Total pixels: between 655,360 and 8,294,400
+
+
+## Request Examples
+
+### Generate Image
+
+```json
+{
+  "model": "gpt-image-2",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A premium product photo of a silver espresso machine on a clean white studio background",
+    "quality": "low",
+    "size": "1:1",
+    "resolution": "1K"
+  }
+}
+```
+
+### Edit Image
+
+```json
+{
+  "model": "gpt-image-2-edit",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the background with a clean white studio backdrop and add a soft natural shadow",
+    "image_urls": ["https://example.com/product.jpg"],
+    "quality": "high",
+    "size": "1:1"
+  }
+}
+```

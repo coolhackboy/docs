@@ -38,6 +38,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
+                      "quality": "low",
                       "size": "1:1"
                     }
                   }
@@ -49,6 +50,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
+                      "quality": "medium",
                       "size": "16:9",
                       "resolution": "2K"
                     }
@@ -61,6 +63,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A cinematic landscape with dramatic lighting, ultra-high detail",
+                      "quality": "high",
                       "size": "16:9",
                       "resolution": "4K"
                     }
@@ -73,6 +76,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A premium product photo of a silver espresso machine on a clean white studio background",
+                      "quality": "medium",
                       "size": "2304x1536",
                       "resolution": "2K"
                     }
@@ -85,6 +89,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Use these reference images together to create a polished product photo: keep the flower subject, use the vase shape from the second image, replace the background with a clean white studio backdrop, and add a soft natural shadow",
+                      "quality": "high",
                       "image_urls": [
                         "https://example.com/flower.jpg",
                         "https://example.com/vase.jpg"
@@ -184,6 +189,13 @@
                 "description": "Prompt describing the target image or requested edit",
                 "maxLength": 4000,
                 "example": "A beautiful sunset over the ocean"
+              },
+              "quality": {
+                "type": "string",
+                "description": "Output image quality. Possible enum values: `low`, `medium`, `high`.",
+                "enum": ["low", "medium", "high"],
+                "default": "low",
+                "example": "low"
               },
               "image_urls": {
                 "type": "array",
