@@ -70,6 +70,7 @@
       "/api-manual/video-series/seedance-1.0-pro.json",
       "/api-manual/video-series/seedance-1-5-pro.json",
       "/api-manual/video-series/seedance-2.json",
+      "/api-manual/video-series/happy-horse.json",
       "/api-manual/video-series/runway-gen-4-5.json",
       "/api-manual/music-series/generate-music.json",
       "/api-manual/music-series/minimax-music-2.6.json",
@@ -241,6 +242,12 @@
                   "api-manual/video-series/seedance-1.0-pro",
                   "api-manual/video-series/seedance-1-5-pro",
                   "api-manual/video-series/seedance-2"
+                ]
+              },
+              {
+                "group": "Alibaba",
+                "pages": [
+                  "api-manual/video-series/happy-horse"
                 ]
               }
             ]

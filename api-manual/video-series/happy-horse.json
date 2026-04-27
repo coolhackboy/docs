@@ -1,0 +1,185 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Happy Horse API",
+    "description": "Alibaba Happy Horse text-to-video and image-to-video generation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Happy Horse Task",
+        "description": "Generate video with Alibaba Happy Horse",
+        "operationId": "submitHappyHorseTask",
+        "tags": ["Happy Horse"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "happy-horse",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A small robot barista prepares coffee in a sunlit Tokyo cafe, cinematic camera movement, warm ambient sound.",
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Image to video",
+                  "value": {
+                    "model": "happy-horse",
+                    "input": {
+                      "image_urls": ["https://example.com/first-frame.png"],
+                      "prompt": "Bring the scene in the image to life with gentle camera movement.",
+                      "resolution": "720p",
+                      "duration": 5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Happy Horse model identifier",
+            "enum": ["happy-horse"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 2500,
+                "description": "Text prompt. Required for text-to-video and optional for image-to-video.",
+                "example": "A small robot barista prepares coffee in a sunlit Tokyo cafe, cinematic camera movement, warm ambient sound."
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Single-item first-frame image URL array for image-to-video",
+                "example": ["https://example.com/first-frame.png"]
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Text-to-video aspect ratio",
+                "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"],
+                "default": "16:9",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution",
+                "enum": ["720p", "1080p"],
+                "default": "1080p",
+                "example": "1080p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Output duration in seconds",
+                "minimum": 3,
+                "maximum": 15,
+                "default": 5,
+                "example": 5
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "description": "Enable content moderation for input and output",
+                "example": true
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-27T10:30:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
