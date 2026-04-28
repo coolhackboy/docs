@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Happy Horse API",
-    "description": "Alibaba Happy Horse text-to-video and image-to-video generation",
+    "description": "Alibaba Happy Horse text-to-video, image-to-video, reference-to-video, and video-edit workflows",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Happy Horse Task",
-        "description": "Generate video with Alibaba Happy Horse",
+        "description": "Generate or edit video with Alibaba Happy Horse",
         "operationId": "submitHappyHorseTask",
         "tags": ["Happy Horse"],
         "requestBody": {
@@ -53,6 +53,37 @@
                       "prompt": "Bring the scene in the image to life with gentle camera movement.",
                       "resolution": "720p",
                       "duration": 5
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "Reference to video",
+                  "value": {
+                    "model": "happy-horse",
+                    "input": {
+                      "prompt": "A dance battle between character1 and character2, cinematic lighting, smooth camera movement.",
+                      "reference_image_urls": [
+                        "https://example.com/character1.png",
+                        "https://example.com/character2.png"
+                      ],
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "duration": 5,
+                      "seed": 42
+                    }
+                  }
+                },
+                "video-edit": {
+                  "summary": "Video edit",
+                  "value": {
+                    "model": "happy-horse",
+                    "input": {
+                      "video_url": "https://example.com/source-video.mp4",
+                      "prompt": "Recolor the sky to a deep purple sunset.",
+                      "reference_image_urls": ["https://example.com/style-reference.png"],
+                      "resolution": "1080p",
+                      "audio_setting": "auto",
+                      "enable_safety_checker": true
                     }
                   }
                 }
@@ -106,7 +137,7 @@
               "prompt": {
                 "type": "string",
                 "maxLength": 2500,
-                "description": "Text prompt. Required for text-to-video and optional for image-to-video.",
+                "description": "Text prompt. Required for text-to-video, reference-to-video, and video-edit. Optional for image-to-video.",
                 "example": "A small robot barista prepares coffee in a sunlit Tokyo cafe, cinematic camera movement, warm ambient sound."
               },
               "image_urls": {
@@ -116,12 +147,27 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Single-item first-frame image URL array for image-to-video",
+                "description": "Single-item first-frame image URL array for image-to-video. Do not combine with reference_image_urls or video_url.",
                 "example": ["https://example.com/first-frame.png"]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Reference images. For reference-to-video, provide 1-9 images and refer to them as character1, character2, and so on in the prompt. For video-edit, provide up to 5 optional images and refer to them as @Image1, @Image2, and so on.",
+                "example": ["https://example.com/reference.png"]
+              },
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Source video URL for video-edit. Supported source duration is 3-60 seconds. Billing is based on the probed source video duration, capped at 15 seconds.",
+                "example": "https://example.com/source-video.mp4"
               },
               "aspect_ratio": {
                 "type": "string",
-                "description": "Text-to-video aspect ratio",
+                "description": "Output aspect ratio for text-to-video and reference-to-video",
                 "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"],
                 "default": "16:9",
                 "example": "16:9"
@@ -135,11 +181,25 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Output duration in seconds",
+                "description": "Output duration in seconds for text-to-video, image-to-video, and reference-to-video. Ignored for video-edit because the output follows the source video and is capped at 15 seconds.",
                 "minimum": 3,
                 "maximum": 15,
                 "default": 5,
                 "example": 5
+              },
+              "audio_setting": {
+                "type": "string",
+                "description": "Video-edit audio handling. `auto` lets the model decide whether to regenerate audio; `origin` preserves original audio.",
+                "enum": ["auto", "origin"],
+                "default": "auto",
+                "example": "auto"
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Optional random seed for reproducible generation",
+                "minimum": 0,
+                "maximum": 2147483647,
+                "example": 42
               },
               "enable_safety_checker": {
                 "type": "boolean",

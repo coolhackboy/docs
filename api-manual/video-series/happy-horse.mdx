@@ -1,6 +1,6 @@
 ---
 title: "Happy Horse"
-description: "Alibaba Happy Horse text-to-video and image-to-video generation"
+description: "Alibaba Happy Horse text-to-video, image-to-video, reference-to-video, and video-edit workflows"
 icon: "video"
 openapi: "/api-manual/video-series/happy-horse.json POST /api/generate/submit"
 ---
@@ -12,41 +12,55 @@ openapi: "/api-manual/video-series/happy-horse.json POST /api/generate/submit"
 
 # Happy Horse
 
-`happy-horse` supports both text-to-video and image-to-video generation through one public model ID.
+`happy-horse` supports text-to-video, image-to-video, reference-to-video, and video-edit through one public model ID.
 
 ## Available Model
 
-- **happy-horse** - Alibaba Happy Horse 1.0 text-to-video and image-to-video
+- **happy-horse** - Alibaba Happy Horse 1.0 video generation and editing
 
 ## Workflows
 
 ### Text to Video
 
-Send a `prompt` without `image_urls`.
+Send a `prompt` without image or video input fields. Use `aspect_ratio`, `resolution`, and `duration` to control the output.
 
 ### Image to Video
 
 Send a single-item `image_urls` array. The image is used as the first frame. `prompt` is optional in this workflow.
 
+### Reference to Video
+
+Send `reference_image_urls` with 1-9 images and a required `prompt`. Reference the images in prompt text as `character1`, `character2`, and so on, matching the order of `reference_image_urls`.
+
+Do not combine `reference_image_urls` with `image_urls`.
+
+### Video Edit
+
+Send `video_url` with a required edit `prompt`. Optional `reference_image_urls` can guide the edit; refer to them as `@Image1`, `@Image2`, and so on. `audio_setting` controls whether Happy Horse decides audio handling automatically or preserves the original audio.
+
+The source video must be 3-60 seconds. Video-edit billing uses the probed source video duration, capped at 15 seconds, because output follows the source video and truncates longer input to the first 15 seconds.
+
 ## Required Parameters
 
 - **model**: `happy-horse`
-- **input.prompt**: Required for text-to-video. Optional for image-to-video.
+- **input.prompt**: Required for text-to-video, reference-to-video, and video-edit. Optional for image-to-video.
+- **input.video_url**: Required for video-edit.
+- **input.reference_image_urls**: Required for reference-to-video.
 
 ## Optional Parameters
 
-- **image_urls**: Single-item first-frame image URL array
-- **aspect_ratio**: Text-to-video only. `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
+- **image_urls**: Single-item first-frame image URL array for image-to-video
+- **reference_image_urls**: 1-9 images for reference-to-video, or up to 5 optional images for video-edit
+- **aspect_ratio**: Text-to-video and reference-to-video only. `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
 - **resolution**: `720p` or `1080p`. Default is `1080p`
-- **duration**: Integer seconds from `3` to `15`. Default is `5`
+- **duration**: Integer seconds from `3` to `15` for text-to-video, image-to-video, and reference-to-video. Ignored for video-edit
+- **audio_setting**: Video-edit only. `auto` or `origin`. Default is `auto`
+- **seed**: Optional integer from `0` to `2147483647`
 - **enable_safety_checker**: Optional boolean
-
-## Pricing
-
-- **720p**: 16 credits per second
-- **1080p**: 32 credits per second
 
 ## Notes
 
-- `image_urls` must resolve to exactly one image.
-- For text-to-video, omit image fields and use `aspect_ratio`.
+- `image_urls` must resolve to exactly one image and is only for image-to-video.
+- `reference_image_urls` selects reference-to-video unless `video_url` is present, in which case it is treated as optional video-edit reference imagery.
+- For text-to-video and reference-to-video, omit `video_url` and use `aspect_ratio`.
+- For video-edit, omit `duration`; the backend probes the source video duration for validation and duration-based billing.
