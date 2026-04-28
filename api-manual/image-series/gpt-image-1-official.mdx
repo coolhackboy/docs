@@ -1,0 +1,69 @@
+---
+title: "GPT Image 1 Official Generation"
+description: "Fal-backed GPT Image 1 official text-to-image and edit models"
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-1-official.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# GPT Image 1 Official Generation
+
+Generate images from text prompts or edit reference images using the official GPT Image 1 models through PoYo.
+
+## Available Models
+
+- **gpt-image-1-official** - Text-to-image generation
+- **gpt-image-1-edit-official** - Image editing with reference images
+
+## Notes
+
+- `quality` supports `low`, `medium`, and `high`. Default: `low`.
+- `size` supports `auto`, `1024x1024`, `1536x1024`, and `1024x1536`.
+- `gpt-image-1-edit-official` requires `image_urls`.
+- `input_fidelity` is available for the edit model.
+- `mask_image_url` is not supported by GPT Image 1 official models.
+- `output_format` supports `jpeg`, `png`, and `webp`. Default: `png`.
+
+## Billing
+
+This model is billed by the selected `quality` and the number of generated images. The `n` parameter controls how many images are requested, so higher `n` values increase the total task cost.
+
+## Request Examples
+
+### Generate Image
+
+```json
+{
+  "model": "gpt-image-1-official",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic cyberpunk city street at twilight with neon reflections",
+    "quality": "low",
+    "size": "auto",
+    "background": "auto",
+    "n": 1,
+    "output_format": "png"
+  }
+}
+```
+
+### Edit Image
+
+```json
+{
+  "model": "gpt-image-1-edit-official",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Make this image look like polished pixel art",
+    "image_urls": ["https://example.com/source.png"],
+    "quality": "medium",
+    "size": "auto",
+    "input_fidelity": "high",
+    "output_format": "png"
+  }
+}
+```

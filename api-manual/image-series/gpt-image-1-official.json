@@ -1,0 +1,218 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - GPT Image 1 Official API",
+    "description": "GPT Image 1 official generation and editing through Fal",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit GPT Image 1 Official Task",
+        "description": "Generate or edit images using GPT Image 1 official models.",
+        "operationId": "submitGPTImage1OfficialTask",
+        "tags": ["GPT Image 1 Official"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "generate": {
+                  "summary": "Generate image",
+                  "value": {
+                    "model": "gpt-image-1-official",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic cyberpunk city street at twilight with neon reflections",
+                      "quality": "low",
+                      "size": "auto",
+                      "background": "auto",
+                      "n": 1,
+                      "output_format": "png"
+                    }
+                  }
+                },
+                "edit": {
+                  "summary": "Edit image",
+                  "value": {
+                    "model": "gpt-image-1-edit-official",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Make this image look like polished pixel art",
+                      "image_urls": ["https://example.com/source.png"],
+                      "quality": "medium",
+                      "size": "auto",
+                      "input_fidelity": "high",
+                      "output_format": "png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": ["gpt-image-1-official", "gpt-image-1-edit-official"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt for generation or editing."
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Required for gpt-image-1-edit-official."
+              },
+              "size": {
+                "type": "string",
+                "enum": ["auto", "1024x1024", "1536x1024", "1024x1536"]
+              },
+              "background": {
+                "type": "string",
+                "enum": ["auto", "transparent", "opaque"]
+              },
+              "quality": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "default": "low"
+              },
+              "input_fidelity": {
+                "type": "string",
+                "enum": ["low", "high"],
+                "description": "Edit model only."
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              },
+              "output_format": {
+                "type": "string",
+                "enum": ["jpeg", "png", "webp"],
+                "default": "png"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

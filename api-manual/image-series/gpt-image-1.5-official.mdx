@@ -1,0 +1,70 @@
+---
+title: "GPT Image 1.5 Official Generation"
+description: "Fal-backed GPT Image 1.5 official text-to-image and edit models"
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-1.5-official.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# GPT Image 1.5 Official Generation
+
+Generate high-fidelity images or edit reference images using the official GPT Image 1.5 models through PoYo.
+
+## Available Models
+
+- **gpt-image-1.5-official** - Text-to-image generation
+- **gpt-image-1.5-edit-official** - Image editing with reference images and optional mask
+
+## Notes
+
+- `quality` supports `low`, `medium`, and `high`. Default: `low`.
+- `size` for `gpt-image-1.5-official`: `1024x1024`, `1536x1024`, `1024x1536`.
+- `size` for `gpt-image-1.5-edit-official`: `auto`, `1024x1024`, `1536x1024`, `1024x1536`.
+- `gpt-image-1.5-edit-official` requires `image_urls`.
+- `mask_image_url` is only supported by `gpt-image-1.5-edit-official`.
+- `output_format` supports `jpeg`, `png`, and `webp`. Default: `png`.
+
+## Billing
+
+This model is billed by the selected `quality` and the number of generated images. The `n` parameter controls how many images are requested, so higher `n` values increase the total task cost.
+
+## Request Examples
+
+### Generate Image
+
+```json
+{
+  "model": "gpt-image-1.5-official",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A premium product photo of a silver espresso machine on a clean white studio background",
+    "quality": "low",
+    "size": "1024x1024",
+    "background": "auto",
+    "n": 1,
+    "output_format": "png"
+  }
+}
+```
+
+### Edit Image
+
+```json
+{
+  "model": "gpt-image-1.5-edit-official",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the background with a clean white studio backdrop",
+    "image_urls": ["https://example.com/product.jpg"],
+    "mask_image_url": "https://example.com/mask.png",
+    "quality": "medium",
+    "size": "auto",
+    "input_fidelity": "high",
+    "output_format": "png"
+  }
+}
+```
