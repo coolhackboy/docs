@@ -28,6 +28,7 @@ Generate high-quality images using the Z-Image model. Supports both text-to-imag
 - `prompt` - Required prompt, max `1000` characters
 - `size` - Required for text-to-image, optional for image editing. Supported values: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`
 - `image_urls` - Optional reference image array for editing, must contain exactly `1` image URL
+- `enable_safety_checker` - Optional boolean safety checker switch, defaults to `true`
 
 ## Notes
 
@@ -50,7 +51,8 @@ curl --request POST \
     "callback_url": "https://your-domain.com/callback",
     "input": {
       "prompt": "A serene mountain landscape at sunset with vibrant colors",
-      "size": "1:1"
+      "size": "1:1",
+      "enable_safety_checker": true
     }
   }'
 ```
@@ -68,7 +70,8 @@ curl --request POST \
     "input": {
       "prompt": "Turn this product photo into a premium studio shot with soft rim lighting",
       "image_urls": ["https://example.com/reference-image.png"],
-      "size": "4:3"
+      "size": "4:3",
+      "enable_safety_checker": true
     }
   }'
 ```
