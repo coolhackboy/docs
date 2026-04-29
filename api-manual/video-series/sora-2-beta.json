@@ -39,9 +39,7 @@
                     "input": {
                       "prompt": "A cinematic shot of a red sports car driving through neon rain at night, reflective streets, dramatic lighting, smooth camera tracking.",
                       "duration": 8,
-                      "aspect_ratio": "16:9",
-                      "style": "anime",
-                      "storyboard": false
+                      "aspect_ratio": "16:9"
                     }
                   }
                 },
@@ -144,17 +142,6 @@
                 "maxItems": 1,
                 "description": "Optional reference image array for image-to-video generation. If provided, exactly one image is used as the first frame/reference image. Supports HTTP(S) image URLs or base64 image strings, including data:image/...;base64,... values.",
                 "example": ["https://example.com/reference-image.png"]
-              },
-              "style": {
-                "type": "string",
-                "description": "Optional video style",
-                "enum": ["thanksgiving", "comic", "news", "selfie", "nostalgic", "anime"],
-                "example": "anime"
-              },
-              "storyboard": {
-                "type": "boolean",
-                "description": "Optional storyboard mode switch",
-                "example": false
               }
             }
           }
