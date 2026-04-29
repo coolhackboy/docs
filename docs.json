@@ -50,6 +50,7 @@
       "/api-manual/video-series/sora-2.json",
       "/api-manual/video-series/sora-2-pro.json",
       "/api-manual/video-series/sora-2-official.json",
+      "/api-manual/video-series/sora-2-beta.json",
       "/api-manual/video-series/veo-3-1.json",
       "/api-manual/video-series/wan-animate.json",
       "/api-manual/video-series/wan2.2-text-to-video-fast.json",
@@ -187,7 +188,8 @@
                 "pages": [
                   "api-manual/video-series/sora-2",
                   "api-manual/video-series/sora-2-pro",
-                  "api-manual/video-series/sora-2-official"
+                  "api-manual/video-series/sora-2-official",
+                  "api-manual/video-series/sora-2-beta"
                 ]
               },
               {

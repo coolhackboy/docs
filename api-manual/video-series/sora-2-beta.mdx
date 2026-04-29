@@ -1,0 +1,84 @@
+---
+title: "Sora 2 Beta"
+description: "Text-to-video and optional image-guided video generation"
+icon: "video"
+openapi: "/api-manual/video-series/sora-2-beta.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Sora 2 Beta
+
+`sora-2-beta` supports text-to-video generation and optional single-image guided generation with fixed 4s, 8s, and 12s durations.
+
+## Available Model
+
+- **sora-2-beta** - Text-to-video and image-to-video with an optional single reference image
+
+## Generation Modes
+
+### Text-to-Video
+
+Omit `input.image_urls` to generate a video directly from `input.prompt`.
+
+```json
+{
+  "model": "sora-2-beta",
+  "input": {
+    "prompt": "A cinematic shot of a red sports car driving through neon rain at night.",
+    "duration": 4,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### Image-to-Video
+
+Provide `input.image_urls` with exactly one image. The image is used as the reference image for video generation.
+
+```json
+{
+  "model": "sora-2-beta",
+  "input": {
+    "prompt": "Animate this image into a smooth cinematic video with natural motion.",
+    "duration": 4,
+    "aspect_ratio": "16:9",
+    "image_urls": ["https://example.com/reference-image.png"]
+  }
+}
+```
+
+Base64 images are also supported in `image_urls`:
+
+```json
+{
+  "model": "sora-2-beta",
+  "input": {
+    "prompt": "Animate this image into a smooth cinematic video with natural motion.",
+    "duration": 4,
+    "aspect_ratio": "16:9",
+    "image_urls": ["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."]
+  }
+}
+```
+
+## Required Parameters
+
+- **prompt**: Text prompt for video generation
+
+## Optional Parameters
+
+- **duration**: `4`, `8`, or `12`. Default is `4`
+- **aspect_ratio**: `16:9` or `9:16`. Default is `16:9`
+- **image_urls**: Optional reference image array for image-to-video. Maximum `1` image. Supports HTTP(S) image URLs or Base64 image strings
+- **style**: `thanksgiving`, `comic`, `news`, `selfie`, `nostalgic`, or `anime`
+- **storyboard**: Boolean storyboard mode switch
+
+## Notes
+
+- `image_urls` is optional. If provided, only one image is supported and it is used as the image-to-video reference image.
+- Base64 inputs are uploaded and converted to an image URL before being sent to the video provider.
+- This page only describes the unified submit request. Query status through the standard task status API.
