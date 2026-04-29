@@ -20,9 +20,11 @@
     "/api/common/upload/stream": {
       "post": {
         "summary": "Upload File Stream",
-        "description": "Upload files using multipart/form-data format. Supports direct file uploads from local storage with automatic type identification.",
+        "description": "Upload files using multipart/form-data format. Supports image uploads and video uploads. Videos are stored under the temp/videos prefix by default, are limited to 100MB, and expire after 24 hours.",
         "operationId": "uploadFileStream",
-        "tags": ["File Upload"],
+        "tags": [
+          "File Upload"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -52,6 +54,13 @@
                     "uploadPath": "documents",
                     "fileName": "profile-image.png"
                   }
+                },
+                "video-upload": {
+                  "summary": "Video Upload",
+                  "value": {
+                    "file": "(binary video data)",
+                    "file_name": "input-video.mp4"
+                  }
                 }
               }
             }
@@ -79,7 +88,7 @@
                   "unsupported-type": {
                     "summary": "Unsupported File Type",
                     "value": {
-                      "detail": "Unsupported file type: video/mp4"
+                      "detail": "Unsupported file type: application/pdf"
                     }
                   },
                   "empty-file": {
@@ -123,7 +132,10 @@
                     "value": {
                       "detail": [
                         {
-                          "loc": ["body", "file"],
+                          "loc": [
+                            "body",
+                            "file"
+                          ],
                           "msg": "field required",
                           "type": "value_error.missing"
                         }
@@ -169,6 +181,24 @@
                 }
               }
             }
+          },
+          "413": {
+            "description": "Payload too large - Video exceeds 100MB limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "video-too-large": {
+                    "summary": "Video Too Large",
+                    "value": {
+                      "detail": "Video file too large. Maximum size is 100MB"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -186,16 +216,18 @@
     "schemas": {
       "UploadStreamRequest": {
         "type": "object",
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "properties": {
           "file": {
             "type": "string",
             "format": "binary",
-            "description": "File binary data to upload.\n\n**Supported formats**: JPEG, PNG, GIF, WebP\n\n**Maximum**: 1 image per request\n\n**Note**: The system automatically identifies and categorizes file types."
+            "description": "File binary data to upload.\n\n**Supported image formats**: JPEG, PNG, GIF, WebP\n\n**Supported video formats**: MP4, WebM, QuickTime/MOV, AVI, MKV\n\n**Maximum**: 1 file per request. Videos are limited to 100MB.\n\n**Retention**: Images expire after 72 hours. Videos expire after 24 hours when stored under the temp/videos lifecycle prefix.\n\n**Note**: The system automatically identifies and categorizes file types."
           },
           "upload_path": {
             "type": "string",
-            "description": "Custom storage directory path.\n\nSupports both naming conventions:\n- **snake_case**: `upload_path`\n- **camelCase**: `uploadPath`\n\nIf not specified, the system will auto-categorize the file.\n\n**Note**: All files are stored with a `temp/` prefix regardless of the specified path.",
+            "description": "Custom storage directory path.\n\nSupports both naming conventions:\n- **snake_case**: `upload_path`\n- **camelCase**: `uploadPath`\n\nIf not specified, the system uses `temp`. Video uploads using the default `temp` path are stored as `temp/videos`.\n\n**Note**: API routing normalizes custom paths under the `temp/` prefix.",
             "example": "photos"
           },
           "file_name": {
@@ -207,7 +239,12 @@
       },
       "UploadResponse": {
         "type": "object",
-        "required": ["success", "code", "msg", "data"],
+        "required": [
+          "success",
+          "code",
+          "msg",
+          "data"
+        ],
         "properties": {
           "success": {
             "type": "boolean",
@@ -226,7 +263,15 @@
           },
           "data": {
             "type": "object",
-            "required": ["file_id", "file_name", "file_size", "mime_type", "file_url", "download_url", "expires_at"],
+            "required": [
+              "file_id",
+              "file_name",
+              "file_size",
+              "mime_type",
+              "file_url",
+              "download_url",
+              "expires_at"
+            ],
             "properties": {
               "file_id": {
                 "type": "string",
@@ -251,23 +296,23 @@
               "mime_type": {
                 "type": "string",
                 "example": "image/png",
-                "description": "MIME type of the uploaded file"
+                "description": "MIME type of the uploaded file, such as image/png or video/mp4"
               },
               "upload_path": {
                 "type": "string",
-                "example": "temp/test-stream",
-                "description": "Storage path (includes temp/ prefix)"
+                "example": "temp/videos",
+                "description": "Storage path. Default video uploads use temp/videos; default image uploads use temp."
               },
               "file_url": {
                 "type": "string",
                 "format": "uri",
-                "example": "https://storage.poyo.ai/temp/test-stream/test-stream.png",
+                "example": "https://storage.poyo.ai/temp/videos/input-video.mp4",
                 "description": "Direct access URL for the uploaded file"
               },
               "download_url": {
                 "type": "string",
                 "format": "uri",
-                "example": "https://storage.poyo.ai/temp/test-stream/test-stream.png",
+                "example": "https://storage.poyo.ai/temp/videos/input-video.mp4",
                 "description": "Download URL (same as file_url)"
               },
               "upload_time": {
@@ -280,7 +325,7 @@
                 "type": "string",
                 "format": "date-time",
                 "example": "2026-01-01T13:09:04.731057",
-                "description": "Expiration timestamp in ISO 8601 format (72 hours after upload)"
+                "description": "Expiration timestamp in ISO 8601 format. Images expire after 72 hours; videos expire after 24 hours."
               }
             }
           }
@@ -288,7 +333,9 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["detail"],
+        "required": [
+          "detail"
+        ],
         "properties": {
           "detail": {
             "type": "string",
@@ -299,7 +346,9 @@
       },
       "ValidationErrorResponse": {
         "type": "object",
-        "required": ["detail"],
+        "required": [
+          "detail"
+        ],
         "properties": {
           "detail": {
             "type": "array",
