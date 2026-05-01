@@ -1,0 +1,40 @@
+---
+title: "Sora 2 Pro Official"
+description: "Official Sora 2 Pro text-to-video and image-to-video generation"
+icon: "video"
+openapi: "/api-manual/video-series/sora-2-pro-official.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Sora 2 Pro Official
+
+`sora-2-pro-official` supports text-to-video generation and optional single-image guided generation with fixed 4s, 8s, 12s, 16s, and 20s durations.
+
+## Available Model
+
+- **sora-2-pro-official** - Official Sora 2 Pro text-to-video and image-to-video generation
+
+## Required Parameters
+
+- **prompt**: Text prompt for video generation
+
+## Optional Parameters
+
+- **image_urls**: Optional reference image array. Maximum `1` image. Providing this field enables image-to-video mode
+- **aspect_ratio**: `16:9` or `9:16` for text-to-video; `auto`, `16:9`, or `9:16` for image-to-video. Default is `16:9` for text-to-video and `auto` for image-to-video
+- **duration**: `4`, `8`, `12`, `16`, or `20`. Default is `4`
+- **resolution**: `720p`, `1024p`, or `1080p`. Default is `1024p`
+
+## Credit Billing
+
+Billing is calculated based on the selected output `resolution` and video `duration` in seconds.
+
+## Notes
+
+- `image_urls` is optional. If provided, only one image is supported and `image_urls[0]` is used as the first frame.
+- `aspect_ratio=auto` is only valid when `image_urls` is provided.
+- This page only describes the unified submit request. Query status through the standard task status API.
