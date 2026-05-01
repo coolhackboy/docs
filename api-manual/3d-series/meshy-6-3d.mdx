@@ -1,0 +1,71 @@
+---
+title: "Meshy 6 3D"
+description: "Fal Meshy 6 text-to-3D, image-to-3D, and multi-image-to-3D generation"
+icon: "box"
+openapi: "/api-manual/3d-series/meshy-6-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Meshy 6 3D
+
+Meshy 6 3D supports text-to-3D, single image-to-3D, and multi-image-to-3D generation through three public model IDs.
+
+## Available Models
+
+- **meshy-6-text-to-3d** - Generate a 3D model from a prompt
+- **meshy-6-image-to-3d** - Generate a 3D model from one image
+- **meshy-6-multi-image-to-3d** - Generate a 3D model from 1-4 images
+
+## Pricing
+
+All three models cost **60 credits per generation**.
+
+## Required Parameters
+
+- **model**: `meshy-6-text-to-3d`, `meshy-6-image-to-3d`, or `meshy-6-multi-image-to-3d`
+- **input.prompt**: Required for `meshy-6-text-to-3d`
+- **input.image_urls**: Required for image models. Use exactly 1 image for `meshy-6-image-to-3d`, and 1-4 images for `meshy-6-multi-image-to-3d`
+
+## Optional Parameters
+
+- **mode**: Text-to-3D only. `preview` or `full`. Default is `full`
+- **seed**: Text-to-3D only. Integer seed for reproducible results
+- **topology**: `quad` or `triangle`. Default is `triangle`
+- **target_polycount**: Target polygon count. Default is `30000`
+- **should_remesh**: Whether to enable the remesh phase. Default is `true`
+- **symmetry_mode**: `off`, `auto`, or `on`. Default is `auto`
+- **should_texture**: Image models only. Whether to generate textures. Default is `true`
+- **enable_pbr**: Generate PBR maps such as metallic, roughness, and normal maps
+- **pose_mode**: `a-pose`, `t-pose`, or an empty string for no specific pose
+- **enable_prompt_expansion**: Text-to-3D only. Whether to expand the prompt automatically
+- **texture_prompt**: Text prompt to guide texturing
+- **texture_image_url**: Image URL to guide texturing
+- **enable_rigging**: Whether to rig humanoid characters
+- **rigging_height_meters**: Character height used when rigging is enabled. Default is `1.7`
+- **enable_animation**: Whether to apply an animation preset. Requires rigging
+- **animation_action_id**: Meshy animation preset ID. Default is `1001`
+- **enable_safety_checker**: Whether to enable input safety checking. Default is `true`
+- **callback_url**: Optional webhook URL for task completion notification
+
+## Output
+
+The task result may include:
+
+- `model_glb`
+- `thumbnail`
+- `model_urls`: `glb`, `fbx`, `obj`, `usdz`, `blend`, and `stl` when available
+- `texture_urls`: base color and optional PBR texture files
+- `animation_glb` and `animation_fbx` when animation is enabled
+- `rigged_character_glb` and `rigged_character_fbx` when rigging is enabled
+- `basic_animations` when rigging is enabled
+- Metadata such as `seed`, `prompt`, `actual_prompt`, and `rig_task_id`
+
+## Notes
+
+- `meshy-6-image-to-3d` accepts exactly one image in `image_urls`.
+- `meshy-6-multi-image-to-3d` accepts 1-4 images. Images should show the same object from different angles.
+- The API returns asynchronous task status. Poll the unified task status endpoint or use `callback_url`.

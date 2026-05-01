@@ -1,0 +1,259 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Meshy 6 3D API",
+    "description": "Fal Meshy 6 text-to-3D, image-to-3D, and multi-image-to-3D generation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Meshy 6 3D Task",
+        "description": "Generate a 3D model from text, one image, or multiple images.",
+        "operationId": "submitMeshy6ThreeDTask",
+        "tags": ["Meshy 6 3D"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-3d": {
+                  "summary": "Text to 3D",
+                  "value": {
+                    "model": "meshy-6-text-to-3d",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A worn leather explorer backpack with brass buckles, canvas straps, realistic stitching, game-ready asset",
+                      "mode": "full",
+                      "topology": "triangle",
+                      "target_polycount": 30000,
+                      "should_remesh": true,
+                      "symmetry_mode": "auto",
+                      "enable_pbr": true,
+                      "pose_mode": "",
+                      "enable_prompt_expansion": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                },
+                "image-to-3d": {
+                  "summary": "Image to 3D",
+                  "value": {
+                    "model": "meshy-6-image-to-3d",
+                    "input": {
+                      "image_urls": ["https://example.com/object-front.png"],
+                      "topology": "triangle",
+                      "target_polycount": 30000,
+                      "symmetry_mode": "auto",
+                      "should_remesh": true,
+                      "should_texture": true,
+                      "enable_pbr": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                },
+                "multi-image-to-3d": {
+                  "summary": "Multi image to 3D",
+                  "value": {
+                    "model": "meshy-6-multi-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/object-front.png",
+                        "https://example.com/object-side.png",
+                        "https://example.com/object-back.png"
+                      ],
+                      "topology": "triangle",
+                      "target_polycount": 30000,
+                      "symmetry_mode": "auto",
+                      "should_remesh": true,
+                      "should_texture": true,
+                      "enable_pbr": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "meshy-6-text-to-3d",
+              "meshy-6-image-to-3d",
+              "meshy-6-multi-image-to-3d"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "$ref": "#/components/schemas/Meshy6Input"
+          }
+        }
+      },
+      "Meshy6Input": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Required for meshy-6-text-to-3d."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "Required for image models. Use exactly 1 item for meshy-6-image-to-3d and 1-4 items for meshy-6-multi-image-to-3d."
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["preview", "full"],
+            "default": "full",
+            "description": "Text-to-3D only."
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Text-to-3D only."
+          },
+          "topology": {
+            "type": "string",
+            "enum": ["quad", "triangle"],
+            "default": "triangle"
+          },
+          "target_polycount": {
+            "type": "integer",
+            "default": 30000
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true
+          },
+          "symmetry_mode": {
+            "type": "string",
+            "enum": ["off", "auto", "on"],
+            "default": "auto"
+          },
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "Image models only."
+          },
+          "enable_pbr": {
+            "type": "boolean"
+          },
+          "pose_mode": {
+            "type": "string",
+            "enum": ["a-pose", "t-pose", ""],
+            "default": ""
+          },
+          "enable_prompt_expansion": {
+            "type": "boolean",
+            "description": "Text-to-3D only."
+          },
+          "texture_prompt": {
+            "type": "string"
+          },
+          "texture_image_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "enable_rigging": {
+            "type": "boolean"
+          },
+          "rigging_height_meters": {
+            "type": "number",
+            "default": 1.7
+          },
+          "enable_animation": {
+            "type": "boolean"
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 1001
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
