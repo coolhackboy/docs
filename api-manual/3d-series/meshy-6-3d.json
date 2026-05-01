@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Meshy 6 3D API",
-    "description": "Fal Meshy 6 text-to-3D, image-to-3D, and multi-image-to-3D generation",
+    "description": "Meshy 6 text-to-3D, image-to-3D, and multi-image-to-3D generation",
     "version": "1.0.0"
   },
   "servers": [
