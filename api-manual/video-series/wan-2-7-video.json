@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Wan 2.7 Video API",
-    "description": "Wan 2.7 text-to-video, image-to-video, reference-to-video, and edit-video workflows",
+    "description": "Wan 2.7 Video API",
     "version": "1.0.0"
   },
   "servers": [
