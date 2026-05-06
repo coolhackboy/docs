@@ -1,0 +1,248 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Wan 2.7 Video API",
+    "description": "Fal Wan 2.7 text-to-video, image-to-video, reference-to-video, and edit-video workflows",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Wan 2.7 Video Task",
+        "description": "Generate or edit video with Wan 2.7 Video models",
+        "operationId": "submitWan27VideoTask",
+        "tags": ["Wan 2.7 Video"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "wan2.7-text-to-video",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic tracking shot of a glass greenhouse at sunrise, soft light, slow camera movement.",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Image to video",
+                  "value": {
+                    "model": "wan2.7-image-to-video",
+                    "input": {
+                      "image_urls": ["https://example.com/start-frame.png"],
+                      "prompt": "Animate the frame with gentle wind and a slow push-in camera movement.",
+                      "resolution": "1080p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "Reference to video",
+                  "value": {
+                    "model": "wan2.7-reference-to-video",
+                    "input": {
+                      "prompt": "A product reveal video using the reference object, clean studio lighting, smooth motion.",
+                      "reference_image_urls": ["https://example.com/reference.png"],
+                      "aspect_ratio": "1:1",
+                      "resolution": "720p",
+                      "duration": 5,
+                      "multi_shots": false
+                    }
+                  }
+                },
+                "edit-video": {
+                  "summary": "Edit video",
+                  "value": {
+                    "model": "wan2.7-edit-video",
+                    "input": {
+                      "prompt": "Change the scene into a rainy neon street while preserving the subject motion.",
+                      "video_url": "https://example.com/source-video.mp4",
+                      "reference_image_url": "https://example.com/style-reference.png",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication. Create an API key at https://poyo.ai/dashboard/api-key and send it as `Authorization: Bearer YOUR_API_KEY`."
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "wan2.7-text-to-video",
+              "wan2.7-image-to-video",
+              "wan2.7-reference-to-video",
+              "wan2.7-edit-video"
+            ],
+            "description": "Wan 2.7 Video public model identifier"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications"
+          },
+          "input": {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "Text prompt. Required for text-to-video, reference-to-video, and edit-video."
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Image-to-video input. The first item maps to image_url and the second item maps to end_image_url."
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Reference images for wan2.7-reference-to-video."
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Reference videos for wan2.7-reference-to-video."
+              },
+              "reference_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Single reference image for wan2.7-edit-video."
+              },
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional video input for image-to-video, required source video for edit-video."
+              },
+              "audio_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional audio URL for text-to-video and image-to-video."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"],
+                "default": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": ["720p", "1080p"],
+                "default": "720p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Text-to-video supports 5, 10, 15. Image-to-video supports 2-15. Reference-to-video supports 2-10. Edit-video supports 0 or 2-10; 0 means PoYo probes the source video duration."
+              },
+              "multi_shots": {
+                "type": "boolean",
+                "description": "Optional multi-shot control for image, reference, and edit workflows."
+              },
+              "audio_setting": {
+                "type": "string",
+                "description": "Optional audio setting for edit-video."
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "enable_safety_checker": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

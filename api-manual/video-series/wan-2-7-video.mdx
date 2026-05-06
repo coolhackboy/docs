@@ -1,0 +1,92 @@
+---
+title: "Wan 2.7 Video"
+description: "Fal Wan 2.7 text-to-video, image-to-video, reference-to-video, and edit-video workflows"
+icon: "video"
+openapi: "/api-manual/video-series/wan-2-7-video.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Wan 2.7 Video
+
+Wan 2.7 Video on PoYo exposes four public model IDs for text generation, first-frame image animation, reference-guided generation, and video editing.
+
+## Available Models
+
+- **wan2.7-text-to-video** - generate video from a text prompt
+- **wan2.7-image-to-video** - animate one or two input images
+- **wan2.7-reference-to-video** - generate video from reference images or videos
+- **wan2.7-edit-video** - edit an existing video with optional image reference
+
+## Workflows
+
+### Text to Video
+
+Use `model: "wan2.7-text-to-video"` with a required `prompt`. Optional controls include `audio_url`, `aspect_ratio`, `duration`, `resolution`, `seed`, and `enable_safety_checker`.
+
+### Image to Video
+
+Use `model: "wan2.7-image-to-video"` with `image_urls`. `image_urls[0]` is sent as the starting image and `image_urls[1]`, when present, is sent as the ending image. Optional controls include `prompt`, `video_url`, `audio_url`, `duration`, `resolution`, `multi_shots`, `seed`, and `enable_safety_checker`.
+
+### Reference to Video
+
+Use `model: "wan2.7-reference-to-video"` with a required `prompt` and at least one of `reference_image_urls` or `reference_video_urls`. PoYo follows Fal's current duration range for this workflow: `2` through `10` seconds.
+
+### Edit Video
+
+Use `model: "wan2.7-edit-video"` with a required `prompt` and `video_url`. Optional `reference_image_url` can guide the edit. If `duration` is `0` or omitted, PoYo probes the source video duration and submits the detected integer duration. The detected duration must be between `2` and `10` seconds.
+
+## Parameters
+
+### Shared
+
+- **model**: one of `wan2.7-text-to-video`, `wan2.7-image-to-video`, `wan2.7-reference-to-video`, `wan2.7-edit-video`
+- **resolution**: `720p` or `1080p`. Default is `720p`
+- **seed**: optional integer from `0` to `2147483647`
+- **enable_safety_checker**: optional boolean
+
+### Text to Video
+
+- **prompt**: required
+- **audio_url**: optional audio URL
+- **aspect_ratio**: `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
+- **duration**: `5`, `10`, or `15`. Default is `5`
+
+### Image to Video
+
+- **image_urls**: required array with one or two image URLs
+- **prompt**: optional
+- **video_url**: optional video URL
+- **audio_url**: optional audio URL
+- **duration**: integer from `2` to `15`. Default is `5`
+- **multi_shots**: optional boolean
+
+### Reference to Video
+
+- **prompt**: required
+- **reference_image_urls**: optional array of image URLs
+- **reference_video_urls**: optional array of video URLs
+- **aspect_ratio**: `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
+- **duration**: integer from `2` to `10`. Default is `5`
+- **multi_shots**: optional boolean
+
+### Edit Video
+
+- **prompt**: required
+- **video_url**: required source video URL
+- **reference_image_url**: optional image URL
+- **aspect_ratio**: `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
+- **duration**: `0`, or an integer from `2` to `10`. Use `0` or omit it to let PoYo detect the video duration
+- **multi_shots**: optional boolean
+- **audio_setting**: optional string
+
+## Pricing
+
+All four models use duration-based billing:
+
+- `720p`: 12 credits per second
+- `1080p`: 18 credits per second
+
