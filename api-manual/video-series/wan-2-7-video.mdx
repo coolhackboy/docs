@@ -1,6 +1,6 @@
 ---
 title: "Wan 2.7 Video"
-description: "Fal Wan 2.7 text-to-video, image-to-video, reference-to-video, and edit-video workflows"
+description: "Wan 2.7 text-to-video, image-to-video, reference-to-video, and edit-video workflows"
 icon: "video"
 openapi: "/api-manual/video-series/wan-2-7-video.json POST /api/generate/submit"
 ---
@@ -33,7 +33,7 @@ Use `model: "wan2.7-image-to-video"` with `image_urls`. `image_urls[0]` is sent 
 
 ### Reference to Video
 
-Use `model: "wan2.7-reference-to-video"` with a required `prompt` and at least one of `reference_image_urls` or `reference_video_urls`. PoYo follows Fal's current duration range for this workflow: `2` through `10` seconds.
+Use `model: "wan2.7-reference-to-video"` with a required `prompt` and at least one of `reference_image_urls` or `reference_video_urls`. The supported duration range for this workflow is `2` through `10` seconds.
 
 ### Edit Video
 
@@ -89,4 +89,3 @@ All four models use duration-based billing:
 
 - `720p`: 12 credits per second
 - `1080p`: 18 credits per second
-
