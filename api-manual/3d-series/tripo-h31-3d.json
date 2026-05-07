@@ -1,0 +1,379 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Tripo3D H3.1 API",
+    "description": "Tripo3D H3.1 text-to-3D, image-to-3D, and multiview-to-3D generation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Tripo3D H3.1 3D Task",
+        "description": "Generate a high-detail 3D model from text, one image, or multiple object views.",
+        "operationId": "SubmitTripo3dH3.13dTask",
+        "tags": [
+          "Tripo3D H3.1"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-3d": {
+                  "summary": "Text to 3D",
+                  "value": {
+                    "model": "tripo3d-h3.1-text-to-3d",
+                    "input": {
+                      "prompt": "A japanese samurai kabuto helmet with gold dragon ornament and red cord lacing",
+                      "texture": true,
+                      "texture_quality": "standard",
+                      "geometry_quality": "standard",
+                      "quad": false
+                    }
+                  }
+                },
+                "image-to-3d": {
+                  "summary": "Image to 3D",
+                  "value": {
+                    "model": "tripo3d-h3.1-image-to-3d",
+                    "input": {
+                      "image_urls": ["https://example.com/object-front.png"],
+                      "texture": true,
+                      "texture_quality": "standard",
+                      "geometry_quality": "standard"
+                    }
+                  }
+                },
+                "multiview-to-3d": {
+                  "summary": "Multiview to 3D",
+                  "value": {
+                    "model": "tripo3d-h3.1-multiview-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/object-front.png",
+                        "https://example.com/object-left.png"
+                      ],
+                      "texture": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Query Tripo3D H3.1 Task Status",
+        "tags": [
+          "Tripo3D H3.1"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "tripo3d-h3.1-text-to-3d",
+              "tripo3d-h3.1-image-to-3d",
+              "tripo3d-h3.1-multiview-to-3d"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "$ref": "#/components/schemas/TripoH31Input"
+          }
+        }
+      },
+      "TripoH31Input": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 1024,
+            "description": "Required for tripo3d-h3.1-text-to-3d."
+          },
+          "negative_prompt": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Single-image shorthand for image-to-3D."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "Use exactly 1 image for image-to-3D and 2-4 images of the same object for multiview-to-3D."
+          },
+          "face_limit": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 2000000
+          },
+          "texture": {
+            "type": "boolean",
+            "default": true
+          },
+          "pbr": {
+            "type": "boolean"
+          },
+          "model_seed": {
+            "type": "integer"
+          },
+          "image_seed": {
+            "type": "integer",
+            "description": "Text-to-3D only."
+          },
+          "texture_seed": {
+            "type": "integer"
+          },
+          "texture_quality": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "detailed"
+            ],
+            "default": "standard"
+          },
+          "geometry_quality": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "detailed"
+            ],
+            "default": "standard"
+          },
+          "auto_size": {
+            "type": "boolean"
+          },
+          "quad": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "example": "finished"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "example": "model_glb"
+                    },
+                    "file_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "file_type": {
+                      "type": "string",
+                      "enum": [
+                        "model",
+                        "image",
+                        "file"
+                      ]
+                    },
+                    "format": {
+                      "type": "string",
+                      "example": "glb"
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "example": "model/gltf-binary"
+                    },
+                    "file_name": {
+                      "type": "string",
+                      "example": "model.glb"
+                    },
+                    "file_size": {
+                      "type": "integer",
+                      "example": 43803144
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Reserved metadata object. Processed 3D outputs are usually returned in files.",
+                "additionalProperties": true
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "number",
+                "example": 100
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "FileItem": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "model_glb"
+          },
+          "file_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "file_type": {
+            "type": "string",
+            "enum": [
+              "model",
+              "image",
+              "file"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "example": "glb"
+          },
+          "content_type": {
+            "type": "string",
+            "example": "model/gltf-binary"
+          },
+          "file_name": {
+            "type": "string",
+            "example": "model.glb"
+          },
+          "file_size": {
+            "type": "integer",
+            "example": 43803144
+          }
+        }
+      }
+    }
+  }
+}

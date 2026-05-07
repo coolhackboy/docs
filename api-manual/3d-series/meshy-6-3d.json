@@ -227,28 +227,31 @@
       },
       "SubmitResponse": {
         "type": "object",
+        "required": ["code", "data"],
         "properties": {
           "code": {
             "type": "integer",
-            "example": 200
-          },
-          "message": {
-            "type": "string",
-            "example": "success"
+            "example": 200,
+            "description": "HTTP status code"
           },
           "data": {
             "type": "object",
+            "required": ["task_id", "status", "created_time"],
             "properties": {
               "task_id": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique task identifier for status tracking"
               },
               "status": {
                 "type": "string",
-                "example": "not_started"
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
               },
               "created_time": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when the task was created"
               }
             }
           }
