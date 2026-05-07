@@ -144,11 +144,6 @@
             "maxLength": 1024,
             "description": "Required for tripo3d-p1-text-to-3d."
           },
-          "image_url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Single-image shorthand for image-to-3D."
-          },
           "image_urls": {
             "type": "array",
             "items": {

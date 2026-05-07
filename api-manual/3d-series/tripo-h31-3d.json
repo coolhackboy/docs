@@ -165,11 +165,6 @@
             "type": "string",
             "maxLength": 1024
           },
-          "image_url": {
-            "type": "string",
-            "format": "uri",
-            "description": "Single-image shorthand for image-to-3D."
-          },
           "image_urls": {
             "type": "array",
             "items": {
