@@ -1,0 +1,62 @@
+---
+title: "Tripo3D H3.1 API"
+description: "High-detail Tripo3D H3.1 text-to-3D, image-to-3D, and multiview-to-3D generation"
+icon: "box"
+openapi: "/api-manual/3d-series/tripo-h31-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task becomes `finished` or `failed`.
+2. You can retrieve results through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Tripo3D H3.1 API
+
+Tripo3D H3.1 supports high-detail text-to-3D, single image-to-3D, and multiview-to-3D generation through three public model IDs.
+
+## Available Models
+
+- **tripo3d-h3.1-text-to-3d** - Generate a high-detail 3D model from a prompt
+- **tripo3d-h3.1-image-to-3d** - Generate a 3D model from one object image
+- **tripo3d-h3.1-multiview-to-3d** - Generate a 3D model from 2-4 views of the same object
+
+## Required Parameters
+
+- **model**: `tripo3d-h3.1-text-to-3d`, `tripo3d-h3.1-image-to-3d`, or `tripo3d-h3.1-multiview-to-3d`
+- **input.prompt**: Required for `tripo3d-h3.1-text-to-3d`
+- **input.image_urls**: Required for image models. Use exactly one item for image-to-3D; use 2-4 items for multiview-to-3D
+
+## Optional Parameters
+
+- **negative_prompt**: Text-to-3D only. Features to avoid
+- **face_limit**: Target face count, from `1000` to `2000000`
+- **texture**: Whether to generate textures. Default is `true`
+- **pbr**: Whether to generate PBR materials when textures are enabled
+- **model_seed**, **image_seed**, **texture_seed**: Optional integer seeds
+- **texture_quality**: `standard` or `detailed`. Default is `standard`
+- **geometry_quality**: `standard` or `detailed`. Default is `standard`
+- **auto_size**: Whether to auto-scale the model
+- **quad**: Whether to generate quad mesh topology
+- **callback_url**: Optional webhook URL for task completion notification
+
+## Pricing
+
+- Text-to-3D and multiview-to-3D: 15 credits without textures, 30 credits with standard textures, or 45 credits with detailed textures
+- Image-to-3D: 30 credits without textures, 45 credits with standard textures, or 60 credits with detailed textures
+- Detailed geometry adds 30 credits
+- Quad mesh adds 7.5 credits
+
+## Output
+
+The task result is returned as a file list. Available items may include:
+
+- `model_glb`
+- `thumbnail`
+- entries from `model_urls`, such as `glb`, `base_model`, and `pbr_model`, when available
+
+Each file item includes `label`, `file_url`, `file_type`, `format`, `content_type`, `file_name`, and `file_size` when available.
+
+## Notes
+
+- Multiview inputs should show the same object from different angles.
+- The API returns asynchronous task status. Poll the unified task status endpoint or use `callback_url`.

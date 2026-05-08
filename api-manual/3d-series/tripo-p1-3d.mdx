@@ -1,0 +1,53 @@
+---
+title: "Tripo3D P1 API"
+description: "Clean low-poly Tripo3D P1 text-to-3D and image-to-3D generation"
+icon: "box"
+openapi: "/api-manual/3d-series/tripo-p1-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task becomes `finished` or `failed`.
+2. You can retrieve results through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Tripo3D P1 API
+
+Tripo3D P1 supports text-to-3D and single image-to-3D generation for clean, lightweight 3D assets.
+
+## Available Models
+
+- **tripo3d-p1-text-to-3d** - Generate a low-poly 3D model from a prompt
+- **tripo3d-p1-image-to-3d** - Generate a low-poly 3D model from one object image
+
+## Required Parameters
+
+- **model**: `tripo3d-p1-text-to-3d` or `tripo3d-p1-image-to-3d`
+- **input.prompt**: Required for `tripo3d-p1-text-to-3d`
+- **input.image_urls**: Required for `tripo3d-p1-image-to-3d`; use exactly one item
+
+## Optional Parameters
+
+- **face_limit**: Target face count, from `48` to `20000`
+- **texture**: Whether to generate textures. Default is `true`
+- **model_seed**: Optional integer seed for reproducible geometry
+- **callback_url**: Optional webhook URL for task completion notification
+
+## Pricing
+
+- Without textures: 56 credits
+- With textures: 70 credits
+
+## Output
+
+The task result is returned as a file list. Available items may include:
+
+- `model_glb`
+- `thumbnail`
+- entries from `model_urls`, such as `glb`, `base_model`, and `pbr_model`, when available
+
+Each file item includes `label`, `file_url`, `file_type`, `format`, `content_type`, `file_name`, and `file_size` when available.
+
+## Notes
+
+- P1 is best suited to lightweight, clean-mesh assets where lower polygon budgets are useful.
+- The API returns asynchronous task status. Poll the unified task status endpoint or use `callback_url`.
