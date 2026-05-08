@@ -76,6 +76,9 @@
       "/api-manual/video-series/seedance-2.json",
       "/api-manual/video-series/happy-horse.json",
       "/api-manual/video-series/runway-gen-4-5.json",
+      "/api-manual/3d-series/meshy-6-3d.json",
+      "/api-manual/3d-series/tripo-h31-3d.json",
+      "/api-manual/3d-series/tripo-p1-3d.json",
       "/api-manual/music-series/generate-music.json",
       "/api-manual/music-series/minimax-music-2.6.json",
       "/api-manual/music-series/extend-music.json",
@@ -319,6 +322,24 @@
                 "group": "Gemini",
                 "pages": [
                   "api-manual/chat-series/gemini-native-format"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "3D Model",
+            "pages": [
+              {
+                "group": "Meshy",
+                "pages": [
+                  "api-manual/3d-series/meshy-6-3d"
+                ]
+              },
+              {
+                "group": "Tripo3D",
+                "pages": [
+                  "api-manual/3d-series/tripo-h31-3d",
+                  "api-manual/3d-series/tripo-p1-3d"
                 ]
               }
             ]
