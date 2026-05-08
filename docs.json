@@ -262,24 +262,6 @@
             ]
           },
           {
-            "group": "3D Model",
-            "pages": [
-              {
-                "group": "Meshy",
-                "pages": [
-                  "api-manual/3d-series/meshy-6-3d"
-                ]
-              },
-              {
-                "group": "Tripo3D",
-                "pages": [
-                  "api-manual/3d-series/tripo-h31-3d",
-                  "api-manual/3d-series/tripo-p1-3d"
-                ]
-              }
-            ]
-          },
-          {
             "group": "Music Model",
             "pages": [
               {
@@ -338,6 +320,24 @@
                 "group": "Gemini",
                 "pages": [
                   "api-manual/chat-series/gemini-native-format"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "3D Model",
+            "pages": [
+              {
+                "group": "Meshy",
+                "pages": [
+                  "api-manual/3d-series/meshy-6-3d"
+                ]
+              },
+              {
+                "group": "Tripo3D",
+                "pages": [
+                  "api-manual/3d-series/tripo-h31-3d",
+                  "api-manual/3d-series/tripo-p1-3d"
                 ]
               }
             ]
