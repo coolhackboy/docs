@@ -76,6 +76,7 @@
       "/api-manual/video-series/seedance-2.json",
       "/api-manual/video-series/happy-horse.json",
       "/api-manual/video-series/runway-gen-4-5.json",
+      "/api-manual/task-management/3d-status.json",
       "/api-manual/3d-series/meshy-6-3d.json",
       "/api-manual/3d-series/tripo-h31-3d.json",
       "/api-manual/3d-series/tripo-p1-3d.json",
@@ -359,6 +360,13 @@
                 "pages": [
                   "api-manual/task-management/status",
                   "api-manual/task-management/webhooks"
+                ]
+              },
+              {
+                "group": "3D",
+                "pages": [
+                  "api-manual/task-management/3d-status",
+                  "api-manual/task-management/3d-webhooks"
                 ]
               },
               {

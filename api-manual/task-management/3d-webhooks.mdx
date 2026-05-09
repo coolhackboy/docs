@@ -1,0 +1,108 @@
+---
+title: "Webhook Callbacks"
+description: "Receive automatic notifications when 3D tasks complete"
+---
+
+# Webhook Callbacks
+
+Instead of polling the status endpoint, you can provide a callback URL when submitting 3D tasks to receive automatic notifications when generation completes.
+
+## How It Works
+
+1. **Submit with callback URL**: Include a `callback_url` in your 3D task submission
+2. **Receive notification**: When the task completes (success or failure), PoYo AI sends a POST request to your URL
+3. **Process result**: Your server receives the complete task data including generated model files
+
+## Callback Request
+
+When a task completes, PoYo AI will send a POST request to your callback URL with the same structure as the [3D status endpoint response](/api-manual/task-management/3d-status):
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "finished",
+    "files": [
+      {
+        "label": "model_glb",
+        "file_url": "https://storage.poyo.ai/generated/model.glb",
+        "file_type": "model",
+        "format": "glb",
+        "content_type": "model/gltf-binary",
+        "file_name": "model.glb",
+        "file_size": 43803144
+      }
+    ],
+    "metadata": {},
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```
+
+### Failed Task Callback
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "failed",
+    "files": [],
+    "metadata": {},
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 0,
+    "error_message": "The prompt violates our content policy"
+  }
+}
+```
+
+## Requirements
+
+Your callback endpoint must meet the following requirements:
+
+- **HTTPS only**: Must use HTTPS protocol (HTTP not supported)
+- **Maximum URL length**: 2048 characters
+- **Response timeout**: Must respond within 10 seconds
+- **Success response**: Should return HTTP 200-299 status code
+- **No internal IPs**: Cannot use private/internal IP addresses (e.g., 192.168.x.x, 10.x.x.x)
+- **Public accessibility**: Must be publicly accessible from the internet
+
+## Retry Policy
+
+If your callback endpoint fails to respond or returns an error:
+
+- **Retry attempts**: 3 automatic retries
+- **Retry delays**: After 1 second, 2 seconds, and 4 seconds
+- **Final failure**: After 3 failed attempts, no further retries are made
+
+<Warning>
+  If all retry attempts fail, you can still retrieve the results by polling the [3D status endpoint](/api-manual/task-management/3d-status).
+</Warning>
+
+## Important Notes
+
+<Tip>
+  **Idempotency**: Design your webhook handler to be idempotent in case of duplicate deliveries.
+</Tip>
+
+<Tip>
+  **Async processing**: Process the callback asynchronously and return 200 quickly to avoid timeouts.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Task Status" icon="list-check" href="/api-manual/task-management/3d-status">
+    Learn about polling 3D task status
+  </Card>
+  <Card title="Meshy 6 3D" icon="box" href="/api-manual/3d-series/meshy-6-3d">
+    Generate 3D models with Meshy 6
+  </Card>
+  <Card title="Tripo3D H3.1" icon="box" href="/api-manual/3d-series/tripo-h31-3d">
+    Generate 3D models with Tripo3D H3.1
+  </Card>
+</CardGroup>
+
