@@ -1,0 +1,283 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Sora 2 Characters API",
+    "description": "Create a reusable Sora 2 character resource from a short video",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Sora 2 Characters Task",
+        "description": "Create a reusable Sora 2 character resource",
+        "operationId": "submitSora2CharactersTask",
+        "tags": ["Sora 2 Characters"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "create-character": {
+                  "summary": "Create Character",
+                  "value": {
+                    "model": "sora-2-characters",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "video_url": "https://example.com/character.mp4",
+                      "name": "Maya"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Query Sora 2 Characters Task Status",
+        "description": "Query task status and read the character result from files[0].file_url",
+        "operationId": "getSora2CharactersTaskStatus",
+        "tags": ["Sora 2 Characters"],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Task ID returned by the submit endpoint"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "examples": {
+                  "finished": {
+                    "summary": "Finished Character Task",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "finished",
+                        "files": [
+                          {
+                            "file_url": "{\"id\":\"char_123\",\"name\":\"Maya\"}",
+                            "file_type": "other"
+                          }
+                        ],
+                        "created_time": "2026-05-12T10:30:00",
+                        "progress": 100,
+                        "error_message": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key from the [API Key Management Page](https://poyo.ai/dashboard/api-key).\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Sora 2 Characters model identifier",
+            "enum": ["sora-2-characters"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["video_url", "name"],
+            "properties": {
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the source MP4 video",
+                "example": "https://example.com/character.mp4"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80,
+                "description": "Character name",
+                "example": "Maya"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-05-12T10:29:55"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "files", "created_time", "progress"],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"]
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CharacterResultFile"
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "number"
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "CharacterResultFile": {
+        "type": "object",
+        "required": ["file_url", "file_type"],
+        "properties": {
+          "file_url": {
+            "type": "string",
+            "description": "JSON string containing the character id and name",
+            "example": "{\"id\":\"char_123\",\"name\":\"Maya\"}"
+          },
+          "file_type": {
+            "type": "string",
+            "enum": ["other"],
+            "example": "other"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "video_url is required"
+          }
+        }
+      }
+    }
+  }
+}
