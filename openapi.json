@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI API",
-    "description": "Professional Image and Video Generation APIs",
+    "description": "Professional Image, Video, and 3D Generation APIs",
     "version": "1.0.0",
     "contact": {
       "email": "support@poyo.ai"
@@ -354,9 +354,29 @@
                     },
                     "file_type": {
                       "type": "string",
-                      "enum": ["image", "video"],
+                      "enum": ["image", "video", "3d", "other"],
                       "example": "image",
-                      "description": "Type of media file: 'image' or 'video'"
+                      "description": "Type of generated file: 'image', 'video', '3d', or 'other'"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "Optional file label, commonly used for 3D outputs"
+                    },
+                    "format": {
+                      "type": "string",
+                      "description": "Optional file format, such as glb, fbx, obj, png, or mp4"
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "description": "Optional MIME type of the generated file"
+                    },
+                    "file_name": {
+                      "type": "string",
+                      "description": "Optional file name"
+                    },
+                    "file_size": {
+                      "type": "integer",
+                      "description": "Optional file size in bytes"
                     }
                   }
                 },

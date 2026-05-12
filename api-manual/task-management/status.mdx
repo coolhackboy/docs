@@ -6,7 +6,7 @@ openapi: "/openapi.json GET /api/generate/status/{task_id}"
 
 # Get Task Status
 
-Query the execution status of image and video generation tasks and retrieve results when complete.
+Query the execution status of image, video, and 3D generation tasks and retrieve results when complete.
 
 ## Endpoint
 
@@ -66,7 +66,12 @@ Authorization: Bearer YOUR_API_KEY
 | `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
 | `data.files` | array | Generated media files (when status is `finished`) |
 | `data.files[].file_url` | string | Direct URL to generated file |
-| `data.files[].file_type` | string | Type of media file: `image` or `video` |
+| `data.files[].file_type` | string | Type of generated file: `image`, `video`, `3d`, or `other` |
+| `data.files[].label` | string | Optional file label. Common for 3D outputs, such as `model_glb` or `thumbnail` |
+| `data.files[].format` | string | Optional file format, such as `glb`, `fbx`, `obj`, `png`, or `mp4` |
+| `data.files[].content_type` | string | Optional MIME type of the generated file |
+| `data.files[].file_name` | string | Optional file name |
+| `data.files[].file_size` | integer | Optional file size in bytes |
 | `data.created_time` | string | ISO 8601 timestamp of task creation |
 | `data.progress` | integer | Completion percentage (0-100) |
 | `data.error_message` | string | Error description (when status is `failed`) |
@@ -152,6 +157,34 @@ Authorization: Bearer YOUR_API_KEY
     "created_time": "2025-11-12T10:30:00",
     "progress": 100,
     "error_message": null
+  }
+}
+```
+
+### Finished (3D)
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "9OTM0HH9LBS63LF0",
+    "status": "finished",
+    "files": [
+      {
+        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+        "file_type": "3d"
+      },
+      {
+        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
+        "file_type": "image"
+      },
+      {
+        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
+        "file_type": "3d"
+      }
+    ],
+    "created_time": "2026-05-12T02:36:12",
+    "progress": 100
   }
 }
 ```

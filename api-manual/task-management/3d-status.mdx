@@ -38,32 +38,24 @@ Authorization: Bearer YOUR_API_KEY
 {
   "code": 200,
   "data": {
-    "task_id": "task-unified-1757165031-uyujaw3d",
+    "task_id": "9OTM0HH9LBS63LF0",
     "status": "finished",
     "files": [
       {
-        "label": "model_glb",
-        "file_url": "https://storage.poyo.ai/generated/model.glb",
-        "file_type": "model",
-        "format": "glb",
-        "content_type": "model/gltf-binary",
-        "file_name": "model.glb",
-        "file_size": 43803144
+        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+        "file_type": "3d"
       },
       {
-        "label": "thumbnail",
-        "file_url": "https://storage.poyo.ai/generated/thumbnail.png",
-        "file_type": "image",
-        "format": "png",
-        "content_type": "image/png",
-        "file_name": "thumbnail.png",
-        "file_size": 312445
+        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
+        "file_type": "image"
+      },
+      {
+        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
+        "file_type": "3d"
       }
     ],
-    "metadata": {},
-    "created_time": "2025-11-12T10:30:00",
-    "progress": 100,
-    "error_message": null
+    "created_time": "2026-05-12T02:36:12",
+    "progress": 100
   }
 }
 ```
@@ -76,17 +68,16 @@ Authorization: Bearer YOUR_API_KEY
 | `data.task_id` | string | Unique task identifier |
 | `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
 | `data.files` | array | Generated 3D model, preview image, and supporting files when status is `finished` |
-| `data.files[].label` | string | File label, such as `model_glb`, `thumbnail`, or a model format label |
+| `data.files[].label` | string | Optional file label, such as `model_glb`, `thumbnail`, a model format label, texture label, or animation label |
 | `data.files[].file_url` | string | Direct URL to generated file |
-| `data.files[].file_type` | string | Type of generated file: `model`, `image`, or `file` |
-| `data.files[].format` | string | File format, such as `glb`, `fbx`, `obj`, `usdz`, `stl`, or `png` |
-| `data.files[].content_type` | string | MIME type of the generated file |
-| `data.files[].file_name` | string | File name when available |
-| `data.files[].file_size` | integer | File size in bytes when available |
-| `data.metadata` | object | Reserved metadata object. Processed 3D outputs are usually returned in `files` |
+| `data.files[].file_type` | string | Type of generated file: `3d`, `image`, or `other` |
+| `data.files[].format` | string | Optional file format, such as `glb`, `fbx`, `obj`, `usdz`, `stl`, or `png` |
+| `data.files[].content_type` | string | Optional MIME type of the generated file |
+| `data.files[].file_name` | string | Optional file name |
+| `data.files[].file_size` | integer | Optional file size in bytes |
 | `data.created_time` | string | ISO 8601 timestamp of task creation |
 | `data.progress` | number | Completion percentage (0-100) |
-| `data.error_message` | string | Error description when status is `failed` |
+| `data.error_message` | string | Error description when status is `failed`; omitted for successful tasks |
 
 ### Status Values
 

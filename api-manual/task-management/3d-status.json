@@ -48,32 +48,24 @@
                     "value": {
                       "code": 200,
                       "data": {
-                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "task_id": "9OTM0HH9LBS63LF0",
                         "status": "finished",
                         "files": [
                           {
-                            "label": "model_glb",
-                            "file_url": "https://storage.poyo.ai/generated/model.glb",
-                            "file_type": "model",
-                            "format": "glb",
-                            "content_type": "model/gltf-binary",
-                            "file_name": "model.glb",
-                            "file_size": 43803144
+                            "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+                            "file_type": "3d"
                           },
                           {
-                            "label": "thumbnail",
-                            "file_url": "https://storage.poyo.ai/generated/thumbnail.png",
-                            "file_type": "image",
-                            "format": "png",
-                            "content_type": "image/png",
-                            "file_name": "thumbnail.png",
-                            "file_size": 312445
+                            "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
+                            "file_type": "image"
+                          },
+                          {
+                            "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
+                            "file_type": "3d"
                           }
                         ],
-                        "metadata": {},
-                        "created_time": "2025-11-12T10:30:00",
-                        "progress": 100,
-                        "error_message": null
+                        "created_time": "2026-05-12T02:36:12",
+                        "progress": 100
                       }
                     }
                   }
@@ -108,6 +100,29 @@
           "data": {
             "$ref": "#/components/schemas/TaskStatus"
           }
+        },
+        "example": {
+          "code": 200,
+          "data": {
+            "task_id": "9OTM0HH9LBS63LF0",
+            "status": "finished",
+            "files": [
+              {
+                "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+                "file_type": "3d"
+              },
+              {
+                "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
+                "file_type": "image"
+              },
+              {
+                "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
+                "file_type": "3d"
+              }
+            ],
+            "created_time": "2026-05-12T02:36:12",
+            "progress": 100
+          }
         }
       },
       "TaskStatus": {
@@ -132,11 +147,6 @@
               "$ref": "#/components/schemas/FileItem"
             }
           },
-          "metadata": {
-            "type": "object",
-            "description": "Reserved metadata object. Processed 3D outputs are usually returned in files.",
-            "additionalProperties": true
-          },
           "created_time": {
             "type": "string",
             "format": "date-time"
@@ -151,43 +161,73 @@
               "null"
             ]
           }
+        },
+        "example": {
+          "task_id": "9OTM0HH9LBS63LF0",
+          "status": "finished",
+          "files": [
+            {
+              "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+              "file_type": "3d"
+            },
+            {
+              "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
+              "file_type": "image"
+            },
+            {
+              "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
+              "file_type": "3d"
+            }
+          ],
+          "created_time": "2026-05-12T02:36:12",
+          "progress": 100
         }
       },
       "FileItem": {
         "type": "object",
+        "required": [
+          "file_url",
+          "file_type"
+        ],
         "properties": {
           "label": {
             "type": "string",
-            "example": "model_glb"
+            "description": "Optional file label when provided by the model"
           },
           "file_url": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "example": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb"
           },
           "file_type": {
             "type": "string",
             "enum": [
-              "model",
+              "3d",
               "image",
-              "file"
-            ]
+              "other"
+            ],
+            "example": "3d"
           },
           "format": {
             "type": "string",
-            "example": "glb"
+            "description": "Optional file format when provided by the model"
           },
           "content_type": {
             "type": "string",
-            "example": "model/gltf-binary"
+            "description": "Optional MIME type when provided by the model"
           },
           "file_name": {
             "type": "string",
-            "example": "model.glb"
+            "description": "Optional file name when provided by the model"
           },
           "file_size": {
             "type": "integer",
-            "example": 43803144
+            "description": "Optional file size in bytes when provided by the model"
           }
+        },
+        "example": {
+          "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+          "file_type": "3d"
         }
       }
     }
