@@ -1,0 +1,115 @@
+---
+title: "Get Task Status"
+description: "Query 3D task execution status and retrieve generated model files"
+openapi: "/api-manual/task-management/3d-status.json GET /api/generate/status/{task_id}"
+---
+
+# Get Task Status
+
+Query the execution status of 3D generation tasks and retrieve generated model files when complete.
+
+## Endpoint
+
+```http
+GET https://api.poyo.ai/api/generate/status/{task_id}
+```
+
+## Authentication
+
+All requests require Bearer token authentication:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Parameters
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string | Yes | Unique task identifier returned from the submit endpoint |
+
+## Response
+
+### Success Response (200)
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "finished",
+    "files": [
+      {
+        "label": "model_glb",
+        "file_url": "https://storage.poyo.ai/generated/model.glb",
+        "file_type": "model",
+        "format": "glb",
+        "content_type": "model/gltf-binary",
+        "file_name": "model.glb",
+        "file_size": 43803144
+      },
+      {
+        "label": "thumbnail",
+        "file_url": "https://storage.poyo.ai/generated/thumbnail.png",
+        "file_type": "image",
+        "format": "png",
+        "content_type": "image/png",
+        "file_name": "thumbnail.png",
+        "file_size": 312445
+      }
+    ],
+    "metadata": {},
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | integer | HTTP status code (200 for success) |
+| `data.task_id` | string | Unique task identifier |
+| `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
+| `data.files` | array | Generated 3D model, preview image, and supporting files when status is `finished` |
+| `data.files[].label` | string | File label, such as `model_glb`, `thumbnail`, or a model format label |
+| `data.files[].file_url` | string | Direct URL to generated file |
+| `data.files[].file_type` | string | Type of generated file: `model`, `image`, or `file` |
+| `data.files[].format` | string | File format, such as `glb`, `fbx`, `obj`, `usdz`, `stl`, or `png` |
+| `data.files[].content_type` | string | MIME type of the generated file |
+| `data.files[].file_name` | string | File name when available |
+| `data.files[].file_size` | integer | File size in bytes when available |
+| `data.metadata` | object | Reserved metadata object. Processed 3D outputs are usually returned in `files` |
+| `data.created_time` | string | ISO 8601 timestamp of task creation |
+| `data.progress` | number | Completion percentage (0-100) |
+| `data.error_message` | string | Error description when status is `failed` |
+
+### Status Values
+
+| Status | Description |
+|--------|-------------|
+| `not_started` | Task is queued, waiting to be processed |
+| `running` | Task is currently being generated |
+| `finished` | Task completed successfully, results available in `files` |
+| `failed` | Task failed, error details in `error_message` |
+
+## Code Example
+
+```bash
+curl -X GET https://api.poyo.ai/api/generate/status/task-unified-1757165031-uyujaw3d \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Important Notes
+
+<Warning>
+  **Content Validity**: Generated 3D files are accessible for **24 hours** after creation. Download and save your content promptly.
+</Warning>
+
+<Tip>
+  **Webhooks**: Instead of polling, you can provide a `callback_url` when submitting tasks to receive automatic notifications. See [3D Webhook Callbacks](/api-manual/task-management/3d-webhooks).
+</Tip>
