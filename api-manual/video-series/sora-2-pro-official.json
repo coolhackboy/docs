@@ -40,7 +40,8 @@
                       "prompt": "A cinematic drone shot flying through a misty forest at dawn, sun rays cutting through the trees, realistic motion, natural ambience.",
                       "duration": 8,
                       "aspect_ratio": "16:9",
-                      "resolution": "1024p"
+                      "resolution": "1024p",
+                      "character_ids": ["char_123"]
                     }
                   }
                 },
@@ -54,7 +55,8 @@
                       "image_urls": ["https://example.com/reference-image.png"],
                       "duration": 4,
                       "aspect_ratio": "auto",
-                      "resolution": "720p"
+                      "resolution": "720p",
+                      "character_ids": ["char_123", "char_456"]
                     }
                   }
                 }
@@ -161,6 +163,15 @@
                 "enum": ["720p", "1024p", "1080p"],
                 "default": "1024p",
                 "example": "1024p"
+              },
+              "character_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 2,
+                "description": "Optional character IDs. Maximum 2 character IDs. You can reference the character names in your prompt.",
+                "example": ["char_123", "char_456"]
               }
             }
           }
