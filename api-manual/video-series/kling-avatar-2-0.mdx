@@ -1,0 +1,40 @@
+---
+title: "Kling Avatar 2.0"
+description: "Audio-driven avatar video generation with Kling Avatar 2.0 Standard and Pro"
+icon: "video"
+openapi: "/api-manual/video-series/kling-avatar-2-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Kling Avatar 2.0
+
+`kling-avatar-2.0/standard` and `kling-avatar-2.0/pro` create an audio-driven avatar video from one reference image and one driving audio file.
+
+## Available Models
+
+- **kling-avatar-2.0/standard** - Standard avatar video generation
+- **kling-avatar-2.0/pro** - Pro avatar video generation with higher quality
+
+## Required Parameters
+
+- **image_urls**: Reference image array. Exactly `1` image is supported, and `image_urls[0]` is used as the avatar image
+- **audio_url**: Driving audio URL. Audio duration must be between `2` and `60` seconds
+
+## Optional Parameters
+
+- **prompt**: Optional text prompt for the avatar video
+
+## Credit Billing
+
+Billing is calculated from the detected audio duration, rounded up to the nearest second.
+Credit usage depends on the selected model and detected audio duration.
+
+## Notes
+
+- Use `image_urls`, consistent with other video generation APIs. The service maps `image_urls[0]` to the upstream `image_url` field.
+- `audio_url` must be an HTTP or HTTPS URL. If the file size can be detected before submission, it must be `5MB` or less.
+- This page only describes the unified submit request. Query status through the standard task status API.

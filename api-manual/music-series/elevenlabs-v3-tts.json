@@ -1,0 +1,225 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - ElevenLabs V3 TTS API",
+    "description": "Generate speech audio from text using ElevenLabs V3",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit ElevenLabs V3 TTS Task",
+        "description": "Convert text into speech audio.",
+        "operationId": "submitElevenLabsV3TtsTask",
+        "tags": ["ElevenLabs V3 TTS"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-speech": {
+                  "summary": "Text to speech",
+                  "value": {
+                    "model": "elevenlabs-v3-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "text": "Hello! This is a test of the text to speech system, powered by ElevenLabs.",
+                      "voice": "Rachel",
+                      "stability": 0.5,
+                      "timestamps": false,
+                      "language_code": "en",
+                      "apply_text_normalization": "auto"
+                    }
+                  }
+                },
+                "with-timestamps": {
+                  "summary": "Request timestamps",
+                  "value": {
+                    "model": "elevenlabs-v3-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "text": "Every word can include timing data when timestamps are enabled.",
+                      "voice": "Aria",
+                      "timestamps": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key from the [API Key Management Page](https://poyo.ai/dashboard/api-key).\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model identifier.",
+            "enum": ["elevenlabs-v3-tts"],
+            "example": "elevenlabs-v3-tts"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["text"],
+            "additionalProperties": false,
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "Text to convert to speech.",
+                "minLength": 1,
+                "maxLength": 5000,
+                "example": "Hello! This is a test of the text to speech system, powered by ElevenLabs."
+              },
+              "voice": {
+                "type": "string",
+                "description": "Voice name used for speech generation.",
+                "default": "Rachel",
+                "example": "Rachel"
+              },
+              "stability": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Voice stability from 0 to 1.",
+                "default": 0.5,
+                "example": 0.5
+              },
+              "timestamps": {
+                "type": "boolean",
+                "description": "Whether to request word-level timestamps. When returned, timestamps are uploaded as a separate timestamps.json file in the task files list.",
+                "default": false,
+                "example": false
+              },
+              "language_code": {
+                "type": "string",
+                "description": "Optional ISO 639-1 language code used to enforce a language for the model.",
+                "example": "en"
+              },
+              "apply_text_normalization": {
+                "type": "string",
+                "description": "Controls text normalization.",
+                "enum": ["auto", "on", "off"],
+                "default": "auto",
+                "example": "auto"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-05-12T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

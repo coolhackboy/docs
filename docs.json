@@ -66,6 +66,7 @@
       "/api-manual/video-series/kling-2-5-turbo-pro.json",
       "/api-manual/video-series/kling-3-0.json",
       "/api-manual/video-series/kling-3-0-4k.json",
+      "/api-manual/video-series/kling-avatar-2-0.json",
       "/api-manual/video-series/kling-o3.json",
       "/api-manual/video-series/kling-o3-4k.json",
       "/api-manual/video-series/grok-imagine.json",
@@ -82,6 +83,7 @@
       "/api-manual/3d-series/tripo-p1-3d.json",
       "/api-manual/music-series/generate-music.json",
       "/api-manual/music-series/minimax-music-2.6.json",
+      "/api-manual/music-series/elevenlabs-v3-tts.json",
       "/api-manual/music-series/extend-music.json",
       "/api-manual/music-series/upload-and-cover-audio.json",
       "/api-manual/music-series/upload-and-extend-audio.json",
@@ -223,6 +225,7 @@
                   "api-manual/video-series/kling-2-6",
                   "api-manual/video-series/kling-3-0",
                   "api-manual/video-series/kling-3-0-4k",
+                  "api-manual/video-series/kling-avatar-2-0",
                   "api-manual/video-series/kling-o3",
                   "api-manual/video-series/kling-o3-4k",
                   "api-manual/video-series/kling-2.6-motion-control",
@@ -300,6 +303,12 @@
                 "group": "MiniMax",
                 "pages": [
                   "api-manual/music-series/minimax-music-2.6"
+                ]
+              },
+              {
+                "group": "ElevenLabs",
+                "pages": [
+                  "api-manual/music-series/elevenlabs-v3-tts"
                 ]
               }
             ]

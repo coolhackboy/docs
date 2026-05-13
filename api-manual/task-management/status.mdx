@@ -6,7 +6,7 @@ openapi: "/openapi.json GET /api/generate/status/{task_id}"
 
 # Get Task Status
 
-Query the execution status of image, video, and 3D generation tasks and retrieve results when complete.
+Query the execution status of image, video, audio, and 3D generation tasks and retrieve results when complete.
 
 ## Endpoint
 
@@ -66,7 +66,7 @@ Authorization: Bearer YOUR_API_KEY
 | `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
 | `data.files` | array | Generated media files (when status is `finished`) |
 | `data.files[].file_url` | string | Direct URL to generated file |
-| `data.files[].file_type` | string | Type of generated file: `image`, `video`, `3d`, or `other` |
+| `data.files[].file_type` | string | Type of generated file: `image`, `video`, `audio`, `3d`, or `other` |
 | `data.files[].label` | string | Optional file label. Common for 3D outputs, such as `model_glb` or `thumbnail` |
 | `data.files[].format` | string | Optional file format, such as `glb`, `fbx`, `obj`, `png`, or `mp4` |
 | `data.files[].content_type` | string | Optional MIME type of the generated file |
@@ -103,7 +103,7 @@ Authorization: Bearer YOUR_API_KEY
 }
 ```
 
-### Running (Image)
+### Running
 
 ```json
 {
@@ -155,6 +155,31 @@ Authorization: Bearer YOUR_API_KEY
       }
     ],
     "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```
+
+### Finished (TTS)
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "KAI9LGP3UIXLG51W",
+    "status": "finished",
+    "files": [
+      {
+        "file_url": "https://cdn.doculator.org/audios/KAI9LGP3UIXLG51W/KAI9LGP3UIXLG51W.mp3",
+        "file_type": "audio"
+      },
+      {
+        "file_url": "https://cdn.doculator.org/audios/KAI9LGP3UIXLG51W/timestamps.json",
+        "file_type": "other"
+      }
+    ],
+    "created_time": "2026-05-13T10:39:39",
     "progress": 100,
     "error_message": null
   }
