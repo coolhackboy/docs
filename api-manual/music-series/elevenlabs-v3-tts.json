@@ -151,7 +151,7 @@
               },
               "timestamps": {
                 "type": "boolean",
-                "description": "Whether to request word-level timestamps.",
+                "description": "Whether to request word-level timestamps. When returned by the provider, timestamps are uploaded as a separate timestamps.json file in the task files list.",
                 "default": false,
                 "example": false
               },

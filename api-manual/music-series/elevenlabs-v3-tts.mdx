@@ -27,7 +27,7 @@ openapi: "/api-manual/music-series/elevenlabs-v3-tts.json POST /api/generate/sub
 
 - **voice**: Voice name used for speech generation. Default upstream voice is `Rachel`
 - **stability**: Voice stability from `0` to `1`
-- **timestamps**: Boolean. When `true`, timestamps may be returned with the generated audio file
+- **timestamps**: Boolean. When `true`, timestamps may be returned as an additional JSON file
 - **language_code**: Optional language code used to enforce a language for the model
 - **apply_text_normalization**: `auto`, `on`, or `off`
 
@@ -38,5 +38,5 @@ Billing is calculated by text length: `16` credits per `1000` characters.
 ## Notes
 
 - Query status through the standard task status API, not the music detail endpoint.
-- Successful responses return `files`, where each file item contains `file_url` and `file_type: audio`.
-- When `timestamps` is enabled and returned by the provider, the first file item also includes `timestamps`.
+- Successful responses return `files`, where the generated speech uses `file_type: audio`.
+- When `timestamps` is enabled and returned by the provider, timestamps are uploaded as `timestamps.json` and returned as a separate file item with `file_type: other`.
