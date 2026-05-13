@@ -1,0 +1,205 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling Avatar 2.0 API",
+    "description": "Audio-driven avatar video generation with Kling Avatar 2.0 Standard and Pro",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Kling Avatar 2.0 Task",
+        "description": "Generate an audio-driven avatar video from one image and one audio file.",
+        "operationId": "submitKlingAvatar20Task",
+        "tags": ["Kling Avatar 2.0"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "standard": {
+                  "summary": "Standard Avatar Video",
+                  "value": {
+                    "model": "kling-avatar-2.0/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "image_urls": ["https://example.com/avatar.png"],
+                      "audio_url": "https://example.com/voice.mp3",
+                      "prompt": "A natural talking avatar facing the camera."
+                    }
+                  }
+                },
+                "pro": {
+                  "summary": "Pro Avatar Video",
+                  "value": {
+                    "model": "kling-avatar-2.0/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "image_urls": ["https://example.com/avatar.png"],
+                      "audio_url": "https://example.com/voice.mp3"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key from the [API Key Management Page](https://poyo.ai/dashboard/api-key).\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling Avatar 2.0 model identifier",
+            "enum": ["kling-avatar-2.0/standard", "kling-avatar-2.0/pro"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["image_urls", "audio_url"],
+            "properties": {
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 1,
+                "description": "Avatar reference image URLs. Exactly one image is supported, and image_urls[0] is used.",
+                "example": ["https://example.com/avatar.png"]
+              },
+              "audio_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Driving audio URL. Duration must be between 2 and 60 seconds.",
+                "example": "https://example.com/voice.mp3"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "Optional text prompt for the avatar video",
+                "example": "A natural talking avatar facing the camera."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
