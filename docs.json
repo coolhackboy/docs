@@ -84,6 +84,7 @@
       "/api-manual/3d-series/tripo-p1-3d.json",
       "/api-manual/music-series/generate-music.json",
       "/api-manual/music-series/minimax-music-2.6.json",
+      "/api-manual/music-series/elevenlabs-v3-tts.json",
       "/api-manual/music-series/extend-music.json",
       "/api-manual/music-series/upload-and-cover-audio.json",
       "/api-manual/music-series/upload-and-extend-audio.json",
@@ -304,6 +305,12 @@
                 "group": "MiniMax",
                 "pages": [
                   "api-manual/music-series/minimax-music-2.6"
+                ]
+              },
+              {
+                "group": "ElevenLabs",
+                "pages": [
+                  "api-manual/music-series/elevenlabs-v3-tts"
                 ]
               }
             ]

@@ -1,0 +1,42 @@
+---
+title: "ElevenLabs V3 TTS"
+description: "Generate speech audio from text using Fal-backed ElevenLabs V3"
+icon: "audio-lines"
+openapi: "/api-manual/music-series/elevenlabs-v3-tts.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# ElevenLabs V3 TTS
+
+`elevenlabs-v3-tts` converts text into speech audio. Results are returned as task `files`, matching the standard image, video, and 3D task response structure.
+
+## Available Model
+
+- **elevenlabs-v3-tts** - ElevenLabs V3 text-to-speech generation through Fal
+
+## Required Parameters
+
+- **text**: Text to convert to speech
+  - Length: `1-5000` characters
+
+## Optional Parameters
+
+- **voice**: Voice name used for speech generation. Default upstream voice is `Rachel`
+- **stability**: Voice stability from `0` to `1`
+- **timestamps**: Boolean. When `true`, timestamps may be returned with the generated audio file
+- **language_code**: Optional language code used to enforce a language for the model
+- **apply_text_normalization**: `auto`, `on`, or `off`
+
+## Credit Billing
+
+Billing is calculated by text length: `16` credits per `1000` characters.
+
+## Notes
+
+- Query status through the standard task status API, not the music detail endpoint.
+- Successful responses return `files`, where each file item contains `file_url` and `file_type: audio`.
+- When `timestamps` is enabled and returned by the provider, the first file item also includes `timestamps`.
