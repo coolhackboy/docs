@@ -1,6 +1,6 @@
 ---
 title: "ElevenLabs V3 TTS"
-description: "Generate speech audio from text using Fal-backed ElevenLabs V3"
+description: "Generate speech audio from text using ElevenLabs V3"
 icon: "audio-lines"
 openapi: "/api-manual/music-series/elevenlabs-v3-tts.json POST /api/generate/submit"
 ---
@@ -16,7 +16,7 @@ openapi: "/api-manual/music-series/elevenlabs-v3-tts.json POST /api/generate/sub
 
 ## Available Model
 
-- **elevenlabs-v3-tts** - ElevenLabs V3 text-to-speech generation through Fal
+- **elevenlabs-v3-tts** - ElevenLabs V3 text-to-speech generation
 
 ## Required Parameters
 
@@ -25,10 +25,10 @@ openapi: "/api-manual/music-series/elevenlabs-v3-tts.json POST /api/generate/sub
 
 ## Optional Parameters
 
-- **voice**: Voice name used for speech generation. Default upstream voice is `Rachel`
+- **voice**: Voice name used for speech generation. Supported values: `Aria`, `Roger`, `Sarah`, `Laura`, `Charlie`, `George`, `Callum`, `River`, `Liam`, `Charlotte`, `Alice`, `Matilda`, `Will`, `Jessica`, `Eric`, `Chris`, `Brian`, `Daniel`, `Lily`, `Bill`, `Rachel`
 - **stability**: Voice stability from `0` to `1`
 - **timestamps**: Boolean. When `true`, timestamps may be returned as an additional JSON file
-- **language_code**: Optional language code used to enforce a language for the model
+- **language_code**: Optional ISO 639-1 language code used to enforce a language for the model
 - **apply_text_normalization**: `auto`, `on`, or `off`
 
 ## Credit Billing
@@ -39,4 +39,4 @@ Billing is calculated by text length: `16` credits per `1000` characters.
 
 - Query status through the standard task status API, not the music detail endpoint.
 - Successful responses return `files`, where the generated speech uses `file_type: audio`.
-- When `timestamps` is enabled and returned by the provider, timestamps are uploaded as `timestamps.json` and returned as a separate file item with `file_type: other`.
+- When `timestamps` is enabled and returned, timestamps are uploaded as `timestamps.json` and returned as a separate file item with `file_type: other`.
