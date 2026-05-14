@@ -92,6 +92,86 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SubmitResponse"
+                },
+                "examples": {
+                  "submitted": {
+                    "summary": "Submitted task",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "not_started",
+                        "created_time": "2026-04-15T10:30:00"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Get MiniMax Music 2.6 Task Status",
+        "description": "Retrieve the task status and generated music files.",
+        "operationId": "getMiniMaxMusic26TaskStatus",
+        "tags": ["MiniMax Music 2.6"],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "description": "Task ID returned by the submit endpoint.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "task-unified-1757165031-uyujaw3d"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "examples": {
+                  "finished": {
+                    "summary": "Finished task",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "finished",
+                        "files": [
+                          {
+                            "file_url": "https://cdn.doculator.org/audios/task-unified-1757165031-uyujaw3d/task-unified-1757165031-uyujaw3d.mp3",
+                            "file_type": "audio"
+                          }
+                        ],
+                        "created_time": "2026-04-15T10:30:00",
+                        "progress": 100,
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "running": {
+                    "summary": "Running task",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "running",
+                        "files": [],
+                        "created_time": "2026-04-15T10:30:00",
+                        "progress": 45,
+                        "error_message": null
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -220,6 +300,75 @@
                 "description": "ISO 8601 timestamp when the task was created"
               }
             }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "files", "created_time", "progress"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "finished",
+                "description": "Current task status"
+              },
+              "files": {
+                "type": "array",
+                "description": "Generated task files. Finished music tasks return at least one audio file.",
+                "items": {
+                  "$ref": "#/components/schemas/FileItem"
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-15T10:30:00"
+              },
+              "progress": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "example": 100
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true,
+                "example": null
+              }
+            }
+          }
+        }
+      },
+      "FileItem": {
+        "type": "object",
+        "required": ["file_url", "file_type"],
+        "properties": {
+          "file_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Generated file URL",
+            "example": "https://cdn.doculator.org/audios/task-unified-1757165031-uyujaw3d/task-unified-1757165031-uyujaw3d.mp3"
+          },
+          "file_type": {
+            "type": "string",
+            "description": "Generated file type",
+            "enum": ["audio", "other"],
+            "example": "audio"
           }
         }
       }

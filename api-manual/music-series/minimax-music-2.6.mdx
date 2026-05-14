@@ -7,14 +7,14 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
 ## Usage Guide
 
 - This endpoint generates complete tracks with singing, backing music, and detailed arrangements from a style prompt
 - You can provide custom lyrics, let the model optimize lyrics from the prompt, or enable instrumental mode for music without vocals
-- Final results are returned asynchronously through `callback_url` or [Query Music Detail](/api-manual/music-series/query-music-detail)
+- Final results are returned asynchronously through `callback_url` or [Query Task Status](/api-manual/task-management/status)
 
 ## Parameter Details
 
@@ -44,4 +44,5 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
 
 - If both `is_instrumental` and `lyrics_optimizer` are `false`, provide `lyrics` to avoid validation errors
 - `lyrics_optimizer` follows the upstream MiniMax Music 2.6 schema. If the upstream service rejects an optimized-lyrics request, retry with explicit `lyrics`
-- Query results for this model return `audio_id`, `audio_url`, `title`, `duration`, and `prompt`
+- Query status through the standard task status API, not the music detail endpoint
+- Successful responses return `files`, where the generated music uses `file_type: audio`
