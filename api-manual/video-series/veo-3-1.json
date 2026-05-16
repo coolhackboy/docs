@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - VEO 3.1 API",
-    "description": "Lite, fast, and high-quality 8-second video generation with Google's VEO 3.1. All models support text-to-video; only fast and quality support image-to-video.",
+    "description": "Lite, fast, official fast, and high-quality video generation with Google's VEO 3.1. All models support text-to-video; fast, official fast, and quality support image-to-video.",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit VEO 3.1 Video Generation Task",
-        "description": "Lite, fast, and high-quality 8-second video generation using Google's VEO 3.1. All models support text-to-video; only fast and quality support image-to-video.",
+        "description": "Lite, fast, official fast, and high-quality video generation using Google's VEO 3.1. All models support text-to-video; fast, official fast, and quality support image-to-video.",
         "operationId": "submitVEO3Task",
         "tags": [
           "VEO 3.1"
@@ -42,6 +42,20 @@
                       "prompt": "Dolphins jumping in a bright blue ocean",
                       "duration": 8,
                       "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "veo3.1-fast-official": {
+                  "summary": "VEO 3.1 Official Fast video generation",
+                  "value": {
+                    "model": "veo3.1-fast-official",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic close-up of a paper boat drifting through a neon-lit canal",
+                      "duration": 6,
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "sound": true
                     }
                   }
                 },
@@ -145,6 +159,7 @@
             "description": "VEO 3.1 model identifier",
             "enum": [
               "veo3.1-fast",
+              "veo3.1-fast-official",
               "veo3.1-lite",
               "veo3.1-quality"
             ]
@@ -189,8 +204,10 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Video duration in seconds (fixed at 8).",
+                "description": "Video duration in seconds.\n\n- `veo3.1-fast-official`: 4, 6, or 8 seconds.\n\n- Other VEO 3.1 models: 8 seconds.",
                 "enum": [
+                  4,
+                  6,
                   8
                 ],
                 "example": 8
@@ -214,6 +231,12 @@
                 ],
                 "default": "720p",
                 "example": "1080p"
+              },
+              "sound": {
+                "type": "boolean",
+                "description": "Whether to generate audio with the video. This parameter is available for `veo3.1-fast-official` only. Default is `true`.",
+                "default": true,
+                "example": true
               }
             }
           }

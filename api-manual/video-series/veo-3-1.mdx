@@ -1,6 +1,6 @@
 ---
 title: "VEO 3.1 Video Generation"
-description: "Lite, fast, and high-quality 8-second video generation with Google's VEO 3.1"
+description: "Lite, fast, official fast, and high-quality video generation with Google's VEO 3.1"
 icon: "video"
 openapi: "/api-manual/video-series/veo-3-1.json POST /api/generate/submit"
 ---
@@ -12,23 +12,25 @@ openapi: "/api-manual/video-series/veo-3-1.json POST /api/generate/submit"
 
 # VEO 3.1 Video Generation
 
-Generate lite, fast, or high-quality 8-second videos with Google's VEO 3.1 model. All models support text-to-video. `veo3.1-fast` and `veo3.1-quality` also support image-to-video.
+Generate lite, fast, official fast, or high-quality videos with Google's VEO 3.1 model. All models support text-to-video. `veo3.1-fast`, `veo3.1-fast-official`, and `veo3.1-quality` also support image-to-video.
 
 ## Available Models
 
 - **veo3.1-fast** - Fast 8-second generation
+- **veo3.1-fast-official** - Official fast generation with 4, 6, or 8 second duration options
 - **veo3.1-lite** - Lite 8-second generation
 - **veo3.1-quality** - High-quality 8-second generation
 
 ## Duration Options
 
-- **8 seconds** - Fixed duration for all generations
+- **veo3.1-fast-official** - 4, 6, or 8 seconds
+- **Other VEO 3.1 models** - 8 seconds
 
 ## Key Features
 
 - Asynchronous processing that returns a `task_id` for status tracking
 - All models support text-to-video
-- `veo3.1-fast` and `veo3.1-quality` support image-to-video
+- `veo3.1-fast`, `veo3.1-fast-official`, and `veo3.1-quality` support image-to-video
 - Supports up to 4k output resolution
 - Generated video URLs are valid for 24 hours
 
@@ -54,3 +56,18 @@ Generate lite, fast, or high-quality 8-second videos with Google's VEO 3.1 model
 ### Resolution
 
 - `720p` (default), `1080p`, or `4k`
+
+### Sound
+
+- `sound` is available for `veo3.1-fast-official`
+- `true` (default) generates audio with the video
+- `false` generates silent video
+- Do not pass `sound` for other VEO 3.1 models
+
+## Pricing
+
+`veo3.1-fast-official` is billed by duration:
+
+- Pricing varies by resolution and whether audio is generated
+- `4k` consumes more credits than `720p` / `1080p`
+- Videos with audio consume more credits than silent videos
