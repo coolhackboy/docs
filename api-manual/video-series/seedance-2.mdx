@@ -30,14 +30,20 @@ openapi: "/api-manual/video-series/seedance-2.json POST /api/generate/submit"
 
 ## Important Notes
 
-- `image_urls` supports up to 2 items only:
-  index `0` maps to the first frame and index `1` maps to the last frame.
+- `image_urls` is used for image-to-video mode and supports up to 2 images only:
+  index `0` maps to the starting frame and index `1` maps to the optional ending frame.
+- `image_urls` supports JPG, JPEG, PNG, WebP, GIF, and AVIF images. Each image should be publicly accessible and up to 30 MB.
 - `image_urls` and any `reference_*_urls` fields are mutually exclusive and cannot be used together in the same request.
+- `reference_image_urls` is used for reference-to-video mode and supports up to 9 images. Supported formats are JPG, JPEG, PNG, and WebP, with each image up to 30 MB.
+- `reference_video_urls` supports up to 3 MP4 or MOV files. The combined reference video duration should be 2 to 15 seconds total, total video size should be under 50 MB, and each video should be 480p to 720p.
+- `reference_audio_urls` supports up to 3 MP3 or WAV files. The combined reference audio duration should not exceed 15 seconds, and each audio file should be up to 15 MB. Audio references require at least one reference image or reference video.
+- For reference-to-video mode, the total number of files across `reference_image_urls`, `reference_video_urls`, and `reference_audio_urls` must not exceed 12.
+- Reference assets can be mentioned in the prompt by order, such as `@Image1`, `@Video1`, and `@Audio1`.
 - `aspect_ratio` is optional. When provided, supported values are `21:9`, `16:9`, `4:3`, `1:1`, `3:4`, `9:16`.
 - `duration` supports integer values from `4` to `15`.
 - `resolution` supports `1080p` only for `seedance-2`. `seedance-2-fast` remains limited to `480p` and `720p`.
 - `seed` is optional and can be used for reproducible generation.
-- All remote URLs should be publicly accessible and directly downloadable by the upstream provider.
+- All remote URLs should be publicly accessible and directly downloadable.
 
 ## Credits Reference
 

@@ -168,7 +168,7 @@
                   "format": "uri"
                 },
                 "maxItems": 2,
-                "description": "Optional first and last frame images. Index 0 is the first frame and index 1 is the last frame. Cannot be used together with any reference_*_urls fields.",
+                "description": "Optional first and last frame images for image-to-video mode. Provide 1 or 2 publicly accessible image URLs. Index 0 is mapped to the starting frame and index 1 is mapped to the optional ending frame. Supported image formats are JPG, JPEG, PNG, WebP, GIF, and AVIF; each image should be up to 30 MB. Cannot be used together with any reference_*_urls fields.",
                 "example": ["https://example.com/first-frame.jpg", "https://example.com/last-frame.jpg"]
               },
               "reference_image_urls": {
@@ -177,7 +177,8 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Optional reference image URLs for multimodal reference-to-video mode.",
+                "maxItems": 9,
+                "description": "Optional reference image URLs for multimodal reference-to-video mode. Supports up to 9 publicly accessible images. Supported image formats are JPG, JPEG, PNG, and WebP; each image should be up to 30 MB. You can reference images in the prompt by order, such as @Image1 or @Image2. Cannot be used together with image_urls.",
                 "example": ["https://example.com/reference-image.jpg"]
               },
               "reference_video_urls": {
@@ -186,7 +187,8 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Optional reference video URLs for multimodal reference-to-video mode.",
+                "maxItems": 3,
+                "description": "Optional reference video URLs for multimodal reference-to-video mode. Supports up to 3 publicly accessible MP4 or MOV files. The combined reference video duration should be 2 to 15 seconds total, total video size should be under 50 MB, and each video should be 480p to 720p. You can reference videos in the prompt by order, such as @Video1 or @Video2. Cannot be used together with image_urls.",
                 "example": ["https://example.com/reference-video.mp4"]
               },
               "reference_audio_urls": {
@@ -195,7 +197,8 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Optional reference audio URLs for multimodal reference-to-video mode.",
+                "maxItems": 3,
+                "description": "Optional reference audio URLs for multimodal reference-to-video mode. Supports up to 3 publicly accessible MP3 or WAV files. The combined reference audio duration should not exceed 15 seconds, and each file should be up to 15 MB. Audio references require at least one reference image or reference video. You can reference audio files in the prompt by order, such as @Audio1 or @Audio2. Cannot be used together with image_urls.",
                 "example": ["https://example.com/reference-audio.mp3"]
               },
               "generate_audio": {
