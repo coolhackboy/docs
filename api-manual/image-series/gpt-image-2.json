@@ -187,7 +187,7 @@
               "prompt": {
                 "type": "string",
                 "description": "Prompt describing the target image or requested edit",
-                "maxLength": 32000,
+                "maxLength": 20000,
                 "example": "A beautiful sunset over the ocean"
               },
               "quality": {
