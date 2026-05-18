@@ -52,6 +52,7 @@
       "/api-manual/video-series/sora-2-official.json",
       "/api-manual/video-series/sora-2-pro-official.json",
       "/api-manual/video-series/veo-3-1.json",
+      "/api-manual/video-series/veo-3-1-official.json",
       "/api-manual/video-series/wan-animate.json",
       "/api-manual/video-series/wan2.2-text-to-video-fast.json",
       "/api-manual/video-series/wan2.2-image-to-video-fast.json",
@@ -202,7 +203,8 @@
               {
                 "group": "Google",
                 "pages": [
-                  "api-manual/video-series/veo-3-1"
+                  "api-manual/video-series/veo-3-1",
+                  "api-manual/video-series/veo-3-1-official"
                 ]
               },
               {
