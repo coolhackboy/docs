@@ -1,6 +1,6 @@
 ---
 title: "VEO 3.1 Official Video Generation"
-description: "Official VEO 3.1 video generation and extension with flexible duration, audio control, and image-guided modes"
+description: "Official VEO 3.1 video generation and extension with duration, audio control, and image-guided modes"
 icon: "video"
 openapi: "/api-manual/video-series/veo-3-1-official.json POST /api/generate/submit"
 ---
@@ -12,14 +12,14 @@ openapi: "/api-manual/video-series/veo-3-1-official.json POST /api/generate/subm
 
 # VEO 3.1 Official Video Generation
 
-Generate or extend VEO 3.1 videos through PoYo's official model family. The generation models support text-to-video, image-to-video, first/last-frame video, and reference-guided video depending on the selected model. The extend model continues an existing video while keeping the final length capped at 30 seconds.
+Generate or extend VEO 3.1 videos through PoYo's official model family. The generation models support text-to-video, image-to-video, first/last-frame video, and `generation_type` driven three-image generation depending on the selected model. The extend model continues an existing video while keeping the final length capped at 30 seconds.
 
 ## Available Models
 
 - **veo3.1-fast-official** - Fast official generation with 4, 6, or 8 second duration options
 - **veo3.1-lite-official** - Lightweight official generation with lower per-second pricing
 - **veo3.1-quality-official** - Higher-quality official generation with 4K support
-- **veo3.1-extend** - Extend an existing VEO 3.1 video up to a 30-second final length
+- **veo3.1-extend** - Extend an existing VEO 3.1 video by 7 seconds
 
 ## Input Modes
 
@@ -28,14 +28,14 @@ Generate or extend VEO 3.1 videos through PoYo's official model family. The gene
 - No `image_urls`: text-to-video
 - One image: image-to-video
 - Two images: first/last-frame video
-- Three images: reference-guided video
-- `veo3.1-lite-official` supports at most two images and does not support reference-guided video
+- Three images: `generation_type: "reference"`, fixed at 8 seconds
+- `veo3.1-lite-official` supports at most two images and does not support `generation_type: "reference"`
 
 ### Extend Model
 
 - Use `model: "veo3.1-extend"` with a required `video_url`
-- `duration` means additional seconds to generate
-- The final video is capped at 30 seconds, so the maximum allowed `duration` depends on the source video length
+- `duration` must be `7`
+- The final video is capped at 30 seconds, so the source video must leave room for a 7-second extension
 - Do not pass `image_urls` for `veo3.1-extend`
 
 ## Parameters
@@ -43,7 +43,7 @@ Generate or extend VEO 3.1 videos through PoYo's official model family. The gene
 - **prompt**: required text prompt, up to 1000 characters
 - **image_urls**: optional image URL array for generation models
 - **generation_type**: optional `frame` or `reference`; if omitted, PoYo infers the mode from `image_urls`
-- **duration**: generation models support `4`, `6`, or `8`; extend supports a valid additional duration based on the source video length
+- **duration**: generation models support `4`, `6`, or `8`; `generation_type: "reference"` with three `image_urls` supports `8` only; `veo3.1-extend` supports `7` only
 - **aspect_ratio**: `16:9` or `9:16`; `veo3.1-extend` also supports `auto`
 - **resolution**: `720p`, `1080p`, or `4k` where supported
 - **sound**: `true` by default; set `false` for silent output

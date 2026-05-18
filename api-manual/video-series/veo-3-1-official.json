@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - VEO 3.1 Official API",
-    "description": "Official VEO 3.1 video generation and extension with flexible duration, audio control, and image-guided modes.",
+    "description": "Official VEO 3.1 video generation and extension with duration, audio control, and image-guided modes.",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit VEO 3.1 Official Video Task",
-        "description": "Submit a VEO 3.1 official generation or extension task. Generation models support text, image, first/last-frame, and reference-guided modes depending on the selected model.",
+        "description": "Submit a VEO 3.1 official generation or extension task. Generation models support text, image, first/last-frame, and generation_type driven three-image generation depending on the selected model.",
         "operationId": "submitVEO31OfficialTask",
         "tags": [
           "VEO 3.1 Official"
@@ -65,7 +65,7 @@
                   }
                 },
                 "quality-reference": {
-                  "summary": "Quality official reference-guided video",
+                  "summary": "Quality official generation_type reference",
                   "value": {
                     "model": "veo3.1-quality-official",
                     "callback_url": "https://your-domain.com/callback",
@@ -85,14 +85,14 @@
                   }
                 },
                 "extend": {
-                  "summary": "Extend an existing video",
+                  "summary": "Extend an existing video by 7 seconds",
                   "value": {
                     "model": "veo3.1-extend",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Continue the scene naturally while preserving the same camera motion",
                       "video_url": "https://example.com/source-video.mp4",
-                      "duration": 6,
+                      "duration": 7,
                       "aspect_ratio": "auto",
                       "resolution": "720p",
                       "sound": true
@@ -191,7 +191,7 @@
                   "format": "uri"
                 },
                 "maxItems": 3,
-                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video.\n\n- 3 images: reference-guided video on supported models.\n\n- `veo3.1-lite-official` supports at most 2 images.\n\n- Do not pass this field for `veo3.1-extend`.",
+                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video.\n\n- 3 images: `generation_type: \"reference\"` on supported models. This mode supports duration 8 only.\n\n- `veo3.1-lite-official` supports at most 2 images.\n\n- Do not pass this field for `veo3.1-extend`.",
                 "example": []
               },
               "generation_type": {
@@ -205,7 +205,7 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- For `veo3.1-extend`, this is the additional extension duration. The final video is capped at 30 seconds, so the valid maximum depends on the source video length.",
+                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-extend` supports 7 seconds only. The final video is capped at 30 seconds, so the source video must leave room for a 7-second extension.",
                 "example": 8
               },
               "aspect_ratio": {
