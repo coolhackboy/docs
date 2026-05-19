@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - VEO 3.1 API",
-    "description": "Lite, fast, and high-quality video generation with Google's VEO 3.1. All models support text-to-video; fast and quality support image-to-video.",
+    "title": "PoYo AI - VEO 3.1 Official API",
+    "description": "Official VEO 3.1 video generation with duration, audio control, and image-guided modes.",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,11 +19,11 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit VEO 3.1 Video Generation Task",
-        "description": "Lite, fast, and high-quality video generation using Google's VEO 3.1. All models support text-to-video; fast and quality support image-to-video.",
-        "operationId": "submitVEO3Task",
+        "summary": "Submit VEO 3.1 Official Video Task",
+        "description": "Submit a VEO 3.1 official generation task. Generation models support text, image, first/last-frame, and generation_type driven three-image generation depending on the selected model.",
+        "operationId": "submitVEO31OfficialTask",
         "tags": [
-          "VEO 3.1"
+          "VEO 3.1 Official"
         ],
         "requestBody": {
           "required": true,
@@ -33,41 +33,54 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "veo3.1-fast": {
-                  "summary": "VEO 3.1 Fast video generation",
+                "fast": {
+                  "summary": "Fast official generation",
                   "value": {
-                    "model": "veo3.1-fast",
+                    "model": "veo3.1-fast-official",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Dolphins jumping in a bright blue ocean",
-                      "duration": 8,
-                      "aspect_ratio": "16:9"
+                      "prompt": "A cinematic close-up of a paper boat drifting through a neon-lit canal",
+                      "duration": 6,
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "sound": true
                     }
                   }
                 },
-                "veo3.1-lite": {
-                  "summary": "VEO 3.1 Lite text-to-video generation",
+                "lite-image": {
+                  "summary": "Lite official image-to-video",
                   "value": {
-                    "model": "veo3.1-lite",
+                    "model": "veo3.1-lite-official",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A cinematic miniature city waking up at sunrise, realistic lighting, smooth camera motion",
+                      "prompt": "The product rotates slowly on a clean studio table",
                       "duration": 8,
-                      "aspect_ratio": "16:9",
-                      "resolution": "720p"
+                      "aspect_ratio": "auto",
+                      "resolution": "720p",
+                      "sound": false,
+                      "image_urls": [
+                        "https://example.com/product-start.jpg"
+                      ]
                     }
                   }
                 },
-                "veo3.1-quality": {
-                  "summary": "VEO 3.1 Quality 4k generation",
+                "quality-reference": {
+                  "summary": "Quality official generation_type reference",
                   "value": {
-                    "model": "veo3.1-quality",
+                    "model": "veo3.1-quality-official",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A high-detail aerial view of a coastal city at dusk",
+                      "prompt": "A premium fashion campaign with consistent subject appearance",
                       "duration": 8,
-                      "aspect_ratio": "16:9",
-                      "resolution": "4k"
+                      "aspect_ratio": "9:16",
+                      "resolution": "4k",
+                      "sound": true,
+                      "generation_type": "reference",
+                      "image_urls": [
+                        "https://example.com/reference-1.jpg",
+                        "https://example.com/reference-2.jpg",
+                        "https://example.com/reference-3.jpg"
+                      ]
                     }
                   }
                 }
@@ -92,13 +105,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 400,
-                  "error": {
-                    "message": "Invalid request parameters",
-                    "type": "invalid_request_error"
-                  }
                 }
               }
             }
@@ -109,13 +115,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": 401,
-                  "error": {
-                    "message": "Unauthorized - Invalid API key",
-                    "type": "authentication_error"
-                  }
                 }
               }
             }
@@ -130,23 +129,24 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "API Key",
-        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+        "description": "All API endpoints require Bearer Token authentication.\n\nUse the header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
       }
     },
     "schemas": {
       "SubmitRequest": {
         "type": "object",
         "required": [
-          "model"
+          "model",
+          "input"
         ],
         "properties": {
           "model": {
             "type": "string",
-            "description": "VEO 3.1 model identifier",
+            "description": "VEO 3.1 official model identifier",
             "enum": [
-              "veo3.1-fast",
-              "veo3.1-lite",
-              "veo3.1-quality"
+              "veo3.1-fast-official",
+              "veo3.1-lite-official",
+              "veo3.1-quality-official"
             ]
           },
           "callback_url": {
@@ -175,12 +175,12 @@
                   "format": "uri"
                 },
                 "maxItems": 3,
-                "description": "Reference image URLs for image-to-video on supported models.\n\n- Supports public http/https URLs.\n\n- Maximum 3 images.\n\n- Frame mode: first image is the start frame, second image is the end frame.\n\n- Maximum file size: 10MB.\n\n- Supported formats: .jpeg, .jpg, .png, .webp.\n\n- `veo3.1-lite` does not support this parameter; do not pass `image_urls`.",
+                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video.\n\n- 3 images: `generation_type: \"reference\"` on supported models. This mode supports duration 8 only.\n\n- `veo3.1-lite-official` supports at most 2 images.",
                 "example": []
               },
               "generation_type": {
                 "type": "string",
-                "description": "Video generation type.\n\n- `frame`: Frame-to-video (two images).\n\n- `reference`: Reference image-to-video (three images).\n\n- If omitted, inferred by `image_urls` count: 2 for `frame`, 3 for `reference`.\n\n- `veo3.1-quality` does not support `reference` mode.\n\n- `veo3.1-lite` does not support this parameter; do not pass `generation_type`.",
+                "description": "Optional generation type for image-guided generation.\n\n- `frame`: requires exactly 2 `image_urls`.\n\n- `reference`: requires exactly 3 `image_urls` and is not supported by `veo3.1-lite-official`.\n\nIf omitted, PoYo infers the mode from the number of `image_urls`.",
                 "enum": [
                   "frame",
                   "reference"
@@ -189,18 +189,14 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Video duration in seconds. VEO 3.1 models on this page use 8 seconds.",
-                "enum": [
-                  4,
-                  6,
-                  8
-                ],
+                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-lite-official` with `resolution: \"1080p\"` supports 8 seconds only.",
                 "example": 8
               },
               "aspect_ratio": {
                 "type": "string",
-                "description": "Video aspect ratio",
+                "description": "Video aspect ratio. `auto` is supported for image-to-video and first/last-frame generation.",
                 "enum": [
+                  "auto",
                   "16:9",
                   "9:16"
                 ],
@@ -208,7 +204,7 @@
               },
               "resolution": {
                 "type": "string",
-                "description": "Output resolution.\n\n- `720p`: Default.\n\n- `1080p`: Full HD.\n\n- `4k`: Ultra HD.",
+                "description": "Output resolution. 4K is available on supported generation models.",
                 "enum": [
                   "720p",
                   "1080p",
@@ -216,6 +212,12 @@
                 ],
                 "default": "720p",
                 "example": "1080p"
+              },
+              "sound": {
+                "type": "boolean",
+                "description": "Whether to generate audio with the video. Default is `true`.",
+                "default": true,
+                "example": true
               }
             }
           }
@@ -230,8 +232,7 @@
         "properties": {
           "code": {
             "type": "integer",
-            "example": 200,
-            "description": "HTTP status code"
+            "example": 200
           },
           "data": {
             "type": "object",
@@ -243,22 +244,19 @@
             "properties": {
               "task_id": {
                 "type": "string",
-                "example": "task-unified-1757165031-uyujaw3d",
-                "description": "Unique task identifier for status tracking"
+                "example": "task-unified-1757165031-uyujaw3d"
               },
               "status": {
                 "type": "string",
                 "enum": [
                   "not_started"
                 ],
-                "example": "not_started",
-                "description": "Initial task status"
+                "example": "not_started"
               },
               "created_time": {
                 "type": "string",
                 "format": "date-time",
-                "example": "2025-11-12T10:30:00",
-                "description": "ISO 8601 timestamp when the task was created"
+                "example": "2026-05-18T10:30:00"
               }
             }
           }
@@ -273,8 +271,7 @@
         "properties": {
           "code": {
             "type": "integer",
-            "example": 400,
-            "description": "HTTP status code"
+            "example": 400
           },
           "error": {
             "type": "object",
@@ -285,13 +282,11 @@
             "properties": {
               "message": {
                 "type": "string",
-                "example": "Invalid request parameters",
-                "description": "Error message describing what went wrong"
+                "example": "Invalid request parameters"
               },
               "type": {
                 "type": "string",
-                "example": "invalid_request_error",
-                "description": "Error type identifier"
+                "example": "invalid_request_error"
               }
             }
           }
