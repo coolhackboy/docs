@@ -19,7 +19,7 @@ Generate or extend VEO 3.1 videos through PoYo's official model family. The gene
 - **veo3.1-fast-official** - Fast official generation with 4, 6, or 8 second duration options
 - **veo3.1-lite-official** - Lightweight official generation with lower per-second pricing
 - **veo3.1-quality-official** - Higher-quality official generation with 4K support
-- **veo3.1-extend** - Extend an existing VEO 3.1 video by 7 seconds
+- **veo3.1-extend** - Extend an existing VEO 3.1 video by 1-7 seconds
 
 ## Input Modes
 
@@ -34,8 +34,8 @@ Generate or extend VEO 3.1 videos through PoYo's official model family. The gene
 ### Extend Model
 
 - Use `model: "veo3.1-extend"` with a required `video_url`
-- `duration` must be `7`
-- The final video is capped at 30 seconds, so the source video must leave room for a 7-second extension
+- `duration` can be `1` through `7`. Default is `7`
+- The final video is capped at 30 seconds, so the source video must leave room for the requested extension
 - Do not pass `image_urls` for `veo3.1-extend`
 
 ## Parameters
@@ -43,9 +43,9 @@ Generate or extend VEO 3.1 videos through PoYo's official model family. The gene
 - **prompt**: required text prompt, up to 1000 characters
 - **image_urls**: optional image URL array for generation models
 - **generation_type**: optional `frame` or `reference`; if omitted, PoYo infers the mode from `image_urls`
-- **duration**: generation models support `4`, `6`, or `8`; `generation_type: "reference"` with three `image_urls` supports `8` only; `veo3.1-extend` supports `7` only
-- **aspect_ratio**: `16:9` or `9:16`; `veo3.1-extend` also supports `auto`
-- **resolution**: `720p`, `1080p`, or `4k` where supported
+- **duration**: generation models support `4`, `6`, or `8`; `generation_type: "reference"` with three `image_urls` supports `8` only; `veo3.1-lite-official` with `resolution: "1080p"` supports `8` only; `veo3.1-extend` supports `1` through `7`
+- **aspect_ratio**: `16:9` or `9:16`; `auto` is also supported for `veo3.1-extend`, image-to-video, and first/last-frame generation
+- **resolution**: `720p`, `1080p`, or `4k` where supported; `veo3.1-lite-official` does not support `4k`
 - **sound**: `true` by default; set `false` for silent output
 - **video_url**: required for `veo3.1-extend`
 

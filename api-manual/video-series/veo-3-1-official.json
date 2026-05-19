@@ -55,7 +55,7 @@
                     "input": {
                       "prompt": "The product rotates slowly on a clean studio table",
                       "duration": 8,
-                      "aspect_ratio": "16:9",
+                      "aspect_ratio": "auto",
                       "resolution": "720p",
                       "sound": false,
                       "image_urls": [
@@ -85,14 +85,14 @@
                   }
                 },
                 "extend": {
-                  "summary": "Extend an existing video by 7 seconds",
+                  "summary": "Extend an existing video by 5 seconds",
                   "value": {
                     "model": "veo3.1-extend",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Continue the scene naturally while preserving the same camera motion",
                       "video_url": "https://example.com/source-video.mp4",
-                      "duration": 7,
+                      "duration": 5,
                       "aspect_ratio": "auto",
                       "resolution": "720p",
                       "sound": true
@@ -205,12 +205,12 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-extend` supports 7 seconds only. The final video is capped at 30 seconds, so the source video must leave room for a 7-second extension.",
+                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-lite-official` with `resolution: \"1080p\"` supports 8 seconds only.\n\n- `veo3.1-extend` supports 1 through 7 seconds. The final video is capped at 30 seconds, so the source video must leave room for the requested extension.",
                 "example": 8
               },
               "aspect_ratio": {
                 "type": "string",
-                "description": "Video aspect ratio. `auto` is supported for `veo3.1-extend`.",
+                "description": "Video aspect ratio. `auto` is supported for `veo3.1-extend`, image-to-video, and first/last-frame generation.",
                 "enum": [
                   "auto",
                   "16:9",
