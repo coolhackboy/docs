@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - VEO 3.1 Official API",
-    "description": "Official VEO 3.1 video generation and extension with duration, audio control, and image-guided modes.",
+    "description": "Official VEO 3.1 video generation with duration, audio control, and image-guided modes.",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit VEO 3.1 Official Video Task",
-        "description": "Submit a VEO 3.1 official generation or extension task. Generation models support text, image, first/last-frame, and generation_type driven three-image generation depending on the selected model.",
+        "description": "Submit a VEO 3.1 official generation task. Generation models support text, image, first/last-frame, and generation_type driven three-image generation depending on the selected model.",
         "operationId": "submitVEO31OfficialTask",
         "tags": [
           "VEO 3.1 Official"
@@ -81,21 +81,6 @@
                         "https://example.com/reference-2.jpg",
                         "https://example.com/reference-3.jpg"
                       ]
-                    }
-                  }
-                },
-                "extend": {
-                  "summary": "Extend an existing video by 5 seconds",
-                  "value": {
-                    "model": "veo3.1-extend",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "Continue the scene naturally while preserving the same camera motion",
-                      "video_url": "https://example.com/source-video.mp4",
-                      "duration": 5,
-                      "aspect_ratio": "auto",
-                      "resolution": "720p",
-                      "sound": true
                     }
                   }
                 }
@@ -161,8 +146,7 @@
             "enum": [
               "veo3.1-fast-official",
               "veo3.1-lite-official",
-              "veo3.1-quality-official",
-              "veo3.1-extend"
+              "veo3.1-quality-official"
             ]
           },
           "callback_url": {
@@ -176,7 +160,7 @@
             "required": [
               "prompt"
             ],
-            "description": "Input parameters for generation or extension",
+            "description": "Input parameters for generation",
             "properties": {
               "prompt": {
                 "type": "string",
@@ -191,7 +175,7 @@
                   "format": "uri"
                 },
                 "maxItems": 3,
-                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video.\n\n- 3 images: `generation_type: \"reference\"` on supported models. This mode supports duration 8 only.\n\n- `veo3.1-lite-official` supports at most 2 images.\n\n- Do not pass this field for `veo3.1-extend`.",
+                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video.\n\n- 3 images: `generation_type: \"reference\"` on supported models. This mode supports duration 8 only.\n\n- `veo3.1-lite-official` supports at most 2 images.",
                 "example": []
               },
               "generation_type": {
@@ -205,12 +189,12 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-lite-official` with `resolution: \"1080p\"` supports 8 seconds only.\n\n- `veo3.1-extend` supports 1 through 7 seconds. The final video is capped at 30 seconds, so the source video must leave room for the requested extension.",
+                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-lite-official` with `resolution: \"1080p\"` supports 8 seconds only.",
                 "example": 8
               },
               "aspect_ratio": {
                 "type": "string",
-                "description": "Video aspect ratio. `auto` is supported for `veo3.1-extend`, image-to-video, and first/last-frame generation.",
+                "description": "Video aspect ratio. `auto` is supported for image-to-video and first/last-frame generation.",
                 "enum": [
                   "auto",
                   "16:9",
@@ -234,12 +218,6 @@
                 "description": "Whether to generate audio with the video. Default is `true`.",
                 "default": true,
                 "example": true
-              },
-              "video_url": {
-                "type": "string",
-                "format": "uri",
-                "description": "Required source video URL for `veo3.1-extend`.",
-                "example": "https://example.com/source-video.mp4"
               }
             }
           }
