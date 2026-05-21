@@ -6,150 +6,93 @@ openapi: "/api-manual/chat-series/gemini-native-format.json POST /v1beta/models/
 ---
 
 - Call Gemini models using Google Native API format
-- Synchronous processing mode with real-time response
+- Supports synchronous and streaming generation methods
 - Minimal parameters for quick start
 
-## Authorizations
+## Usage Examples
 
-<ParamField header="Authorization" type="string" required>
-  All API endpoints require Bearer Token authentication
+### Generate Content
 
-  Get your API Key:
+Endpoint:
 
-  Visit the API Key Management Page to get your API Key
+```text  theme={null}
+POST /v1beta/models/gemini-3-flash-preview:generateContent
+```
 
-  Add it to the request header:
+Request body:
 
-  ```
-  Authorization: Bearer PoYo_API_KEY
-  ```
-</ParamField>
-
-## Path Parameters
-
-<ParamField path="model" type="string" required>
-  Gemini model name. Example: `gemini-3-flash-preview`
-</ParamField>
-
-<ParamField path="method" type="enum<string>" required>
-  Request method
-
-  * `generateContent`
-  * `streamGenerateContent`
-</ParamField>
-
-## Body
-
-<ParamField body="contents" type="array" required>
-  Conversation contents with roles and parts
-
-  <Expandable title="Content object structure">
-    <ParamField body="role" type="enum<string>">
-      Role type
-
-      * `user` - User input
-      * `model` - Model output
-    </ParamField>
-
-    <ParamField body="parts" type="array" required>
-      Parts list (text or inline data)
-    </ParamField>
-  </Expandable>
-
-  **Example:**
-
-  ```json  theme={null}
-  [
+```json  theme={null}
+{
+  "contents": [
     {
       "role": "user",
-      "parts": [{"text": "Summarize the goals of the new 'night mode' in one sentence."}]
+      "parts": [
+        {
+          "text": "Summarize the goals of the new night mode in one sentence."
+        }
+      ]
+    }
+  ],
+  "generationConfig": {
+    "maxOutputTokens": 256,
+    "temperature": 0.7
+  }
+}
+```
+
+### Stream Generate Content
+
+Endpoint:
+
+```text  theme={null}
+POST /v1beta/models/gemini-3-flash-preview:streamGenerateContent
+```
+
+Request body:
+
+```json  theme={null}
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Generate 5 short feature names for an AI writing assistant."
+        }
+      ]
+    }
+  ],
+  "generationConfig": {
+    "maxOutputTokens": 256
+  }
+}
+```
+
+### Multimodal Input
+
+```json  theme={null}
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Describe the image and write concise alt text."
+        },
+        {
+          "inlineData": {
+            "mimeType": "image/png",
+            "data": "BASE64_IMAGE_DATA"
+          }
+        }
+      ]
     }
   ]
-  ```
-</ParamField>
+}
+```
 
-<ParamField body="generationConfig" type="object">
-  Generation configuration
+## Notes
 
-  <Expandable title="Properties">
-    <ParamField body="temperature" type="number">
-      Controls output randomness
-    </ParamField>
-
-    <ParamField body="topP" type="number">
-      Nucleus sampling parameter
-    </ParamField>
-
-    <ParamField body="topK" type="integer">
-      Top-k sampling parameter
-    </ParamField>
-
-    <ParamField body="maxOutputTokens" type="integer">
-      Maximum output tokens
-    </ParamField>
-
-    <ParamField body="stopSequences" type="array">
-      Stop sequences
-    </ParamField>
-  </Expandable>
-</ParamField>
-
-<ParamField body="safetySettings" type="array">
-  Safety settings
-
-  <Expandable title="Safety setting object">
-    <ParamField body="category" type="string">
-      Safety category
-    </ParamField>
-
-    <ParamField body="threshold" type="string">
-      Blocking threshold
-    </ParamField>
-  </Expandable>
-</ParamField>
-
-## Response
-
-<ResponseField name="candidates" type="array">
-  Generated candidates
-
-  <Expandable title="Properties">
-    <ResponseField name="content" type="object">
-      Output content
-    </ResponseField>
-
-    <ResponseField name="finishReason" type="string">
-      Reason for completion
-    </ResponseField>
-
-    <ResponseField name="index" type="integer">
-      Candidate index
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="promptFeedback" type="object">
-  Prompt safety feedback
-</ResponseField>
-
-<ResponseField name="usageMetadata" type="object">
-  Token usage metadata
-
-  <Expandable title="Properties">
-    <ResponseField name="promptTokenCount" type="integer">
-      Tokens in prompt
-    </ResponseField>
-
-    <ResponseField name="candidatesTokenCount" type="integer">
-      Tokens in candidates
-    </ResponseField>
-
-    <ResponseField name="totalTokenCount" type="integer">
-      Total tokens
-    </ResponseField>
-
-    <ResponseField name="thoughtsTokenCount" type="integer">
-      Thoughts tokens
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+* Use `generateContent` for complete JSON responses.
+* Use `streamGenerateContent` for streaming generation.
+* Put text instructions before multimodal parts when possible.

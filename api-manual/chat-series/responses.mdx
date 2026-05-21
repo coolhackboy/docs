@@ -1,0 +1,108 @@
+---
+title: "Responses API"
+description: "OpenAI-compatible Responses API for text, multimodal input, tools, and streaming"
+icon: "message"
+openapi: "/api-manual/chat-series/responses.json POST /v1/responses"
+---
+
+- OpenAI-compatible Responses API format
+- Supports plain text input and structured multimodal input
+- Supports tools such as web search and function calling when available on the selected model
+- Supports both complete JSON responses and SSE streaming
+
+## Usage Examples
+
+### Basic Text
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "input": "Write a product tagline in one sentence.",
+  "max_output_tokens": 120
+}
+```
+
+### Multimodal Input
+
+```json  theme={null}
+{
+  "model": "gpt-5",
+  "input": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Describe this image in one paragraph."
+        },
+        {
+          "type": "input_image",
+          "image_url": "https://example.com/image.jpg"
+        }
+      ]
+    }
+  ],
+  "max_output_tokens": 300
+}
+```
+
+### Web Search
+
+```json  theme={null}
+{
+  "model": "gpt-5",
+  "input": "Use web search to find the latest product update on poyo.ai. Reply with the title and URL only.",
+  "tools": [
+    {
+      "type": "web_search_preview"
+    }
+  ],
+  "tool_choice": "auto",
+  "max_output_tokens": 2000
+}
+```
+
+### Streaming
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "input": "Write a 100-word product introduction.",
+  "max_output_tokens": 200,
+  "stream": true,
+  "store": false
+}
+```
+
+### cURL
+
+```bash  theme={null}
+curl "https://api.poyo.ai/v1/responses" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer PoYo_API_KEY" \
+  -d '{
+    "model": "gpt-5.2",
+    "input": "Write a product tagline in one sentence.",
+    "max_output_tokens": 120
+  }'
+```
+
+## Streaming
+
+When `stream` is `true`, the endpoint returns `text/event-stream`. Events are sent as SSE `data:` lines and end with `data: [DONE]`.
+
+Common event types include:
+
+* `response.created`
+* `response.output_item.added`
+* `response.output_text.delta`
+* `response.output_text.done`
+* `response.completed`
+* `response.failed`
+
+## Notes
+
+* Tool availability depends on the selected model. If a model does not support a requested tool, the request may return an error.
+* For image input, public URLs must be reachable by the model service.
+* Base64 images must use the full Data URI prefix, for example `data:image/png;base64,`.
+* Content block order can affect model understanding. Put text instructions before images when possible.

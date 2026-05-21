@@ -101,6 +101,7 @@
       "/api-manual/music-series/create-music-video.json",
       "/api-manual/music-series/query-music-detail.json",
       "/api-manual/chat-series/chat-completions.json",
+      "/api-manual/chat-series/responses.json",
       "/api-manual/chat-series/claude-messages.json",
       "/api-manual/chat-series/gemini-native-format.json",
       "/api-manual/account-management/user-balance.json",
@@ -317,7 +318,8 @@
               {
                 "group": "OpenAI",
                 "pages": [
-                  "api-manual/chat-series/chat-completions"
+                  "api-manual/chat-series/chat-completions",
+                  "api-manual/chat-series/responses"
                 ]
               },
               {

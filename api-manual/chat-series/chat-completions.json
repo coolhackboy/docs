@@ -116,12 +116,12 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Model name.",
+            "description": "Model name. Example: `gpt-5.2`, `claude-sonnet-4-5-20250929`, `gemini-3-flash-preview`.",
             "example": "gpt-5.2"
           },
           "messages": {
             "type": "array",
-            "description": "List of conversation messages. Example: [{\"role\": \"user\", \"content\": \"Explain vector databases in one sentence.\"}].",
+            "description": "List of conversation messages. Each message contains a `role` and `content`. Use `system` to define model behavior, `user` for user input, and `assistant` for previous model responses in multi-turn conversations. Example: [{\"role\": \"user\", \"content\": \"Explain vector databases in one sentence.\"}].",
             "items": {
               "$ref": "#/components/schemas/ChatMessage"
             }
@@ -130,43 +130,43 @@
             "type": "number",
             "minimum": 0,
             "maximum": 2,
-            "description": "Controls output randomness, range 0-2. Default: 1.0.",
+            "description": "Controls output randomness, range 0-2. Lower values such as 0.2 make output more deterministic. Higher values such as 1.8 make output more random. Default: 1.0.",
             "example": 1.0
           },
           "max_tokens": {
             "type": "integer",
             "minimum": 1,
-            "description": "Maximum number of tokens to generate. Model limits vary.",
+            "description": "Maximum number of tokens to generate. Different models have different maximum limits.",
             "example": 256
           },
           "stream": {
             "type": "boolean",
-            "description": "Whether to use streaming output (SSE). Default: false.",
+            "description": "Whether to use streaming output. `true` returns a streaming response in SSE format. `false` returns the complete response at once. Default: false.",
             "example": false
           },
           "top_p": {
             "type": "number",
             "minimum": 0,
             "maximum": 1,
-            "description": "Nucleus sampling parameter, range 0-1. Default: 1.0.",
+            "description": "Nucleus sampling parameter, range 0-1. Controls diversity of generated text. We recommend using either `top_p` or `temperature`, not both. Default: 1.0.",
             "example": 1.0
           },
           "frequency_penalty": {
             "type": "number",
             "minimum": -2,
             "maximum": 2,
-            "description": "Frequency penalty, range -2.0 to 2.0. Default: 0.",
+            "description": "Frequency penalty, range -2.0 to 2.0. Positive values reduce the likelihood of repeating the same words. Default: 0.",
             "example": 0
           },
           "presence_penalty": {
             "type": "number",
             "minimum": -2,
             "maximum": 2,
-            "description": "Presence penalty, range -2.0 to 2.0. Default: 0.",
+            "description": "Presence penalty, range -2.0 to 2.0. Positive values increase the likelihood of talking about new topics. Default: 0.",
             "example": 0
           },
           "stop": {
-            "description": "Stop sequences (up to 4).",
+            "description": "Stop sequences. Up to 4 sequences where generation will stop when encountered.",
             "oneOf": [
               {
                 "type": "string",
@@ -183,7 +183,7 @@
           "n": {
             "type": "integer",
             "minimum": 1,
-            "description": "Number of completions to generate. Default: 1.",
+            "description": "Number of completions to generate. Default: 1. Must be a plain number such as `1`; do not use quotes.",
             "example": 1
           }
         }
@@ -202,13 +202,13 @@
               "user",
               "assistant"
             ],
-            "description": "Message role. Default is `user`.",
+            "description": "Message role. `user` is user input, `assistant` is previous model output for multi-turn conversations, and `system` is the system prompt. Default is `user`.",
             "default": "user",
             "example": "user"
           },
           "content": {
             "type": "string",
-            "description": "Message content.",
+            "description": "Message content, question, or instruction.",
             "example": "Explain vector databases in one sentence."
           }
         }

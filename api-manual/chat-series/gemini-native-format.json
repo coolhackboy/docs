@@ -34,7 +34,7 @@
               "type": "string",
               "example": "gemini-3-flash-preview"
             },
-            "description": "Gemini model name."
+            "description": "Gemini model name. Example: `gemini-3-flash-preview`."
           },
           {
             "name": "method",
@@ -48,7 +48,7 @@
               ],
               "example": "generateContent"
             },
-            "description": "Request method: `generateContent` or `streamGenerateContent`."
+            "description": "Request method. Use `generateContent` for complete JSON responses and `streamGenerateContent` for streaming generation."
           }
         ],
         "requestBody": {
@@ -167,16 +167,18 @@
         "properties": {
           "contents": {
             "type": "array",
-            "description": "Conversation contents with roles and parts.",
+            "description": "Conversation contents with roles and parts. Each content object may include a `role` (`user` or `model`) and a `parts` array containing text or inline data.",
             "items": {
               "$ref": "#/components/schemas/GeminiContent"
             }
           },
           "generationConfig": {
+            "description": "Generation configuration, including temperature, topP, topK, maxOutputTokens, and stopSequences.",
             "$ref": "#/components/schemas/GeminiGenerationConfig"
           },
           "safetySettings": {
             "type": "array",
+            "description": "Safety settings.",
             "items": {
               "$ref": "#/components/schemas/GeminiSafetySetting"
             }
@@ -196,10 +198,12 @@
               "user",
               "model"
             ],
+            "description": "Role type. Use `user` for user input and `model` for model output.",
             "example": "user"
           },
           "parts": {
             "type": "array",
+            "description": "Parts list. Each part can contain text or inline data.",
             "items": {
               "$ref": "#/components/schemas/GeminiPart"
             }
@@ -255,31 +259,37 @@
       },
       "GeminiGenerationConfig": {
         "type": "object",
+        "description": "Generation configuration.",
         "properties": {
           "temperature": {
             "type": "number",
             "minimum": 0,
             "maximum": 2,
+            "description": "Controls output randomness.",
             "example": 0.7
           },
           "topP": {
             "type": "number",
             "minimum": 0,
             "maximum": 1,
+            "description": "Nucleus sampling parameter.",
             "example": 0.9
           },
           "topK": {
             "type": "integer",
             "minimum": 1,
+            "description": "Top-k sampling parameter.",
             "example": 40
           },
           "maxOutputTokens": {
             "type": "integer",
             "minimum": 1,
+            "description": "Maximum output tokens.",
             "example": 512
           },
           "stopSequences": {
             "type": "array",
+            "description": "Stop sequences.",
             "items": {
               "type": "string"
             }
@@ -288,13 +298,16 @@
       },
       "GeminiSafetySetting": {
         "type": "object",
+        "description": "Safety setting.",
         "properties": {
           "category": {
             "type": "string",
+            "description": "Safety category.",
             "example": "HARM_CATEGORY_DANGEROUS_CONTENT"
           },
           "threshold": {
             "type": "string",
+            "description": "Blocking threshold.",
             "example": "BLOCK_MEDIUM_AND_ABOVE"
           }
         }

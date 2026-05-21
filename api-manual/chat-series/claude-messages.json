@@ -116,12 +116,12 @@
         "properties": {
           "model": {
             "type": "string",
-            "description": "Claude model name.",
+            "description": "Model name. Example: `claude-sonnet-4-5-20250929`.",
             "example": "claude-sonnet-4-5-20250929"
           },
           "messages": {
             "type": "array",
-            "description": "Conversation messages in order. Example: [{\"role\": \"user\", \"content\": \"Summarize the purpose of feature canary releases in two sentences.\"}].",
+            "description": "List of conversation messages in order. Each message contains a `role` and `content`. Use `user` for user input and `assistant` for previous model output in multi-turn conversations. Example: [{\"role\": \"user\", \"content\": \"Summarize the purpose of feature canary releases in two sentences.\"}].",
             "items": {
               "$ref": "#/components/schemas/ClaudeMessage"
             }
@@ -129,11 +129,11 @@
           "max_tokens": {
             "type": "integer",
             "minimum": 1,
-            "description": "Maximum tokens to generate.",
+            "description": "Maximum number of tokens to generate.",
             "example": 1024
           },
           "system": {
-            "description": "System prompt for the assistant.",
+            "description": "System prompt for the assistant. Supports a string or structured text blocks.",
             "oneOf": [
               {
                 "type": "string",
@@ -152,7 +152,7 @@
           },
           "stream": {
             "type": "boolean",
-            "description": "Enable streaming responses.",
+            "description": "Whether to use streaming output.",
             "example": false
           },
           "stop_sequences": {
@@ -171,7 +171,7 @@
             "$ref": "#/components/schemas/ClaudeOutputConfig"
           },
           "thinking": {
-            "description": "Configuration for Claude extended thinking. Use this field with the `claude-opus-4-7-thinking` model.",
+            "description": "Configuration for Claude extended thinking. Use this field with the `claude-opus-4-7-thinking` model. Thinking tokens count toward `max_tokens`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ClaudeThinkingEnabled"
@@ -192,7 +192,7 @@
             }
           },
           "tool_choice": {
-            "description": "Controls tool usage behavior.",
+            "description": "Controls tool usage behavior. Examples: `auto`, or an object such as {\"type\": \"tool\", \"name\": \"get_weather\"}.",
             "oneOf": [
               {
                 "type": "string",
@@ -219,11 +219,11 @@
               "user",
               "assistant"
             ],
-            "description": "Role of the message author.",
+            "description": "Role type. Use `user` for user messages and `assistant` for model responses in multi-turn conversations.",
             "example": "user"
           },
           "content": {
-            "description": "Message content. Supports text or structured blocks.",
+            "description": "Message content. Supports plain text or structured blocks such as text and image content.",
             "oneOf": [
               {
                 "type": "string",
@@ -241,6 +241,7 @@
       },
       "ClaudeTool": {
         "type": "object",
+        "description": "Tool definition available to the model.",
         "required": [
           "name",
           "input_schema"
@@ -248,10 +249,12 @@
         "properties": {
           "name": {
             "type": "string",
+            "description": "Tool name.",
             "example": "get_weather"
           },
           "description": {
             "type": "string",
+            "description": "Tool description shown to the model.",
             "example": "Fetch the weather by city name."
           },
           "input_schema": {
@@ -286,7 +289,7 @@
       },
       "ClaudeOutputConfig": {
         "type": "object",
-        "description": "Configuration options for the model's output, such as the output format.",
+        "description": "Configuration options for the model's output, such as output format and effort level.",
         "properties": {
           "effort": {
             "type": "string",
@@ -301,6 +304,7 @@
             "example": "high"
           },
           "format": {
+            "description": "Structured output format configuration.",
             "$ref": "#/components/schemas/ClaudeOutputFormat"
           }
         }

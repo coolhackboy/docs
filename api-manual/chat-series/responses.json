@@ -1,0 +1,528 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Responses API",
+    "description": "OpenAI-compatible Responses API for text, multimodal input, tools, and streaming.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/responses": {
+      "post": {
+        "summary": "Responses API",
+        "description": "Create a response from text, multimodal input, and optional tools.",
+        "operationId": "createResponse",
+        "tags": [
+          "Text Series"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResponsesRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic text response",
+                  "value": {
+                    "model": "gpt-5.2",
+                    "input": "Write a product tagline in one sentence.",
+                    "max_output_tokens": 120
+                  }
+                },
+                "multimodal": {
+                  "summary": "Image understanding",
+                  "value": {
+                    "model": "gpt-5",
+                    "input": [
+                      {
+                        "role": "user",
+                        "content": [
+                          {
+                            "type": "input_text",
+                            "text": "Describe this image in one paragraph."
+                          },
+                          {
+                            "type": "input_image",
+                            "image_url": "https://example.com/image.jpg"
+                          }
+                        ]
+                      }
+                    ],
+                    "max_output_tokens": 300
+                  }
+                },
+                "webSearch": {
+                  "summary": "Web search",
+                  "value": {
+                    "model": "gpt-5",
+                    "input": "Use web search to find the latest product update on poyo.ai. Reply with the title and URL only.",
+                    "tools": [
+                      {
+                        "type": "web_search_preview"
+                      }
+                    ],
+                    "tool_choice": "auto",
+                    "max_output_tokens": 2000
+                  }
+                },
+                "streaming": {
+                  "summary": "Streaming response",
+                  "value": {
+                    "model": "gpt-5.2",
+                    "input": "Write a 100-word product introduction.",
+                    "max_output_tokens": 200,
+                    "stream": true,
+                    "store": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponsesEnvelope"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful response",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "id": "resp_9876543210",
+                        "object": "response",
+                        "created_at": 1677652288,
+                        "status": "completed",
+                        "model": "gpt-5.2",
+                        "output": [
+                          {
+                            "id": "msg_123",
+                            "type": "message",
+                            "status": "completed",
+                            "role": "assistant",
+                            "content": [
+                              {
+                                "type": "output_text",
+                                "text": "Launch faster with a smarter AI workspace built for teams."
+                              }
+                            ]
+                          }
+                        ],
+                        "usage": {
+                          "input_tokens": 12,
+                          "output_tokens": 14,
+                          "total_tokens": 26
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-sent events stream. Events end with `data: [DONE]`."
+                },
+                "example": "event: response.output_text.delta\ndata: {\"type\":\"response.output_text.delta\",\"delta\":\"Hello\"}\n\ndata: [DONE]\n\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "402": {
+            "description": "Insufficient balance"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "ResponsesRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model name.",
+            "example": "gpt-5.2"
+          },
+          "input": {
+            "$ref": "#/components/schemas/ResponsesInput"
+          },
+          "instructions": {
+            "type": "string",
+            "description": "System or developer instructions that guide the model response."
+          },
+          "tools": {
+            "type": "array",
+            "description": "Tools available to the model. Tool support depends on the selected model.",
+            "items": {
+              "$ref": "#/components/schemas/ResponsesTool"
+            }
+          },
+          "tool_choice": {
+            "description": "Controls how the model selects tools.",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "auto"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          },
+          "max_output_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum number of output tokens to generate.",
+            "example": 200
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Legacy compatibility field for maximum output tokens.",
+            "example": 200
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "Whether to use streaming output in SSE format.",
+            "default": false,
+            "example": false
+          },
+          "store": {
+            "type": "boolean",
+            "description": "Whether the response should be stored when supported.",
+            "example": false
+          },
+          "reasoning": {
+            "type": "object",
+            "description": "Reasoning configuration, when supported by the selected model.",
+            "additionalProperties": true,
+            "example": {
+              "effort": "medium"
+            }
+          },
+          "text": {
+            "type": "object",
+            "description": "Text output configuration, such as structured output format options when supported.",
+            "additionalProperties": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom metadata key-value pairs for your request.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "previous_response_id": {
+            "type": "string",
+            "description": "Previous response ID for continuing a conversation."
+          },
+          "include": {
+            "type": "array",
+            "description": "Additional response fields to include, when supported.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parallel_tool_calls": {
+            "type": "boolean",
+            "description": "Whether the model may call multiple tools in parallel."
+          },
+          "truncation": {
+            "type": "string",
+            "description": "Truncation behavior for long context, when supported.",
+            "example": "auto"
+          },
+          "user": {
+            "type": "string",
+            "description": "End-user identifier for abuse monitoring and request tracing."
+          },
+          "background": {
+            "type": "boolean",
+            "description": "Whether to run the response in background mode, when supported."
+          },
+          "service_tier": {
+            "type": "string",
+            "description": "Service tier selection, when supported.",
+            "example": "auto"
+          },
+          "prompt": {
+            "type": "object",
+            "description": "Prompt object, when supported by the selected model.",
+            "additionalProperties": true
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "description": "Controls output randomness, range 0-2.",
+            "example": 1
+          },
+          "top_p": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Nucleus sampling parameter, range 0-1.",
+            "example": 1
+          }
+        }
+      },
+      "ResponsesInput": {
+        "description": "Plain text input or an array of structured input items.",
+        "oneOf": [
+          {
+            "type": "string",
+            "example": "Write a product tagline in one sentence."
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponsesInputItem"
+            }
+          }
+        ]
+      },
+      "ResponsesInputItem": {
+        "type": "object",
+        "description": "Structured input item.",
+        "additionalProperties": true,
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "Input role.",
+            "enum": [
+              "system",
+              "developer",
+              "user",
+              "assistant"
+            ],
+            "example": "user"
+          },
+          "content": {
+            "description": "Input content.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ResponsesContentBlock"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "ResponsesContentBlock": {
+        "type": "object",
+        "description": "Input content block.",
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Content block type, such as `input_text`, `input_image`, or `input_audio`.",
+            "example": "input_text"
+          },
+          "text": {
+            "type": "string",
+            "description": "Text content for text blocks.",
+            "example": "Describe this image."
+          },
+          "image_url": {
+            "type": "string",
+            "description": "Image URL or Base64 Data URI.",
+            "example": "https://example.com/image.jpg"
+          },
+          "audio": {
+            "type": "object",
+            "description": "Audio payload, when supported by the selected model.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ResponsesTool": {
+        "type": "object",
+        "description": "Tool definition. Tool support depends on the selected model.",
+        "required": [
+          "type"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Tool type.",
+            "example": "web_search_preview"
+          }
+        }
+      },
+      "ResponsesEnvelope": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "$ref": "#/components/schemas/ResponseObject"
+          }
+        }
+      },
+      "ResponseObject": {
+        "type": "object",
+        "description": "Response object.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "resp_9876543210"
+          },
+          "object": {
+            "type": "string",
+            "example": "response"
+          },
+          "created_at": {
+            "type": "integer",
+            "example": 1677652288
+          },
+          "status": {
+            "type": "string",
+            "example": "completed"
+          },
+          "model": {
+            "type": "string",
+            "example": "gpt-5.2"
+          },
+          "output": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponseOutputItem"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/ResponseUsage"
+          }
+        }
+      },
+      "ResponseOutputItem": {
+        "type": "object",
+        "description": "Response output item.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "message"
+          },
+          "status": {
+            "type": "string",
+            "example": "completed"
+          },
+          "role": {
+            "type": "string",
+            "example": "assistant"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponseContent"
+            }
+          }
+        }
+      },
+      "ResponseContent": {
+        "type": "object",
+        "description": "Response content block.",
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "output_text"
+          },
+          "text": {
+            "type": "string",
+            "example": "Launch faster with a smarter AI workspace built for teams."
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "ResponseUsage": {
+        "type": "object",
+        "description": "Token usage statistics.",
+        "additionalProperties": true,
+        "properties": {
+          "input_tokens": {
+            "type": "integer",
+            "example": 12
+          },
+          "output_tokens": {
+            "type": "integer",
+            "example": 14
+          },
+          "total_tokens": {
+            "type": "integer",
+            "example": 26
+          },
+          "input_tokens_details": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "output_tokens_details": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}
