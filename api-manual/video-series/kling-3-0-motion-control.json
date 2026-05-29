@@ -173,7 +173,7 @@
                     }
                   }
                 },
-                "description": "Optional facial consistency element definitions. Only available when `character_orientation` is `video`; forwarded to Fal's upstream `elements` field. Only 1 element is supported and can be referenced in the prompt as `@Element1`. When an element is provided, both `frontal_image_url` and `reference_image_urls` are required",
+                "description": "Optional facial consistency element definitions. Only available when `character_orientation` is `video`. Only 1 element is supported and can be referenced in the prompt as `@Element1`. When an element is provided, both `frontal_image_url` and `reference_image_urls` are required",
                 "example": [
                   {
                     "frontal_image_url": "https://example.com/front-face.png",
