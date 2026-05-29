@@ -43,8 +43,17 @@
                       "video_urls": [
                         "https://storage.poyo.ai/kling-3.0-motion-control/reference-video-new.mp4"
                       ],
-                      "character_orientation": "image",
-                      "resolution": "720p"
+                      "character_orientation": "video",
+                      "resolution": "720p",
+                      "prompt": "Keep the identity consistent and reference @Element1 for facial details",
+                      "kling_elements": [
+                        {
+                          "frontal_image_url": "https://example.com/front-face.png",
+                          "reference_image_urls": [
+                            "https://example.com/face-angle-1.png"
+                          ]
+                        }
+                      ]
                     }
                   }
                 }
@@ -135,6 +144,44 @@
                 "enum": ["720p", "1080p"],
                 "default": "720p",
                 "example": "720p"
+              },
+              "kling_elements": {
+                "type": "array",
+                "maxItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["frontal_image_url", "reference_image_urls"],
+                  "properties": {
+                    "frontal_image_url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "Required frontal image URL for the facial element main view. Supports JPG, JPEG, PNG, WebP, max 10MB",
+                      "example": "https://example.com/front-face.png"
+                    },
+                    "reference_image_urls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "minItems": 1,
+                      "maxItems": 3,
+                      "description": "Additional facial reference image URLs from different angles. 1-3 images are supported",
+                      "example": [
+                        "https://example.com/face-angle-1.png"
+                      ]
+                    }
+                  }
+                },
+                "description": "Optional facial consistency element definitions. Only available when `character_orientation` is `video`. Only 1 element is supported and can be referenced in the prompt as `@Element1`. When an element is provided, both `frontal_image_url` and `reference_image_urls` are required",
+                "example": [
+                  {
+                    "frontal_image_url": "https://example.com/front-face.png",
+                    "reference_image_urls": [
+                      "https://example.com/face-angle-1.png"
+                    ]
+                  }
+                ]
               }
             }
           }

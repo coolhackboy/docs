@@ -28,6 +28,7 @@ openapi: "/api-manual/video-series/kling-3-0-motion-control.json POST /api/gener
 
 - **prompt**: Optional scene prompt
 - **resolution**: `720p` or `1080p`. Default is `720p`
+- **kling_elements**: Optional facial consistency element. Only available when `character_orientation=video`
 
 ## Notes
 
@@ -36,3 +37,5 @@ openapi: "/api-manual/video-series/kling-3-0-motion-control.json POST /api/gener
 - Reference video must be at least `3` seconds
 - When `character_orientation=image`, the reference video must not exceed `10` seconds
 - When `character_orientation=video`, the reference video must not exceed `30` seconds
+- `kling_elements` supports only `1` facial element. Each element requires `frontal_image_url` and `reference_image_urls` with `1` to `3` images
+- When using `kling_elements`, reference the element in your prompt as `@Element1`
