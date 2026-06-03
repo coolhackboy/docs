@@ -1,0 +1,116 @@
+---
+title: "Omni Flash"
+description: "Text, image, and video input generation with Omni Flash"
+icon: "video"
+openapi: "/api-manual/video-series/omni-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task reaches `finished` or `failed`.
+2. You can always retrieve the latest result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Omni Flash
+
+`omni-flash` creates short videos from text prompts, optional image references, or an optional video reference.
+
+## Available Model
+
+- **omni-flash** - Text-to-video, image-to-video, reference image fusion, and video-input generation
+
+## Required Parameters
+
+- **prompt**: Text prompt describing the scene, motion, style, camera behavior, and other generation instructions
+
+## Optional Parameters
+
+- **image_urls**: Image URL array. Allowed counts are `0`, `1`, or `3`
+- **video_urls**: Video URL array. At most `1` video is allowed
+- **resolution**: `720p`, `1080p`, or `4k`. Default is `1080p`
+- **duration**: `4`, `6`, `8`, or `10` seconds. Default is `6`. Do not provide this field when `video_urls` is provided
+- **aspect_ratio**: `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
+- **callback_url**: Optional webhook URL for completion notifications
+
+## Input Modes
+
+- **Text to video**: Send `prompt` only, plus optional `resolution`, `duration`, and `aspect_ratio`
+- **Image to video**: Send `prompt` and exactly one image in `image_urls`
+- **Reference image fusion**: Send `prompt` and exactly three images in `image_urls`
+- **Video input**: Send `prompt` and one video in `video_urls`; omit `duration`
+
+## Billing
+
+Requests without video input are billed by selected resolution and duration. Requests with video input are billed per generation by selected resolution.
+
+## Notes
+
+- Use public HTTPS image and video URLs, or upload files through the playground before submitting
+- `image_urls` with two images is not supported
+- `video_urls` supports at most one video
+- When `video_urls` is provided, `duration` must be omitted
+- The response returns a `task_id`; query task status to retrieve generated video files
+
+## Submit Examples
+
+### Text to Video
+
+```json
+{
+  "model": "omni-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic macro shot of a glass marble rolling across a wet reflective table, realistic physics, slow camera push-in",
+    "resolution": "1080p",
+    "duration": 6,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### Image to Video
+
+```json
+{
+  "model": "omni-flash",
+  "input": {
+    "prompt": "Animate this product photo with a slow turntable motion, soft studio highlights, and subtle background parallax",
+    "image_urls": ["https://example.com/source-image.webp"],
+    "resolution": "1080p",
+    "duration": 6,
+    "aspect_ratio": "1:1"
+  }
+}
+```
+
+### Three-Image Reference Fusion
+
+```json
+{
+  "model": "omni-flash",
+  "input": {
+    "prompt": "Combine the character, outfit, and set references into a single fashion campaign clip with gentle camera drift",
+    "image_urls": [
+      "https://example.com/character.webp",
+      "https://example.com/outfit.webp",
+      "https://example.com/set.webp"
+    ],
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### Video Input
+
+```json
+{
+  "model": "omni-flash",
+  "input": {
+    "prompt": "Use the reference motion as the timing guide and transform the final look into a clean cinematic product reveal",
+    "video_urls": ["https://example.com/reference-video.mp4"],
+    "resolution": "1080p",
+    "aspect_ratio": "16:9"
+  }
+}
+```

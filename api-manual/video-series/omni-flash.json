@@ -1,0 +1,308 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Omni Flash API",
+    "description": "Text, image, and video input generation with Omni Flash",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Omni Flash Task",
+        "description": "Generate a video from a prompt, optional images, or an optional video reference",
+        "operationId": "submitOmniFlashTask",
+        "tags": ["Omni Flash"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "omni-flash",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic macro shot of a glass marble rolling across a wet reflective table, realistic physics, slow camera push-in",
+                      "resolution": "1080p",
+                      "duration": 6,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Image to video",
+                  "value": {
+                    "model": "omni-flash",
+                    "input": {
+                      "prompt": "Animate this product photo with a slow turntable motion, soft studio highlights, and subtle background parallax",
+                      "image_urls": ["https://example.com/source-image.webp"],
+                      "resolution": "1080p",
+                      "duration": 6,
+                      "aspect_ratio": "1:1"
+                    }
+                  }
+                },
+                "reference-fusion": {
+                  "summary": "Three-image reference fusion",
+                  "value": {
+                    "model": "omni-flash",
+                    "input": {
+                      "prompt": "Combine the character, outfit, and set references into a single fashion campaign clip with gentle camera drift",
+                      "image_urls": [
+                        "https://example.com/character.webp",
+                        "https://example.com/outfit.webp",
+                        "https://example.com/set.webp"
+                      ],
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "9:16"
+                    }
+                  }
+                },
+                "video-input": {
+                  "summary": "Video input generation",
+                  "value": {
+                    "model": "omni-flash",
+                    "input": {
+                      "prompt": "Use the reference motion as the timing guide and transform the final look into a clean cinematic product reveal",
+                      "video_urls": ["https://example.com/reference-video.mp4"],
+                      "resolution": "1080p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Query Task Status",
+        "description": "Query generation status and retrieve generated video files",
+        "operationId": "getOmniFlashTaskStatus",
+        "tags": ["Omni Flash"],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Task ID returned by the submit endpoint"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Omni Flash model identifier",
+            "enum": ["omni-flash"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt for video generation",
+                "example": "A cinematic macro shot of a glass marble rolling across a wet reflective table"
+              },
+              "image_urls": {
+                "type": "array",
+                "description": "Optional source images. Allowed counts are 0, 1, or 3.",
+                "minItems": 0,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": ["https://example.com/source-image.webp"]
+              },
+              "video_urls": {
+                "type": "array",
+                "description": "Optional source video. At most one video is supported.",
+                "minItems": 0,
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": ["https://example.com/reference-video.mp4"]
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution",
+                "enum": ["720p", "1080p", "4k"],
+                "default": "1080p",
+                "example": "1080p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Output duration in seconds. Omit when video_urls is provided.",
+                "enum": [4, 6, 8, 10],
+                "default": 6,
+                "example": 6
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Output aspect ratio",
+                "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"],
+                "default": "16:9",
+                "example": "16:9"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-03T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "finished"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "file_url": {
+                      "type": "string",
+                      "format": "uri",
+                      "example": "https://cdn.poyo.ai/videos/result.mp4"
+                    },
+                    "file_type": {
+                      "type": "string",
+                      "example": "video"
+                    }
+                  }
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "integer",
+                "example": 100
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+---
+title: "Grok Imagine Video 1.5"
+description: "Image-to-video generation with Grok Imagine Video 1.5"
+icon: "video"
+openapi: "/api-manual/video-series/grok-imagine-video-1-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task reaches `finished` or `failed`.
+2. You can always retrieve the latest result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Grok Imagine Video 1.5
+
+`grok-imagine-video-1.5` creates a video from one input image and a text prompt.
+
+## Available Model
+
+- **grok-imagine-video-1.5** - Image-to-video generation from a single source image
+
+## Required Parameters
+
+- **prompt**: Text prompt describing the motion, style, camera direction, and scene changes
+- **image_urls**: Single-item image URL array. `image_urls[0]` is used as the source image
+
+## Optional Parameters
+
+- **resolution**: `480p` or `720p`. Default is `720p`
+- **duration**: Integer seconds from `1` to `15`. Default is `6`
+- **callback_url**: Optional webhook URL for completion notifications
+
+## Notes
+
+- Provide exactly one image in `image_urls`
+- Use public HTTPS image URLs or upload through the playground before submitting
+- The response returns a `task_id`; query task status to retrieve generated video files
