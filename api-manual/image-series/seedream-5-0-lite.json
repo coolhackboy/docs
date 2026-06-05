@@ -175,7 +175,7 @@
               "prompt": {
                 "type": "string",
                 "description": "Generation prompt describing the desired output",
-                "maxLength": 2000,
+                "maxLength": 3000,
                 "example": "A beautiful sunset over the ocean"
               },
               "image_urls": {
