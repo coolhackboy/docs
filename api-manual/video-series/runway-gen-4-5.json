@@ -93,7 +93,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for generation",
+                "description": "Text prompt for generation. Maximum length is 1,800 characters.",
+                "maxLength": 1800,
                 "example": "A dense, verdant jungle world made up of small lego-like pieces. We see a rainbow chameleon running through the 3D world, the camera in and out of focus."
               },
               "duration": {

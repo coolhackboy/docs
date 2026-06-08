@@ -94,7 +94,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for generation",
+                "description": "Text prompt for generation. Maximum length is 5,000 characters.",
+                "maxLength": 5000,
                 "example": "a tiktok dancer is dancing on a small drone, doing flips and tricks"
               },
               "duration": {

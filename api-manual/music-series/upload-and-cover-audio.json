@@ -150,7 +150,7 @@
               },
               "prompt": {
                 "type": "string",
-                "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
+                "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation. Maximum 500 characters.\n\nCharacter limits by model in Custom Mode:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
                 "maxLength": 5000,
                 "example": "Transform into an upbeat electronic dance version"
               },

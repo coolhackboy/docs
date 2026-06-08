@@ -115,7 +115,9 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Enter video description",
+                "description": "Enter video description. Must be between 3 and 2,500 characters.",
+                "minLength": 3,
+                "maxLength": 2500,
                 "example": "slow zoom, sunset glow"
               },
               "image_urls": {

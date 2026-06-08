@@ -228,8 +228,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Generation prompt describing the desired output",
-                "maxLength": 1000,
+                "description": "Generation prompt describing the desired output. Prompt limits are model-specific; see each model page for exact limits.",
+                "maxLength": 20000,
                 "example": "A beautiful sunset over the ocean"
               },
               "image_urls": {

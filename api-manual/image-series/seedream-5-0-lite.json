@@ -174,7 +174,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Generation prompt describing the desired output",
+                "description": "Generation prompt describing the desired output. Must be between 3 and 3,000 characters.",
+                "minLength": 3,
                 "maxLength": 3000,
                 "example": "A beautiful sunset over the ocean"
               },

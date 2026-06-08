@@ -107,7 +107,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Optional prompt for scene details",
+                "description": "Optional prompt for scene details. Can be empty or up to 2,500 characters.",
+                "maxLength": 2500,
                 "example": "Keep the character movement smooth and natural"
               },
               "image_urls": {

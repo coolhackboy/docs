@@ -99,7 +99,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for the motion and scene",
+                "description": "Text prompt for the motion and scene. Maximum length is 800 characters; longer text is automatically truncated by the upstream model.",
+                "maxLength": 800,
                 "example": "A cinematic video scene"
               },
               "image_urls": {

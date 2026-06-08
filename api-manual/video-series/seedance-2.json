@@ -158,7 +158,9 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt describing the target video.",
+                "description": "Text prompt describing the target video. Must be between 3 and 20,000 characters.",
+                "minLength": 3,
+                "maxLength": 20000,
                 "example": "A cinematic drone shot flying over a neon city after rain"
               },
               "image_urls": {

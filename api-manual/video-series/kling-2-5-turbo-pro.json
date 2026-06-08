@@ -94,7 +94,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for generation",
+                "description": "Text prompt for generation. Maximum length is 2,500 characters.",
+                "maxLength": 2500,
                 "example": "A man in a trench coat holding a black umbrella walks briskly through the streets of Tokyo on a rainy night, splashing through puddles. A handheld follow-cam shot from his side and slightly behind. The focus is locked on the man, while background neon signs blur into beautiful bokeh. Cyberpunk aesthetic with a film noir quality; the mood is mysterious and lonely. The pavement is slick and wet, reflecting the vibrant neon signs. Individual raindrops are visible, and a light fog hangs in the air."
               },
               "duration": {

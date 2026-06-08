@@ -143,8 +143,9 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Generation prompt describing the desired output",
-                "maxLength": 1000,
+                "description": "Generation prompt describing the desired output. Must be between 3 and 5,000 characters.",
+                "minLength": 3,
+                "maxLength": 5000,
                 "example": "A beautiful sunset over the ocean"
               },
               "image_urls": {

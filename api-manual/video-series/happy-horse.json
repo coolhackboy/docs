@@ -136,8 +136,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "maxLength": 2500,
-                "description": "Text prompt. Required for text-to-video, reference-to-video, and video-edit. Optional for image-to-video.",
+                "maxLength": 5000,
+                "description": "Text prompt. Required for text-to-video, reference-to-video, and video-edit. Optional for image-to-video. Maximum length is 5,000 non-Chinese characters or 2,500 Chinese characters.",
                 "example": "A small robot barista prepares coffee in a sunlit Tokyo cafe, cinematic camera movement, warm ambient sound."
               },
               "image_urls": {

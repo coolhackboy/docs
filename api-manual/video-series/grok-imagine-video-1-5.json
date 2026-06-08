@@ -94,7 +94,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for video generation",
+                "description": "Text prompt for video generation. Maximum length is 4,096 characters.",
+                "maxLength": 4096,
                 "example": "A cinematic product shot with a slow camera push-in and soft studio lighting"
               },
               "image_urls": {

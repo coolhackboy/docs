@@ -97,7 +97,8 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt for video generation",
+                "description": "Text prompt for video generation. Maximum length is 800 characters; longer text is automatically truncated by the upstream model.",
+                "maxLength": 800,
                 "example": "A cinematic video scene"
               },
               "aspect_ratio": {
