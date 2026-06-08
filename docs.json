@@ -193,8 +193,6 @@
               {
                 "group": "OpenAI",
                 "pages": [
-                  "api-manual/video-series/sora-2",
-                  "api-manual/video-series/sora-2-pro",
                   "api-manual/video-series/sora-2-official",
                   "api-manual/video-series/sora-2-pro-official"
                 ]

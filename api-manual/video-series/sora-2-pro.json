@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Sora 2 Pro API",
+    "title": "PoYo AI - Sora 2 Pro API (Deprecated)",
     "description": "Sora 2 Pro Premium Quality Video Generation",
     "version": "1.0.0"
   },
@@ -19,7 +19,7 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Sora 2 Pro Video Generation Task",
+        "summary": "Submit Sora 2 Pro Video Generation Task (Deprecated)",
         "description": "Generate premium HD quality videos using Sora 2 Pro",
         "operationId": "submitSora2ProTask",
         "tags": ["Sora 2 Pro"],

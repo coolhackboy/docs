@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Nano Banana 2 (gemini-3.1-flash-image-preview) API",
+    "title": "PoYo AI - Nano Banana 2 API",
     "description": "Next-generation AI image generation powered by Gemini 3.1 Flash Image Preview",
     "version": "1.0.0"
   },
@@ -32,7 +32,7 @@
               },
               "examples": {
                 "nano-banana-2-new": {
-                  "summary": "Nano Banana 2 (gemini-3.1-flash-image-preview) Image Generation",
+                  "summary": "Nano Banana 2 Image Generation",
                   "value": {
                     "model": "nano-banana-2-new",
                     "callback_url": "https://your-domain.com/callback",
@@ -44,7 +44,7 @@
                   }
                 },
                 "nano-banana-2-new-edit": {
-                  "summary": "Nano Banana 2 (gemini-3.1-flash-image-preview) Image Edit",
+                  "summary": "Nano Banana 2 Image Edit",
                   "value": {
                     "model": "nano-banana-2-new-edit",
                     "callback_url": "https://your-domain.com/callback",

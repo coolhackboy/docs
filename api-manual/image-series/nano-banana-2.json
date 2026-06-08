@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Nano Banana 2 API",
+    "title": "PoYo AI - Nano Banana Pro API",
     "description": "Classic Nano Banana 2 and Nano Banana Pro image generation and editing",
     "version": "1.0.0"
   },
@@ -19,7 +19,7 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Nano Banana Generation Task",
+        "summary": "Submit Nano Banana Pro Image Generation Task",
         "description": "Image generation and editing for both Nano Banana 2 and Nano Banana Pro model families",
         "operationId": "submitNanoBanana2Task",
         "tags": ["Nano Banana"],
