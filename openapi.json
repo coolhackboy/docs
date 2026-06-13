@@ -326,7 +326,7 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "files", "created_time", "progress"],
+            "required": ["task_id", "status", "credits_amount", "files", "created_time", "progress"],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -338,6 +338,11 @@
                 "enum": ["not_started", "running", "finished", "failed"],
                 "example": "finished",
                 "description": "Current task status"
+              },
+              "credits_amount": {
+                "type": "number",
+                "example": 2,
+                "description": "Credits charged for the task"
               },
               "files": {
                 "type": "array",
@@ -414,6 +419,7 @@
           "data": {
             "task_id": "task-unified-1757165031-uyujaw3d",
             "status": "finished",
+            "credits_amount": 2,
             "files": [
               {
                 "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",

@@ -50,6 +50,7 @@
                       "data": {
                         "task_id": "9OTM0HH9LBS63LF0",
                         "status": "finished",
+                        "credits_amount": 30,
                         "files": [
                           {
                             "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
@@ -106,6 +107,7 @@
           "data": {
             "task_id": "9OTM0HH9LBS63LF0",
             "status": "finished",
+            "credits_amount": 30,
             "files": [
               {
                 "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
@@ -141,6 +143,11 @@
             ],
             "example": "finished"
           },
+          "credits_amount": {
+            "type": "number",
+            "description": "Credits charged for the task",
+            "example": 30
+          },
           "files": {
             "type": "array",
             "items": {
@@ -165,6 +172,7 @@
         "example": {
           "task_id": "9OTM0HH9LBS63LF0",
           "status": "finished",
+          "credits_amount": 30,
           "files": [
             {
               "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",

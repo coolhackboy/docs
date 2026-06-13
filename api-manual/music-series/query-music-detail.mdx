@@ -20,6 +20,18 @@ openapi: "/api-manual/music-series/query-music-detail.json GET /api/generate/det
 - When a task fails, check the `error_message` field for details
 - Multiple audio files may be returned for a single task as variations are generated
 - `minimax-music-2.6` detail responses return `audio_id`, `audio_url`, `title`, `duration`, and `prompt`
+- `credits_amount` is returned at the task level, alongside `task_id`, `status`, and `files`. It is not repeated inside each item in `files`.
+
+## Response Fields (task data)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_id` | string | Unique task identifier |
+| `status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
+| `credits_amount` | number | Credits charged for the task |
+| `files` | array | Generated music result files or task-specific result objects |
+| `created_time` | string | ISO 8601 timestamp when the task was created |
+| `error_message` | string \| null | Error message when the task failed |
 
 ## Response Fields (files data)
 

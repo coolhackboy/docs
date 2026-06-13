@@ -40,6 +40,7 @@ Authorization: Bearer YOUR_API_KEY
   "data": {
     "task_id": "9OTM0HH9LBS63LF0",
     "status": "finished",
+    "credits_amount": 30,
     "files": [
       {
         "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
@@ -67,6 +68,7 @@ Authorization: Bearer YOUR_API_KEY
 | `code` | integer | HTTP status code (200 for success) |
 | `data.task_id` | string | Unique task identifier |
 | `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
+| `data.credits_amount` | number | Credits charged for the task |
 | `data.files` | array | Generated 3D model, preview image, and supporting files when status is `finished` |
 | `data.files[].label` | string | Optional file label, such as `model_glb`, `thumbnail`, a model format label, texture label, or animation label |
 | `data.files[].file_url` | string | Direct URL to generated file |

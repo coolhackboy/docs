@@ -146,6 +146,7 @@
                       "data": {
                         "task_id": "task-unified-1757165031-uyujaw3d",
                         "status": "finished",
+                        "credits_amount": 8,
                         "files": [
                           {
                             "file_url": "https://cdn.doculator.org/audios/task-unified-1757165031-uyujaw3d/task-unified-1757165031-uyujaw3d.mp3",
@@ -165,6 +166,7 @@
                       "data": {
                         "task_id": "task-unified-1757165031-uyujaw3d",
                         "status": "running",
+                        "credits_amount": 8,
                         "files": [],
                         "created_time": "2026-04-15T10:30:00",
                         "progress": 45,
@@ -314,7 +316,7 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "files", "created_time", "progress"],
+            "required": ["task_id", "status", "credits_amount", "files", "created_time", "progress"],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -326,6 +328,11 @@
                 "enum": ["not_started", "running", "finished", "failed"],
                 "example": "finished",
                 "description": "Current task status"
+              },
+              "credits_amount": {
+                "type": "number",
+                "example": 8,
+                "description": "Credits charged for the task"
               },
               "files": {
                 "type": "array",

@@ -271,6 +271,11 @@
                 "enum": ["not_started", "running", "finished", "failed"],
                 "example": "finished"
               },
+              "credits_amount": {
+                "type": "number",
+                "example": 20,
+                "description": "Credits charged for the task"
+              },
               "files": {
                 "type": "array",
                 "items": {
