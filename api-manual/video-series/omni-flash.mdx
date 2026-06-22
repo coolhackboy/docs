@@ -28,7 +28,7 @@ openapi: "/api-manual/video-series/omni-flash.json POST /api/generate/submit"
 - **video_urls**: Video URL array. At most `1` video is allowed
 - **resolution**: `720p` or `1080p`. Default is `1080p`
 - **duration**: `4`, `6`, `8`, or `10` seconds. Default is `6`. Do not provide this field when `video_urls` is provided
-- **aspect_ratio**: `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`. Default is `16:9`
+- **aspect_ratio**: `16:9` or `9:16`. `16:9` is landscape, and `9:16` is portrait. Default is `16:9`
 - **callback_url**: Optional webhook URL for completion notifications
 
 ## Input Modes
@@ -77,7 +77,7 @@ Requests without video input are billed by selected resolution and duration. Req
     "image_urls": ["https://example.com/source-image.webp"],
     "resolution": "1080p",
     "duration": 6,
-    "aspect_ratio": "1:1"
+    "aspect_ratio": "16:9"
   }
 }
 ```

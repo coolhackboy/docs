@@ -53,7 +53,7 @@
                       "image_urls": ["https://example.com/source-image.webp"],
                       "resolution": "1080p",
                       "duration": 6,
-                      "aspect_ratio": "1:1"
+                      "aspect_ratio": "16:9"
                     }
                   }
                 },
@@ -209,8 +209,8 @@
               },
               "aspect_ratio": {
                 "type": "string",
-                "description": "Output aspect ratio",
-                "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"],
+                "description": "The aspect ratio of the generated video. 16:9 is landscape, and 9:16 is portrait.",
+                "enum": ["16:9", "9:16"],
                 "default": "16:9",
                 "example": "16:9"
               }
