@@ -58,6 +58,7 @@
       "/api-manual/video-series/wan2.5-text-to-video.json",
       "/api-manual/video-series/wan-2-6.json",
       "/api-manual/video-series/wan-2-7-video.json",
+      "/api-manual/video-series/kling-1-6.json",
       "/api-manual/video-series/kling-2-1.json",
       "/api-manual/video-series/kling-2-6.json",
       "/api-manual/video-series/kling-2.6-motion-control.json",
@@ -221,6 +222,7 @@
               {
                 "group": "Kling",
                 "pages": [
+                  "api-manual/video-series/kling-1-6",
                   "api-manual/video-series/kling-2-1",
                   "api-manual/video-series/kling-2-5-turbo-pro",
                   "api-manual/video-series/kling-2-6",

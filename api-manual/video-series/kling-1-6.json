@@ -1,0 +1,296 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling 1.6 API",
+    "description": "Kling 1.6 Standard and Pro video generation through the PoYo API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Kling 1.6 Video Generation Task",
+        "description": "Generate videos with Kling 1.6 Standard or Pro. PoYo automatically selects text-to-video, image-to-video, or elements based on the input image fields.",
+        "operationId": "submitKling16Task",
+        "tags": ["Kling 1.6"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "kling-1-6-standard-text": {
+                  "summary": "Kling 1.6 Standard - Text to Video",
+                  "value": {
+                    "model": "kling-1.6/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A quiet city street after rain, soft reflections on the pavement as the camera moves forward",
+                      "duration": 5,
+                      "aspect_ratio": "16:9",
+                      "negative_prompt": "blur, low quality, distorted hands",
+                      "cfg_scale": 0.5
+                    }
+                  }
+                },
+                "kling-1-6-standard-image": {
+                  "summary": "Kling 1.6 Standard - Image to Video",
+                  "value": {
+                    "model": "kling-1.6/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A landscape photograph comes alive as mist drifts across a quiet mountain lake at sunrise",
+                      "duration": 5,
+                      "start_image_url": "https://example.com/start-frame.png",
+                      "negative_prompt": "blur, flicker, distorted scenery",
+                      "cfg_scale": 0.45
+                    }
+                  }
+                },
+                "kling-1-6-standard-elements": {
+                  "summary": "Kling 1.6 Standard - Elements",
+                  "value": {
+                    "model": "kling-1.6/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A ceramic teapot, linen cloth, and wooden table stay visually consistent as the camera circles the scene",
+                      "duration": 5,
+                      "aspect_ratio": "1:1",
+                      "image_urls": [
+                        "https://example.com/reference-1.png",
+                        "https://example.com/reference-2.png"
+                      ]
+                    }
+                  }
+                },
+                "kling-1-6-pro-text": {
+                  "summary": "Kling 1.6 Pro - Text to Video",
+                  "value": {
+                    "model": "kling-1.6/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Glass sculptures catch shifting afternoon light inside a quiet gallery as the camera slowly moves past",
+                      "duration": 10,
+                      "aspect_ratio": "16:9",
+                      "negative_prompt": "low quality, jitter, artifacts",
+                      "cfg_scale": 0.35
+                    }
+                  }
+                },
+                "kling-1-6-pro-image": {
+                  "summary": "Kling 1.6 Pro - Image to Video",
+                  "value": {
+                    "model": "kling-1.6/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A still indoor scene gently animates as warm afternoon light moves across the room",
+                      "duration": 10,
+                      "aspect_ratio": "16:9",
+                      "start_image_url": "https://example.com/start-frame.png",
+                      "end_image_url": "https://example.com/end-frame.png",
+                      "negative_prompt": "warped face, flicker, artifacts",
+                      "cfg_scale": 0.4
+                    }
+                  }
+                },
+                "kling-1-6-pro-elements": {
+                  "summary": "Kling 1.6 Pro - Elements",
+                  "value": {
+                    "model": "kling-1.6/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Four reference objects form a calm tabletop scene while their shapes and materials stay consistent",
+                      "duration": 5,
+                      "aspect_ratio": "9:16",
+                      "image_urls": [
+                        "https://example.com/reference-1.png",
+                        "https://example.com/reference-2.png",
+                        "https://example.com/reference-3.png",
+                        "https://example.com/reference-4.png"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling 1.6 public model identifier",
+            "enum": ["kling-1.6/standard", "kling-1.6/pro"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt", "duration"],
+            "description": "Input parameters for generation. PoYo selects the generation workflow from the provided image fields.",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt for video generation",
+                "maxLength": 2500,
+                "example": "A cinematic video scene"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Output duration in seconds",
+                "enum": [5, 10],
+                "example": 5
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Video aspect ratio. Standard supports this for text-to-video and elements. Standard image-to-video does not support aspect_ratio. Pro supports aspect_ratio across Kling 1.6 workflows",
+                "enum": ["1:1", "16:9", "9:16"],
+                "example": "16:9"
+              },
+              "negative_prompt": {
+                "type": "string",
+                "description": "Optional negative prompt",
+                "maxLength": 2500,
+                "example": "blur, low quality, artifacts"
+              },
+              "cfg_scale": {
+                "type": "number",
+                "description": "Prompt guidance scale for text-to-video and image-to-video. Valid range is 0 to 1. Not supported when image_urls is provided",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.5
+              },
+              "start_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "First frame image URL for image-to-video. If omitted and image_urls is also omitted, the request runs as text-to-video",
+                "example": "https://example.com/start-frame.png"
+              },
+              "end_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Last frame image URL for Pro image-to-video. Requires start_image_url and is only supported by kling-1.6/pro",
+                "example": "https://example.com/end-frame.png"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "1 to 4 reference image URLs for Elements. When provided, PoYo routes the request to Elements. Cannot be used with start_image_url, end_image_url, or cfg_scale",
+                "minItems": 1,
+                "maxItems": 4,
+                "example": [
+                  "https://example.com/reference-1.png"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

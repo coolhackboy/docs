@@ -1,0 +1,59 @@
+---
+title: "Kling 1.6 Video Generation"
+description: "Kling 1.6 Standard and Pro video generation through the PoYo API"
+icon: "video"
+openapi: "/api-manual/video-series/kling-1-6.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task becomes `finished` or `failed`.
+2. You can always retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+## Available Models
+
+- **kling-1.6/standard** - Cost-effective Kling 1.6 video generation
+- **kling-1.6/pro** - Higher-quality Kling 1.6 video generation
+
+## Input Routing
+
+PoYo does not require a public `mode`, `type`, or `task_type` field for Kling 1.6.
+All Kling 1.6 requests require `prompt` and `duration`.
+
+- Provide no image fields to generate text-to-video.
+- Provide `start_image_url` to generate image-to-video.
+- Provide `start_image_url` and `end_image_url` with `kling-1.6/pro` to control both the first and last frame.
+- Provide `image_urls` with 1 to 4 reference images to generate Elements.
+
+`image_urls` cannot be used together with `start_image_url`, `end_image_url`, or `cfg_scale`.
+
+## Parameter Compatibility
+
+Elements is a reference-image workflow that uses 1 to 4 images to guide the generated video.
+
+| Model and workflow | How PoYo detects it | Supported parameters |
+| --- | --- | --- |
+| Text to Video (`standard` or `pro`) | No image fields | `prompt`, `duration`, `aspect_ratio`, `negative_prompt`, `cfg_scale` |
+| Standard Image to Video | `kling-1.6/standard` with `start_image_url` | `prompt`, `duration`, `start_image_url`, `negative_prompt`, `cfg_scale` |
+| Pro Image to Video | `kling-1.6/pro` with `start_image_url` and optional `end_image_url` | `prompt`, `duration`, `aspect_ratio`, `start_image_url`, `end_image_url`, `negative_prompt`, `cfg_scale` |
+| Elements (`standard` or `pro`) | `image_urls` | `prompt`, `duration`, `aspect_ratio`, `negative_prompt`, `image_urls` |
+
+Notes:
+
+- `end_image_url` requires `start_image_url` and is only supported by `kling-1.6/pro`.
+- `kling-1.6/standard` image-to-video does not support `aspect_ratio`.
+- Elements supports 1 to 4 `image_urls` and does not support `cfg_scale`.
+
+## Key Features
+
+- **Text to Video**: Generate videos from a prompt, duration, and optional aspect ratio.
+- **Image to Video**: Animate a first frame image, with optional Pro-only last frame control.
+- **Elements**: Use 1 to 4 reference images to guide the generated video.
+- **Durations**: 5 or 10 seconds.
+- **Aspect Ratios**: 1:1, 16:9, and 9:16. Standard uses `aspect_ratio` for text-to-video and elements. Standard image-to-video does not support `aspect_ratio`. Pro supports it across Kling 1.6 workflows.
+- **Prompt Controls**: Optional `negative_prompt`; `cfg_scale` is available for text-to-video and image-to-video, but not for elements.
+
+## Pricing
+
+- **kling-1.6/standard**: 9 credits per second.
+- **kling-1.6/pro**: 15 credits per second.
