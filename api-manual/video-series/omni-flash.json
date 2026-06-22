@@ -38,7 +38,7 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A cinematic macro shot of a glass marble rolling across a wet reflective table, realistic physics, slow camera push-in",
-                      "resolution": "1080p",
+                      "resolution": "720p",
                       "duration": 6,
                       "aspect_ratio": "16:9"
                     }
@@ -51,7 +51,7 @@
                     "input": {
                       "prompt": "Animate this product photo with a slow turntable motion, soft studio highlights, and subtle background parallax",
                       "image_urls": ["https://example.com/source-image.webp"],
-                      "resolution": "1080p",
+                      "resolution": "720p",
                       "duration": 6,
                       "aspect_ratio": "16:9"
                     }
@@ -81,7 +81,7 @@
                     "input": {
                       "prompt": "Use the reference motion as the timing guide and transform the final look into a clean cinematic product reveal",
                       "video_urls": ["https://example.com/reference-video.mp4"],
-                      "resolution": "1080p",
+                      "resolution": "720p",
                       "aspect_ratio": "16:9"
                     }
                   }
@@ -195,10 +195,10 @@
               },
               "resolution": {
                 "type": "string",
-                "description": "Output resolution",
-                "enum": ["720p", "1080p"],
-                "default": "1080p",
-                "example": "1080p"
+                "description": "The resolution of the generated video. Available values are 720p, 1080p, and 4k.",
+                "enum": ["720p", "1080p", "4k"],
+                "default": "720p",
+                "example": "720p"
               },
               "duration": {
                 "type": "integer",
