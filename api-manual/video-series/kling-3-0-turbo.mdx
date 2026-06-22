@@ -1,0 +1,26 @@
+---
+title: "Kling 3.0 Turbo Video Generation"
+description: "Fast Kling 3.0 Turbo video generation with standard and pro models"
+icon: "video"
+openapi: "/api-manual/video-series/kling-3-0-turbo.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+## Available Models
+
+- **kling-3.0-turbo/standard** - 720p Turbo video generation
+- **kling-3.0-turbo/pro** - 1080p Turbo video generation
+
+## Key Features
+
+- **Automatic Mode Routing**: If `input.image_urls` has a value, the request is handled as image-to-video. Otherwise it is handled as text-to-video
+- **Image Input**: In image-to-video mode, `image_urls[0]` is used as the first-frame image
+- **Flexible Duration**: 3 to 15 seconds. If omitted, the default duration is 5 seconds
+- **Aspect Ratios**: `16:9`, `9:16`, and `1:1` for text-to-video mode
+- **Multi-Shot**: Use `multi_prompt` for multi-shot storytelling with per-shot prompts and durations
+- **Billing**: Usage is billed by video duration
+
