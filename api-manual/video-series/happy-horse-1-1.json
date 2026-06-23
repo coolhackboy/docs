@@ -1,0 +1,221 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Happy Horse 1.1 API",
+    "description": "Alibaba Happy Horse 1.1 text-to-video, image-to-video, and reference-to-video workflows",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Happy Horse 1.1 Task",
+        "description": "Generate video with Alibaba Happy Horse 1.1",
+        "operationId": "submitHappyHorse11Task",
+        "tags": ["Happy Horse 1.1"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "happy-horse-1.1",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Medium shot of a professional news anchor at a sleek desk in a modern broadcast studio, cool blue lighting, softly glowing screens behind. 0-5s: He looks into the camera and says in a clear measured voice, \"Good evening. Tonight, a breakthrough that could change how millions of us work.\" 5-10s: He turns slightly toward a second camera, \"We'll have the full story, and what it means for you, right after this.\" Precise lip-sync, subtle studio room tone, crisp broadcast quality, shallow depth of field.",
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "duration": 10
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Image to video",
+                  "value": {
+                    "model": "happy-horse-1.1",
+                    "input": {
+                      "image_urls": ["https://storage.poyo.ai/happy-horse-1-1/image-to-video-input.png"],
+                      "prompt": "A bearded man sits in a warm rustic study with brick and wood walls, bookshelves, a glowing table lamp, and a leather chair. He gently strums an acoustic guitar, then looks up toward the camera and starts singing with natural lip-sync. The camera slowly pushes in, keeping the cozy room light and shallow depth of field. Audio: soft acoustic guitar, intimate male vocal, quiet room tone.",
+                      "resolution": "1080p",
+                      "duration": 10
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "Reference to video",
+                  "value": {
+                    "model": "happy-horse-1.1",
+                    "input": {
+                      "prompt": "Ultra-realistic skincare commercial using the four reference images as the exact product identity. Show a frosted glass serum bottle on a clean marble countertop with soft morning light and water droplets. Slow macro push-in, gentle rotation of the bottle, dewy highlights on the label, premium spa atmosphere. Audio: soft water ripple, subtle glass tap, calm luxury ambient music. No people.",
+                      "reference_image_urls": [
+                        "https://storage.poyo.ai/happy-horse-1-1/reference-input-1.png",
+                        "https://storage.poyo.ai/happy-horse-1-1/reference-input-2.png",
+                        "https://storage.poyo.ai/happy-horse-1-1/reference-input-3.png",
+                        "https://storage.poyo.ai/happy-horse-1-1/reference-input-4.png"
+                      ],
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "duration": 10,
+                      "seed": 42
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Happy Horse 1.1 model identifier",
+            "enum": ["happy-horse-1.1"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 2500,
+                "description": "Text prompt. Required for text-to-video and reference-to-video. Optional for image-to-video. Maximum length is 2,500 characters.",
+                "example": "Medium shot of a professional news anchor at a sleek desk in a modern broadcast studio, cool blue lighting, softly glowing screens behind. Precise lip-sync, subtle studio room tone, crisp broadcast quality, shallow depth of field."
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Single-item first-frame image URL array for image-to-video. Do not combine with reference_image_urls.",
+                "example": ["https://example.com/first-frame.png"]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "maxItems": 9,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Reference images for reference-to-video. Do not combine with image_urls.",
+                "example": ["https://example.com/reference.png"]
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Output aspect ratio for text-to-video and reference-to-video",
+                "enum": ["21:9", "16:9", "4:3", "1:1", "3:4", "4:5", "5:4", "9:16", "9:21"],
+                "default": "16:9",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution",
+                "enum": ["720p", "1080p"],
+                "default": "1080p",
+                "example": "1080p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Output duration in seconds. Credits are calculated by duration and selected resolution.",
+                "minimum": 3,
+                "maximum": 15,
+                "default": 5,
+                "example": 5
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Optional random seed for reproducible generation",
+                "minimum": 0,
+                "maximum": 2147483647,
+                "example": 42
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "description": "Enable content moderation for input and output",
+                "example": true
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-23T10:30:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

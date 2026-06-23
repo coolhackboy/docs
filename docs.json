@@ -79,6 +79,7 @@
       "/api-manual/video-series/seedance-1-5-pro.json",
       "/api-manual/video-series/seedance-2.json",
       "/api-manual/video-series/happy-horse.json",
+      "/api-manual/video-series/happy-horse-1-1.json",
       "/api-manual/video-series/runway-gen-4-5.json",
       "/api-manual/task-management/3d-status.json",
       "/api-manual/3d-series/meshy-6-3d.json",
@@ -267,7 +268,8 @@
               {
                 "group": "Alibaba",
                 "pages": [
-                  "api-manual/video-series/happy-horse"
+                  "api-manual/video-series/happy-horse",
+                  "api-manual/video-series/happy-horse-1-1"
                 ]
               }
             ]

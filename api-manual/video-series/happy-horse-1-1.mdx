@@ -1,0 +1,59 @@
+---
+title: "Happy Horse 1.1"
+description: "Alibaba Happy Horse 1.1 text-to-video, image-to-video, and reference-to-video workflows"
+icon: "video"
+openapi: "/api-manual/video-series/happy-horse-1-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Happy Horse 1.1
+
+`happy-horse-1.1` supports text-to-video, image-to-video, and reference-to-video through one public model ID.
+
+## Available Model
+
+- **happy-horse-1.1** - Alibaba Happy Horse 1.1 video generation
+
+## Workflows
+
+### Text to Video
+
+Send a `prompt` without `image_urls` or `reference_image_urls`. Use `aspect_ratio`, `resolution`, and `duration` to control the output.
+
+### Image to Video
+
+Send a single-item `image_urls` array. The image is used as the first frame. `prompt` is optional in this workflow.
+
+### Reference to Video
+
+Send `reference_image_urls` with 1-9 images and a required `prompt`.
+
+Do not combine `reference_image_urls` with `image_urls`.
+
+## Required Parameters
+
+- **model**: `happy-horse-1.1`
+- **input.prompt**: Required for text-to-video and reference-to-video. Optional for image-to-video. Maximum length is 2,500 characters.
+- **input.image_urls**: Required for image-to-video.
+- **input.reference_image_urls**: Required for reference-to-video.
+
+## Optional Parameters
+
+- **image_urls**: Single-item first-frame image URL array for image-to-video
+- **reference_image_urls**: 1-9 images for reference-to-video
+- **aspect_ratio**: Text-to-video and reference-to-video only. `21:9`, `16:9`, `4:3`, `1:1`, `3:4`, `4:5`, `5:4`, `9:16`, or `9:21`. Default is `16:9`
+- **resolution**: `720p` or `1080p`. Default is `1080p`
+- **duration**: Integer seconds from `3` to `15`. Default is `5`
+- **seed**: Optional integer from `0` to `2147483647`
+- **enable_safety_checker**: Optional boolean
+
+## Notes
+
+- `image_urls` must resolve to exactly one image and is only for image-to-video.
+- `reference_image_urls` selects reference-to-video and cannot be used together with `image_urls`.
+- For text-to-video and reference-to-video, omit `image_urls` and use `aspect_ratio`.
+- Credits are calculated by video duration and selected resolution.
