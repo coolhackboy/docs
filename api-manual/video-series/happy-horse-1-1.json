@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Happy Horse 1.1 API",
-    "description": "Alibaba Happy Horse 1.1 text-to-video, image-to-video, and reference-to-video workflows",
+    "description": "Happy Horse 1.1 text-to-video, image-to-video, and reference-to-video modes",
     "version": "1.0.0"
   },
   "servers": [
