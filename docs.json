@@ -83,6 +83,7 @@
       "/api-manual/video-series/runway-gen-4-5.json",
       "/api-manual/task-management/3d-status.json",
       "/api-manual/3d-series/meshy-6-3d.json",
+      "/api-manual/3d-series/hunyuan-3d-3-1.json",
       "/api-manual/3d-series/tripo-h31-3d.json",
       "/api-manual/3d-series/tripo-p1-3d.json",
       "/api-manual/music-series/generate-music.json",
@@ -351,6 +352,12 @@
                 "group": "Meshy",
                 "pages": [
                   "api-manual/3d-series/meshy-6-3d"
+                ]
+              },
+              {
+                "group": "Hunyuan3D",
+                "pages": [
+                  "api-manual/3d-series/hunyuan-3d-3-1"
                 ]
               },
               {

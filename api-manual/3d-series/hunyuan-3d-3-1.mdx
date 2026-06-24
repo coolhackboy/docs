@@ -1,0 +1,58 @@
+---
+title: "Hunyuan 3D v3.1"
+description: "Hunyuan 3D v3.1 Pro and Rapid text-to-3D and image-to-3D generation"
+icon: "box"
+openapi: "/api-manual/3d-series/hunyuan-3d-3-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query 3D Task Status](/api-manual/task-management/3d-status) endpoint.
+</Tip>
+
+# Hunyuan 3D v3.1
+
+Hunyuan 3D v3.1 supports Pro and Rapid text-to-3D and image-to-3D models through four public model IDs.
+
+## Available Models
+
+- **hunyuan-3d/v3.1/pro/image-to-3d** - Generate a Pro 3D model from one front-view image, with optional extra view images
+- **hunyuan-3d/v3.1/pro/text-to-3d** - Generate a Pro 3D model from a text prompt
+- **hunyuan-3d/v3.1/rapid/text-to-3d** - Generate a faster Rapid 3D model from a text prompt
+- **hunyuan-3d/v3.1/rapid/image-to-3d** - Generate a faster Rapid 3D model from one image
+
+## Required Parameters
+
+- **model**: One of the four Hunyuan 3D v3.1 public model IDs
+- **input.prompt**: Required for text-to-3D models
+- **input.image_urls**: Required for image-to-3D models. Use exactly one image URL.
+
+## Optional Parameters
+
+- **generate_type**: Pro models only. `Normal` or `Geometry`
+- **enable_pbr**: Enable PBR material generation. Ignored for geometry-only generation
+- **face_count**: Pro models only. Target face count between `40000` and `1500000`; default is `500000`
+- **enable_geometry**: Rapid models only. Generate a geometry-only white model without textures
+- **back_image_url**, **left_image_url**, **right_image_url**, **top_image_url**, **bottom_image_url**, **left_front_image_url**, **right_front_image_url**: Pro image-to-3D only. Optional extra object views
+- **callback_url**: Optional webhook URL for task completion notification
+
+## Pricing
+
+Hunyuan 3D v3.1 is charged per generation. Optional features such as PBR materials, Pro image multi-view inputs, and custom face count may add extra credits when enabled.
+
+## Output
+
+The task result may include:
+
+- `model_glb` or another returned 3D model file
+- `thumbnail`
+- `model_urls`: `glb`, `obj`, `mtl`, `texture`, and other formats when available
+- texture and material files when available
+
+Each file item includes `label`, `file_url`, `file_type`, `format`, `content_type`, `file_name`, and `file_size` when available.
+
+## Notes
+
+- Image-to-3D models accept exactly one required image in `image_urls`.
+- Pro image-to-3D can also accept optional named extra view image URLs.
+- The API returns asynchronous task status. Poll the unified 3D task status endpoint or use `callback_url`.

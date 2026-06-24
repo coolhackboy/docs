@@ -1,0 +1,234 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Hunyuan 3D v3.1 API",
+    "description": "Hunyuan 3D v3.1 Pro and Rapid text-to-3D and image-to-3D generation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Hunyuan 3D v3.1 Task",
+        "description": "Generate a 3D model from text or one image with Hunyuan 3D v3.1 Pro or Rapid.",
+        "operationId": "submitHunyuan3D31Task",
+        "tags": ["Hunyuan 3D v3.1"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "pro-image-to-3d": {
+                  "summary": "Pro Image to 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/pro/image-to-3d",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "image_urls": ["https://example.com/object-front.png"],
+                      "generate_type": "Normal",
+                      "enable_pbr": true,
+                      "face_count": 500000
+                    }
+                  }
+                },
+                "pro-text-to-3d": {
+                  "summary": "Pro Text to 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/pro/text-to-3d",
+                    "input": {
+                      "prompt": "A detailed sci-fi cargo drone with compact landing legs and panel seams",
+                      "generate_type": "Normal",
+                      "enable_pbr": true,
+                      "face_count": 500000
+                    }
+                  }
+                },
+                "rapid-text-to-3d": {
+                  "summary": "Rapid Text to 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/rapid/text-to-3d",
+                    "input": {
+                      "prompt": "A rustic wooden treasure chest with metal bands",
+                      "enable_pbr": false
+                    }
+                  }
+                },
+                "rapid-image-to-3d": {
+                  "summary": "Rapid Image to 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/rapid/image-to-3d",
+                    "input": {
+                      "image_urls": ["https://example.com/object-front.png"],
+                      "enable_geometry": false,
+                      "enable_pbr": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "hunyuan-3d/v3.1/pro/image-to-3d",
+              "hunyuan-3d/v3.1/pro/text-to-3d",
+              "hunyuan-3d/v3.1/rapid/text-to-3d",
+              "hunyuan-3d/v3.1/rapid/image-to-3d"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "$ref": "#/components/schemas/Hunyuan3D31Input"
+          }
+        }
+      },
+      "Hunyuan3D31Input": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Required for text-to-3D models. Pro supports up to 1024 characters; Rapid supports up to 200 characters."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "Required for image-to-3D models. Use exactly one image URL."
+          },
+          "generate_type": {
+            "type": "string",
+            "enum": ["Normal", "Geometry"],
+            "description": "Pro models only."
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "description": "Ignored for geometry-only generation."
+          },
+          "face_count": {
+            "type": "integer",
+            "minimum": 40000,
+            "maximum": 1500000,
+            "default": 500000,
+            "description": "Pro models only."
+          },
+          "enable_geometry": {
+            "type": "boolean",
+            "description": "Rapid models only."
+          },
+          "back_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          },
+          "left_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          },
+          "right_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          },
+          "top_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          },
+          "bottom_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          },
+          "left_front_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          },
+          "right_front_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Pro image-to-3D only."
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
