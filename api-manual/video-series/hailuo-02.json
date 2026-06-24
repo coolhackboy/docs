@@ -153,7 +153,7 @@
               "end_image_url": {
                 "type": "string",
                 "format": "uri",
-                "description": "Optional URL of the image to use as the last frame (image-to-video only)",
+                "description": "Optional URL of the image to use as the last frame (image-to-video only). When provided with hailuo-02, resolution must be 768P.",
                 "example": "https://example.com/end_image.png"
               },
               "duration": {
@@ -164,7 +164,7 @@
               },
               "resolution": {
                 "type": "string",
-                "description": "Output resolution (hailuo-02 image-to-video only)",
+                "description": "Output resolution (hailuo-02 image-to-video only). Use 768P when end_image_url is provided; 512P is only available without end_image_url.",
                 "enum": ["512P", "768P"],
                 "example": "768P"
               },

@@ -27,3 +27,8 @@ Generate high-quality videos using Hailuo 02 models. Create professional content
 - **Prompt Optimizer**: Optional AI-powered prompt enhancement
 - **End Frame Control**: Specify ending frame for image-to-video (optional)
 
+## Resolution Notes
+
+- `hailuo-02` supports `512P` and `768P`.
+- Requests with `end_image_url` use first-and-last-frame generation and must use `768P`. `512P` is not supported with `end_image_url`.
+
