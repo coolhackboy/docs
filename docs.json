@@ -89,6 +89,7 @@
       "/api-manual/music-series/generate-music.json",
       "/api-manual/music-series/minimax-music-2.6.json",
       "/api-manual/music-series/elevenlabs-v3-tts.json",
+      "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json",
       "/api-manual/music-series/gemini-3-1-flash-tts.json",
       "/api-manual/music-series/extend-music.json",
       "/api-manual/music-series/upload-and-cover-audio.json",
@@ -317,7 +318,8 @@
               {
                 "group": "ElevenLabs",
                 "pages": [
-                  "api-manual/music-series/elevenlabs-v3-tts"
+                  "api-manual/music-series/elevenlabs-v3-tts",
+                  "api-manual/music-series/elevenlabs-tts-turbo-2-5"
                 ]
               },
               {

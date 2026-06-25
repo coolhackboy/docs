@@ -1,0 +1,356 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - ElevenLabs TTS Turbo v2.5 API",
+    "description": "Generate low-latency multilingual speech using ElevenLabs TTS Turbo v2.5. PoYo pricing is $0.04 per 1000 characters; Fal reference pricing is $0.05 per 1000 characters.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit ElevenLabs TTS Turbo v2.5 Task",
+        "description": "Convert a prompt into low-latency speech audio. PoYo pricing is $0.04 per 1000 characters, compared with Fal at $0.05 per 1000 characters.",
+        "operationId": "submitElevenLabsTtsTurbo25Task",
+        "tags": [
+          "ElevenLabs TTS Turbo v2.5"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "product-voiceover": {
+                  "summary": "Low-latency product voiceover (1.008000 credits)",
+                  "description": "126 billable characters.",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "voice": "Rachel",
+                      "speed": 1.08,
+                      "stability": 0.55,
+                      "similarity_boost": 0.78,
+                      "style": 0.12,
+                      "timestamps": false,
+                      "apply_text_normalization": "auto",
+                      "prompt": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."
+                    }
+                  }
+                },
+                "localized-notification": {
+                  "summary": "Localized pickup notification (0.704000 credits)",
+                  "description": "88 billable characters.",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "voice": "Aria",
+                      "language_code": "fr",
+                      "stability": 0.6,
+                      "similarity_boost": 0.75,
+                      "speed": 1,
+                      "timestamps": true,
+                      "apply_text_normalization": "auto",
+                      "prompt": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil."
+                    }
+                  }
+                },
+                "long-form-continuity": {
+                  "summary": "Long-form continuity (0.776000 credits)",
+                  "description": "97 billable characters. Context fields are not billed by PoYo for this model.",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "previous_text": "The city lights faded behind the train.",
+                      "next_text": "The carriage fell silent as the tunnel opened ahead.",
+                      "voice": "Sarah",
+                      "stability": 0.42,
+                      "similarity_boost": 0.82,
+                      "style": 0.35,
+                      "speed": 0.94,
+                      "apply_text_normalization": "auto",
+                      "prompt": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it."
+                    }
+                  }
+                },
+                "expressive-host-intro": {
+                  "summary": "Expressive host intro (0.864000 credits)",
+                  "description": "108 billable characters.",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "voice": "Laura",
+                      "stability": 0.48,
+                      "similarity_boost": 0.8,
+                      "style": 0.4,
+                      "speed": 0.98,
+                      "apply_text_normalization": "auto",
+                      "prompt": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key from the [API Key Management Page](https://poyo.ai/dashboard/api-key).\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model identifier.",
+            "enum": [
+              "elevenlabs-tts-turbo-2-5"
+            ],
+            "example": "elevenlabs-tts-turbo-2-5"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "$ref": "#/components/schemas/ElevenLabsTtsTurbo25Input"
+          }
+        }
+      },
+      "ElevenLabsTtsTurbo25Input": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "voice": {
+            "type": "string",
+            "description": "Voice name or compatible voice ID used for speech generation.",
+            "default": "Rachel",
+            "examples": [
+              "Rachel",
+              "Aria",
+              "Roger",
+              "Sarah",
+              "Laura",
+              "Charlie",
+              "George",
+              "Callum",
+              "River",
+              "Liam",
+              "Charlotte",
+              "Alice",
+              "Matilda",
+              "Will",
+              "Jessica",
+              "Eric",
+              "Chris",
+              "Brian",
+              "Daniel",
+              "Lily",
+              "Bill"
+            ],
+            "example": "Rachel"
+          },
+          "stability": {
+            "type": "number",
+            "description": "Voice stability from 0 to 1.",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.5,
+            "example": 0.55
+          },
+          "similarity_boost": {
+            "type": "number",
+            "description": "Voice similarity boost from 0 to 1.",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.75,
+            "example": 0.78
+          },
+          "style": {
+            "type": "number",
+            "description": "Style exaggeration from 0 to 1.",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0,
+            "example": 0.12
+          },
+          "speed": {
+            "type": "number",
+            "description": "Speech speed from 0.7 to 1.2. Values below 1 slow down speech, while values above 1 speed it up.",
+            "minimum": 0.7,
+            "maximum": 1.2,
+            "default": 1,
+            "example": 1.08
+          },
+          "timestamps": {
+            "type": "boolean",
+            "description": "Whether to request word-level timestamps when available.",
+            "default": false,
+            "example": false
+          },
+          "previous_text": {
+            "type": "string",
+            "nullable": true,
+            "description": "Text that came before the current prompt. Useful for improving continuity when splitting long-form speech into multiple requests.",
+            "example": "The city lights faded behind the train."
+          },
+          "next_text": {
+            "type": "string",
+            "nullable": true,
+            "description": "Text that comes after the current prompt. Useful for improving continuity when splitting long-form speech into multiple requests.",
+            "example": "The carriage fell silent as the tunnel opened ahead."
+          },
+          "language_code": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional ISO 639-1 language code used to enforce a language for the model.",
+            "example": "fr"
+          },
+          "apply_text_normalization": {
+            "type": "string",
+            "description": "Controls text normalization for numbers, dates, currencies, and similar content.",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "default": "auto",
+            "example": "auto"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "Prompt to convert to speech. Billing is calculated from the trimmed prompt length.",
+            "minLength": 1,
+            "maxLength": 40000,
+            "example": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-25T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
