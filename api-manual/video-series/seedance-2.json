@@ -41,8 +41,7 @@
                       "aspect_ratio": "16:9",
                       "resolution": "4k",
                       "duration": 5,
-                      "generate_audio": true,
-                      "seed": 42
+                      "generate_audio": true
                     }
                   }
                 },
@@ -56,8 +55,7 @@
                       "aspect_ratio": "16:9",
                       "resolution": "720p",
                       "duration": 5,
-                      "generate_audio": true,
-                      "seed": 42
+                      "generate_audio": true
                     }
                   }
                 },
@@ -75,8 +73,7 @@
                       "aspect_ratio": "16:9",
                       "resolution": "720p",
                       "duration": 10,
-                      "generate_audio": false,
-                      "seed": 42
+                      "generate_audio": false
                     }
                   }
                 },
@@ -99,8 +96,7 @@
                       "aspect_ratio": "9:16",
                       "resolution": "720p",
                       "duration": 5,
-                      "generate_audio": true,
-                      "seed": 42
+                      "generate_audio": true
                     }
                   }
                 }
@@ -224,11 +220,6 @@
                 "type": "integer",
                 "description": "Video duration in seconds. Supported values are integers from 4 to 15.",
                 "example": 5
-              },
-              "seed": {
-                "type": "integer",
-                "description": "Optional random seed for reproducible generation.",
-                "example": 42
               }
             }
           }
