@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "PoYo AI - Seedance 2 API",
-    "description": "Video generation with Seedance 2 and Seedance 2 Fast",
+    "title": "PoYo AI - Seedance 2 Mini API",
+    "description": "Fast video generation with Seedance 2 Mini",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,10 +19,10 @@
   "paths": {
     "/api/generate/submit": {
       "post": {
-        "summary": "Submit Seedance 2 Video Generation Task",
-        "description": "Generate videos using Seedance 2 or Seedance 2 Fast with text-to-video, first and last frame, and multimodal reference workflows.",
-        "operationId": "submitSeedance2Task",
-        "tags": ["Seedance 2"],
+        "summary": "Submit Seedance 2 Mini Video Generation Task",
+        "description": "Generate videos using Seedance 2 Mini with text-to-video, first and last frame, and reference-to-video workflows.",
+        "operationId": "submitSeedance2MiniTask",
+        "tags": ["Seedance 2 Mini"],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,40 +31,24 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "seedance-2-text-to-video": {
-                  "summary": "Seedance 2 Text-to-Video",
+                "text-to-video": {
+                  "summary": "Text to video",
                   "value": {
-                    "model": "seedance-2",
+                    "model": "seedance-2-mini",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A cinematic drone shot flying over a neon city after rain, reflections shimmering on the streets",
-                      "aspect_ratio": "16:9",
-                      "resolution": "4k",
-                      "duration": 5,
-                      "generate_audio": true,
-                      "seed": 42
-                    }
-                  }
-                },
-                "seedance-2-fast-text-to-video": {
-                  "summary": "Seedance 2 Fast Text-to-Video",
-                  "value": {
-                    "model": "seedance-2-fast",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "A fast-paced tracking shot through a cyberpunk alley with glowing signs and drifting mist",
-                      "aspect_ratio": "16:9",
+                      "aspect_ratio": "auto",
                       "resolution": "720p",
                       "duration": 5,
-                      "generate_audio": true,
-                      "seed": 42
+                      "generate_audio": true
                     }
                   }
                 },
-                "seedance-2-first-last-frame": {
-                  "summary": "Seedance 2 First and Last Frame",
+                "image-to-video": {
+                  "summary": "Image to video",
                   "value": {
-                    "model": "seedance-2",
+                    "model": "seedance-2-mini",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "A smooth transition from sunrise to golden afternoon over a mountain lake",
@@ -74,19 +58,18 @@
                       ],
                       "aspect_ratio": "16:9",
                       "resolution": "720p",
-                      "duration": 10,
-                      "generate_audio": false,
-                      "seed": 42
+                      "duration": 8,
+                      "generate_audio": true
                     }
                   }
                 },
-                "seedance-2-fast-multimodal-reference": {
-                  "summary": "Seedance 2 Fast Multimodal Reference-to-Video",
+                "reference-to-video": {
+                  "summary": "Reference to video",
                   "value": {
-                    "model": "seedance-2-fast",
+                    "model": "seedance-2-mini",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A stylish fashion short with energetic pacing, matching the movement rhythm of the reference clip",
+                      "prompt": "A stylish fashion short matching the movement rhythm and mood of the references",
                       "reference_image_urls": [
                         "https://example.com/reference-image.jpg"
                       ],
@@ -99,8 +82,7 @@
                       "aspect_ratio": "9:16",
                       "resolution": "720p",
                       "duration": 5,
-                      "generate_audio": true,
-                      "seed": 42
+                      "generate_audio": true
                     }
                   }
                 }
@@ -135,15 +117,12 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
-            "description": "Seedance 2 model identifier. Use `seedance-2` for the standard variant or `seedance-2-fast` for faster, lower-cost generation.",
-            "enum": [
-              "seedance-2",
-              "seedance-2-fast"
-            ]
+            "description": "Seedance 2 Mini model identifier",
+            "enum": ["seedance-2-mini"]
           },
           "callback_url": {
             "type": "string",
@@ -153,14 +132,13 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt", "resolution", "duration"],
+            "required": ["prompt", "duration"],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text prompt describing the target video. Must be between 3 and 20,000 characters.",
-                "minLength": 3,
-                "maxLength": 20000,
+                "description": "Text prompt describing the target video.",
+                "maxLength": 10000,
                 "example": "A cinematic drone shot flying over a neon city after rain"
               },
               "image_urls": {
@@ -170,7 +148,7 @@
                   "format": "uri"
                 },
                 "maxItems": 2,
-                "description": "Optional first and last frame images for image-to-video mode. Provide 1 or 2 publicly accessible image URLs. Index 0 is mapped to the starting frame and index 1 is mapped to the optional ending frame. Supported image formats are JPG, JPEG, PNG, WebP, GIF, and AVIF; each image should be up to 30 MB. Cannot be used together with any reference_*_urls fields.",
+                "description": "Optional first and last frame images for image-to-video mode. Index 0 is the starting frame and index 1 is the optional ending frame. Cannot be used together with reference_*_urls fields.",
                 "example": ["https://example.com/first-frame.jpg", "https://example.com/last-frame.jpg"]
               },
               "reference_image_urls": {
@@ -180,7 +158,7 @@
                   "format": "uri"
                 },
                 "maxItems": 9,
-                "description": "Optional reference image URLs for multimodal reference-to-video mode. Supports up to 9 publicly accessible images. Supported image formats are JPG, JPEG, PNG, and WebP; each image should be up to 30 MB. You can reference images in the prompt by order, such as @Image1 or @Image2. Cannot be used together with image_urls.",
+                "description": "Optional reference image URLs for reference-to-video mode. Cannot be used together with image_urls.",
                 "example": ["https://example.com/reference-image.jpg"]
               },
               "reference_video_urls": {
@@ -190,7 +168,7 @@
                   "format": "uri"
                 },
                 "maxItems": 3,
-                "description": "Optional reference video URLs for multimodal reference-to-video mode. Supports up to 3 publicly accessible MP4 or MOV files. The combined reference video duration should be 2 to 15 seconds total, total video size should be under 50 MB, and each video should be 480p to 720p. You can reference videos in the prompt by order, such as @Video1 or @Video2. Cannot be used together with image_urls.",
+                "description": "Optional reference video URLs for reference-to-video mode. Cannot be used together with image_urls.",
                 "example": ["https://example.com/reference-video.mp4"]
               },
               "reference_audio_urls": {
@@ -200,7 +178,7 @@
                   "format": "uri"
                 },
                 "maxItems": 3,
-                "description": "Optional reference audio URLs for multimodal reference-to-video mode. Supports up to 3 publicly accessible MP3 or WAV files. The combined reference audio duration should not exceed 15 seconds, and each file should be up to 15 MB. Audio references require at least one reference image or reference video. You can reference audio files in the prompt by order, such as @Audio1 or @Audio2. Cannot be used together with image_urls.",
+                "description": "Optional reference audio URLs for reference-to-video mode. Requires at least one reference image or reference video. Cannot be used together with image_urls.",
                 "example": ["https://example.com/reference-audio.mp3"]
               },
               "generate_audio": {
@@ -210,9 +188,10 @@
               },
               "resolution": {
                 "type": "string",
-                "description": "Output resolution. `seedance-2` supports `480p`, `720p`, `1080p`, and `4k`. `seedance-2-fast` supports `480p` and `720p` only.",
-                "enum": ["480p", "720p", "1080p", "4k"],
-                "example": "4k"
+                "description": "Output resolution",
+                "enum": ["480p", "720p"],
+                "default": "720p",
+                "example": "720p"
               },
               "aspect_ratio": {
                 "type": "string",
@@ -222,13 +201,10 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Video duration in seconds. Supported values are integers from 4 to 15.",
+                "description": "Video duration in seconds. Supported values are integers from 4 to 15. Usage is billed by generated video duration.",
+                "minimum": 4,
+                "maximum": 15,
                 "example": 5
-              },
-              "seed": {
-                "type": "integer",
-                "description": "Optional random seed for reproducible generation.",
-                "example": 42
               }
             }
           }

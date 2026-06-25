@@ -78,6 +78,7 @@
       "/api-manual/video-series/seedance-1.0-pro.json",
       "/api-manual/video-series/seedance-1-5-pro.json",
       "/api-manual/video-series/seedance-2.json",
+      "/api-manual/video-series/seedance-2-mini.json",
       "/api-manual/video-series/happy-horse.json",
       "/api-manual/video-series/happy-horse-1-1.json",
       "/api-manual/video-series/runway-gen-4-5.json",
@@ -263,7 +264,8 @@
                 "pages": [
                   "api-manual/video-series/seedance-1.0-pro",
                   "api-manual/video-series/seedance-1-5-pro",
-                  "api-manual/video-series/seedance-2"
+                  "api-manual/video-series/seedance-2",
+                  "api-manual/video-series/seedance-2-mini"
                 ]
               },
               {

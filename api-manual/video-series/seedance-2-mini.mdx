@@ -1,0 +1,43 @@
+---
+title: "Seedance 2 Mini Video Generation"
+description: "Fast video generation with Seedance 2 Mini"
+icon: "video"
+openapi: "/api-manual/video-series/seedance-2-mini.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+## Available Model
+
+- **seedance-2-mini** - Fast Seedance 2 Mini video generation
+
+## Modes
+
+### Text to Video
+
+Send a `prompt` without `image_urls` or `reference_*_urls`. Use `aspect_ratio`, `resolution`, and `duration` to control the output.
+
+### Image to Video
+
+Send `image_urls` with 1 or 2 images. `image_urls[0]` is used as the first frame, and `image_urls[1]` is used as the optional last frame.
+
+### Reference to Video
+
+Send one or more reference fields: `reference_image_urls`, `reference_video_urls`, or `reference_audio_urls`. Reference images, videos, and audio can guide the generated video.
+
+## Important Notes
+
+- `prompt` is required.
+- `duration` supports integer values from `4` to `15`.
+- `resolution` supports `480p` and `720p`.
+- `aspect_ratio` is optional. Supported values are `auto`, `21:9`, `16:9`, `4:3`, `1:1`, `3:4`, `9:16`.
+- `image_urls` and any `reference_*_urls` fields are mutually exclusive.
+- `reference_image_urls` supports up to 9 images.
+- `reference_video_urls` supports up to 3 videos.
+- `reference_audio_urls` supports up to 3 audio files and requires at least one reference image or reference video.
+- The total number of reference files across image, video, and audio references must not exceed 12.
+- Usage is billed by generated video duration.
+- All remote URLs should be publicly accessible and directly downloadable.
