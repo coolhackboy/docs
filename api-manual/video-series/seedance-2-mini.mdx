@@ -14,19 +14,12 @@ openapi: "/api-manual/video-series/seedance-2-mini.json POST /api/generate/submi
 
 - **seedance-2-mini** - Fast Seedance 2 Mini video generation
 
-## Modes
+## Key Features
 
-### Text to Video
-
-Send a `prompt` without `image_urls` or `reference_*_urls`. Use `aspect_ratio`, `resolution`, and `duration` to control the output.
-
-### Image to Video
-
-Send `image_urls` with 1 or 2 images. `image_urls[0]` is used as the first frame, and `image_urls[1]` is used as the optional last frame.
-
-### Reference to Video
-
-Send one or more reference fields: `reference_image_urls`, `reference_video_urls`, or `reference_audio_urls`. Reference images, videos, and audio can guide the generated video.
+- **Text-to-Video**: Generate videos directly from prompt text
+- **First and Last Frame Control**: Use up to 2 images as the first and last frame
+- **Reference-to-Video**: Guide generation with reference images, videos, and audio
+- **Optional Audio**: Request generated audio together with the video
 
 ## Important Notes
 
