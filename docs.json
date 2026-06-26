@@ -91,6 +91,7 @@
       "/api-manual/music-series/elevenlabs-v3-tts.json",
       "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json",
       "/api-manual/music-series/gemini-3-1-flash-tts.json",
+      "/api-manual/music-series/xai-tts-1.json",
       "/api-manual/music-series/extend-music.json",
       "/api-manual/music-series/upload-and-cover-audio.json",
       "/api-manual/music-series/upload-and-extend-audio.json",
@@ -326,6 +327,12 @@
                 "group": "Google",
                 "pages": [
                   "api-manual/music-series/gemini-3-1-flash-tts"
+                ]
+              },
+              {
+                "group": "xAI",
+                "pages": [
+                  "api-manual/music-series/xai-tts-1"
                 ]
               }
             ]

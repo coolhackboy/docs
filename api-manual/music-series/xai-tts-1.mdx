@@ -1,0 +1,70 @@
+---
+title: "xAI TTS 1"
+description: "Generate low-latency expressive multilingual speech using xAI TTS 1"
+icon: "audio-lines"
+openapi: "/api-manual/music-series/xai-tts-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# xAI TTS 1
+
+`xai-tts-1` converts a prompt into low-latency expressive speech audio using xAI TTS through fal. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
+
+## Available Model
+
+- **xai-tts-1** - xAI TTS v1 prompt-to-speech generation
+
+## Required Parameters
+
+- **prompt**: Prompt to convert to speech
+  - Length: `1-15000` characters
+  - Supports expressive speech tags such as `[laugh]`, `[pause]`, `[sigh]`, `<whisper>text</whisper>`, and `<slow>text</slow>`
+
+## Optional Parameters
+
+- **voice**: Voice preset. Supported values: `eve`, `ara`, `rex`, `sal`, `leo`. Default: `eve`
+- **language_code**: BCP-47 language code or `auto` for automatic detection. Default: `auto`
+- **output_format**: Audio output configuration object:
+  - `codec`: `mp3`, `wav`, `pcm`, `mulaw`, or `alaw`. Default: `mp3`
+  - `sample_rate`: `8000`, `16000`, `22050`, `24000`, `44100`, or `48000`. Default: `24000`
+  - `bit_rate`: `32000`, `64000`, `96000`, `128000`, `192000`, or `null`. Only applicable for MP3. Default: `128000`
+
+## Supported Languages
+
+Supported values: `auto`, `en`, `ar-EG`, `ar-SA`, `ar-AE`, `bn`, `zh`, `fr`, `de`, `hi`, `id`, `it`, `ja`, `ko`, `pt-BR`, `pt-PT`, `ru`, `es-MX`, `es-ES`, `tr`, `vi`.
+
+## Credit Billing
+
+Billing is calculated by prompt length: `2.4` credits per `1000` characters, equal to `$0.012` per `1000` characters.
+
+## Request Example
+
+Estimated usage: `140` billable characters, `0.336000` credits.
+
+```json
+{
+  "model": "xai-tts-1",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Welcome to the xAI text to speech demo. [pause] <whisper>This line is softer.</whisper> [laugh] Now back to a clear product narration voice.",
+    "voice": "eve",
+    "language_code": "auto",
+    "output_format": {
+      "codec": "mp3",
+      "sample_rate": 24000,
+      "bit_rate": 128000
+    }
+  }
+}
+```
+
+## Notes
+
+- PoYo's public parameter name is `language_code`; it is mapped to fal's `language` field upstream.
+- PoYo's public parameter name is `prompt`; it is mapped to fal's `text` field upstream.
+- Query status through the standard task status API.
+- Successful responses return `files`, where the generated speech uses `file_type: audio`.
