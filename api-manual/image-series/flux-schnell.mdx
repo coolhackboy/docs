@@ -1,0 +1,21 @@
+---
+title: "Flux Schnell Image Generation"
+description: "Flux Schnell fast text-to-image generation"
+icon: "image"
+openapi: "/api-manual/image-series/flux-schnell.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Flux Schnell Image Generation
+
+Generate images with `flux-schnell` from a prompt. Use `input.size` for output size, `input.n` for output image count, and `input.output_format` for the returned image format. Supported size values are `1:1`, `1:1 HD`, `4:3`, `3:4`, `16:9`, and `9:16`; `1:1 HD` is the high-definition square option. Custom `WIDTHxHEIGHT` values such as `1024x1536` are also supported.
+
+Billing is based on output image size and output image count.
+
+## Available Models
+
+- **flux-schnell** - Fast text-to-image generation

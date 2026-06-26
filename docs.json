@@ -35,6 +35,8 @@
       "/api-manual/image-series/nano-banana-2.json",
       "/api-manual/image-series/nano-banana-2-new.json",
       "/api-manual/image-series/flux-2.json",
+      "/api-manual/image-series/flux-dev.json",
+      "/api-manual/image-series/flux-schnell.json",
       "/api-manual/image-series/flux-kontext.json",
       "/api-manual/image-series/seedream-4.json",
       "/api-manual/image-series/seedream-4-5.json",
@@ -154,6 +156,8 @@
                 "group": "Flux",
                 "pages": [
                   "api-manual/image-series/flux-2",
+                  "api-manual/image-series/flux-dev",
+                  "api-manual/image-series/flux-schnell",
                   "api-manual/image-series/flux-kontext"
                 ]
               },
