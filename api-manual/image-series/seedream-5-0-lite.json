@@ -39,7 +39,8 @@
                     "input": {
                       "prompt": "A serene Japanese garden with cherry blossoms and a koi pond",
                       "size": "16:9",
-                      "n": 1
+                      "n": 1,
+                      "enable_safety_checker": true
                     }
                   }
                 },
@@ -51,7 +52,8 @@
                     "input": {
                       "prompt": "A cinematic mountain sunrise",
                       "size": "2304x1728",
-                      "n": 1
+                      "n": 1,
+                      "enable_safety_checker": true
                     }
                   }
                 },
@@ -67,7 +69,8 @@
                         "https://example.com/reference2.jpg"
                       ],
                       "size": "16:9",
-                      "n": 1
+                      "n": 1,
+                      "enable_safety_checker": true
                     }
                   }
                 },
@@ -82,7 +85,8 @@
                         "https://example.com/reference1.jpg"
                       ],
                       "size": "2304x1728",
-                      "n": 1
+                      "n": 1,
+                      "enable_safety_checker": true
                     }
                   }
                 }
@@ -228,6 +232,12 @@
                 "maximum": 15,
                 "default": 1,
                 "example": 1
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "description": "Optional safety checker switch. Defaults to true when omitted.",
+                "default": true,
+                "example": true
               }
             }
           }

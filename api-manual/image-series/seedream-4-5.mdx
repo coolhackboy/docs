@@ -30,6 +30,10 @@ Seedream-4.5 is an advanced image generation model that supports text-to-image, 
 
 Custom `size` is supported in both text-to-image and `seedream-4.5-edit`.
 
+## Safety Checker
+
+`input.enable_safety_checker` is an optional boolean. If omitted, the safety checker defaults to `true`.
+
 In edit mode:
 
 - Preset resolutions such as `2K` and `4K` are handled automatically by the upstream model
@@ -52,7 +56,8 @@ curl --request POST \
     "input": {
       "prompt": "A serene Japanese garden with cherry blossoms and a koi pond",
       "size": "16:9",
-      "n": 1
+      "n": 1,
+      "enable_safety_checker": true
     }
   }'
 ```
@@ -70,7 +75,8 @@ curl --request POST \
     "input": {
       "prompt": "Seedream 4.5 API now Available on Poyo.ai",
       "size": "1920x4096",
-      "n": 1
+      "n": 1,
+      "enable_safety_checker": true
     }
   }'
 ```
@@ -89,7 +95,8 @@ curl --request POST \
       "prompt": "Transform the scene to a winter wonderland with snow",
       "image_urls": ["https://example.com/reference1.jpg"],
       "size": "1920x4096",
-      "n": 1
+      "n": 1,
+      "enable_safety_checker": true
     }
   }'
 ```
@@ -105,7 +112,8 @@ Custom size object example:
       "width": 2304,
       "height": 3072
     },
-    "n": 1
+    "n": 1,
+    "enable_safety_checker": true
   }
 }
 ```
