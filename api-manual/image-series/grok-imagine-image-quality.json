@@ -1,0 +1,227 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Grok Imagine Image Quality API",
+    "description": "High-quality Grok Imagine Image generation with text-to-image and image editing support",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Grok Imagine Image Quality Task",
+        "description": "Generate or edit images with Grok Imagine Image Quality. When input.image_urls is provided, PoYo uses those images as references for editing; otherwise it creates images from the prompt.",
+        "operationId": "submitGrokImagineImageQualityTask",
+        "tags": ["Grok Imagine Image Quality"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text-to-image generation",
+                  "value": {
+                    "model": "grok-imagine-image-quality",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A premium product photo of a matte black smart speaker on a marble table, soft studio lighting",
+                      "aspect_ratio": "1:1",
+                      "resolution": "1K",
+                      "output_format": "png",
+                      "n": 1
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "Image editing with reference images",
+                  "value": {
+                    "model": "grok-imagine-image-quality",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Replace the background with a warm modern studio and keep the product shape unchanged",
+                      "image_urls": ["https://example.com/source-image.png"],
+                      "aspect_ratio": "1:1",
+                      "resolution": "2K",
+                      "output_format": "webp",
+                      "n": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Grok Imagine Image Quality model identifier",
+            "enum": ["grok-imagine-image-quality"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters. If image_urls is provided, PoYo uses those images as references for editing; otherwise it creates images from the prompt.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Generation or editing prompt",
+                "example": "A cinematic product photo on a clean studio background"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 3,
+                "description": "Optional reference image URLs. Provide one or more images for image editing.",
+                "example": ["https://example.com/source-image.png"]
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of output images.",
+                "default": 1,
+                "example": 1
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "Output aspect ratio",
+                "enum": ["1:1", "2:3", "3:2", "9:16", "16:9"],
+                "default": "1:1",
+                "example": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output image resolution tier",
+                "enum": ["1K", "2K"],
+                "default": "1K",
+                "example": "1K"
+              },
+              "output_format": {
+                "type": "string",
+                "description": "Output image format",
+                "enum": ["png", "jpeg", "jpg", "webp"],
+                "default": "png",
+                "example": "png"
+              },
+              "sync_mode": {
+                "type": "boolean",
+                "description": "Optional upstream sync mode flag",
+                "example": false
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-26T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

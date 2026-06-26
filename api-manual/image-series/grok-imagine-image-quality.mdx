@@ -1,0 +1,23 @@
+---
+title: "Grok Imagine Image Quality Generation"
+description: "High-quality image generation and editing with Grok Imagine Image Quality"
+icon: "image"
+openapi: "/api-manual/image-series/grok-imagine-image-quality.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Grok Imagine Image Quality Generation
+
+Generate high-quality images using `grok-imagine-image-quality`. The same model supports text-to-image generation and image editing.
+
+When `input.image_urls` is empty or omitted, PoYo creates images from the prompt. When `input.image_urls` has one or more images, PoYo uses those images as references for editing. Use `input.n` to set the number of output images.
+
+Billing is image-based. The final cost depends on the requested output image count, resolution, and the number of input images.
+
+## Available Models
+
+- **grok-imagine-image-quality** - High-quality text-to-image and image editing
