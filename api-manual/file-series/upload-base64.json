@@ -121,7 +121,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded",
+            "description": "Rate limit exceeded - 10 requests per 60-second fixed window per authenticated user, per upload endpoint",
             "content": {
               "application/json": {
                 "schema": {

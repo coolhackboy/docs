@@ -71,9 +71,11 @@ openapi: "/api-manual/file-series/upload-stream.json POST /api/common/upload/str
 
 ## Rate Limits and Quotas
 
-- **Rate Limit**: 5 requests per minute per API key
+- **Rate Limit**: 10 requests per 60-second fixed window per authenticated user, per upload endpoint
 
 - When the rate limit is exceeded, you will receive a `429 Too Many Requests` error
+
+- The fixed window starts with the first request in the window and is shared by JWT and API key requests from the same user
 
 - Implement exponential backoff retry logic for handling rate limit errors
 
