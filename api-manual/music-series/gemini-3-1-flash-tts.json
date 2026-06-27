@@ -1,0 +1,408 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Gemini 3.1 Flash TTS API",
+    "description": "Generate expressive multilingual speech using Gemini 3.1 Flash TTS",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Gemini 3.1 Flash TTS Task",
+        "description": "Convert prompts into expressive speech audio.",
+        "operationId": "submitGemini31FlashTtsTask",
+        "tags": ["Gemini 3.1 Flash TTS"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "single-audio-tags-mp3": {
+                  "summary": "Single speaker with audio tags (3.648000 credits)",
+                  "description": "152 billable characters: 101 prompt characters + 51 style instruction characters.",
+                  "value": {
+                    "model": "gemini-3-1-flash-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
+                      "style_instructions": "Warm, confident product narrator with clear pacing.",
+                      "voice": "Kore",
+                      "temperature": 1,
+                      "output_format": "mp3"
+                    }
+                  }
+                },
+                "multilingual-store-wav": {
+                  "summary": "Multilingual single voice output (4.440000 credits)",
+                  "description": "185 billable characters: 133 prompt characters + 52 style instruction characters.",
+                  "value": {
+                    "model": "gemini-3-1-flash-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
+                      "style_instructions": "Friendly store assistant voice, natural and concise.",
+                      "voice": "Zephyr",
+                      "language_code": "English (US)",
+                      "temperature": 1,
+                      "output_format": "wav"
+                    }
+                  }
+                },
+                "two-speaker-podcast-ogg": {
+                  "summary": "Two speaker podcast dialogue (4.800000 credits)",
+                  "description": "200 billable characters: 143 prompt characters + 57 style instruction characters.",
+                  "value": {
+                    "model": "gemini-3-1-flash-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
+                      "style_instructions": "Conversational podcast tone with distinct speaker energy.",
+                      "speakers": [
+                        {
+                          "speaker_id": "Host",
+                          "voice": "Charon"
+                        },
+                        {
+                          "speaker_id": "Guest",
+                          "voice": "Kore"
+                        }
+                      ],
+                      "temperature": 1,
+                      "output_format": "ogg_opus"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key from the [API Key Management Page](https://poyo.ai/dashboard/api-key).\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model identifier.",
+            "enum": ["gemini-3-1-flash-tts"],
+            "example": "gemini-3-1-flash-tts"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "$ref": "#/components/schemas/Gemini31FlashTtsInput"
+          }
+        }
+      },
+      "Gemini31FlashTtsInput": {
+        "type": "object",
+        "required": ["prompt"],
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Prompt to convert to speech. Supports natural-language style, pace, accent, and emotional direction inline, plus expressive audio tags such as [sigh], [laughing], [whispering], and [short pause]. For multi-speaker synthesis, prefix lines with speaker aliases that match speakers[].speaker_id.",
+            "minLength": 1,
+            "maxLength": 8192,
+            "example": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes."
+          },
+          "style_instructions": {
+            "type": "string",
+            "description": "Optional style, delivery, pace, accent, tone, or emotional direction applied to the whole request.",
+            "example": "Warm, confident product narrator with clear pacing."
+          },
+          "voice": {
+            "$ref": "#/components/schemas/VoiceEnum"
+          },
+          "language_code": {
+            "$ref": "#/components/schemas/LanguageCodeEnum"
+          },
+          "speakers": {
+            "type": "array",
+            "description": "Exactly two speaker objects for dialogue. When set, top-level voice is ignored. Each speaker_id must be alphanumeric with no whitespace, unique within the request, and used as a prefix in prompt.",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/SpeakerConfig"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Controls speech variation from 0 to 2. Higher values can produce more varied delivery.",
+            "minimum": 0,
+            "maximum": 2,
+            "default": 1,
+            "example": 1
+          },
+          "output_format": {
+            "type": "string",
+            "description": "Audio output format. mp3 is compact and recommended for playback, wav is uncompressed for post-production, and ogg_opus balances quality and size.",
+            "enum": ["mp3", "wav", "ogg_opus"],
+            "default": "mp3",
+            "example": "mp3"
+          }
+        }
+      },
+      "SpeakerConfig": {
+        "type": "object",
+        "required": ["voice", "speaker_id"],
+        "additionalProperties": false,
+        "properties": {
+          "voice": {
+            "$ref": "#/components/schemas/VoiceEnum"
+          },
+          "speaker_id": {
+            "type": "string",
+            "description": "Alphanumeric alias with no whitespace, unique within the request, used to identify this speaker as a prefix in the prompt field.",
+            "pattern": "^[A-Za-z0-9]+$",
+            "example": "Host"
+          }
+        }
+      },
+      "VoiceEnum": {
+        "type": "string",
+        "description": "Gemini TTS voice preset.",
+        "enum": [
+          "Achernar",
+          "Achird",
+          "Algenib",
+          "Algieba",
+          "Alnilam",
+          "Aoede",
+          "Autonoe",
+          "Callirrhoe",
+          "Charon",
+          "Despina",
+          "Enceladus",
+          "Erinome",
+          "Fenrir",
+          "Gacrux",
+          "Iapetus",
+          "Kore",
+          "Laomedeia",
+          "Leda",
+          "Orus",
+          "Pulcherrima",
+          "Puck",
+          "Rasalgethi",
+          "Sadachbia",
+          "Sadaltager",
+          "Schedar",
+          "Sulafat",
+          "Umbriel",
+          "Vindemiatrix",
+          "Zephyr",
+          "Zubenelgenubi"
+        ],
+        "default": "Kore",
+        "example": "Kore"
+      },
+      "LanguageCodeEnum": {
+        "type": "string",
+        "description": "Language for multilingual synthesis. If omitted, the model auto-detects from prompt.",
+        "enum": [
+          "Arabic (Egypt)",
+          "Bangla (Bangladesh)",
+          "Dutch (Netherlands)",
+          "English (India)",
+          "English (US)",
+          "French (France)",
+          "German (Germany)",
+          "Hindi (India)",
+          "Indonesian (Indonesia)",
+          "Italian (Italy)",
+          "Japanese (Japan)",
+          "Korean (South Korea)",
+          "Marathi (India)",
+          "Polish (Poland)",
+          "Portuguese (Brazil)",
+          "Romanian (Romania)",
+          "Russian (Russia)",
+          "Spanish (Spain)",
+          "Tamil (India)",
+          "Telugu (India)",
+          "Thai (Thailand)",
+          "Turkish (Turkey)",
+          "Ukrainian (Ukraine)",
+          "Vietnamese (Vietnam)",
+          "Afrikaans (South Africa)",
+          "Albanian (Albania)",
+          "Amharic (Ethiopia)",
+          "Arabic (World)",
+          "Armenian (Armenia)",
+          "Azerbaijani (Azerbaijan)",
+          "Basque (Spain)",
+          "Belarusian (Belarus)",
+          "Bulgarian (Bulgaria)",
+          "Burmese (Myanmar)",
+          "Catalan (Spain)",
+          "Cebuano (Philippines)",
+          "Chinese Mandarin (China)",
+          "Chinese Mandarin (Taiwan)",
+          "Croatian (Croatia)",
+          "Czech (Czech Republic)",
+          "Danish (Denmark)",
+          "English (Australia)",
+          "English (UK)",
+          "Estonian (Estonia)",
+          "Filipino (Philippines)",
+          "Finnish (Finland)",
+          "French (Canada)",
+          "Galician (Spain)",
+          "Georgian (Georgia)",
+          "Greek (Greece)",
+          "Gujarati (India)",
+          "Haitian Creole (Haiti)",
+          "Hebrew (Israel)",
+          "Hungarian (Hungary)",
+          "Icelandic (Iceland)",
+          "Javanese (Java)",
+          "Kannada (India)",
+          "Konkani (India)",
+          "Lao (Laos)",
+          "Latin (Vatican City)",
+          "Latvian (Latvia)",
+          "Lithuanian (Lithuania)",
+          "Luxembourgish (Luxembourg)",
+          "Macedonian (North Macedonia)",
+          "Maithili (India)",
+          "Malagasy (Madagascar)",
+          "Malay (Malaysia)",
+          "Malayalam (India)",
+          "Mongolian (Mongolia)",
+          "Nepali (Nepal)",
+          "Norwegian Bokmal (Norway)",
+          "Norwegian Nynorsk (Norway)",
+          "Odia (India)",
+          "Pashto (Afghanistan)",
+          "Persian (Iran)",
+          "Portuguese (Portugal)",
+          "Punjabi (India)",
+          "Serbian (Serbia)",
+          "Sindhi (India)",
+          "Sinhala (Sri Lanka)",
+          "Slovak (Slovakia)",
+          "Slovenian (Slovenia)",
+          "Spanish (Latin America)",
+          "Spanish (Mexico)",
+          "Swahili (Kenya)",
+          "Swedish (Sweden)",
+          "Urdu (Pakistan)"
+        ],
+        "example": "English (US)"
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-25T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

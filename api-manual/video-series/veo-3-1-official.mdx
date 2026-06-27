@@ -26,7 +26,7 @@ Generate VEO 3.1 videos through PoYo's official model family. The generation mod
 
 - No `image_urls`: text-to-video
 - One image: image-to-video
-- Two images: first/last-frame video
+- Two images: first/last-frame video; `veo3.1-lite-official` supports this mode at 8 seconds only
 - Three images: `generation_type: "reference"`, fixed at 8 seconds
 - `veo3.1-lite-official` supports at most two images and does not support `generation_type: "reference"`
 
@@ -34,8 +34,8 @@ Generate VEO 3.1 videos through PoYo's official model family. The generation mod
 
 - **prompt**: required text prompt, up to 1000 characters
 - **image_urls**: optional image URL array for generation models
-- **generation_type**: optional `frame` or `reference`; if omitted, PoYo infers the mode from `image_urls`
-- **duration**: generation models support `4`, `6`, or `8`; `generation_type: "reference"` with three `image_urls` supports `8` only; `veo3.1-lite-official` with `resolution: "1080p"` supports `8` only
+- **generation_type**: optional `frame` or `reference`; if omitted, PoYo infers the mode from `image_urls`; two images on `veo3.1-lite-official` still require `duration: 8`
+- **duration**: generation models support `4`, `6`, or `8`; `generation_type: "reference"` with three `image_urls` supports `8` only; `veo3.1-lite-official` with two `image_urls` supports `8` only; `veo3.1-lite-official` with `resolution: "1080p"` supports `8` only
 - **aspect_ratio**: `16:9` or `9:16`; `auto` is also supported for image-to-video and first/last-frame generation
 - **resolution**: `720p`, `1080p`, or `4k` where supported; `veo3.1-lite-official` does not support `4k`
 - **sound**: `true` by default; set `false` for silent output

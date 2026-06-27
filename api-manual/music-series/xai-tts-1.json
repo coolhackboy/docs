@@ -1,0 +1,243 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - xAI TTS 1 API",
+    "description": "Generate low-latency expressive multilingual speech using xAI TTS 1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit xAI TTS 1 Task",
+        "description": "Convert a prompt into expressive speech audio.",
+        "operationId": "submitXaiTts1Task",
+        "tags": ["xAI TTS 1"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "prompt-to-speech": {
+                  "summary": "Prompt to speech",
+                  "value": {
+                    "model": "xai-tts-1",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Welcome to the xAI text to speech demo. [pause] <whisper>This line is softer.</whisper> [laugh] Now back to a clear product narration voice.",
+                      "voice": "eve",
+                      "language_code": "auto",
+                      "output_format": {
+                        "codec": "mp3",
+                        "sample_rate": 24000,
+                        "bit_rate": 128000
+                      }
+                    }
+                  }
+                },
+                "telephony": {
+                  "summary": "Telephony optimized output",
+                  "value": {
+                    "model": "xai-tts-1",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Your verification code is ready. [pause] Please enter it within five minutes.",
+                      "voice": "ara",
+                      "language_code": "en",
+                      "output_format": {
+                        "codec": "mulaw",
+                        "sample_rate": 8000
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key from the [API Key Management Page](https://poyo.ai/dashboard/api-key).\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model identifier.",
+            "enum": ["xai-tts-1"],
+            "example": "xai-tts-1"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Prompt to convert to speech. Supports expressive tags such as [laugh], [pause], [sigh], <whisper>text</whisper>, and <slow>text</slow>.",
+                "minLength": 1,
+                "maxLength": 15000,
+                "example": "Hello! [pause] <whisper>This is a softer line.</whisper>"
+              },
+              "voice": {
+                "type": "string",
+                "description": "Voice preset used for speech generation.",
+                "enum": ["eve", "ara", "rex", "sal", "leo"],
+                "default": "eve",
+                "example": "eve"
+              },
+              "language_code": {
+                "type": "string",
+                "description": "BCP-47 language code or auto for automatic detection.",
+                "enum": ["auto", "en", "ar-EG", "ar-SA", "ar-AE", "bn", "zh", "fr", "de", "hi", "id", "it", "ja", "ko", "pt-BR", "pt-PT", "ru", "es-MX", "es-ES", "tr", "vi"],
+                "default": "auto",
+                "example": "auto"
+              },
+              "output_format": {
+                "$ref": "#/components/schemas/OutputFormat"
+              }
+            }
+          }
+        }
+      },
+      "OutputFormat": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Audio output format configuration.",
+        "properties": {
+          "codec": {
+            "type": "string",
+            "enum": ["mp3", "wav", "pcm", "mulaw", "alaw"],
+            "default": "mp3",
+            "example": "mp3"
+          },
+          "sample_rate": {
+            "type": "integer",
+            "enum": [8000, 16000, 22050, 24000, 44100, 48000],
+            "default": 24000,
+            "example": 24000
+          },
+          "bit_rate": {
+            "type": "integer",
+            "nullable": true,
+            "enum": [32000, 64000, 96000, 128000, 192000, null],
+            "description": "Bit rate in bps. Only applicable for MP3 codec.",
+            "default": 128000,
+            "example": 128000
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-25T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

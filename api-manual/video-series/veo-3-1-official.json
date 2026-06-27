@@ -83,6 +83,25 @@
                       ]
                     }
                   }
+                },
+                "lite-frame": {
+                  "summary": "Lite official first/last-frame generation",
+                  "value": {
+                    "model": "veo3.1-lite-official",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "The first frame shows a runner at the starting line, then the video transitions naturally to the runner crossing the finish line.",
+                      "duration": 8,
+                      "aspect_ratio": "auto",
+                      "resolution": "720p",
+                      "sound": true,
+                      "generation_type": "frame",
+                      "image_urls": [
+                        "https://example.com/first-frame.jpg",
+                        "https://example.com/last-frame.jpg"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -175,12 +194,12 @@
                   "format": "uri"
                 },
                 "maxItems": 3,
-                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video.\n\n- 3 images: `generation_type: \"reference\"` on supported models. This mode supports duration 8 only.\n\n- `veo3.1-lite-official` supports at most 2 images.",
+                "description": "Image URLs for generation models.\n\n- 1 image: image-to-video.\n\n- 2 images: first/last-frame video. For `veo3.1-lite-official`, this mode supports duration 8 only.\n\n- 3 images: `generation_type: \"reference\"` on supported models. This mode supports duration 8 only.\n\n- `veo3.1-lite-official` supports at most 2 images.",
                 "example": []
               },
               "generation_type": {
                 "type": "string",
-                "description": "Optional generation type for image-guided generation.\n\n- `frame`: requires exactly 2 `image_urls`.\n\n- `reference`: requires exactly 3 `image_urls` and is not supported by `veo3.1-lite-official`.\n\nIf omitted, PoYo infers the mode from the number of `image_urls`.",
+                "description": "Optional generation type for image-guided generation.\n\n- `frame`: requires exactly 2 `image_urls`. For `veo3.1-lite-official`, `duration` must be 8.\n\n- `reference`: requires exactly 3 `image_urls` and is not supported by `veo3.1-lite-official`.\n\nIf omitted, PoYo infers the mode from the number of `image_urls`; two images on `veo3.1-lite-official` still require `duration: 8`.",
                 "enum": [
                   "frame",
                   "reference"
@@ -189,7 +208,7 @@
               },
               "duration": {
                 "type": "integer",
-                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-lite-official` with `resolution: \"1080p\"` supports 8 seconds only.",
+                "description": "Generation duration in seconds.\n\n- Generation models support 4, 6, or 8 seconds.\n\n- `generation_type: \"reference\"` with three `image_urls` supports 8 seconds only.\n\n- `veo3.1-lite-official` with two `image_urls` supports 8 seconds only, even when `generation_type` is omitted.\n\n- `veo3.1-lite-official` with `resolution: \"1080p\"` supports 8 seconds only.",
                 "example": 8
               },
               "aspect_ratio": {
