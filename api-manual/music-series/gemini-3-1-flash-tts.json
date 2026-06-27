@@ -166,7 +166,7 @@
             "type": "string",
             "description": "Prompt to convert to speech. Supports natural-language style, pace, accent, and emotional direction inline, plus expressive audio tags such as [sigh], [laughing], [whispering], and [short pause]. For multi-speaker synthesis, prefix lines with speaker aliases that match speakers[].speaker_id.",
             "minLength": 1,
-            "maxLength": 8192,
+            "maxLength": 50000,
             "example": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes."
           },
           "style_instructions": {
@@ -182,7 +182,7 @@
           },
           "speakers": {
             "type": "array",
-            "description": "Exactly two speaker objects for dialogue. When set, top-level voice is ignored. Each speaker_id must be alphanumeric with no whitespace, unique within the request, and used as a prefix in prompt.",
+            "description": "Exactly two speaker objects for dialogue. When set, top-level voice is ignored. Each speaker_id must contain only letters, numbers, and underscores with no whitespace, be unique within the request, and be used as a prefix in prompt.",
             "minItems": 2,
             "maxItems": 2,
             "items": {
@@ -216,8 +216,8 @@
           },
           "speaker_id": {
             "type": "string",
-            "description": "Alphanumeric alias with no whitespace, unique within the request, used to identify this speaker as a prefix in the prompt field.",
-            "pattern": "^[A-Za-z0-9]+$",
+            "description": "Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used to identify this speaker as a prefix in the prompt field.",
+            "pattern": "^[A-Za-z0-9_]+$",
             "example": "Host"
           }
         }

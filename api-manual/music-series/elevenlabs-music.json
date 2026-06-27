@@ -216,6 +216,7 @@
         "properties": {
           "prompt": {
             "type": "string",
+            "maxLength": 4100,
             "description": "Text prompt describing the music to generate. Required when composition_plan is not provided. Do not send prompt and composition_plan together.",
             "example": "A polished instrumental cinematic game menu loop for a neon sci-fi strategy game, elegant synth arpeggios, warm analog pads, restrained percussion, gradual heroic lift, no vocals, seamless background score."
           },

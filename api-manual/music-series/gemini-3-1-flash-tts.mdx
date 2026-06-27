@@ -21,7 +21,7 @@ openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/
 ## Required Parameters
 
 - **prompt**: Prompt to convert to speech
-  - Length: `1-8192` characters
+  - Length: `1-50000` characters
   - Supports natural-language style, pace, accent, and emotional direction inline
   - Supports expressive audio tags such as `[sigh]`, `[laughing]`, `[whispering]`, and `[short pause]`
   - For multi-speaker synthesis, prefix prompt lines with speaker aliases that match `speakers[].speaker_id`
@@ -33,7 +33,7 @@ openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/
 - **language_code**: Optional language enum used to steer multilingual synthesis. If omitted, the model auto-detects from `prompt`
 - **speakers**: Exactly two speaker objects for dialogue. When set, top-level `voice` is ignored. Each item includes:
   - `voice`: Gemini voice preset
-  - `speaker_id`: Alphanumeric alias with no whitespace, unique within the request, used as a prefix in `prompt`
+  - `speaker_id`: Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used as a prefix in `prompt`
 - **temperature**: Number controlling delivery variation. Default: `1`. Range: `0-2`
 - **output_format**: `mp3`, `wav`, or `ogg_opus`. Default: `mp3`. Use `mp3` for compact playback, `wav` for uncompressed post-production, and `ogg_opus` for quality-to-size balance
 
