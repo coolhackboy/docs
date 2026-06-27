@@ -20,9 +20,11 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Gemini 3.1 Flash TTS Task",
-        "description": "Convert prompts into expressive speech audio.",
+        "description": "Convert text inputs into expressive speech audio.",
         "operationId": "submitGemini31FlashTtsTask",
-        "tags": ["Gemini 3.1 Flash TTS"],
+        "tags": [
+          "Gemini 3.1 Flash TTS"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -33,12 +35,12 @@
               "examples": {
                 "single-audio-tags-mp3": {
                   "summary": "Single speaker with audio tags (3.648000 credits)",
-                  "description": "152 billable characters: 101 prompt characters + 51 style instruction characters.",
+                  "description": "152 billable characters: 101 text characters + 51 style instruction characters.",
                   "value": {
                     "model": "gemini-3-1-flash-tts",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
+                      "text": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
                       "style_instructions": "Warm, confident product narrator with clear pacing.",
                       "voice": "Kore",
                       "temperature": 1,
@@ -48,12 +50,12 @@
                 },
                 "multilingual-store-wav": {
                   "summary": "Multilingual single voice output (4.440000 credits)",
-                  "description": "185 billable characters: 133 prompt characters + 52 style instruction characters.",
+                  "description": "185 billable characters: 133 text characters + 52 style instruction characters.",
                   "value": {
                     "model": "gemini-3-1-flash-tts",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
+                      "text": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
                       "style_instructions": "Friendly store assistant voice, natural and concise.",
                       "voice": "Zephyr",
                       "language_code": "English (US)",
@@ -64,12 +66,12 @@
                 },
                 "two-speaker-podcast-ogg": {
                   "summary": "Two speaker podcast dialogue (4.800000 credits)",
-                  "description": "200 billable characters: 143 prompt characters + 57 style instruction characters.",
+                  "description": "200 billable characters: 143 text characters + 57 style instruction characters.",
                   "value": {
                     "model": "gemini-3-1-flash-tts",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
+                      "text": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
                       "style_instructions": "Conversational podcast tone with distinct speaker energy.",
                       "speakers": [
                         {
@@ -137,13 +139,18 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "additionalProperties": false,
         "properties": {
           "model": {
             "type": "string",
             "description": "Model identifier.",
-            "enum": ["gemini-3-1-flash-tts"],
+            "enum": [
+              "gemini-3-1-flash-tts"
+            ],
             "example": "gemini-3-1-flash-tts"
           },
           "callback_url": {
@@ -159,12 +166,14 @@
       },
       "Gemini31FlashTtsInput": {
         "type": "object",
-        "required": ["prompt"],
+        "required": [
+          "text"
+        ],
         "additionalProperties": false,
         "properties": {
-          "prompt": {
+          "text": {
             "type": "string",
-            "description": "Prompt to convert to speech. Supports natural-language style, pace, accent, and emotional direction inline, plus expressive audio tags such as [sigh], [laughing], [whispering], and [short pause]. For multi-speaker synthesis, prefix lines with speaker aliases that match speakers[].speaker_id.",
+            "description": "Text to convert to speech. Supports natural-language style, pace, accent, and emotional direction inline, plus expressive audio tags such as [sigh], [laughing], [whispering], and [short pause]. For multi-speaker synthesis, prefix lines with speaker aliases that match speakers[].speaker_id.",
             "minLength": 1,
             "maxLength": 50000,
             "example": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes."
@@ -182,7 +191,7 @@
           },
           "speakers": {
             "type": "array",
-            "description": "Exactly two speaker objects for dialogue. When set, top-level voice is ignored. Each speaker_id must contain only letters, numbers, and underscores with no whitespace, be unique within the request, and be used as a prefix in prompt.",
+            "description": "Exactly two speaker objects for dialogue. When set, top-level voice is ignored. Each speaker_id must contain only letters, numbers, and underscores with no whitespace, be unique within the request, and be used as a prefix in text.",
             "minItems": 2,
             "maxItems": 2,
             "items": {
@@ -200,7 +209,11 @@
           "output_format": {
             "type": "string",
             "description": "Audio output format. mp3 is compact and recommended for playback, wav is uncompressed for post-production, and ogg_opus balances quality and size.",
-            "enum": ["mp3", "wav", "ogg_opus"],
+            "enum": [
+              "mp3",
+              "wav",
+              "ogg_opus"
+            ],
             "default": "mp3",
             "example": "mp3"
           }
@@ -208,7 +221,10 @@
       },
       "SpeakerConfig": {
         "type": "object",
-        "required": ["voice", "speaker_id"],
+        "required": [
+          "voice",
+          "speaker_id"
+        ],
         "additionalProperties": false,
         "properties": {
           "voice": {
@@ -216,7 +232,7 @@
           },
           "speaker_id": {
             "type": "string",
-            "description": "Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used to identify this speaker as a prefix in the prompt field.",
+            "description": "Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used to identify this speaker as a prefix in the text field.",
             "pattern": "^[A-Za-z0-9_]+$",
             "example": "Host"
           }
@@ -262,7 +278,7 @@
       },
       "LanguageCodeEnum": {
         "type": "string",
-        "description": "Language for multilingual synthesis. If omitted, the model auto-detects from prompt.",
+        "description": "Language for multilingual synthesis. If omitted, the model auto-detects from text.",
         "enum": [
           "Arabic (Egypt)",
           "Bangla (Bangladesh)",
@@ -356,7 +372,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -364,7 +383,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -372,7 +395,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {

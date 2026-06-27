@@ -12,17 +12,17 @@ openapi: "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json POST /api/gener
 
 # ElevenLabs TTS Turbo v2.5
 
-`elevenlabs-tts-turbo-2-5` converts prompts into low-latency multilingual speech audio. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
+`elevenlabs-tts-turbo-2-5` converts text inputs into low-latency multilingual speech audio. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
 ## Available Model
 
-- **elevenlabs-tts-turbo-2-5** - ElevenLabs TTS Turbo v2.5 prompt-to-speech generation
+- **elevenlabs-tts-turbo-2-5** - ElevenLabs TTS Turbo v2.5 text-to-speech generation
 
 ## Required Parameters
 
-- **prompt**: Prompt to convert to speech
+- **text**: Text to convert to speech
   - Length: `1-40000` characters
-  - Billing is calculated from `prompt.trim().length`
+  - Billing is calculated from `text.trim().length`
   - Use `previous_text` and `next_text` when splitting long-form narration into multiple requests
 
 ## Optional Parameters
@@ -33,14 +33,14 @@ openapi: "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json POST /api/gener
 - **style**: Style exaggeration from `0` to `1`. Default: `0`
 - **speed**: Speech speed from `0.7` to `1.2`. Default: `1`
 - **timestamps**: Boolean. When `true`, timestamp data may be returned with the generated audio
-- **previous_text**: Optional context that came before `prompt`, useful for long-form continuity
-- **next_text**: Optional context that comes after `prompt`, useful for long-form continuity
+- **previous_text**: Optional context that came before `text`, useful for long-form continuity
+- **next_text**: Optional context that comes after `text`, useful for long-form continuity
 - **language_code**: Optional ISO 639-1 code used to enforce a target language, such as `en`, `fr`, `de`, `ja`, `vi`, `hu`, or `no`
 - **apply_text_normalization**: `auto`, `on`, or `off`. Default: `auto`
 
 ## Credit Billing
 
-Billing is calculated by trimmed prompt length: `8` credits per `1000` characters. PoYo is priced at `$0.04 / 1000 characters`; the Fal reference price is `$0.05 / 1000 characters`.
+Billing is calculated by trimmed text length: `8` credits per `1000` characters. PoYo is priced at `$0.04 / 1000 characters`; the Fal reference price is `$0.05 / 1000 characters`.
 
 ## Request Examples
 
@@ -53,7 +53,7 @@ Estimated usage: `126` billable characters, `1.008000` credits.
   "model": "elevenlabs-tts-turbo-2-5",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes.",
+    "text": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes.",
     "voice": "Rachel",
     "speed": 1.08,
     "stability": 0.55,
@@ -74,7 +74,7 @@ Estimated usage: `88` billable characters, `0.704000` credits.
   "model": "elevenlabs-tts-turbo-2-5",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil.",
+    "text": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil.",
     "voice": "Aria",
     "language_code": "fr",
     "stability": 0.6,
@@ -96,7 +96,7 @@ Estimated usage: `97` billable characters, `0.776000` credits.
   "callback_url": "https://your-domain.com/callback",
   "input": {
     "previous_text": "The city lights faded behind the train.",
-    "prompt": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it.",
+    "text": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it.",
     "next_text": "The carriage fell silent as the tunnel opened ahead.",
     "voice": "Sarah",
     "stability": 0.42,
@@ -117,7 +117,7 @@ Estimated usage: `108` billable characters, `0.864000` credits.
   "model": "elevenlabs-tts-turbo-2-5",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence.",
+    "text": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence.",
     "voice": "Laura",
     "stability": 0.48,
     "similarity_boost": 0.8,
@@ -130,7 +130,7 @@ Estimated usage: `108` billable characters, `0.864000` credits.
 
 ## Notes
 
-- PoYo's public parameter name is `prompt`.
+- PoYo's public parameter name is `text`.
 - Fal reference pricing is `$0.05 / 1000 characters`; PoYo pricing is `$0.04 / 1000 characters`.
 - Query status through the standard task status API.
 - Successful responses return `files`, where the generated speech uses `file_type: audio`.

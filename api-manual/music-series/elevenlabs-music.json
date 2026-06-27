@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - ElevenLabs Music API",
-    "description": "Generate studio-grade music from prompts or structured composition plans using ElevenLabs Music. PoYo pricing is $0.64 per started minute, equal to 128 credits per started minute.",
+    "description": "Generate studio-grade music from text inputs or structured composition plans using ElevenLabs Music. PoYo pricing is $0.64 per started minute, equal to 128 credits per started minute.",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,9 +20,11 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit ElevenLabs Music Task",
-        "description": "Generate music from a prompt or a structured composition plan.",
+        "description": "Generate music from a text or a structured composition plan.",
         "operationId": "submitElevenLabsMusicTask",
-        "tags": ["ElevenLabs Music"],
+        "tags": [
+          "ElevenLabs Music"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,26 +33,26 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "prompt-instrumental-score": {
-                  "summary": "Prompt Instrumental Score",
+                "text-instrumental-score": {
+                  "summary": "Text Instrumental Score",
                   "value": {
                     "model": "elevenlabs-music",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A polished instrumental cinematic game menu loop for a neon sci-fi strategy game, elegant synth arpeggios, warm analog pads, restrained percussion, gradual heroic lift, no vocals, seamless background score.",
+                      "text": "A polished instrumental cinematic game menu loop for a neon sci-fi strategy game, elegant synth arpeggios, warm analog pads, restrained percussion, gradual heroic lift, no vocals, seamless background score.",
                       "duration": 45,
                       "is_instrumental": true,
                       "output_format": "opus_48000_128"
                     }
                   }
                 },
-                "prompt-vocal-multilingual-song": {
-                  "summary": "Prompt Vocal Multilingual Song",
+                "text-vocal-multilingual-song": {
+                  "summary": "Text Vocal Multilingual Song",
                   "value": {
                     "model": "elevenlabs-music",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A studio-grade upbeat pop song with a clear vocal hook for a travel campaign, bright drums, warm bass, polished lead vocal, and a short bilingual English and Spanish refrain: 'We chase the sunrise' and 'Vamos hacia la luz'.",
+                      "text": "A studio-grade upbeat pop song with a clear vocal hook for a travel campaign, bright drums, warm bass, polished lead vocal, and a short bilingual English and Spanish refrain: 'We chase the sunrise' and 'Vamos hacia la luz'.",
                       "duration": 30,
                       "output_format": "mp3_44100_128"
                     }
@@ -132,7 +134,7 @@
                     "model": "elevenlabs-music",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "A concise instrumental sonic logo for a premium productivity app, five-note memorable motif, clean mallet attack, soft synth shimmer, confident but friendly ending, no vocals.",
+                      "text": "A concise instrumental sonic logo for a premium productivity app, five-note memorable motif, clean mallet attack, soft synth shimmer, confident but friendly ending, no vocals.",
                       "duration": 10,
                       "is_instrumental": true,
                       "output_format": "ulaw_8000"
@@ -190,12 +192,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Model identifier.",
-            "enum": ["elevenlabs-music"],
+            "enum": [
+              "elevenlabs-music"
+            ],
             "example": "elevenlabs-music"
           },
           "callback_url": {
@@ -206,7 +213,7 @@
           },
           "input": {
             "$ref": "#/components/schemas/Input",
-            "description": "Input parameters. Provide exactly one of prompt or composition_plan."
+            "description": "Input parameters. Provide exactly one of text or composition_plan."
           }
         }
       },
@@ -214,26 +221,26 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "prompt": {
+          "text": {
             "type": "string",
             "maxLength": 4100,
-            "description": "Text prompt describing the music to generate. Required when composition_plan is not provided. Do not send prompt and composition_plan together.",
+            "description": "Text describing the music to generate. Required when composition_plan is not provided. Do not send text and composition_plan together.",
             "example": "A polished instrumental cinematic game menu loop for a neon sci-fi strategy game, elegant synth arpeggios, warm analog pads, restrained percussion, gradual heroic lift, no vocals, seamless background score."
           },
           "composition_plan": {
             "$ref": "#/components/schemas/CompositionPlan",
-            "description": "Structured composition plan. Required when prompt is not provided. Do not send prompt and composition_plan together."
+            "description": "Structured composition plan. Required when text is not provided. Do not send text and composition_plan together."
           },
           "duration": {
             "type": "number",
             "minimum": 3,
             "maximum": 600,
-            "description": "Optional song length in seconds. Only valid with prompt.",
+            "description": "Optional song length in seconds. Only valid with text.",
             "example": 45
           },
           "is_instrumental": {
             "type": "boolean",
-            "description": "When true, requests instrumental-only output. Only valid with prompt.",
+            "description": "When true, requests instrumental-only output. Only valid with text.",
             "default": false,
             "example": true
           },
@@ -250,20 +257,36 @@
       },
       "CompositionPlan": {
         "type": "object",
-        "required": ["positive_global_styles", "negative_global_styles", "sections"],
+        "required": [
+          "positive_global_styles",
+          "negative_global_styles",
+          "sections"
+        ],
         "additionalProperties": false,
         "properties": {
           "positive_global_styles": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Global styles to include.",
-            "example": ["studio-grade pop production", "clear multilingual vocal hook", "cinematic electronic texture"]
+            "example": [
+              "studio-grade pop production",
+              "clear multilingual vocal hook",
+              "cinematic electronic texture"
+            ]
           },
           "negative_global_styles": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Global styles to avoid.",
-            "example": ["muddy mix", "harsh distortion", "off-key vocals"]
+            "example": [
+              "muddy mix",
+              "harsh distortion",
+              "off-key vocals"
+            ]
           },
           "sections": {
             "type": "array",
@@ -276,7 +299,13 @@
       },
       "CompositionSection": {
         "type": "object",
-        "required": ["section_name", "positive_local_styles", "negative_local_styles", "duration", "lines"],
+        "required": [
+          "section_name",
+          "positive_local_styles",
+          "negative_local_styles",
+          "duration",
+          "lines"
+        ],
         "additionalProperties": false,
         "properties": {
           "section_name": {
@@ -288,15 +317,24 @@
           },
           "positive_local_styles": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Section-specific styles to include.",
-            "example": ["gentle vocal lead", "subtle electronic pulse"]
+            "example": [
+              "gentle vocal lead",
+              "subtle electronic pulse"
+            ]
           },
           "negative_local_styles": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Section-specific styles to avoid.",
-            "example": ["crowded arrangement"]
+            "example": [
+              "crowded arrangement"
+            ]
           },
           "duration": {
             "type": "number",
@@ -312,7 +350,10 @@
               "maxLength": 200
             },
             "description": "Lyrics lines for this section.",
-            "example": ["We cross the night with open eyes", "Cada paso brilla bajo el cielo"]
+            "example": [
+              "We cross the night with open eyes",
+              "Cada paso brilla bajo el cielo"
+            ]
           }
         }
       },
@@ -345,7 +386,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -353,7 +397,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -361,7 +409,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {

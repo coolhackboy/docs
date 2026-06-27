@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit ElevenLabs TTS Turbo v2.5 Task",
-        "description": "Convert a prompt into low-latency speech audio. PoYo pricing is $0.04 per 1000 characters, compared with Fal at $0.05 per 1000 characters.",
+        "description": "Convert a text into low-latency speech audio. PoYo pricing is $0.04 per 1000 characters, compared with Fal at $0.05 per 1000 characters.",
         "operationId": "submitElevenLabsTtsTurbo25Task",
         "tags": [
           "ElevenLabs TTS Turbo v2.5"
@@ -47,7 +47,7 @@
                       "style": 0.12,
                       "timestamps": false,
                       "apply_text_normalization": "auto",
-                      "prompt": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."
+                      "text": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."
                     }
                   }
                 },
@@ -65,7 +65,7 @@
                       "speed": 1,
                       "timestamps": true,
                       "apply_text_normalization": "auto",
-                      "prompt": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil."
+                      "text": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil."
                     }
                   }
                 },
@@ -84,7 +84,7 @@
                       "style": 0.35,
                       "speed": 0.94,
                       "apply_text_normalization": "auto",
-                      "prompt": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it."
+                      "text": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it."
                     }
                   }
                 },
@@ -101,7 +101,7 @@
                       "style": 0.4,
                       "speed": 0.98,
                       "apply_text_normalization": "auto",
-                      "prompt": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence."
+                      "text": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence."
                     }
                   }
                 }
@@ -184,7 +184,7 @@
       "ElevenLabsTtsTurbo25Input": {
         "type": "object",
         "required": [
-          "prompt"
+          "text"
         ],
         "additionalProperties": false,
         "properties": {
@@ -235,13 +235,13 @@
           "previous_text": {
             "type": "string",
             "nullable": true,
-            "description": "Text that came before the current prompt. Useful for improving continuity when splitting long-form speech into multiple requests.",
+            "description": "Text that came before the current text. Useful for improving continuity when splitting long-form speech into multiple requests.",
             "example": "The city lights faded behind the train."
           },
           "next_text": {
             "type": "string",
             "nullable": true,
-            "description": "Text that comes after the current prompt. Useful for improving continuity when splitting long-form speech into multiple requests.",
+            "description": "Text that comes after the current text. Useful for improving continuity when splitting long-form speech into multiple requests.",
             "example": "The carriage fell silent as the tunnel opened ahead."
           },
           "language_code": {
@@ -261,9 +261,9 @@
             "default": "auto",
             "example": "auto"
           },
-          "prompt": {
+          "text": {
             "type": "string",
-            "description": "Prompt to convert to speech. Billing is calculated from the trimmed prompt length.",
+            "description": "Text to convert to speech. Billing is calculated from the trimmed text length.",
             "minLength": 1,
             "maxLength": 40000,
             "example": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."

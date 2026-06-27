@@ -20,9 +20,11 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit xAI TTS 1 Task",
-        "description": "Convert a prompt into expressive speech audio.",
+        "description": "Convert a text into expressive speech audio.",
         "operationId": "submitXaiTts1Task",
-        "tags": ["xAI TTS 1"],
+        "tags": [
+          "xAI TTS 1"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -31,13 +33,13 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "prompt-to-speech": {
-                  "summary": "Prompt to speech",
+                "text-to-speech": {
+                  "summary": "Text to speech",
                   "value": {
                     "model": "xai-tts-1",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Welcome to the xAI text to speech demo. [pause] <whisper>This line is softer.</whisper> [laugh] Now back to a clear product narration voice.",
+                      "text": "Welcome to the xAI text to speech demo. [pause] <whisper>This line is softer.</whisper> [laugh] Now back to a clear product narration voice.",
                       "voice": "eve",
                       "language_code": "auto",
                       "output_format": {
@@ -54,7 +56,7 @@
                     "model": "xai-tts-1",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "prompt": "Your verification code is ready. [pause] Please enter it within five minutes.",
+                      "text": "Your verification code is ready. [pause] Please enter it within five minutes.",
                       "voice": "ara",
                       "language_code": "en",
                       "output_format": {
@@ -115,12 +117,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Model identifier.",
-            "enum": ["xai-tts-1"],
+            "enum": [
+              "xai-tts-1"
+            ],
             "example": "xai-tts-1"
           },
           "callback_url": {
@@ -131,12 +138,14 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "text"
+            ],
             "additionalProperties": false,
             "properties": {
-              "prompt": {
+              "text": {
                 "type": "string",
-                "description": "Prompt to convert to speech. Supports expressive tags such as [laugh], [pause], [sigh], <whisper>text</whisper>, and <slow>text</slow>.",
+                "description": "Text to convert to speech. Supports expressive tags such as [laugh], [pause], [sigh], <whisper>text</whisper>, and <slow>text</slow>.",
                 "minLength": 1,
                 "maxLength": 15000,
                 "example": "Hello! [pause] <whisper>This is a softer line.</whisper>"
@@ -144,14 +153,42 @@
               "voice": {
                 "type": "string",
                 "description": "Voice preset used for speech generation.",
-                "enum": ["eve", "ara", "rex", "sal", "leo"],
+                "enum": [
+                  "eve",
+                  "ara",
+                  "rex",
+                  "sal",
+                  "leo"
+                ],
                 "default": "eve",
                 "example": "eve"
               },
               "language_code": {
                 "type": "string",
                 "description": "BCP-47 language code or auto for automatic detection.",
-                "enum": ["auto", "en", "ar-EG", "ar-SA", "ar-AE", "bn", "zh", "fr", "de", "hi", "id", "it", "ja", "ko", "pt-BR", "pt-PT", "ru", "es-MX", "es-ES", "tr", "vi"],
+                "enum": [
+                  "auto",
+                  "en",
+                  "ar-EG",
+                  "ar-SA",
+                  "ar-AE",
+                  "bn",
+                  "zh",
+                  "fr",
+                  "de",
+                  "hi",
+                  "id",
+                  "it",
+                  "ja",
+                  "ko",
+                  "pt-BR",
+                  "pt-PT",
+                  "ru",
+                  "es-MX",
+                  "es-ES",
+                  "tr",
+                  "vi"
+                ],
                 "default": "auto",
                 "example": "auto"
               },
@@ -169,20 +206,40 @@
         "properties": {
           "codec": {
             "type": "string",
-            "enum": ["mp3", "wav", "pcm", "mulaw", "alaw"],
+            "enum": [
+              "mp3",
+              "wav",
+              "pcm",
+              "mulaw",
+              "alaw"
+            ],
             "default": "mp3",
             "example": "mp3"
           },
           "sample_rate": {
             "type": "integer",
-            "enum": [8000, 16000, 22050, 24000, 44100, 48000],
+            "enum": [
+              8000,
+              16000,
+              22050,
+              24000,
+              44100,
+              48000
+            ],
             "default": 24000,
             "example": 24000
           },
           "bit_rate": {
             "type": "integer",
             "nullable": true,
-            "enum": [32000, 64000, 96000, 128000, 192000, null],
+            "enum": [
+              32000,
+              64000,
+              96000,
+              128000,
+              192000,
+              null
+            ],
             "description": "Bit rate in bps. Only applicable for MP3 codec.",
             "default": 128000,
             "example": 128000
@@ -191,7 +248,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -199,7 +259,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -207,7 +271,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {

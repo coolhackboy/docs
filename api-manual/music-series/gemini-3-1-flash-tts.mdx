@@ -12,28 +12,28 @@ openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/
 
 # Gemini 3.1 Flash TTS
 
-`gemini-3-1-flash-tts` converts prompts into expressive speech audio using Google's Gemini 3.1 Flash TTS model. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
+`gemini-3-1-flash-tts` converts text inputs into expressive speech audio using Google's Gemini 3.1 Flash TTS model. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
 ## Available Model
 
-- **gemini-3-1-flash-tts** - Gemini 3.1 Flash prompt-to-speech generation
+- **gemini-3-1-flash-tts** - Gemini 3.1 Flash text-to-speech generation
 
 ## Required Parameters
 
-- **prompt**: Prompt to convert to speech
+- **text**: Text to convert to speech
   - Length: `1-50000` characters
   - Supports natural-language style, pace, accent, and emotional direction inline
   - Supports expressive audio tags such as `[sigh]`, `[laughing]`, `[whispering]`, and `[short pause]`
-  - For multi-speaker synthesis, prefix prompt lines with speaker aliases that match `speakers[].speaker_id`
+  - For multi-speaker synthesis, prefix text lines with speaker aliases that match `speakers[].speaker_id`
 
 ## Optional Parameters
 
 - **style_instructions**: Optional style, delivery, pace, accent, tone, or emotional direction applied to the request
 - **voice**: Voice preset for single-speaker synthesis. Ignored when `speakers` is set. Default: `Kore`
-- **language_code**: Optional language enum used to steer multilingual synthesis. If omitted, the model auto-detects from `prompt`
+- **language_code**: Optional language enum used to steer multilingual synthesis. If omitted, the model auto-detects from `text`
 - **speakers**: Exactly two speaker objects for dialogue. When set, top-level `voice` is ignored. Each item includes:
   - `voice`: Gemini voice preset
-  - `speaker_id`: Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used as a prefix in `prompt`
+  - `speaker_id`: Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used as a prefix in `text`
 - **temperature**: Number controlling delivery variation. Default: `1`. Range: `0-2`
 - **output_format**: `mp3`, `wav`, or `ogg_opus`. Default: `mp3`. Use `mp3` for compact playback, `wav` for uncompressed post-production, and `ogg_opus` for quality-to-size balance
 
@@ -43,7 +43,7 @@ Supported values: `Achernar`, `Achird`, `Algenib`, `Algieba`, `Alnilam`, `Aoede`
 
 ## Credit Billing
 
-Billing is calculated by prompt length plus style instruction length: `24` credits per `1000` characters.
+Billing is calculated by text length plus style instruction length: `24` credits per `1000` characters.
 
 ## Request Examples
 
@@ -56,7 +56,7 @@ Estimated usage: `152` billable characters, `3.648000` credits.
   "model": "gemini-3-1-flash-tts",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
+    "text": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
     "style_instructions": "Warm, confident product narrator with clear pacing.",
     "voice": "Kore",
     "temperature": 1,
@@ -74,7 +74,7 @@ Estimated usage: `185` billable characters, `4.440000` credits.
   "model": "gemini-3-1-flash-tts",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
+    "text": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
     "style_instructions": "Friendly store assistant voice, natural and concise.",
     "voice": "Zephyr",
     "language_code": "English (US)",
@@ -93,7 +93,7 @@ Estimated usage: `200` billable characters, `4.800000` credits.
   "model": "gemini-3-1-flash-tts",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
+    "text": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
     "style_instructions": "Conversational podcast tone with distinct speaker energy.",
     "speakers": [
       {
@@ -113,6 +113,6 @@ Estimated usage: `200` billable characters, `4.800000` credits.
 
 ## Notes
 
-- PoYo's public parameter name is `prompt`.
+- PoYo's public parameter name is `text`.
 - Query status through the standard task status API.
 - Successful responses return `files`, where the generated speech uses `file_type: audio`.

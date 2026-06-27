@@ -12,15 +12,15 @@ openapi: "/api-manual/music-series/xai-tts-1.json POST /api/generate/submit"
 
 # xAI TTS 1
 
-`xai-tts-1` converts a prompt into low-latency expressive speech audio using xAI TTS through fal. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
+`xai-tts-1` converts a text into low-latency expressive speech audio using xAI TTS through fal. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
 ## Available Model
 
-- **xai-tts-1** - xAI TTS v1 prompt-to-speech generation
+- **xai-tts-1** - xAI TTS v1 text-to-speech generation
 
 ## Required Parameters
 
-- **prompt**: Prompt to convert to speech
+- **text**: Text to convert to speech
   - Length: `1-15000` characters
   - Supports expressive speech tags such as `[laugh]`, `[pause]`, `[sigh]`, `<whisper>text</whisper>`, and `<slow>text</slow>`
 
@@ -39,7 +39,7 @@ Supported values: `auto`, `en`, `ar-EG`, `ar-SA`, `ar-AE`, `bn`, `zh`, `fr`, `de
 
 ## Credit Billing
 
-Billing is calculated by prompt length: `2.4` credits per `1000` characters, equal to `$0.012` per `1000` characters.
+Billing is calculated by text length: `2.4` credits per `1000` characters, equal to `$0.012` per `1000` characters.
 
 ## Request Example
 
@@ -50,7 +50,7 @@ Estimated usage: `140` billable characters, `0.336000` credits.
   "model": "xai-tts-1",
   "callback_url": "https://your-domain.com/callback",
   "input": {
-    "prompt": "Welcome to the xAI text to speech demo. [pause] <whisper>This line is softer.</whisper> [laugh] Now back to a clear product narration voice.",
+    "text": "Welcome to the xAI text to speech demo. [pause] <whisper>This line is softer.</whisper> [laugh] Now back to a clear product narration voice.",
     "voice": "eve",
     "language_code": "auto",
     "output_format": {
@@ -65,6 +65,6 @@ Estimated usage: `140` billable characters, `0.336000` credits.
 ## Notes
 
 - PoYo's public parameter name is `language_code`; it is mapped to fal's `language` field upstream.
-- PoYo's public parameter name is `prompt`; it is mapped to fal's `text` field upstream.
+- PoYo's public parameter name is `text`; it is mapped to fal's `text` field upstream.
 - Query status through the standard task status API.
 - Successful responses return `files`, where the generated speech uses `file_type: audio`.
