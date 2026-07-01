@@ -1,0 +1,224 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Nano Banana 2 Lite API",
+    "description": "Nano Banana 2 Lite image generation and image editing API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Nano Banana 2 Lite Image Task",
+        "description": "Generate an image from a prompt, or edit an image using reference image URLs.",
+        "operationId": "submitNanoBanana2LiteTask",
+        "tags": ["Nano Banana 2 Lite"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "nano-banana-2-lite": {
+                  "summary": "Nano Banana 2 Lite Image Generation",
+                  "value": {
+                    "model": "nano-banana-2-lite",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A small red cube on a plain white background",
+                      "size": "1:1"
+                    }
+                  }
+                },
+                "nano-banana-2-lite-edit": {
+                  "summary": "Nano Banana 2 Lite Image Edit",
+                  "value": {
+                    "model": "nano-banana-2-lite-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Change the background to a clean pale blue studio backdrop",
+                      "image_urls": ["https://example.com/source-image.png"],
+                      "size": "1:1"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Nano Banana 2 Lite model identifier",
+            "enum": ["nano-banana-2-lite", "nano-banana-2-lite-edit"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters. `image_urls` is required for `nano-banana-2-lite-edit` and is not supported for `nano-banana-2-lite`.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text instruction for the generated or edited image",
+                "example": "A small red cube on a plain white background"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Reference image URLs. Required for `nano-banana-2-lite-edit`. Not supported for `nano-banana-2-lite`.",
+                "minItems": 1,
+                "maxItems": 14,
+                "example": ["https://example.com/source-image.png"]
+              },
+              "size": {
+                "type": "string",
+                "description": "Optional output image aspect ratio. If omitted, no explicit output aspect ratio is specified.",
+                "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
+                "example": "1:1"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-07-01T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error code"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "type": {
+                "type": "string",
+                "description": "Error type"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

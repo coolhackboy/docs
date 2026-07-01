@@ -1,0 +1,55 @@
+---
+title: "Nano Banana 2 Lite Image Generation"
+description: "Lightweight image generation and image editing with prompt, image_urls, and size inputs"
+icon: "image"
+openapi: "/api-manual/image-series/nano-banana-2-lite.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Nano Banana 2 Lite Image Generation
+
+Nano Banana 2 Lite provides a compact image generation and image editing interface. It supports text-to-image generation from a prompt and image editing from one or more reference images.
+
+## Available Models
+
+- **nano-banana-2-lite** - Text-to-image generation
+- **nano-banana-2-lite-edit** - Image editing with reference images
+
+## Input Parameters
+
+- `prompt` - Required. Text instruction for the generated or edited image.
+- `image_urls` - Required for `nano-banana-2-lite-edit`. Not supported for `nano-banana-2-lite`.
+- `size` - Optional aspect ratio. If omitted, no explicit output aspect ratio is specified.
+
+Supported `size` values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`.
+
+## Text-to-Image Example
+
+```json
+{
+  "model": "nano-banana-2-lite",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A small red cube on a plain white background",
+    "size": "1:1"
+  }
+}
+```
+
+## Image Editing Example
+
+```json
+{
+  "model": "nano-banana-2-lite-edit",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Change the background to a clean pale blue studio backdrop",
+    "image_urls": ["https://example.com/source-image.png"],
+    "size": "1:1"
+  }
+}
+```
