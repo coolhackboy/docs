@@ -1,0 +1,95 @@
+---
+title: "Seedream-5.0-Pro Image Generation"
+description: "Flagship Seedream image generation and editing model with precise prompt following, layout control, and multi-image reference editing"
+icon: "image"
+openapi: "/api-manual/image-series/seedream-5-0-pro.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Seedream-5.0-Pro Image Generation
+
+Seedream-5.0-Pro is ByteDance's flagship image model for text-to-image generation and region-precise image editing. It is designed for complex prompts, structured layouts, multilingual typography, product visuals, and multi-reference editing workflows.
+
+## Available Models
+
+- **seedream-5.0-pro** - Flagship text-to-image generation
+- **seedream-5.0-pro-edit** - Image editing with multi-image reference support (up to 10 images)
+
+## Size Parameter
+
+`input.size` supports these forms:
+
+- Resolution preset: `1K`, `2K`
+- Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`
+
+## Pricing
+
+Pricing is based on the number of generated images.
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Text-to-image example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-pro",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Editorial studio portrait of a fashion model wearing vibrant West African wax-print clothing, matching headwrap, layered bead jewelry and bracelets, confident pose, warm textured backdrop, saturated colors, dramatic fashion lighting.",
+      "size": "3:4",
+      "n": 1,
+      "output_format": "jpeg"
+    }
+  }'
+```
+
+Multiple images example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-pro",
+    "input": {
+      "prompt": "A clean science magazine cover about renewable city infrastructure, dense but readable layout, accurate icons, modern editorial design",
+      "size": "2K",
+      "n": 2,
+      "output_format": "png"
+    }
+  }'
+```
+
+Edit example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-pro-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Replace the perfume bottle in the first reference image with the green BB cream tube from the second reference image, keep the outdoor flower-and-water background, and apply the script logo from the third reference image to the front label.",
+      "image_urls": [
+        "https://example.com/reference-scene.jpg",
+        "https://example.com/reference-product.jpg",
+        "https://example.com/reference-logo.jpg"
+      ],
+      "size": "3:4",
+      "n": 1
+    }
+  }'
+```
