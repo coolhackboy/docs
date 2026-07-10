@@ -15,31 +15,38 @@ Instead of polling the status endpoint, you can provide a callback URL when subm
 
 ## Callback Request
 
-When a task completes, PoYo AI will send a POST request to your callback URL with the same structure as the [3D status endpoint response](/api-manual/task-management/3d-status):
+When a task completes, PoYo AI sends a POST request to your callback URL. The callback body uses the same task data shape as the [3D status endpoint](/api-manual/task-management/3d-status), without the outer `code` and `data` wrapper.
+
+### Request Headers
+
+```http
+Content-Type: application/json
+X-Webhook-Timestamp: 1783680000
+X-Webhook-Signature: base64_hmac_sha256_signature
+```
+
+### Request Body
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "9OTM0HH9LBS63LF0",
-    "status": "finished",
-    "files": [
-      {
-        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
-        "file_type": "3d"
-      },
-      {
-        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
-        "file_type": "image"
-      },
-      {
-        "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
-        "file_type": "3d"
-      }
-    ],
-    "created_time": "2026-05-12T02:36:12",
-    "progress": 100
-  }
+  "task_id": "9OTM0HH9LBS63LF0",
+  "status": "finished",
+  "files": [
+    {
+      "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_1.glb",
+      "file_type": "3d"
+    },
+    {
+      "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_2.png",
+      "file_type": "image"
+    },
+    {
+      "file_url": "https://cdn.doculator.org/3d/9OTM0HH9LBS63LF0/9OTM0HH9LBS63LF0_3.glb",
+      "file_type": "3d"
+    }
+  ],
+  "created_time": "2026-05-12T02:36:12",
+  "error_message": null
 }
 ```
 
@@ -47,17 +54,41 @@ When a task completes, PoYo AI will send a POST request to your callback URL wit
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "task-unified-1757165031-uyujaw3d",
-    "status": "failed",
-    "files": [],
-    "created_time": "2025-11-12T10:30:00",
-    "progress": 0,
-    "error_message": "The prompt violates our content policy"
-  }
+  "task_id": "task-unified-1757165031-uyujaw3d",
+  "status": "failed",
+  "files": [],
+  "created_time": "2025-11-12T10:30:00",
+  "error_message": "The prompt violates our content policy"
 }
 ```
+
+## Signature Verification
+
+PoYo signs every 3D webhook request with HMAC-SHA256. Existing receivers can ignore these headers, but production systems should verify them.
+
+Get your webhook HMAC key:
+
+```bash
+GET /api/api-keys/webhook-secret
+```
+
+Rotate your webhook HMAC key:
+
+```bash
+POST /api/api-keys/webhook-secret/rotate
+```
+
+Signature rule:
+
+```text
+base64(HMAC-SHA256(task_id + "." + timestamp, webhook_hmac_key))
+```
+
+Where:
+
+- `task_id` is the top-level `task_id` in the callback body
+- `timestamp` is the value of `X-Webhook-Timestamp`
+- `webhook_hmac_key` is returned by `GET /api/api-keys/webhook-secret`
 
 ## Requirements
 
@@ -65,7 +96,7 @@ Your callback endpoint must meet the following requirements:
 
 - **HTTPS only**: Must use HTTPS protocol (HTTP not supported)
 - **Maximum URL length**: 2048 characters
-- **Response timeout**: Must respond within 10 seconds
+- **Response timeout**: Must respond within 30 seconds
 - **Success response**: Should return HTTP 200-299 status code
 - **No internal IPs**: Cannot use private/internal IP addresses (e.g., 192.168.x.x, 10.x.x.x)
 - **Public accessibility**: Must be publicly accessible from the internet
@@ -74,15 +105,19 @@ Your callback endpoint must meet the following requirements:
 
 If your callback endpoint fails to respond or returns an error:
 
-- **Retry attempts**: 3 automatic retries
-- **Retry delays**: After 1 second, 2 seconds, and 4 seconds
-- **Final failure**: After 3 failed attempts, no further retries are made
+- **Retry attempts**: Up to 5 automatic retries
+- **Retry delays**: Exponential backoff, starting at about 60 seconds and capped at 10 minutes
+- **Final failure**: After all retry attempts fail, no further retries are made
 
 <Warning>
   If all retry attempts fail, you can still retrieve the results by polling the [3D status endpoint](/api-manual/task-management/3d-status).
 </Warning>
 
 ## Important Notes
+
+<Tip>
+  **Verify requests**: Validate `X-Webhook-Timestamp` and `X-Webhook-Signature` before processing callbacks.
+</Tip>
 
 <Tip>
   **Idempotency**: Design your webhook handler to be idempotent in case of duplicate deliveries.

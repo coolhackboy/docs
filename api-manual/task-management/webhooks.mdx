@@ -15,24 +15,30 @@ Instead of polling the status endpoint, you can provide a callback URL when subm
 
 ## Callback Request
 
-When a task completes, PoYo AI will send a POST request to your callback URL with the same structure as the [status endpoint response](/api-manual/task-management/status):
+When a task completes, PoYo AI sends a POST request to your callback URL. The callback body uses the same task data shape as the [status endpoint](/api-manual/task-management/status), without the outer `code` and `data` wrapper.
+
+### Request Headers
+
+```http
+Content-Type: application/json
+X-Webhook-Timestamp: 1783680000
+X-Webhook-Signature: base64_hmac_sha256_signature
+```
+
+### Request Body
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "task-unified-1757165031-uyujaw3d",
-    "status": "finished",
-    "files": [
-      {
-        "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
-        "file_type": "image"
-      }
-    ],
-    "created_time": "2025-11-12T10:30:00",
-    "progress": 100,
-    "error_message": null
-  }
+  "task_id": "task-unified-1757165031-uyujaw3d",
+  "status": "finished",
+  "files": [
+    {
+      "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+      "file_type": "image"
+    }
+  ],
+  "created_time": "2025-11-12T10:30:00",
+  "error_message": null
 }
 ```
 
@@ -40,15 +46,99 @@ When a task completes, PoYo AI will send a POST request to your callback URL wit
 
 ```json
 {
-  "code": 200,
-  "data": {
-    "task_id": "task-unified-1757165031-uyujaw3d",
-    "status": "failed",
-    "files": [],
-    "created_time": "2025-11-12T10:30:00",
-    "progress": 0,
-    "error_message": "The prompt violates our content policy"
-  }
+  "task_id": "task-unified-1757165031-uyujaw3d",
+  "status": "failed",
+  "files": [],
+  "created_time": "2025-11-12T10:30:00",
+  "error_message": "The prompt violates our content policy"
+}
+```
+
+## Signature Verification
+
+PoYo signs every webhook request with HMAC-SHA256. Existing receivers can ignore these headers, but production systems should verify them.
+
+Get your webhook HMAC key:
+
+```bash
+GET /api/api-keys/webhook-secret
+```
+
+Rotate your webhook HMAC key:
+
+```bash
+POST /api/api-keys/webhook-secret/rotate
+```
+
+Signature rule:
+
+```text
+base64(HMAC-SHA256(task_id + "." + timestamp, webhook_hmac_key))
+```
+
+Where:
+
+- `task_id` is the top-level `task_id` in the callback body
+- `timestamp` is the value of `X-Webhook-Timestamp`
+- `webhook_hmac_key` is returned by `GET /api/api-keys/webhook-secret`
+
+### Python Verification
+
+```python
+import base64
+import hashlib
+import hmac
+import time
+
+
+def verify_poyo_webhook(payload, headers, webhook_hmac_key):
+    task_id = payload.get("task_id")
+    timestamp = headers.get("X-Webhook-Timestamp")
+    received_signature = headers.get("X-Webhook-Signature")
+
+    if not task_id or not timestamp or not received_signature:
+        return False
+
+    if abs(int(time.time()) - int(timestamp)) > 300:
+        return False
+
+    expected_signature = base64.b64encode(
+        hmac.new(
+            webhook_hmac_key.encode("utf-8"),
+            f"{task_id}.{timestamp}".encode("utf-8"),
+            hashlib.sha256,
+        ).digest()
+    ).decode("utf-8")
+
+    return hmac.compare_digest(expected_signature, received_signature)
+```
+
+### Node.js Verification
+
+```javascript
+const crypto = require("crypto");
+
+function verifyPoyoWebhook(payload, headers, webhookHmacKey) {
+  const taskId = payload.task_id;
+  const timestamp = headers["x-webhook-timestamp"];
+  const receivedSignature = headers["x-webhook-signature"];
+
+  if (!taskId || !timestamp || !receivedSignature) return false;
+
+  const now = Math.floor(Date.now() / 1000);
+  if (Math.abs(now - Number(timestamp)) > 300) return false;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", webhookHmacKey)
+    .update(`${taskId}.${timestamp}`)
+    .digest("base64");
+
+  if (expectedSignature.length !== receivedSignature.length) return false;
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature),
+    Buffer.from(receivedSignature)
+  );
 }
 ```
 
@@ -58,7 +148,7 @@ Your callback endpoint must meet the following requirements:
 
 - **HTTPS only**: Must use HTTPS protocol (HTTP not supported)
 - **Maximum URL length**: 2048 characters
-- **Response timeout**: Must respond within 10 seconds
+- **Response timeout**: Must respond within 30 seconds
 - **Success response**: Should return HTTP 200-299 status code
 - **No internal IPs**: Cannot use private/internal IP addresses (e.g., 192.168.x.x, 10.x.x.x)
 - **Public accessibility**: Must be publicly accessible from the internet
@@ -67,9 +157,9 @@ Your callback endpoint must meet the following requirements:
 
 If your callback endpoint fails to respond or returns an error:
 
-- **Retry attempts**: 3 automatic retries
-- **Retry delays**: After 1 second, 2 seconds, and 4 seconds
-- **Final failure**: After 3 failed attempts, no further retries are made
+- **Retry attempts**: Up to 5 automatic retries
+- **Retry delays**: Exponential backoff, starting at about 60 seconds and capped at 10 minutes
+- **Final failure**: After all retry attempts fail, no further retries are made
 
 <Warning>
   If all retry attempts fail, you can still retrieve the results by polling the [status endpoint](/api-manual/task-management/status).
@@ -88,14 +178,12 @@ app = Flask(__name__)
 def handle_generation_complete():
     # Parse the callback payload
     data = request.json
-    task_data = data.get('data', {})
-
-    task_id = task_data.get('task_id')
-    status = task_data.get('status')
+    task_id = data.get('task_id')
+    status = data.get('status')
 
     if status == 'finished':
         # Task completed successfully
-        files = task_data.get('files', [])
+        files = data.get('files', [])
         for file in files:
             print(f"Generated file: {file['file_url']}")
             # Download and process the file
@@ -103,7 +191,7 @@ def handle_generation_complete():
 
     elif status == 'failed':
         # Task failed
-        error = task_data.get('error_message')
+        error = data.get('error_message')
         print(f"Task {task_id} failed: {error}")
         # Handle the failure
 
@@ -123,8 +211,7 @@ const app = express();
 app.use(express.json());
 
 app.post('/webhook/generation-complete', (req, res) => {
-  const { data } = req.body;
-  const { task_id, status, files, error_message } = data;
+  const { task_id, status, files, error_message } = req.body;
 
   if (status === 'finished') {
     // Task completed successfully
@@ -167,11 +254,6 @@ import (
     "net/http"
 )
 
-type CallbackPayload struct {
-    Code int      `json:"code"`
-    Data TaskData `json:"data"`
-}
-
 type TaskData struct {
     TaskID       string      `json:"task_id"`
     Status       string      `json:"status"`
@@ -187,14 +269,12 @@ type MediaFile struct {
 }
 
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
-    var payload CallbackPayload
+    var taskData TaskData
 
-    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+    if err := json.NewDecoder(r.Body).Decode(&taskData); err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
-
-    taskData := payload.Data
 
     if taskData.Status == "finished" {
         // Task completed successfully
@@ -228,7 +308,7 @@ func main() {
 ## Security Best Practices
 
 <Tip>
-  **Verify requests**: Consider adding a signature verification mechanism to ensure requests are from PoYo AI
+  **Verify requests**: Validate `X-Webhook-Timestamp` and `X-Webhook-Signature` before processing callbacks.
 </Tip>
 
 <Tip>

@@ -20,8 +20,10 @@ When a task completes, PoYo AI will send a POST request to your callback URL:
 
 ### Request Headers
 
-```
+```http
 Content-Type: application/json
+X-Webhook-Timestamp: 1783680000
+X-Webhook-Signature: base64_hmac_sha256_signature
 ```
 
 ### Request Body Structure
@@ -39,6 +41,65 @@ Content-Type: application/json
 <Note>
 The webhook body uses the same task-level shape as the music detail response body, without the outer `code` and `data` wrapper. The `files` array content varies depending on which model created the task. See [Response Fields](#response-fields-files-data) below for details.
 </Note>
+
+## Signature Verification
+
+PoYo signs every music webhook request with HMAC-SHA256. Existing receivers can ignore these headers, but production systems should verify them.
+
+Get your webhook HMAC key:
+
+```bash
+GET /api/api-keys/webhook-secret
+```
+
+Rotate your webhook HMAC key:
+
+```bash
+POST /api/api-keys/webhook-secret/rotate
+```
+
+Signature rule:
+
+```text
+base64(HMAC-SHA256(task_id + "." + timestamp, webhook_hmac_key))
+```
+
+Where:
+
+- `task_id` is the top-level `task_id` in the callback body
+- `timestamp` is the value of `X-Webhook-Timestamp`
+- `webhook_hmac_key` is returned by `GET /api/api-keys/webhook-secret`
+
+### Python Verification
+
+```python
+import base64
+import hashlib
+import hmac
+import time
+
+
+def verify_poyo_webhook(payload, headers, webhook_hmac_key):
+    task_id = payload.get("task_id")
+    timestamp = headers.get("X-Webhook-Timestamp")
+    received_signature = headers.get("X-Webhook-Signature")
+
+    if not task_id or not timestamp or not received_signature:
+        return False
+
+    if abs(int(time.time()) - int(timestamp)) > 300:
+        return False
+
+    expected_signature = base64.b64encode(
+        hmac.new(
+            webhook_hmac_key.encode("utf-8"),
+            f"{task_id}.{timestamp}".encode("utf-8"),
+            hashlib.sha256,
+        ).digest()
+    ).decode("utf-8")
+
+    return hmac.compare_digest(expected_signature, received_signature)
+```
 
 ## Response Fields (files data)
 
@@ -342,7 +403,7 @@ Your callback endpoint must meet the following requirements:
 
 - **HTTPS only**: Must use HTTPS protocol (HTTP not supported)
 - **Maximum URL length**: 2048 characters
-- **Response timeout**: Must respond within 10 seconds
+- **Response timeout**: Must respond within 30 seconds
 - **Success response**: Should return HTTP 200-299 status code
 - **No internal IPs**: Cannot use private/internal IP addresses (for example, `192.168.x.x` and `10.x.x.x`)
 - **Public accessibility**: Must be publicly accessible from the internet
@@ -351,9 +412,9 @@ Your callback endpoint must meet the following requirements:
 
 If your callback endpoint fails to respond or returns an error:
 
-- **Retry attempts**: 3 automatic retries
-- **Retry delays**: After 1 second, 2 seconds, and 4 seconds
-- **Final failure**: After 3 failed attempts, no further retries are made
+- **Retry attempts**: Up to 5 automatic retries
+- **Retry delays**: Exponential backoff, starting at about 60 seconds and capped at 10 minutes
+- **Final failure**: After all retry attempts fail, no further retries are made
 
 <Warning>
 If all retry attempts fail, you can still retrieve the results by polling the [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
@@ -362,7 +423,7 @@ If all retry attempts fail, you can still retrieve the results by polling the [Q
 ## Security Best Practices
 
 <Tip>
-**Verify requests**: Consider adding a signature verification mechanism to ensure requests are from PoYo AI
+**Verify requests**: Validate `X-Webhook-Timestamp` and `X-Webhook-Signature` before processing callbacks.
 </Tip>
 
 <Tip>
