@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Seedream-5.0-Pro Generation Task",
-        "description": "Flagship text-to-image and image editing with 1K/2K size presets, ratio presets, and up to 6 output images",
+        "description": "Flagship text-to-image and image editing with ratio size presets and 1K/2K resolution control",
         "operationId": "submitSeedream50ProTask",
         "tags": ["Seedream-5.0-Pro"],
         "requestBody": {
@@ -39,7 +39,7 @@
                     "input": {
                       "prompt": "Editorial studio portrait of a fashion model wearing vibrant West African wax-print clothing, matching headwrap, layered bead jewelry and bracelets, confident pose, warm textured backdrop, saturated colors, dramatic fashion lighting.",
                       "size": "3:4",
-                      "n": 1,
+                      "resolution": "2K",
                       "output_format": "jpeg"
                     }
                   }
@@ -50,8 +50,8 @@
                     "model": "seedream-5.0-pro",
                     "input": {
                       "prompt": "A clean science magazine cover about renewable city infrastructure, dense but readable layout, accurate icons, modern editorial design",
-                      "size": "2K",
-                      "n": 2,
+                      "size": "16:9",
+                      "resolution": "1K",
                       "output_format": "png"
                     }
                   }
@@ -69,7 +69,7 @@
                         "https://example.com/reference-logo.jpg"
                       ],
                       "size": "3:4",
-                      "n": 1
+                      "resolution": "2K"
                     }
                   }
                 }
@@ -177,18 +177,17 @@
               },
               "size": {
                 "type": "string",
-                "description": "Output size. Supported resolution presets: `1K`, `2K`. Supported ratio presets: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`.",
-                "enum": ["1K", "2K", "1:1", "4:3", "3:4", "16:9", "9:16"],
-                "default": "2K",
+                "description": "Output aspect ratio preset.",
+                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"],
+                "default": "1:1",
                 "example": "16:9"
               },
-              "n": {
-                "type": "integer",
-                "description": "Number of images to generate.",
-                "minimum": 1,
-                "maximum": 6,
-                "default": 1,
-                "example": 1
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution preset.",
+                "enum": ["1K", "2K"],
+                "default": "2K",
+                "example": "2K"
               },
               "output_format": {
                 "type": "string",

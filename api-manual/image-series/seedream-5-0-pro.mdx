@@ -21,14 +21,19 @@ Seedream-5.0-Pro is ByteDance's flagship image model for text-to-image generatio
 
 ## Size Parameter
 
-`input.size` supports these forms:
+`input.size` controls the output aspect ratio:
+
+- Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `2:3`, `3:2`, `21:9`
+
+## Resolution Parameter
+
+`input.resolution` controls the output resolution:
 
 - Resolution preset: `1K`, `2K`
-- Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`
 
 ## Pricing
 
-Pricing is based on the number of generated images.
+Each request generates one image by default and uses the current Seedream-5.0-Pro price.
 
 ## How to Call
 
@@ -47,7 +52,7 @@ curl --request POST \
     "input": {
       "prompt": "Editorial studio portrait of a fashion model wearing vibrant West African wax-print clothing, matching headwrap, layered bead jewelry and bracelets, confident pose, warm textured backdrop, saturated colors, dramatic fashion lighting.",
       "size": "3:4",
-      "n": 1,
+      "resolution": "2K",
       "output_format": "jpeg"
     }
   }'
@@ -64,8 +69,8 @@ curl --request POST \
     "model": "seedream-5.0-pro",
     "input": {
       "prompt": "A clean science magazine cover about renewable city infrastructure, dense but readable layout, accurate icons, modern editorial design",
-      "size": "2K",
-      "n": 2,
+      "size": "16:9",
+      "resolution": "1K",
       "output_format": "png"
     }
   }'
@@ -89,7 +94,7 @@ curl --request POST \
         "https://example.com/reference-logo.jpg"
       ],
       "size": "3:4",
-      "n": 1
+      "resolution": "2K"
     }
   }'
 ```
