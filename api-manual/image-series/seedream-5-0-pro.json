@@ -177,17 +177,17 @@
               },
               "size": {
                 "type": "string",
-                "description": "Output aspect ratio preset.",
+                "description": "Output aspect ratio preset. Defaults to 1:1 for seedream-5.0-pro. For seedream-5.0-pro-edit, omitted size is inferred from the first reference image.",
                 "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"],
                 "default": "1:1",
                 "example": "16:9"
               },
               "resolution": {
                 "type": "string",
-                "description": "Output resolution preset.",
+                "description": "Output resolution preset. Defaults to 1K for seedream-5.0-pro. For seedream-5.0-pro-edit, omitted resolution is inferred from the first reference image.",
                 "enum": ["1K", "2K"],
-                "default": "2K",
-                "example": "2K"
+                "default": "1K",
+                "example": "1K"
               },
               "output_format": {
                 "type": "string",
