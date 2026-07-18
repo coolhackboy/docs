@@ -156,7 +156,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": ["prompt", "size", "resolution"],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
@@ -177,14 +177,14 @@
               },
               "size": {
                 "type": "string",
-                "description": "Output aspect ratio preset.",
+                "description": "Required output aspect ratio preset. If omitted, the system uses 1:1 by default.",
                 "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"],
                 "default": "1:1",
                 "example": "16:9"
               },
               "resolution": {
                 "type": "string",
-                "description": "Output resolution preset.",
+                "description": "Required output resolution preset. If omitted, the system uses 1K by default.",
                 "enum": ["1K", "2K"],
                 "default": "1K",
                 "example": "1K"
