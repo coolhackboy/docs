@@ -32,7 +32,7 @@ Generate VEO 3.1 videos through PoYo's official model family. The generation mod
 
 ## Parameters
 
-- **prompt**: required text prompt, up to 1000 characters
+- **prompt**: required text prompt
 - **image_urls**: optional image URL array for generation models
 - **generation_type**: optional `frame` or `reference`; if omitted, PoYo infers the mode from `image_urls`; two images on `veo3.1-lite-official` still require `duration: 8`
 - **duration**: generation models support `4`, `6`, or `8`; `generation_type: "reference"` with three `image_urls` supports `8` only; `veo3.1-lite-official` with two `image_urls` supports `8` only; `veo3.1-lite-official` with `resolution: "1080p"` supports `8` only
