@@ -1,0 +1,85 @@
+---
+title: "PoYo CLI"
+description: "Discover models, stream chat, run generation, and manage tasks"
+icon: "terminal"
+---
+
+# PoYo CLI
+
+Run the CLI without a global installation:
+
+```bash
+npx -y @poyo/cli help
+```
+
+The examples below use the shorter `poyo` command. Install it globally first, or replace `poyo` with `npx -y @poyo/cli`:
+
+```bash
+npm install --global @poyo/cli
+```
+
+## Authentication
+
+```bash
+npx -y @poyo/cli auth login
+npx -y @poyo/cli auth status
+```
+
+Credential priority is:
+
+1. `--api-key`
+2. `POYO_API_KEY`
+3. System keyring
+4. Local config fallback
+
+Prefer the environment or keyring so the key does not enter shell history.
+
+## Discover models
+
+```bash
+poyo models
+poyo models image
+poyo describe MODEL_ID
+```
+
+## Chat
+
+```bash
+poyo chat MODEL_ID \
+  --protocol openai-chat \
+  --input '{"messages":[{"role":"user","content":"Hello"}]}'
+```
+
+Stream chat tokens:
+
+```bash
+poyo chat MODEL_ID \
+  --protocol anthropic \
+  --stream \
+  --input-file request.json
+```
+
+Supported protocol values are `openai-chat`, `openai-responses`, `anthropic`, and `gemini`. Text is printed incrementally by default; use `--format jsonl` to preserve raw SSE event JSON.
+
+## Generation
+
+```bash
+poyo run MODEL_ID --input '{"prompt":"A mountain lake"}'
+poyo submit MODEL_ID --input-file request.json
+poyo task get TASK_ID
+poyo task wait TASK_ID --timeout 300
+```
+
+`run` submits and waits. `submit` returns immediately unless `--wait` is provided.
+
+## stdio MCP
+
+```bash
+poyo mcp
+poyo mcp --categories image,video
+poyo mcp --models MODEL_A,MODEL_B
+```
+
+## Output
+
+Use `--format table|json|jsonl|csv` and optionally `--output FILE`.

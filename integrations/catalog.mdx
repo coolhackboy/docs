@@ -1,0 +1,76 @@
+---
+title: "Capability Catalog"
+description: "Discover current PoYo models, JSON Schemas, protocols, and pricing"
+icon: "list"
+openapi: "/integrations/capability-catalog.json GET /v1/catalog/models"
+---
+
+# Capability Catalog
+
+The public Catalog contains only developer-facing model contracts. Supplier credentials, internal routing, model codes, and failover configuration are never returned.
+
+Use it when model availability changes faster than an application release:
+
+1. Search by workload, modality, or keyword.
+2. Read the selected model's current schema and examples.
+3. Show pricing before paid execution.
+4. Cache the response and revalidate with its ETag.
+
+## Endpoints
+
+| Endpoint | Description |
+|---|---|
+| `GET /v1/catalog/models` | Search and paginate enabled models |
+| `GET /v1/catalog/models/{model_id}` | Read one complete model capability |
+| `GET /v1/catalog/categories` | List categories and model counts |
+| `GET /v1/catalog/openapi.json` | Generate OpenAPI 3.1 from the current Catalog |
+
+## Search models
+
+```bash
+curl "https://api.poyo.ai/v1/catalog/models?service_type=generate&category=image&q=flux&limit=25"
+```
+
+Supported query parameters:
+
+| Parameter | Description |
+|---|---|
+| `service_type` | `chat` or `generate` |
+| `category` | Model category such as `image`, `video`, or `audio` |
+| `tags` | Repeatable required tags |
+| `q` | Free-text match against model ID, title, description, and tags |
+| `cursor` | Opaque cursor returned by the previous page |
+| `limit` | Page size from 1 to 100 |
+
+<Tip>
+  Treat `model_id` as an opaque public identifier. Store it exactly as returned and do not derive supplier or routing information from its shape.
+</Tip>
+
+## Capability fields
+
+Each model includes:
+
+- `model_id`, `service_type`, `category`, title, description, and tags
+- `input_schema` and `output_schema`
+- examples and supported chat protocols
+- streaming, callback, and execution-mode flags
+- public credit pricing
+- a stable MCP-compatible `tool_name`
+
+## Caching
+
+Catalog responses include:
+
+- `ETag`
+- `X-PoYo-Schema-Version`
+- `Cache-Control: public, max-age=60, stale-while-revalidate=300`
+
+Send `If-None-Match` to receive `304 Not Modified` when the projection has not changed.
+
+<Warning>
+  Only execute parameters allowed by the current `input_schema`. Model contracts can evolve independently of CLI and MCP package releases.
+</Warning>
+
+## Use from an agent
+
+Agents should call `poyo_search_models`, then `poyo_get_model_schema` and `poyo_get_pricing`. Loading every model as a tool is unnecessary; use a filtered typed MCP endpoint only when the task benefits from model-specific parameters.

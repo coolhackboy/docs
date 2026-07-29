@@ -1,0 +1,125 @@
+---
+title: "Connect with MCP"
+description: "Connect AI agents to the hosted PoYo Streamable HTTP MCP server"
+icon: "plug"
+---
+
+# PoYo MCP
+
+PoYo MCP lets an AI assistant search the live model catalog, inspect schemas and prices, run chat or generation, and resume long-running tasks without relying on stale model knowledge.
+
+The hosted MCP endpoint is:
+
+```text
+https://api.poyo.ai/mcp
+```
+
+It uses stateless Streamable HTTP and Bearer authentication. The API key is evaluated on every request and is not stored by the MCP server.
+
+## Choose a setup
+
+| Client | Recommended connection |
+|---|---|
+| Codex | Hosted Streamable HTTP |
+| Claude Code | Hosted Streamable HTTP or stdio bridge |
+| Claude Desktop | Local stdio bridge |
+| Cursor | Hosted HTTP when authenticated headers are supported; otherwise stdio |
+| VS Code | Local stdio bridge with a secure input |
+
+See the tested guides for [Claude](/integrations/claude-desktop), [Cursor](/integrations/cursor), [Codex](/integrations/codex), and [VS Code](/integrations/vscode).
+
+## Claude Code
+
+```bash
+claude mcp add --transport http poyo \
+  https://api.poyo.ai/mcp \
+  --header "Authorization: Bearer $POYO_API_KEY"
+```
+
+## Cursor
+
+```json
+{
+  "mcpServers": {
+    "poyo": {
+      "url": "https://api.poyo.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:POYO_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+## Local stdio bridge
+
+For hosts that do not support remote Streamable HTTP:
+
+```json
+{
+  "mcpServers": {
+    "poyo": {
+      "command": "npx",
+      "args": ["-y", "@poyo/mcp"],
+      "env": {
+        "POYO_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+## Verify the connection
+
+Ask your assistant:
+
+```text
+Use PoYo to check my account, find an image model for a cinematic product
+photo, show its schema and price, and explain which execution tool you
+would use. Do not run a paid request yet.
+```
+
+A working connection discovers PoYo tools and calls `poyo_account`, `poyo_search_models`, `poyo_get_model_schema`, and `poyo_get_pricing`.
+
+## What you can ask
+
+| Goal | Example request |
+|---|---|
+| Find a model | “Compare image-to-video models that accept a start image.” |
+| Validate input | “Check this request against the selected model schema.” |
+| Estimate cost | “Show the pricing before generating.” |
+| Run short work | “Generate this image and return the output URL.” |
+| Run long work | “Submit this video, wait for completion, and report the task ID and cost.” |
+| Stream chat | Use the native chat API or `poyo chat --stream`, not MCP |
+
+## Load typed model tools
+
+The default endpoint exposes a compact tool set. To load model-specific JSON Schemas, filter the URL:
+
+```text
+https://api.poyo.ai/mcp?categories=image,video
+https://api.poyo.ai/mcp?models=MODEL_A,MODEL_B
+```
+
+- Choose categories or models, never both.
+- Select at most 3 categories or 20 explicit models.
+- The expanded tool set may contain at most 30 model tools.
+
+The compact default is intentional: it keeps tool descriptions small and lets the assistant discover only the schemas needed for the current task. See [Choose MCP tools](/integrations/mcp-filtering).
+
+## Streaming behavior
+
+`poyo_chat` returns one complete MCP Tool Result. MCP transport SSE carries protocol messages and progress; it is not PoYo's token stream.
+
+Use the existing chat REST endpoints or `poyo chat --stream` for token-by-token output.
+
+## How it works
+
+1. The MCP client sends the API key and tool request to PoYo.
+2. PoYo applies the same account, model-access, balance, idempotency, routing, failover, and billing rules as the public API.
+3. The tool returns a complete result or a durable task ID.
+4. Long tasks are retrieved with `poyo_check_job`; they are not resubmitted.
+
+<Warning>
+  MCP is an agent-facing interface, not a browser-safe proxy. Keep the API key out of prompts, URLs, client-side applications, and committed configuration.
+</Warning>

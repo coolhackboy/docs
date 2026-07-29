@@ -1,0 +1,51 @@
+---
+title: "Authentication"
+description: "Authenticate PoYo MCP and CLI requests with a PoYo API key."
+icon: "key"
+---
+
+# Authentication
+
+All paid MCP and CLI execution requests require a PoYo API key.
+
+```http
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+
+The public Capability Catalog does not require authentication.
+
+## CLI
+
+Store the key in the system keyring:
+
+```bash
+poyo auth login
+```
+
+For an ephemeral environment:
+
+```bash
+export POYO_API_KEY="YOUR_API_KEY"
+```
+
+Credential priority is `--api-key`, `POYO_API_KEY`, system keyring, then local config fallback.
+
+## Security
+
+- Never include a key in an MCP URL or prompt.
+- Never commit a key to MCP configuration.
+- Prefer environment interpolation when configuring a client.
+- Apply API-key model and credit limits in the PoYo dashboard.
+
+## Unauthorized response
+
+```json
+{
+  "code": 401,
+  "error": {
+    "message": "Invalid API key",
+    "type": "authentication_error"
+  }
+}
+```

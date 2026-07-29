@@ -1,0 +1,112 @@
+---
+title: "PoYo Integrations"
+description: "Use PoYo models through the Capability Catalog, MCP, CLI, and Agent Skill"
+icon: "terminal"
+---
+
+# PoYo Integrations
+
+Build with PoYo through REST, CLI, MCP, or an Agent Skill. All four use the same live Capability Catalog, model schemas, pricing, authentication, and task lifecycle.
+
+## What do you want to do?
+
+<CardGroup cols={2}>
+  <Card title="Add models to an application" icon="code" href="/api-manual/overview">
+    Call chat and generation APIs directly from any language.
+  </Card>
+  <Card title="Build with an AI assistant" icon="robot" href="/integrations/mcp">
+    Give Claude, Cursor, Codex, or VS Code live model discovery and execution tools.
+  </Card>
+</CardGroup>
+
+Choose the interface by workload instead of treating MCP, CLI, and REST as interchangeable transports.
+
+<CardGroup cols={2}>
+  <Card title="Capability Catalog" icon="list" href="/integrations/catalog">
+    Discover enabled models, schemas, protocols, examples, and public credit pricing.
+  </Card>
+  <Card title="MCP" icon="plug" href="/integrations/mcp">
+    Let Claude, Cursor, Codex, and other MCP hosts discover and execute PoYo models.
+  </Card>
+  <Card title="CLI" icon="terminal" href="/integrations/cli">
+    Run chat, generation, task polling, and the local stdio MCP bridge.
+  </Card>
+  <Card title="Agent Skill" icon="wand-magic-sparkles" href="/integrations/skill">
+    Give coding agents a repeatable discovery, pricing, execution, and polling workflow.
+  </Card>
+</CardGroup>
+
+## Choose an interface
+
+| Requirement | Recommended interface |
+|---|---|
+| Integrate a product directly | REST API |
+| Stream chat tokens | REST API or `poyo chat --stream` |
+| Let an AI agent choose and run a model | Hosted MCP |
+| MCP host only supports stdio | `npx @poyo/mcp` |
+| Automate from a shell or CI job | `npx @poyo/cli` |
+| Give an agent PoYo operating guidance | `poyo-ai-models` Skill |
+
+<Card title="Compare execution methods" icon="route" href="/integrations/execution-methods">
+  See when to use token streaming, a complete MCP Tool Result, a short wait, or a durable asynchronous task.
+</Card>
+
+## Start in three commands
+
+```bash
+npx -y @poyo/cli auth login
+npx -y @poyo/cli models image
+npx -y @poyo/cli describe MODEL_ID
+```
+
+After reviewing the schema and price, run the model:
+
+```bash
+npx -y @poyo/cli run MODEL_ID --input '{"prompt":"A cinematic sunrise over Shanghai"}'
+```
+
+<Info>
+  A generation may finish immediately or return a task ID. Keep the ID and retrieve the existing task instead of submitting the same paid work again.
+</Info>
+
+## The workflow is always the same
+
+<Steps>
+  <Step title="Search">
+    Find a model by service type, category, tags, or free-text query.
+  </Step>
+  <Step title="Describe">
+    Read the current input schema, output schema, protocols, and pricing.
+  </Step>
+  <Step title="Execute">
+    Use non-streaming MCP chat, CLI streaming chat, or asynchronous generation.
+  </Step>
+  <Step title="Retrieve">
+    Poll generation tasks until they reach `succeeded` or `failed`.
+  </Step>
+</Steps>
+
+## Shared source of truth
+
+The production Capability Catalog drives MCP tool definitions, CLI parameter discovery, generated Skill references, and machine-readable API documentation. Do not hard-code a model schema from an old response.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Choose an execution method" icon="route" href="/integrations/execution-methods">
+    Compare streaming chat, complete MCP results, short waits, and durable tasks.
+  </Card>
+  <Card title="Set up a client" icon="plug" href="/integrations/claude-desktop">
+    Follow a tested setup for Claude, Cursor, Codex, or VS Code.
+  </Card>
+</CardGroup>
+
+## Authentication
+
+Use the same PoYo API key for REST, MCP, and CLI:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+Never place an API key in an MCP URL, prompt, committed file, or retained shell command.

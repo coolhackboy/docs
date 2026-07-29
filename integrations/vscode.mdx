@@ -1,0 +1,57 @@
+---
+title: "VS Code"
+description: "Connect VS Code through the PoYo stdio bridge."
+icon: "window-maximize"
+---
+
+# VS Code
+
+VS Code stores MCP server definitions in `mcp.json`. Use a user-level configuration or `.vscode/mcp.json` in a trusted workspace.
+
+## Configure
+
+Run **MCP: Open User Configuration** and add:
+
+```json
+{
+  "servers": {
+    "poyo": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@poyo/mcp"],
+      "env": {
+        "POYO_API_KEY": "${input:poyo-api-key}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "poyo-api-key",
+      "description": "PoYo API key",
+      "password": true
+    }
+  ]
+}
+```
+
+VS Code prompts for the key when the server starts.
+
+## Typed tools
+
+To expose selected model tools, change the bridge arguments:
+
+```json
+"args": ["-y", "@poyo/mcp", "--models", "MODEL_A,MODEL_B"]
+```
+
+See [Choose MCP tools](/integrations/mcp-filtering) for limits.
+
+## Verify
+
+Start or restart `poyo` from **MCP: List Servers**, then ask:
+
+```text
+Use PoYo to check my account and list image-generation models.
+```
+

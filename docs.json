@@ -28,6 +28,7 @@
     },
     "openapi": [
       "/openapi.json",
+        "/integrations/capability-catalog.json",
       "/api-manual/image-series/gpt-4o-image.json",
       "/api-manual/image-series/gpt-image-1.5.json",
       "/api-manual/image-series/gpt-image-2.json",
@@ -433,6 +434,40 @@
             ]
           }
         ]
+      },
+      {
+          "tab": "Integrations",
+          "groups": [
+            {
+              "group": "Get started",
+              "pages": [
+                "integrations/overview",
+                "integrations/authentication",
+                "integrations/mcp",
+                "integrations/cli",
+                "integrations/skill"
+              ]
+            },
+            {
+              "group": "Guides",
+              "pages": [
+                "integrations/catalog",
+                "integrations/execution-methods",
+                "integrations/mcp-filtering",
+                "integrations/tasks-results",
+                "integrations/troubleshooting"
+              ]
+            },
+            {
+              "group": "Clients",
+              "pages": [
+                "integrations/claude-desktop",
+                "integrations/cursor",
+                "integrations/codex",
+                "integrations/vscode"
+              ]
+            }
+          ]
       },
       {
         "tab": "Common API",

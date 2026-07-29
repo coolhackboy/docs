@@ -1,0 +1,63 @@
+---
+title: "Task Lifecycle"
+description: "Submit generation work and retrieve its normalized status."
+icon: "clock"
+openapi: "/integrations/capability-catalog.json GET /api/generate/status/{task_id}"
+---
+
+# Task Lifecycle
+
+Long-running model execution follows:
+
+```text
+submit -> task_id -> queued/running -> succeeded/failed
+```
+
+A successful submit response means the request was accepted. It does not mean generation has finished.
+
+Use MCP `poyo_submit_job` and `poyo_check_job`, or the CLI:
+
+```bash
+poyo submit MODEL_ID --input-file request.json
+poyo task wait TASK_ID --timeout 300
+```
+
+## Normalized statuses
+
+| Status | Meaning |
+|---|---|
+| `queued` | Accepted but waiting for execution |
+| `running` | A worker or provider is processing |
+| `succeeded` | Output is ready |
+| `failed` | Terminal failure; inspect `error_message` |
+
+The REST generation API continues to expose its existing raw status values. MCP and the CLI normalize them without changing the stored task.
+
+## Resume safely
+
+Keep the `task_id` in durable application state or working notes. If a process or agent session is interrupted, query the existing task rather than submitting and paying for a replacement.
+
+## Polling
+
+Use bounded exponential backoff with jitter. Stop only on `succeeded`, `failed`, or your own timeout; a local timeout does not cancel the remote task.
+
+```text
+2s -> 4s -> 8s -> 15s -> 30s
+```
+
+For production applications, prefer a signed webhook when the native generation API supports it. A webhook reduces status traffic, but the receiver should still fetch or validate the task before trusting output.
+
+## Result handling
+
+On success:
+
+1. Record the model ID, task ID, final status, and charged credits.
+2. Validate the expected output fields.
+3. Download generated files to storage you control before temporary URLs expire.
+4. Treat repeated webhook deliveries and status reads as normal.
+
+On failure, keep the task ID and normalized error. Retry only when the error is transient, and reuse the same idempotency key only with the identical request payload.
+
+<Info>
+  `poyo_run_model` waits for at most 30 seconds. If the work is still running, it returns the task ID and a suggested polling interval instead of failing the generation.
+</Info>

@@ -1,0 +1,60 @@
+---
+title: "Choose MCP Tools"
+description: "Compact and model-specific tools exposed by PoYo MCP"
+icon: "toolbox"
+---
+
+# MCP Tools
+
+## Default compact tools
+
+| Tool | Purpose |
+|---|---|
+| `poyo_search_models` | Search models by query, service type, category, or tags |
+| `poyo_get_model_schema` | Read schemas, examples, protocols, and capability flags |
+| `poyo_get_pricing` | Inspect public credit pricing |
+| `poyo_chat` | Run non-streaming chat and return the complete response |
+| `poyo_run_model` | Submit generation and wait up to 30 seconds |
+| `poyo_submit_job` | Submit a long-running generation task |
+| `poyo_check_job` | Read normalized task status and outputs |
+| `poyo_account` | Read authenticated account and credit information |
+
+## Recommended workflow
+
+<Steps>
+  <Step title="Search models">
+    Call `poyo_search_models` unless the exact model is already known.
+  </Step>
+  <Step title="Inspect schema and pricing">
+    Call `poyo_get_model_schema` and `poyo_get_pricing` before a paid execution.
+  </Step>
+  <Step title="Choose execution mode">
+    Use `poyo_chat` for chat, `poyo_run_model` for short generation, or `poyo_submit_job` for video, 3D, music, and other long work.
+  </Step>
+  <Step title="Poll long tasks">
+    Call `poyo_check_job` until status is `succeeded` or `failed`.
+  </Step>
+</Steps>
+
+## Idempotency
+
+Pass one reusable idempotency key when a paid request might be retried. Reusing the key with an identical payload returns the original response. Reusing it with a different payload fails with an idempotency conflict.
+
+## Typed tools
+
+Filtered MCP URLs replace discovery/execution tools with model-specific tools such as:
+
+```text
+poyo_fal_flux_dev
+```
+
+The input schema comes directly from the Capability Catalog. Typed mode always retains `poyo_check_job` and `poyo_account`.
+
+## Status normalization
+
+| MCP status | Meaning |
+|---|---|
+| `queued` | Accepted but not running |
+| `running` | Provider or worker is processing |
+| `succeeded` | Output is ready |
+| `failed` | Terminal failure; inspect `error_message` |

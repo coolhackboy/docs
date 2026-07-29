@@ -1,0 +1,56 @@
+---
+title: "Troubleshooting Integrations"
+description: "Common PoYo MCP, CLI, and integration failures."
+icon: "triangle-exclamation"
+---
+
+# Errors
+
+| HTTP code | Meaning |
+|---|---|
+| `400` | Invalid input, filter, cursor, or idempotency conflict |
+| `401` | Missing or invalid API key |
+| `402` | Insufficient credits |
+| `403` | Model or task is not available to the API key |
+| `404` | Model capability or task not found |
+| `429` | Rate or credit limit exceeded |
+| `503` | Catalog metadata is incomplete or unavailable |
+
+## MCP errors
+
+Tool input and business failures are returned as MCP tool errors so the calling model can inspect and correct them.
+
+Common identifiers include:
+
+- `model_capability_not_found`
+- `mcp_models_and_categories_are_mutually_exclusive`
+- `mcp_model_filter_limit`
+- `mcp_category_filter_limit`
+- `mcp_typed_tool_limit`
+- `idempotency_key_payload_conflict`
+- `idempotency_request_in_progress`
+
+## Retry decisions
+
+| Condition | Retry? | Action |
+|---|---|---|
+| Invalid schema or unknown model | No | Refresh the Catalog and correct the request |
+| Invalid API key or forbidden model | No | Fix credentials or model access |
+| Insufficient credits | No | Add credits or choose a lower-cost model |
+| Rate limited | Yes | Honor `Retry-After` and back off |
+| Transient provider or service failure | Usually | Retry with backoff and the same idempotency key |
+| Local wait timeout with a task ID | Do not resubmit | Continue checking the existing task |
+
+Do not blindly retry a paid failure. Inspect the normalized error and reuse the same idempotency key only when retrying the identical request.
+
+## Tools are missing
+
+Restart the MCP server or begin a new client session after changing its URL or filters. Confirm that `models` and `categories` are not used together and that the typed-tool limits are not exceeded.
+
+## Chat is not streaming
+
+This is expected for `poyo_chat`: it returns one complete Tool Result. Use a native chat REST endpoint or `poyo chat --stream` for token SSE.
+
+## A task appears stuck
+
+Keep the task ID and check it again with backoff. A client timeout or disconnect does not imply that the remote task failed. Contact support with the task ID if its status does not change beyond the model's expected processing window.

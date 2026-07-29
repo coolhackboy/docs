@@ -1,0 +1,53 @@
+---
+title: "Cursor"
+description: "Connect Cursor through the PoYo stdio bridge."
+icon: "arrow-pointer"
+---
+
+# Cursor
+
+The stdio bridge is the most portable Cursor configuration and does not require a separate OAuth flow.
+
+## Configure
+
+Open Cursor's MCP settings and add:
+
+```json
+{
+  "mcpServers": {
+    "poyo": {
+      "command": "npx",
+      "args": ["-y", "@poyo/mcp"],
+      "env": {
+        "POYO_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+Restart the MCP server after saving so Cursor refreshes the tool list.
+
+<Warning>
+  Do not commit or share a configuration containing your API key.
+</Warning>
+
+## Typed tools
+
+To expose typed image and video model tools:
+
+```json
+"args": ["-y", "@poyo/mcp", "--categories", "image,video"]
+```
+
+See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
+
+## Verify
+
+Ask Cursor:
+
+```text
+Use PoYo to search for image models, inspect the selected model's schema
+and pricing, then tell me which execution tool you would use.
+```
+

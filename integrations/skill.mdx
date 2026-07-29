@@ -1,0 +1,45 @@
+---
+title: "PoYo Agent Skill"
+description: "Install and use the poyo-ai-models workflow with coding agents"
+icon: "wand-magic-sparkles"
+---
+
+# PoYo Agent Skill
+
+The `poyo-ai-models` Skill teaches compatible coding agents to discover models, validate schemas, check pricing, execute safely, and resume asynchronous tasks.
+
+The Skill is distributed from the `poyo-devtools` repository under:
+
+```text
+skills/poyo-ai-models
+```
+
+## Workflow
+
+The Skill instructs an agent to:
+
+1. Restate modality, inputs, constraints, output requirements, and budget.
+2. Search the production Capability Catalog.
+3. Inspect the selected model's schema and pricing.
+4. Choose non-streaming MCP chat, CLI streaming chat, short generation, or asynchronous submission.
+5. Reuse an idempotency key for transport retries.
+6. Poll queued/running tasks until they succeed or fail.
+7. Report model ID, credits, status, outputs, and partial failures.
+
+## Attribution
+
+Skill-triggered paid calls must identify their source:
+
+- MCP: `_request_source: "skill"`
+- CLI: `--request-source skill`
+
+This produces `skill-mcp` or `skill-cli` audit attribution without changing pricing.
+
+## Guardrails
+
+- Never invent a model ID or parameter.
+- Never put an API key in a prompt or committed file.
+- Check credits before expensive or repeated work.
+- Do not blindly retry a paid failure.
+- Do not claim completion while a task is queued or running.
+- Preserve task IDs so an interrupted workflow can resume without resubmission.

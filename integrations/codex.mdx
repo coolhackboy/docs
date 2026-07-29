@@ -1,0 +1,55 @@
+---
+title: "Codex"
+description: "Connect Codex to PoYo MCP and add the PoYo Agent Skill."
+icon: "code"
+---
+
+# Codex
+
+Codex CLI and the IDE extension read MCP configuration from `~/.codex/config.toml`.
+
+## Configure remote MCP
+
+Set `POYO_API_KEY` before starting Codex, then add:
+
+```toml
+[mcp_servers.poyo]
+url = "https://api.poyo.ai/mcp"
+bearer_token_env_var = "POYO_API_KEY"
+tool_timeout_sec = 45
+```
+
+Start a new Codex session after changing the configuration.
+
+<Warning>
+  Keep the API key in the environment. Do not put it in the URL or commit it to project configuration.
+</Warning>
+
+## Typed tools
+
+Use a filtered URL when a task benefits from model-specific schemas:
+
+```toml
+[mcp_servers.poyo_image]
+url = "https://api.poyo.ai/mcp?categories=image"
+bearer_token_env_var = "POYO_API_KEY"
+tool_timeout_sec = 45
+```
+
+See [Choose MCP tools](/integrations/mcp-filtering).
+
+## Add workflow guidance
+
+Install the `poyo-ai-models` Skill from the PoYo devtools repository. The Skill adds model discovery, pricing, execution, and task-waiting guidance; it complements MCP rather than replacing it.
+
+See [PoYo Agent Skill](/integrations/skill).
+
+## Verify
+
+Ask Codex:
+
+```text
+Use PoYo to check my account, search for a suitable model, inspect its
+schema and price, execute it, and report the final task status and cost.
+```
+

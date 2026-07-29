@@ -1,0 +1,45 @@
+---
+title: "Choose an Execution Method"
+description: "Compare REST, streaming chat, MCP tool calls, and asynchronous generation."
+icon: "route"
+---
+
+# Choose an Execution Method
+
+PoYo has different execution paths because chat tokens and long-running media generation have different delivery requirements.
+
+| Workload | Recommended path | Result delivery |
+|---|---|---|
+| Chat in an application | Native chat REST endpoint | Complete JSON or token SSE |
+| Chat from a terminal | `poyo chat --stream` | Text increments or raw JSONL events |
+| Agent-driven chat | `poyo_chat` over MCP | One complete Tool Result |
+| Short generation in an agent | `poyo_run_model` | Result if ready within 30 seconds; otherwise a task ID |
+| Video, 3D, music, or long generation | `poyo_submit_job` | Task ID, then polling |
+| Application generation | Unified REST submit endpoint | Task ID, then webhook or polling |
+
+## Why MCP chat is non-streaming
+
+MCP Streamable HTTP may use SSE to transport protocol messages, but that transport is not the model's token stream. `poyo_chat` waits for the upstream chat request and returns one self-contained tool result with the protocol response, normalized usage, and credits.
+
+Use the native chat API or CLI when the user experience requires token-by-token rendering.
+
+## Why generation uses tasks
+
+Media workloads can take longer than an interactive tool-call timeout. The durable task ID lets a client disconnect, resume later, retry status checks safely, or receive a webhook without resubmitting and paying twice.
+
+<Steps>
+  <Step title="Discover">
+    Search the Capability Catalog and inspect the exact model schema and price.
+  </Step>
+  <Step title="Submit once">
+    Send validated input and retain the returned task ID.
+  </Step>
+  <Step title="Wait safely">
+    Poll with backoff or verify the signed webhook notification.
+  </Step>
+  <Step title="Persist results">
+    Download generated files before temporary storage expires.
+  </Step>
+</Steps>
+
+See [Task lifecycle and results](/integrations/tasks-results) for normalized MCP statuses.

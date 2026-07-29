@@ -1,175 +1,131 @@
 ---
-title: "Getting Started"
-description: |
-  Welcome to PoYo.ai. 👋
-  This guide walks you through the essential information you need to start integrating PoYo.ai APIs into your product,
-  including models, pricing, authentication, request flow, limits, and support.
-  We aim to be transparent, practical, and developer-friendly.
-  Please read this carefully before going to production.
+title: "Quickstart"
+description: "Make your first PoYo model request and learn the production request lifecycle."
 icon: "rocket"
 ---
 
-## 1. Available Models & Playground
+# Build with PoYo
 
-Find the **latest supported models** on our Model page:
-👉 https://poyo.ai/models
+Access image, video, audio, music, 3D, and chat models through one API key. Start with a model call, then choose REST, CLI, or MCP for your application.
 
-- We continuously update and onboard new models as soon as they are stable.
-- Each model page links to its Playground, where you can test and experiment directly in our UI before calling the API.
-- The Playground is the best place to understand model behavior, parameters, and output formats.
+<CardGroup cols={3}>
+  <Card title="Browse models" icon="grid-2" href="https://poyo.ai/models">
+    Compare model capabilities and test inputs in the Playground.
+  </Card>
+  <Card title="Get an API key" icon="key" href="https://poyo.ai/dashboard/api-key">
+    Create a key and configure usage limits or an IP allowlist.
+  </Card>
+  <Card title="View pricing" icon="credit-card" href="https://poyo.ai/pricing">
+    Check current model pricing before submitting paid work.
+  </Card>
+</CardGroup>
 
----
+## Choose how to integrate
 
-## 2. Pricing
+| Approach | Best for |
+|---|---|
+| [REST API](/api-manual/overview) | Product integrations in any language |
+| [PoYo CLI](/integrations/cli) | Local testing, scripts, CI, and streaming chat |
+| [MCP](/integrations/mcp) | Letting Claude, Cursor, Codex, or VS Code discover and run models |
+| [Agent Skill](/integrations/skill) | Teaching an agent the recommended discovery and execution workflow |
 
-The **complete and up-to-date pricing list** is here:
-👉 https://poyo.ai/pricing
+## Make your first generation request
 
-- Our prices are typically 30%-50% lower than official APIs.
-- For some models, discounts can reach up to 80%.
-- Pricing may change as upstream providers adjust their costs, so always refer to the pricing page for the latest numbers.
+Generation is asynchronous. Submit a task, save its `task_id`, then poll its status or receive a webhook.
 
----
+<Tabs>
+  <Tab title="cURL">
+    ```bash
+    curl https://api.poyo.ai/api/generate/submit \
+      -H "Authorization: Bearer $POYO_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gpt-4o-image",
+        "input": {
+          "prompt": "A paper-cut illustration of a city at sunrise",
+          "size": "1:1"
+        }
+      }'
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import os
+    import requests
 
-## 3. Creating and Securing Your API Key
+    response = requests.post(
+        "https://api.poyo.ai/api/generate/submit",
+        headers={"Authorization": f"Bearer {os.environ['POYO_API_KEY']}"},
+        json={
+            "model": "gpt-4o-image",
+            "input": {
+                "prompt": "A paper-cut illustration of a city at sunrise",
+                "size": "1:1",
+            },
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    task_id = response.json()["data"]["task_id"]
+    print(task_id)
+    ```
+  </Tab>
+  <Tab title="JavaScript">
+    ```javascript
+    const response = await fetch("https://api.poyo.ai/api/generate/submit", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.POYO_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-image",
+        input: {
+          prompt: "A paper-cut illustration of a city at sunrise",
+          size: "1:1",
+        },
+      }),
+    });
 
-Create and manage your API keys here:
-👉 https://poyo.ai/dashboard/api-key
+    if (!response.ok) throw new Error(await response.text());
+    const { data } = await response.json();
+    console.log(data.task_id);
+    ```
+  </Tab>
+</Tabs>
 
-**Important security notes:**
+<Info>
+  A successful submit response means the task was accepted, not that generation has finished.
+</Info>
 
-- **Never expose your API key** in frontend code (browser, mobile apps, public repositories).
-- Treat your API key as a secret.
+## Retrieve the result
 
-To help protect your usage, we provide:
-
-- Rate limits per key (hourly, daily, and total usage caps)
-- IP whitelist support, allowing only approved server IPs to access the API
-
-These features help prevent accidental overuse and unauthorized requests.
-
----
-
-## 4. Required Request Headers
-
-Every API request **must include** the correct headers:
-
+```bash
+curl "https://api.poyo.ai/api/generate/status/TASK_ID" \
+  -H "Authorization: Bearer $POYO_API_KEY"
 ```
-Authorization: Bearer <YOUR_API_KEY>
-Content-Type: application/json
+
+Continue while the task is queued or running. When it finishes, download the returned files to storage you control. For production workloads, prefer [signed webhooks](/api-manual/task-management/webhooks) instead of frequent polling.
+
+## Before production
+
+- Keep API keys on your server; never expose them in browser or mobile code.
+- Validate inputs against the selected model's current schema.
+- Handle `401`, `402`, `429`, and transient server failures explicitly.
+- Use an idempotency key when the endpoint supports it so retries do not duplicate paid work.
+- Review [task statuses](/api-manual/task-management/status), [error responses](/api-manual/error-codes), and current [pricing](https://poyo.ai/pricing).
+- Generated media is temporary. Download results promptly and follow the retention policy shown in your account and API documentation.
+
+## Build with an AI assistant
+
+Connect PoYo MCP when an assistant needs live model schemas, pricing, account information, and execution tools:
+
+```text
+https://api.poyo.ai/mcp
 ```
 
-If these headers are missing or incorrect, you may receive:
+Start with [PoYo Integrations](/integrations/overview), or go directly to the setup guide for [Claude](/integrations/claude-desktop), [Cursor](/integrations/cursor), [Codex](/integrations/codex), or [VS Code](/integrations/vscode).
 
-```
-{"code":401,"error":{"message":"Invalid API key","type":"authentication_error"}}
-```
+## Support
 
-Always double-check your headers when debugging authentication issues.
-
----
-
-## 5. Logs & Task Details
-
-Inspect all your historical tasks here:
-👉 https://poyo.ai/dashboard/history
-
-For each task, you can view:
-
-- Creation time
-- Model used
-- Input parameters
-- Task status
-- Credit consumption
-- Final results or error details
-
-If you ever suspect incorrect credit usage, this page is the **source of truth** for verification.
-
----
-
-## 6. Data Retention Policy
-
-Please note our **retention rules**:
-
-- Generated media files: stored for 3 days, then automatically deleted
-- Log records (text / metadata): stored for 2 months, then automatically deleted
-
-If you need long-term access, make sure to download and store results on your side in time.
-
----
-
-## 7. Asynchronous Task Model
-
-All generation tasks on PoYo.ai are **asynchronous**. A successful request returns:
-
-- HTTP 200
-- A `task_id`
-
-A 200 response only means the task was created, not completed.
-
-To get the final result, you must either:
-
-- Provide a callback (webhook) URL in the request, or
-- Actively poll the "Get Task Status" API using the `task_id`
-
----
-
-## 8. Rate Limits & Concurrency
-
-By default, we apply the following limits:
-
-- Up to 20 new generation requests per 10 seconds
-- This typically allows 100+ concurrent running tasks
-- Limits are applied per account
-
-If you exceed the limit:
-
-- Requests will be rejected with **HTTP 429**
-- Rejected requests will not enter the queue
-
-For most users, this is more than sufficient. If you consistently hit 429 errors, you may contact support to request a higher limit - approvals are handled cautiously.
-
----
-
-## 9. Developer Support
-
-Recommended support channels are available directly from the dashboard (bottom-left menu):
-👉 https://poyo.ai/dashboard
-
-**Discord is the fastest option.** What you get:
-
-- Private, 1-on-1 channels
-- Your data and conversations remain confidential
-- Faster and more technical responses
-
-Support hours: UTC 21:00 - UTC 17:00 (next day).
-Email is available (slower): support@poyo.ai
-
----
-
-## 10. Stability Expectations
-
-We provide access to top-tier, highly competitive APIs at very aggressive pricing. That said:
-
-- We are not perfect
-- **Our overall stability may be slightly lower** than official providers
-- This is a conscious trade-off
-
-In practice, PoYo.ai is stable enough to support production workloads and long-term business growth, but we believe in setting realistic expectations upfront.
-
----
-
-## 11. About the Team
-
-PoYo.ai is built by a **small startup team**.
-
-- We move fast
-- We care deeply about developer experience
-- We are constantly improving
-
-At the same time, we acknowledge that:
-
-- Not everything is perfect
-- We can't satisfy every use case immediately
-
-Your feedback helps us improve - and we genuinely appreciate it.
+Use the support entry in the [PoYo dashboard](https://poyo.ai/dashboard) for the fastest account-aware assistance, or email `support@poyo.ai`.
