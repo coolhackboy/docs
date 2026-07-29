@@ -6,7 +6,7 @@ icon: "robot"
 
 # Claude
 
-Claude Desktop and Claude Code can run `@poyo/mcp` as a local stdio bridge to the hosted PoYo MCP service.
+Claude Desktop and Claude Code can run `@poyoapi/mcp` as a local stdio bridge to the hosted PoYo MCP service.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ Add the following server to the Claude Desktop developer configuration:
   "mcpServers": {
     "poyo": {
       "command": "npx",
-      "args": ["-y", "@poyo/mcp"],
+      "args": ["-y", "@poyoapi/mcp"],
       "env": {
         "POYO_API_KEY": "YOUR_API_KEY"
       }
@@ -44,17 +44,17 @@ Set `POYO_API_KEY` in the environment that starts Claude Code:
 
 ```bash
 export POYO_API_KEY="YOUR_API_KEY"
-claude mcp add poyo --scope user -- npx -y @poyo/mcp
+claude mcp add poyo --scope user -- npx -y @poyoapi/mcp
 ```
 
 On native Windows:
 
 ```powershell
 $env:POYO_API_KEY="YOUR_API_KEY"
-claude mcp add poyo --scope user -- cmd /c npx -y @poyo/mcp
+claude mcp add poyo --scope user -- cmd /c npx -y @poyoapi/mcp
 ```
 
-Use `--categories image,video` or `--models MODEL_A,MODEL_B` after `@poyo/mcp` to expose selected typed tools. See [Choose MCP tools](/integrations/mcp-filtering).
+Use `--categories image,video` or `--models MODEL_A,MODEL_B` after `@poyoapi/mcp` to expose selected typed tools. See [Choose MCP tools](/integrations/mcp-filtering).
 
 ## Verify
 
@@ -66,4 +66,3 @@ show its input schema and price, then run it.
 ```
 
 The connection is working when Claude discovers the PoYo tools and calls `poyo_account` and `poyo_search_models`.
-

@@ -17,7 +17,7 @@ Open Cursor's MCP settings and add:
   "mcpServers": {
     "poyo": {
       "command": "npx",
-      "args": ["-y", "@poyo/mcp"],
+      "args": ["-y", "@poyoapi/mcp"],
       "env": {
         "POYO_API_KEY": "YOUR_API_KEY"
       }
@@ -37,7 +37,7 @@ Restart the MCP server after saving so Cursor refreshes the tool list.
 To expose typed image and video model tools:
 
 ```json
-"args": ["-y", "@poyo/mcp", "--categories", "image,video"]
+"args": ["-y", "@poyoapi/mcp", "--categories", "image,video"]
 ```
 
 See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
@@ -50,4 +50,3 @@ Ask Cursor:
 Use PoYo to search for image models, inspect the selected model's schema
 and pricing, then tell me which execution tool you would use.
 ```
-

@@ -18,7 +18,7 @@ Run **MCP: Open User Configuration** and add:
     "poyo": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@poyo/mcp"],
+      "args": ["-y", "@poyoapi/mcp"],
       "env": {
         "POYO_API_KEY": "${input:poyo-api-key}"
       }
@@ -42,7 +42,7 @@ VS Code prompts for the key when the server starts.
 To expose selected model tools, change the bridge arguments:
 
 ```json
-"args": ["-y", "@poyo/mcp", "--models", "MODEL_A,MODEL_B"]
+"args": ["-y", "@poyoapi/mcp", "--models", "MODEL_A,MODEL_B"]
 ```
 
 See [Choose MCP tools](/integrations/mcp-filtering) for limits.
@@ -54,4 +54,3 @@ Start or restart `poyo` from **MCP: List Servers**, then ask:
 ```text
 Use PoYo to check my account and list image-generation models.
 ```
-

@@ -43,8 +43,8 @@ Choose the interface by workload instead of treating MCP, CLI, and REST as inter
 | Integrate a product directly | REST API |
 | Stream chat tokens | REST API or `poyo chat --stream` |
 | Let an AI agent choose and run a model | Hosted MCP |
-| MCP host only supports stdio | `npx @poyo/mcp` |
-| Automate from a shell or CI job | `npx @poyo/cli` |
+| MCP host only supports stdio | `npx @poyoapi/mcp` |
+| Automate from a shell or CI job | `npx @poyoapi/cli` |
 | Give an agent PoYo operating guidance | `poyo-ai-models` Skill |
 
 <Card title="Compare execution methods" icon="route" href="/integrations/execution-methods">
@@ -54,15 +54,15 @@ Choose the interface by workload instead of treating MCP, CLI, and REST as inter
 ## Start in three commands
 
 ```bash
-npx -y @poyo/cli auth login
-npx -y @poyo/cli models image
-npx -y @poyo/cli describe MODEL_ID
+npx -y @poyoapi/cli auth login
+npx -y @poyoapi/cli models image
+npx -y @poyoapi/cli describe MODEL_ID
 ```
 
 After reviewing the schema and price, run the model:
 
 ```bash
-npx -y @poyo/cli run MODEL_ID --input '{"prompt":"A cinematic sunrise over Shanghai"}'
+npx -y @poyoapi/cli run MODEL_ID --input '{"prompt":"A cinematic sunrise over Shanghai"}'
 ```
 
 <Info>
