@@ -97,13 +97,13 @@ A working connection discovers PoYo tools and calls `poyo_account`, `poyo_search
 The default endpoint exposes a compact tool set. To load model-specific JSON Schemas, filter the URL:
 
 ```text
-https://api.poyo.ai/mcp?categories=image,video
-https://api.poyo.ai/mcp?models=MODEL_A,MODEL_B
+https://api.poyo.ai/mcp?models=flux-schnell,tripo3d-h3.1-text-to-3d
 ```
 
 - Choose categories or models, never both.
 - Select at most 3 categories or 20 explicit models.
 - The expanded tool set may contain at most 30 model tools.
+- Prefer explicit model IDs so the tool set remains stable as categories grow.
 
 The compact default is intentional: it keeps tool descriptions small and lets the assistant discover only the schemas needed for the current task. See [Choose MCP tools](/integrations/mcp-filtering).
 

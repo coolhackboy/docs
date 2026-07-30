@@ -34,13 +34,13 @@ Restart the MCP server after saving so Cursor refreshes the tool list.
 
 ## Typed tools
 
-To expose typed image and video model tools:
+To expose typed image and 3D model tools:
 
 ```json
-"args": ["-y", "@poyoapi/mcp", "--categories", "image,video"]
+"args": ["-y", "@poyoapi/mcp", "--models", "flux-schnell,tripo3d-h3.1-text-to-3d"]
 ```
 
-See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
+Explicit model IDs keep the tool set predictable as categories grow. See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
 
 ## Verify
 

@@ -39,7 +39,9 @@ Keep the `task_id` in durable application state or working notes. If a process o
 
 ## Polling
 
-Use bounded exponential backoff with jitter. Stop only on `succeeded`, `failed`, or your own timeout; a local timeout does not cancel the remote task.
+When a response includes `poll_after_seconds`, wait at least that long before the next status check. Otherwise, use bounded exponential backoff with jitter. Honor `Retry-After` after a `429` response.
+
+Stop only on `succeeded`, `failed`, or your own timeout; a local timeout does not cancel the remote task.
 
 ```text
 2s -> 4s -> 8s -> 15s -> 30s
@@ -59,5 +61,5 @@ On success:
 On failure, keep the task ID and normalized error. Retry only when the error is transient, and reuse the same idempotency key only with the identical request payload.
 
 <Info>
-  `poyo_run_model` waits for at most 30 seconds. If the work is still running, it returns the task ID and a suggested polling interval instead of failing the generation.
+  `poyo_run_model` waits for at most 30 seconds. If the work is still running, it returns the task ID and `poll_after_seconds` instead of failing the generation.
 </Info>

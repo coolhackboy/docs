@@ -32,6 +32,19 @@
             }
           },
           {
+            "name": "tags",
+            "in": "query",
+            "description": "Repeat this parameter to require multiple tags.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
             "name": "q",
             "in": "query",
             "schema": {

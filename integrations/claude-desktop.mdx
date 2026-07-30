@@ -54,7 +54,14 @@ $env:POYO_API_KEY="YOUR_API_KEY"
 claude mcp add poyo --scope user -- cmd /c npx -y @poyoapi/mcp
 ```
 
-Use `--categories image,video` or `--models MODEL_A,MODEL_B` after `@poyoapi/mcp` to expose selected typed tools. See [Choose MCP tools](/integrations/mcp-filtering).
+Add explicit models after `@poyoapi/mcp` to expose a stable set of typed tools:
+
+```bash
+claude mcp add poyo-models --scope user -- npx -y @poyoapi/mcp \
+  --models flux-schnell,tripo3d-h3.1-text-to-3d
+```
+
+See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
 
 ## Verify
 

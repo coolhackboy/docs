@@ -45,10 +45,12 @@ Pass one reusable idempotency key when a paid request might be retried. Reusing 
 Filtered MCP URLs replace discovery/execution tools with model-specific tools such as:
 
 ```text
-poyo_fal_flux_dev
+poyo_flux_dev
 ```
 
 The input schema comes directly from the Capability Catalog. Typed mode always retains `poyo_check_job` and `poyo_account`.
+
+Prefer selecting explicit model IDs for integrations that should expose a stable tool set. Category filters are useful for exploration, but can eventually exceed the 30-model expansion limit as the Catalog grows.
 
 ## Status normalization
 
