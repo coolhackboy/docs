@@ -162,6 +162,8 @@
         "properties": {
           "prompt": {
             "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
             "description": "Text prompt. Reference assets by modality and order, for example Image 1, Video 1, or Audio 1."
           },
           "duration": {
