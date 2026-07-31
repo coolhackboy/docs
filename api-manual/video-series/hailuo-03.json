@@ -216,7 +216,7 @@
               "type": "string",
               "format": "uri"
             },
-            "description": "Reference audio clips. Audio requires at least one reference image or video."
+            "description": "Reference audio clips. Each clip must be 2–15 seconds. Audio requires at least one reference image or video."
           }
         }
       },
