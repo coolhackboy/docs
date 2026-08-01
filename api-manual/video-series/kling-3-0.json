@@ -108,7 +108,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["image_urls", "duration", "multi_shots", "sound"],
+            "required": ["duration", "multi_shots", "sound"],
             "description": "Input parameters for generation",
             "properties": {
               "image_urls": {
