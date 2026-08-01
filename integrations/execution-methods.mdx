@@ -6,24 +6,8 @@ icon: "route"
 
 # Choose an Execution Method
 
-Choose an interface based on who initiates the work and how results must be delivered.
+This guidance now lives with the interface it describes:
 
-| Requirement | Use | Result delivery |
-|---|---|---|
-| Integrate chat or generation into an application | REST API | JSON, token SSE, webhook, or polling |
-| Let an AI assistant discover and run models | MCP | Complete Tool Result or a durable `task_id` |
-| Automate from a terminal or CI | PoYo CLI | Table, JSON, JSONL, CSV, or streamed text |
-
-## Choose streaming or a complete result
-
-Use the native chat REST endpoint or `poyo chat --stream` for token-by-token rendering. `poyo_chat` over MCP waits for the upstream response and returns one complete Tool Result with the protocol response, normalized usage, and charged credits.
-
-MCP Streamable HTTP may use SSE to transport protocol messages. That transport is not the model's token stream.
-
-## Choose short or asynchronous generation
-
-Use `poyo_run_model` when generation is expected to finish quickly. It waits for up to 30 seconds, then returns either the result or a `task_id`.
-
-Use `poyo_submit_job` for video, 3D, music, and other long-running work. Keep the returned `task_id` and call `poyo_check_job`; do not resubmit after a client timeout or disconnect.
-
-Applications should use the REST generation endpoint and retrieve results by signed webhook or polling. See [Task lifecycle](/integrations/tasks-results) for normalized statuses and safe retry behavior.
+- Start with [PoYo Integrations](/integrations/overview) to choose REST, MCP, CLI, or an Agent Skill.
+- See [PoYo MCP](/integrations/mcp) for agent-driven discovery and execution.
+- See [Task lifecycle](/integrations/tasks-results) for short waits, asynchronous jobs, polling, and result handling.

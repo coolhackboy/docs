@@ -473,7 +473,6 @@
               "pages": [
                 "integrations/authentication",
                 "integrations/catalog",
-                "integrations/execution-methods",
                 "integrations/mcp-filtering",
                 "integrations/tasks-results",
                 "integrations/troubleshooting"
