@@ -21,6 +21,21 @@ PoYo has different execution paths because chat tokens and long-running media ge
 
 MCP Streamable HTTP may use SSE to transport protocol messages, but that transport is not the model's token stream. `poyo_chat` waits for the upstream chat request and returns one self-contained tool result with the protocol response, normalized usage, and credits.
 
+The protocol response is preserved and PoYo adds an `_poyo` extension:
+
+```json
+{
+  "_poyo": {
+    "usage": {
+      "input_tokens": 12,
+      "output_tokens": 6,
+      "total_tokens": 18
+    },
+    "credits": 0.00432
+  }
+}
+```
+
 Use the native chat API or CLI when the user experience requires token-by-token rendering.
 
 ## Why generation uses tasks

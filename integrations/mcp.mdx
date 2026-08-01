@@ -109,7 +109,7 @@ The compact default is intentional: it keeps tool descriptions small and lets th
 
 ## Streaming behavior
 
-`poyo_chat` returns one complete MCP Tool Result. MCP transport SSE carries protocol messages and progress; it is not PoYo's token stream.
+`poyo_chat` returns one complete MCP Tool Result. MCP transport SSE carries protocol messages and progress; it is not PoYo's token stream. The original protocol response is preserved, and the `_poyo` field contains normalized token usage and charged credits.
 
 Use the existing chat REST endpoints or `poyo chat --stream` for token-by-token output.
 
