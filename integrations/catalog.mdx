@@ -7,7 +7,7 @@ openapi: "/integrations/capability-catalog.json GET /v1/catalog/models"
 
 # Capability Catalog
 
-The public Catalog contains only publicly discoverable model contracts. Private and VIP models are excluded, and supplier credentials, internal vendor or model codes, routing, and failover configuration are never returned.
+The Catalog contains developer-facing contracts for models available through PoYo. Supplier credentials, internal vendor or model codes, routing, and failover configuration are never returned.
 
 Use it when model availability changes faster than an application release:
 
@@ -20,7 +20,7 @@ Use it when model availability changes faster than an application release:
 
 | Endpoint | Description |
 |---|---|
-| `GET /v1/catalog/models` | Search and paginate publicly discoverable models |
+| `GET /v1/catalog/models` | Search and paginate available models |
 | `GET /v1/catalog/models/{model_id}` | Read one complete model capability |
 | `GET /v1/catalog/categories` | List categories and model counts |
 | `GET /v1/catalog/openapi.json` | Generate OpenAPI 3.1 from the current Catalog |
