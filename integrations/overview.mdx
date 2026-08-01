@@ -1,112 +1,56 @@
 ---
 title: "PoYo Integrations"
-description: "Use PoYo models through the Capability Catalog, MCP, CLI, and Agent Skill"
+description: "Connect AI assistants to PoYo models with MCP, or use the CLI and API directly"
 icon: "terminal"
 ---
 
 # PoYo Integrations
 
-Build with PoYo through REST, CLI, MCP, or an Agent Skill. All four use the same live Capability Catalog, model schemas, pricing, authentication, and task lifecycle.
+Give Claude, Cursor, Codex, VS Code, and other AI assistants live access to PoYo model discovery, schemas, pricing, and execution.
 
-## What do you want to do?
+## Connect with MCP
+
+PoYo hosts a Streamable HTTP MCP server at:
+
+```text
+https://api.poyo.ai/mcp
+```
+
+Public model discovery works without authentication. Add a [PoYo API key](/integrations/authentication) as a Bearer token to access account information and run models. Configuring the key when you connect gives your assistant the complete workflow without relying on stale model knowledge.
 
 <CardGroup cols={2}>
-  <Card title="Add models to an application" icon="code" href="/api-manual/overview">
-    Call chat and generation APIs directly from any language.
+  <Card title="Claude" icon="robot" href="/integrations/claude-desktop">
+    Connect Claude Code or Claude Desktop.
   </Card>
-  <Card title="Build with an AI assistant" icon="robot" href="/integrations/mcp">
-    Give Claude, Cursor, Codex, or VS Code live model discovery and execution tools.
+  <Card title="Cursor" icon="arrow-pointer" href="/integrations/cursor">
+    Add PoYo to Cursor's MCP settings.
+  </Card>
+  <Card title="Codex" icon="code" href="/integrations/codex">
+    Configure Codex CLI or the IDE extension.
+  </Card>
+  <Card title="VS Code" icon="window-maximize" href="/integrations/vscode">
+    Add PoYo with a secure input in `mcp.json`.
   </Card>
 </CardGroup>
 
-Choose the interface by workload instead of treating MCP, CLI, and REST as interchangeable transports.
-
-<CardGroup cols={2}>
-  <Card title="Capability Catalog" icon="list" href="/integrations/catalog">
-    Discover enabled models, schemas, protocols, examples, and public credit pricing.
-  </Card>
-  <Card title="MCP" icon="plug" href="/integrations/mcp">
-    Let Claude, Cursor, Codex, and other MCP hosts discover and execute PoYo models.
-  </Card>
-  <Card title="CLI" icon="terminal" href="/integrations/cli">
-    Run chat, generation, task polling, and the local stdio MCP bridge.
-  </Card>
-  <Card title="Agent Skill" icon="wand-magic-sparkles" href="/integrations/skill">
-    Give coding agents a repeatable discovery, pricing, execution, and polling workflow.
-  </Card>
-</CardGroup>
-
-## Choose an interface
-
-| Requirement | Recommended interface |
-|---|---|
-| Integrate a product directly | REST API |
-| Stream chat tokens | REST API or `poyo chat --stream` |
-| Let an AI agent choose and run a model | Hosted MCP |
-| MCP host only supports stdio | `npx @poyoapi/mcp` |
-| Automate from a shell or CI job | `npx @poyoapi/cli` |
-| Give an agent PoYo operating guidance | `poyo-ai-models` Skill |
-
-<Card title="Compare execution methods" icon="route" href="/integrations/execution-methods">
-  See when to use token streaming, a complete MCP Tool Result, a short wait, or a durable asynchronous task.
+<Card title="Set up any MCP client" icon="plug" href="/integrations/mcp">
+  Copy a client configuration, verify the connection, and see what you can ask PoYo to do.
 </Card>
 
-## Start in three commands
+## Choose another interface
 
-```bash
-npx -y @poyoapi/cli auth login
-npx -y @poyoapi/cli models image
-npx -y @poyoapi/cli describe MODEL_ID
-```
-
-After reviewing the schema and price, run the model:
-
-```bash
-npx -y @poyoapi/cli run MODEL_ID --input '{"prompt":"A cinematic sunrise over Shanghai"}'
-```
+| If you want to... | Use |
+|---|---|
+| Let an AI assistant find and run models | [MCP](/integrations/mcp) |
+| Automate model calls from a terminal or CI | [PoYo CLI](/integrations/cli) |
+| Add repeatable PoYo guidance to a coding agent | [PoYo Agent Skill](/integrations/skill) |
+| Integrate models directly into an application | [REST API](/api-manual/overview) |
+| Compare streaming, tool calls, and async tasks | [Execution methods](/integrations/execution-methods) |
 
 <Info>
-  A generation may finish immediately or return a task ID. Keep the ID and retrieve the existing task instead of submitting the same paid work again.
+  MCP is designed for agent-driven work. For application traffic or token-by-token chat output, use the REST API directly.
 </Info>
 
-## The workflow is always the same
+## Use the same live model data
 
-<Steps>
-  <Step title="Search">
-    Find a model by service type, category, tags, or free-text query.
-  </Step>
-  <Step title="Describe">
-    Read the current input schema, output schema, protocols, and pricing.
-  </Step>
-  <Step title="Execute">
-    Use non-streaming MCP chat, CLI streaming chat, or asynchronous generation.
-  </Step>
-  <Step title="Retrieve">
-    Poll generation tasks until they reach `succeeded` or `failed`.
-  </Step>
-</Steps>
-
-## Shared source of truth
-
-The production Capability Catalog drives MCP tool definitions, CLI parameter discovery, generated Skill references, and machine-readable API documentation. Do not hard-code a model schema from an old response.
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Choose an execution method" icon="route" href="/integrations/execution-methods">
-    Compare streaming chat, complete MCP results, short waits, and durable tasks.
-  </Card>
-  <Card title="Set up a client" icon="plug" href="/integrations/claude-desktop">
-    Follow a tested setup for Claude, Cursor, Codex, or VS Code.
-  </Card>
-</CardGroup>
-
-## Authentication
-
-Use the same PoYo API key for REST, MCP, and CLI:
-
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
-
-Never place an API key in an MCP URL, prompt, committed file, or retained shell command.
+MCP, CLI, Agent Skill, and REST integrations share the [Capability Catalog](/integrations/catalog), model schemas, public pricing, authentication, and task lifecycle. Always inspect the current schema before execution instead of hard-coding parameters from an old response.

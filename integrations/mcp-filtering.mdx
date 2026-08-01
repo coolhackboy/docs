@@ -1,62 +1,39 @@
 ---
 title: "Choose MCP Tools"
-description: "Compact and model-specific tools exposed by PoYo MCP"
+description: "Expose model-specific tools with PoYo MCP filters"
 icon: "toolbox"
 ---
 
-# MCP Tools
+# Choose MCP Tools
 
-## Default compact tools
+The default [PoYo MCP endpoint](/integrations/mcp) exposes a compact tool set for discovering models, checking schemas and pricing, and executing work. In most cases, start there.
 
-| Tool | Purpose |
-|---|---|
-| `poyo_search_models` | Search models by query, service type, category, or tags |
-| `poyo_get_model_schema` | Read schemas, examples, protocols, and capability flags |
-| `poyo_get_pricing` | Inspect public credit pricing |
-| `poyo_chat` | Run non-streaming chat and return the complete response |
-| `poyo_run_model` | Submit generation and wait up to 30 seconds |
-| `poyo_submit_job` | Submit a long-running generation task |
-| `poyo_check_job` | Read normalized task status and outputs |
-| `poyo_account` | Read authenticated account and credit information |
+## Use typed tools
 
-## Recommended workflow
-
-<Steps>
-  <Step title="Search models">
-    Call `poyo_search_models` unless the exact model is already known.
-  </Step>
-  <Step title="Inspect schema and pricing">
-    Call `poyo_get_model_schema` and `poyo_get_pricing` before a paid execution.
-  </Step>
-  <Step title="Choose execution mode">
-    Use `poyo_chat` for chat, `poyo_run_model` for short generation, or `poyo_submit_job` for video, 3D, music, and other long work.
-  </Step>
-  <Step title="Poll long tasks">
-    Call `poyo_check_job` until status is `succeeded` or `failed`.
-  </Step>
-</Steps>
-
-## Idempotency
-
-Pass one reusable idempotency key when a paid request might be retried. Reusing the key with an identical payload returns the original response. Reusing it with a different payload fails with an idempotency conflict.
-
-## Typed tools
-
-Filtered MCP URLs replace discovery/execution tools with model-specific tools such as:
+Add a filter when an integration benefits from model-specific tool names and JSON Schemas:
 
 ```text
-poyo_flux_dev
+https://api.poyo.ai/mcp?models=flux-schnell,tripo3d-h3.1-text-to-3d
 ```
 
-The input schema comes directly from the Capability Catalog. Typed mode always retains `poyo_check_job` and `poyo_account`.
+Typed mode exposes tools such as `poyo_flux_dev`. Their input schemas come directly from the live Capability Catalog. `poyo_check_job` and `poyo_account` remain available.
 
-Prefer selecting explicit model IDs for integrations that should expose a stable tool set. Category filters are useful for exploration, but can eventually exceed the 30-model expansion limit as the Catalog grows.
+## Choose a filter
 
-## Status normalization
+| Filter | Use it when | Tradeoff |
+|---|---|---|
+| `models=MODEL_A,MODEL_B` | The integration needs a stable, reviewed model set | Requires updating the URL to add models |
+| `categories=image,video` | Users need to explore a changing category | The tool set can grow as the catalog changes |
 
-| MCP status | Meaning |
-|---|---|
-| `queued` | Accepted but not running |
-| `running` | Provider or worker is processing |
-| `succeeded` | Output is ready |
-| `failed` | Terminal failure; inspect `error_message` |
+<Warning>
+  Do not combine `models` and `categories` in one URL.
+</Warning>
+
+## Limits
+
+- Select at most 20 explicit models.
+- Select at most 3 categories.
+- The expanded endpoint may expose at most 30 model tools.
+- Restart the MCP server or client after changing filters so it refreshes the tool list.
+
+Prefer explicit model IDs for production integrations. Use category filters for exploration, and switch to model IDs once the set should remain predictable.

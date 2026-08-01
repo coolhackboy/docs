@@ -1,22 +1,26 @@
 ---
 title: "Claude"
-description: "Connect Claude Desktop or Claude Code to PoYo MCP."
+description: "Connect Claude Code or Claude Desktop to PoYo MCP"
 icon: "robot"
 ---
 
-# Claude
+# Connect Claude
 
-Claude Desktop and Claude Code can run `@poyoapi/mcp` as a local stdio bridge to the hosted PoYo MCP service.
+Claude Code can connect directly to hosted PoYo MCP. Claude Desktop can use the local stdio bridge.
 
-## Prerequisites
+## Claude Code
 
-- A PoYo API key
-- Node.js 20 or later
-- Claude Desktop or Claude Code
+Set `POYO_API_KEY`, then run:
+
+```bash
+claude mcp add --transport http poyo \
+  https://api.poyo.ai/mcp \
+  --header "Authorization: Bearer $POYO_API_KEY"
+```
 
 ## Claude Desktop
 
-Add the following server to the Claude Desktop developer configuration:
+Node.js 20 or later is required. Add this server to the Claude Desktop developer configuration, then restart Claude:
 
 ```json
 {
@@ -24,52 +28,25 @@ Add the following server to the Claude Desktop developer configuration:
     "poyo": {
       "command": "npx",
       "args": ["-y", "@poyoapi/mcp"],
-      "env": {
-        "POYO_API_KEY": "YOUR_API_KEY"
-      }
+      "env": { "POYO_API_KEY": "YOUR_API_KEY" }
     }
   }
 }
 ```
 
-Restart Claude Desktop after saving.
-
 <Warning>
-  The local configuration contains a credential. Do not commit or share it.
+  This local configuration contains a credential. Do not commit or share it.
 </Warning>
 
-## Claude Code
-
-Set `POYO_API_KEY` in the environment that starts Claude Code:
-
-```bash
-export POYO_API_KEY="YOUR_API_KEY"
-claude mcp add poyo --scope user -- npx -y @poyoapi/mcp
-```
-
-On native Windows:
+On native Windows, Claude Code can also use the stdio bridge:
 
 ```powershell
 $env:POYO_API_KEY="YOUR_API_KEY"
 claude mcp add poyo --scope user -- cmd /c npx -y @poyoapi/mcp
 ```
 
-Add explicit models after `@poyoapi/mcp` to expose a stable set of typed tools:
-
-```bash
-claude mcp add poyo-models --scope user -- npx -y @poyoapi/mcp \
-  --models flux-schnell,tripo3d-h3.1-text-to-3d
-```
-
-See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
-
 ## Verify
 
-Ask Claude:
+Ask Claude: `Use PoYo to check my account and list image-generation models.`
 
-```text
-Use PoYo to check my account, find an image model for this prompt,
-show its input schema and price, then run it.
-```
-
-The connection is working when Claude discovers the PoYo tools and calls `poyo_account` and `poyo_search_models`.
+For typed model tools and usage examples, see [PoYo MCP](/integrations/mcp).

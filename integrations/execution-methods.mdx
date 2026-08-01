@@ -1,60 +1,29 @@
 ---
 title: "Choose an Execution Method"
-description: "Compare REST, streaming chat, MCP tool calls, and asynchronous generation."
+description: "Choose between REST, MCP, and the PoYo CLI"
 icon: "route"
 ---
 
 # Choose an Execution Method
 
-PoYo has different execution paths because chat tokens and long-running media generation have different delivery requirements.
+Choose an interface based on who initiates the work and how results must be delivered.
 
-| Workload | Recommended path | Result delivery |
+| Requirement | Use | Result delivery |
 |---|---|---|
-| Chat in an application | Native chat REST endpoint | Complete JSON or token SSE |
-| Chat from a terminal | `poyo chat --stream` | Text increments or raw JSONL events |
-| Agent-driven chat | `poyo_chat` over MCP | One complete Tool Result |
-| Short generation in an agent | `poyo_run_model` | Result if ready within 30 seconds; otherwise a task ID |
-| Video, 3D, music, or long generation | `poyo_submit_job` | Task ID, then polling |
-| Application generation | Unified REST submit endpoint | Task ID, then webhook or polling |
+| Integrate chat or generation into an application | REST API | JSON, token SSE, webhook, or polling |
+| Let an AI assistant discover and run models | MCP | Complete Tool Result or a durable `task_id` |
+| Automate from a terminal or CI | PoYo CLI | Table, JSON, JSONL, CSV, or streamed text |
 
-## Why MCP chat is non-streaming
+## Choose streaming or a complete result
 
-MCP Streamable HTTP may use SSE to transport protocol messages, but that transport is not the model's token stream. `poyo_chat` waits for the upstream chat request and returns one self-contained tool result with the protocol response, normalized usage, and credits.
+Use the native chat REST endpoint or `poyo chat --stream` for token-by-token rendering. `poyo_chat` over MCP waits for the upstream response and returns one complete Tool Result with the protocol response, normalized usage, and charged credits.
 
-The protocol response is preserved and PoYo adds an `_poyo` extension:
+MCP Streamable HTTP may use SSE to transport protocol messages. That transport is not the model's token stream.
 
-```json
-{
-  "_poyo": {
-    "usage": {
-      "input_tokens": 12,
-      "output_tokens": 6,
-      "total_tokens": 18
-    },
-    "credits": 0.00432
-  }
-}
-```
+## Choose short or asynchronous generation
 
-Use the native chat API or CLI when the user experience requires token-by-token rendering.
+Use `poyo_run_model` when generation is expected to finish quickly. It waits for up to 30 seconds, then returns either the result or a `task_id`.
 
-## Why generation uses tasks
+Use `poyo_submit_job` for video, 3D, music, and other long-running work. Keep the returned `task_id` and call `poyo_check_job`; do not resubmit after a client timeout or disconnect.
 
-Media workloads can take longer than an interactive tool-call timeout. The durable task ID lets a client disconnect, resume later, retry status checks safely, or receive a webhook without resubmitting and paying twice.
-
-<Steps>
-  <Step title="Discover">
-    Search the Capability Catalog and inspect the exact model schema and price.
-  </Step>
-  <Step title="Submit once">
-    Send validated input and retain the returned task ID.
-  </Step>
-  <Step title="Wait safely">
-    Poll with backoff or verify the signed webhook notification.
-  </Step>
-  <Step title="Persist results">
-    Download generated files before temporary storage expires.
-  </Step>
-</Steps>
-
-See [Task lifecycle and results](/integrations/tasks-results) for normalized MCP statuses.
+Applications should use the REST generation endpoint and retrieve results by signed webhook or polling. See [Task lifecycle](/integrations/tasks-results) for normalized statuses and safe retry behavior.

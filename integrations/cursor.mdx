@@ -1,16 +1,27 @@
 ---
 title: "Cursor"
-description: "Connect Cursor through the PoYo stdio bridge."
+description: "Connect Cursor to PoYo MCP"
 icon: "arrow-pointer"
 ---
 
-# Cursor
+# Connect Cursor
 
-The stdio bridge is the most portable Cursor configuration and does not require a separate OAuth flow.
+Add PoYo to Cursor's MCP configuration, then restart the MCP server so Cursor refreshes its tools.
 
-## Configure
+```json
+{
+  "mcpServers": {
+    "poyo": {
+      "url": "https://api.poyo.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:POYO_API_KEY}"
+      }
+    }
+  }
+}
+```
 
-Open Cursor's MCP settings and add:
+If your Cursor version does not support authenticated remote servers, use the stdio bridge:
 
 ```json
 {
@@ -18,35 +29,18 @@ Open Cursor's MCP settings and add:
     "poyo": {
       "command": "npx",
       "args": ["-y", "@poyoapi/mcp"],
-      "env": {
-        "POYO_API_KEY": "YOUR_API_KEY"
-      }
+      "env": { "POYO_API_KEY": "YOUR_API_KEY" }
     }
   }
 }
 ```
 
-Restart the MCP server after saving so Cursor refreshes the tool list.
-
 <Warning>
-  Do not commit or share a configuration containing your API key.
+  Keep the API key in an environment variable when possible. Do not commit a configuration containing it.
 </Warning>
-
-## Typed tools
-
-To expose typed image and 3D model tools:
-
-```json
-"args": ["-y", "@poyoapi/mcp", "--models", "flux-schnell,tripo3d-h3.1-text-to-3d"]
-```
-
-Explicit model IDs keep the tool set predictable as categories grow. See [Choose MCP tools](/integrations/mcp-filtering) for filtering limits.
 
 ## Verify
 
-Ask Cursor:
+Ask Cursor: `Use PoYo to find image models, inspect one model's schema, and show its price. Do not run it.`
 
-```text
-Use PoYo to search for image models, inspect the selected model's schema
-and pricing, then tell me which execution tool you would use.
-```
+For typed model tools and usage examples, see [PoYo MCP](/integrations/mcp).

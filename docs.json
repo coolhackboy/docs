@@ -441,32 +441,42 @@
           "tab": "Integrations",
           "groups": [
             {
-              "group": "Get started",
+              "group": "Overview",
               "pages": [
-                "integrations/overview",
-                "integrations/authentication",
+                "integrations/overview"
+              ]
+            },
+            {
+              "group": "MCP",
+              "pages": [
                 "integrations/mcp",
-                "integrations/cli",
+                "integrations/claude-desktop",
+                "integrations/cursor",
+                "integrations/codex",
+                "integrations/vscode"
+              ]
+            },
+            {
+              "group": "CLI",
+              "pages": [
+                "integrations/cli"
+              ]
+            },
+            {
+              "group": "Agent Skill",
+              "pages": [
                 "integrations/skill"
               ]
             },
             {
-              "group": "Guides",
+              "group": "Reference",
               "pages": [
+                "integrations/authentication",
                 "integrations/catalog",
                 "integrations/execution-methods",
                 "integrations/mcp-filtering",
                 "integrations/tasks-results",
                 "integrations/troubleshooting"
-              ]
-            },
-            {
-              "group": "Clients",
-              "pages": [
-                "integrations/claude-desktop",
-                "integrations/cursor",
-                "integrations/codex",
-                "integrations/vscode"
               ]
             }
           ]

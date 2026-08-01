@@ -6,14 +6,14 @@ icon: "key"
 
 # Authentication
 
-All paid MCP and CLI execution requests require a PoYo API key.
+MCP initialization, tool discovery, and public model discovery do not require authentication. Account access and all paid MCP or CLI execution requests require a PoYo API key.
 
 ```http
 Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
 ```
 
-The public Capability Catalog does not require authentication.
+The public Capability Catalog and MCP discovery tools do not require authentication. A successful model search therefore does not confirm that the configured API key is valid; use `poyo_account` or `poyo auth status` to verify authentication.
 
 ## CLI
 
@@ -38,7 +38,9 @@ Credential priority is `--api-key`, `POYO_API_KEY`, system keyring, then local c
 - Prefer environment interpolation when configuring a client.
 - Apply API-key model and credit limits in the PoYo dashboard.
 
-## Unauthorized response
+## Authentication failures
+
+REST requests use an HTTP `401` response:
 
 ```json
 {
@@ -49,3 +51,5 @@ Credential priority is `--api-key`, `POYO_API_KEY`, system keyring, then local c
   }
 }
 ```
+
+MCP business and authentication failures are returned as Tool Results with `isError: true`, even when the MCP HTTP transport itself returns `200`. Clients should inspect the tool result instead of relying only on the HTTP status.
