@@ -1,36 +1,37 @@
 ---
 title: "Grok Imagine Video 1.5"
-description: "Image-to-video generation with Grok Imagine Video 1.5"
+description: "Text, image, and reference-to-video generation with Grok Imagine Video 1.5"
 icon: "video"
 openapi: "/api-manual/video-series/grok-imagine-video-1-5.json POST /api/generate/submit"
 ---
 
 <Tip>
-1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task reaches `finished` or `failed`.
-2. You can always retrieve the latest result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+1. After submission, a `task_id` is returned. If you provide a `callback_url`, PoYo sends a POST request when the task reaches `finished` or `failed`.
+2. You can always retrieve the latest result through [Query Task Status](/api-manual/task-management/status).
 </Tip>
 
 # Grok Imagine Video 1.5
 
-`grok-imagine-video-1.5` creates a video from one input image and a text prompt.
+Use `grok-imagine-video-1.5` for three generation modes with 1–15 second outputs:
 
-## Available Model
+- **Text to video**: omit both image fields. Supports 480p, 720p, and 1080p.
+- **Image to video**: provide exactly one item in `image_urls` as the first frame. Supports 480p, 720p, and 1080p.
+- **Reference to video**: provide 1–7 items in `reference_image_urls`. Reference them in the prompt as `<IMAGE_0>`, `<IMAGE_1>`, and so on. Supports 480p and 720p.
 
-- **grok-imagine-video-1.5** - Image-to-video generation from a single source image
+`image_urls` and `reference_image_urls` cannot be used together.
 
-## Required Parameters
+## Parameters
 
-- **prompt**: Text prompt describing the motion, style, camera direction, and scene changes
-- **image_urls**: Single-item image URL array. `image_urls[0]` is used as the source image
+- **prompt** (required): up to 4,096 characters.
+- **image_urls**: exactly one first-frame image for image-to-video.
+- **reference_image_urls**: 1–7 reference images for character, subject, or style consistency.
+- **resolution**: `480p`, `720p`, or `1080p`. Reference-to-video does not support `1080p`. Default: `720p`.
+- **duration**: integer from `1` to `15`. Default: `6` for text/image mode and `8` for reference mode.
+- **aspect_ratio**: `16:9`, `4:3`, `3:2`, `1:1`, `2:3`, `3:4`, or `9:16`. Available only for text and reference modes; default: `16:9`.
+- **callback_url**: optional completion webhook URL.
 
-## Optional Parameters
+## Billing
 
-- **resolution**: `480p` or `720p`. Default is `720p`
-- **duration**: Integer seconds from `1` to `15`. Default is `6`
-- **callback_url**: Optional webhook URL for completion notifications
+Billing depends on the selected resolution, output duration, and number of input images. See the [Grok Imagine Video 1.5 model page](https://poyo.ai/models/grok-imagine-video-1-5) for current pricing.
 
-## Notes
-
-- Provide exactly one image in `image_urls`
-- Use public HTTPS image URLs or upload through the playground before submitting
-- The response returns a `task_id`; query task status to retrieve generated video files
+Use public HTTPS image URLs or upload images through the playground before submitting.
