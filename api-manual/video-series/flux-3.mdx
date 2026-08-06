@@ -11,25 +11,14 @@ The submit endpoint returns a `task_id`. Use the unified [Query Task Status](/ap
 
 # Flux 3 Video Generation
 
-Flux 3 provides five focused video workflows:
+Select a model based on the source media you want to provide:
 
-- `flux-3/text-to-video`: generate from a text prompt
-- `flux-3/image-to-video`: animate one image
-- `flux-3/first-last-frame-to-video`: guide the first and last frames with exactly two images
-- `flux-3/extend-video`: continue a source video from its final frames
-- `flux-3/keyframes-to-video`: pin up to ten images to positions on a 24 fps timeline
+| Model | Required media input |
+| --- | --- |
+| `flux-3/text-to-video` | None |
+| `flux-3/image-to-video` | One image in `image_urls` |
+| `flux-3/first-last-frame-to-video` | Two ordered images in `image_urls` |
+| `flux-3/extend-video` | One MP4 in `video_url` |
+| `flux-3/keyframes-to-video` | 1-10 items in `keyframes` |
 
-## Common Parameters
-
-- `prompt` is required.
-- `duration` accepts integer seconds from `5` through `20` and defaults to `5`.
-- `resolution` accepts `720p` or `1080p` and defaults to `720p`.
-- `aspect_ratio` accepts `auto`, `21:9`, `2:1`, `16:9`, `4:3`, `1:1`, `3:4`, or `9:16` and defaults to `auto`.
-- `sound` controls generated audio and defaults to `true`.
-
-## Media Inputs
-
-- Image-to-video requires one `image_urls` item.
-- First/last-frame generation requires two `image_urls` items. Index `0` is the first frame and index `1` is the last frame.
-- Video extension requires an HTTP(S) `video_url`. Use an MP4 file smaller than 50 MB and shorter than 15 seconds.
-- Keyframes use `keyframes: [{ image_url, frame_index }]`. Provide 1–10 unique frame indexes from `0` through `duration × 24`.
+See the parameter descriptions below for model-specific requirements and limits.

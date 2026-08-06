@@ -41,8 +41,12 @@
         "type": "object",
         "required": ["model", "input"],
         "properties": {
-          "model": {"type": "string", "enum": ["flux-3/text-to-video", "flux-3/image-to-video", "flux-3/first-last-frame-to-video", "flux-3/extend-video", "flux-3/keyframes-to-video"]},
-          "callback_url": {"type": "string", "format": "uri"},
+          "model": {
+            "type": "string",
+            "description": "Flux 3 workflow to use. The selected model determines which media input field is required.",
+            "enum": ["flux-3/text-to-video", "flux-3/image-to-video", "flux-3/first-last-frame-to-video", "flux-3/extend-video", "flux-3/keyframes-to-video"]
+          },
+          "callback_url": {"type": "string", "format": "uri", "description": "Webhook URL that receives the finished or failed result."},
           "input": {"$ref": "#/components/schemas/Flux3Input"}
         }
       },
@@ -50,18 +54,49 @@
         "type": "object",
         "required": ["prompt"],
         "properties": {
-          "prompt": {"type": "string", "minLength": 1},
-          "duration": {"type": "integer", "minimum": 5, "maximum": 20, "default": 5},
-          "resolution": {"type": "string", "enum": ["720p", "1080p"], "default": "720p"},
-          "aspect_ratio": {"type": "string", "enum": ["auto", "21:9", "2:1", "16:9", "4:3", "1:1", "3:4", "9:16"], "default": "auto"},
-          "sound": {"type": "boolean", "default": true},
-          "image_urls": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string"}, "description": "One image for image-to-video or two ordered images for first/last-frame generation."},
-          "video_url": {"type": "string", "format": "uri", "description": "MP4 source video, under 50 MB and under 15 seconds."},
-          "keyframes": {"type": "array", "minItems": 1, "maxItems": 10, "items": {"$ref": "#/components/schemas/Keyframe"}}
+          "prompt": {"type": "string", "minLength": 1, "description": "Describe the desired scene, motion, and camera behavior (all Flux 3 models)."},
+          "duration": {"type": "integer", "minimum": 5, "maximum": 20, "default": 5, "description": "Output duration in seconds (all Flux 3 models)."},
+          "resolution": {"type": "string", "enum": ["720p", "1080p"], "default": "720p", "description": "Output resolution (all Flux 3 models)."},
+          "aspect_ratio": {"type": "string", "enum": ["auto", "21:9", "2:1", "16:9", "4:3", "1:1", "3:4", "9:16"], "default": "auto", "description": "Output aspect ratio (all Flux 3 models)."},
+          "sound": {"type": "boolean", "default": true, "description": "Whether to generate audio (all Flux 3 models)."},
+          "image_urls": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "items": {"type": "string", "format": "uri"},
+            "description": "Source image URLs (image-to-video and first-last-frame-to-video only). Required for these models: provide exactly 1 image for flux-3/image-to-video, or exactly 2 ordered images for flux-3/first-last-frame-to-video. For two images, item 0 is the first frame and item 1 is the last frame.",
+            "example": ["https://example.com/start.png"]
+          },
+          "video_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Source video URL (flux-3/extend-video only, required). Must be an HTTP(S) MP4 file smaller than 50 MB and shorter than 15 seconds.",
+            "example": "https://example.com/source.mp4"
+          },
+          "keyframes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {"$ref": "#/components/schemas/Keyframe"},
+            "description": "Positioned reference images (flux-3/keyframes-to-video only, required). Provide 1–10 keyframes with unique frame_index values on a 24 fps timeline."
+          }
         }
       },
-      "Keyframe": {"type": "object", "required": ["image_url", "frame_index"], "properties": {"image_url": {"type": "string"}, "frame_index": {"type": "integer", "minimum": 0}}},
-      "SubmitResponse": {"type": "object", "properties": {"code": {"type": "integer", "example": 200}, "data": {"type": "object", "properties": {"task_id": {"type": "string"}, "status": {"type": "string", "example": "not_started"}, "created_time": {"type": "string", "format": "date-time"}}}}}
+      "Keyframe": {
+        "type": "object",
+        "required": ["image_url", "frame_index"],
+        "properties": {
+          "image_url": {"type": "string", "format": "uri", "description": "Image URL for this keyframe (flux-3/keyframes-to-video only, required)."},
+          "frame_index": {"type": "integer", "minimum": 0, "description": "Unique timeline position from 0 through duration × 24 (flux-3/keyframes-to-video only, required)."}
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "properties": {
+          "code": {"type": "integer", "example": 200},
+          "data": {"type": "object", "properties": {"task_id": {"type": "string"}, "status": {"type": "string", "example": "not_started"}, "created_time": {"type": "string", "format": "date-time"}}}
+        }
+      }
     }
   }
 }
