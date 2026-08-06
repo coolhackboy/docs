@@ -155,15 +155,6 @@
                 ]
               },
               {
-                "group": "Alibaba",
-                "pages": [
-                  "api-manual/image-series/qwen-image-3",
-                  "api-manual/image-series/wan-2-7-image-pro",
-                  "api-manual/image-series/wan-2-7-image",
-                  "api-manual/image-series/z-image"
-                ]
-              },
-              {
                 "group": "Google",
                 "pages": [
                   "api-manual/image-series/nano-banana",
@@ -202,6 +193,15 @@
                 "pages": [
                   "api-manual/image-series/kling-o1",
                   "api-manual/image-series/kling-o3"
+                ]
+              },
+              {
+                "group": "Alibaba",
+                "pages": [
+                  "api-manual/image-series/qwen-image-3",
+                  "api-manual/image-series/wan-2-7-image-pro",
+                  "api-manual/image-series/wan-2-7-image",
+                  "api-manual/image-series/z-image"
                 ]
               }
             ]

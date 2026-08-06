@@ -33,7 +33,7 @@
                 },
                 "multi-reference": {
                   "summary": "Pro multi-reference generation",
-                  "value": {"model": "qwen-image-3-pro", "input": {"prompt": "Combine the original logo geometry from the first reference with the brushed-metal material and lighting from the second reference, centered premium brand emblem", "image_urls": ["https://storage.poyo.ai/logo.webp", "https://cdn.doculator.org/images/I13NA1X0MGCGMDMC/I13NA1X0MGCGMDMC.jpg"], "size": "1:1", "resolution": "1K", "output_format": "png"}}
+                  "value": {"model": "qwen-image-3-pro", "input": {"prompt": "Combine the original logo geometry from the first reference with the brushed-metal material and lighting from the second reference, centered premium brand emblem", "image_urls": ["https://storage.poyo.ai/logo.webp", "https://storage.poyo.ai/qwen-image-3-pro/reference-material.jpg"], "size": "1:1", "resolution": "1K", "output_format": "png"}}
                 }
               }
             }
