@@ -1,0 +1,98 @@
+---
+title: "Qwen Image 3 Generation"
+description: "Unified text-to-image and reference-image generation with Qwen Image 3"
+icon: "image"
+openapi: "/api-manual/image-series/qwen-image-3.json POST /api/generate/submit"
+---
+
+<Tip>
+After submission, a `task_id` is returned. You can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint or provide a `callback_url` to receive a completion notification.
+</Tip>
+
+# Qwen Image 3 Generation
+
+Qwen Image 3 supports text-to-image and multi-reference image generation for posters, product visuals, typography, and natural-language image editing.
+
+## Available Models
+
+- **qwen-image-3** - Standard image generation with 1K and 2K output
+- **qwen-image-3-pro** - Higher-quality image generation with 1K and 2K output
+
+Both models use a unified endpoint. Omit `image_urls` for text-to-image generation, or provide 1–3 reference images for image-to-image generation.
+
+## Parameters
+
+- `prompt` is required and supports up to 5,000 characters.
+- `size` supports `1:1`, `3:2`, `2:3`, `4:3`, `3:4`, `16:9`, `9:16`, and `21:9`.
+- `resolution` supports `1K` and `2K`.
+- `output_format` supports `png` and `jpeg`.
+- `prompt_extend` controls automatic prompt enhancement.
+- `negative_prompt` describes content that should not appear in the output.
+- `seed` accepts values from 0 to 2,147,483,647.
+- `enable_safety_checker` controls content safety checking.
+
+## Pro Text-to-Image Example
+
+```json
+{
+  "model": "qwen-image-3-pro",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Create a refined bilingual technology conference poster with the headline Future Vision, elegant grid layout, blue and silver palette, realistic print texture",
+    "size": "3:4",
+    "resolution": "1K",
+    "output_format": "png",
+    "negative_prompt": "blurry, distorted typography, watermark",
+    "seed": 314159
+  }
+}
+```
+
+## Standard Reference-Image Example
+
+```json
+{
+  "model": "qwen-image-3",
+  "input": {
+    "prompt": "Transform this logo into a polished metallic badge with realistic studio lighting while preserving its recognizable shape and colors",
+    "image_urls": ["https://storage.poyo.ai/logo.webp"],
+    "size": "4:3",
+    "resolution": "2K",
+    "output_format": "jpeg",
+    "prompt_extend": false
+  }
+}
+```
+
+## Pro 2K Reference-Image Example
+
+```json
+{
+  "model": "qwen-image-3-pro",
+  "input": {
+    "prompt": "Transform this logo into a premium glass and brushed-metal app icon, preserve the original geometry and colors, dark blue studio background",
+    "image_urls": ["https://storage.poyo.ai/logo.webp"],
+    "size": "16:9",
+    "resolution": "2K",
+    "output_format": "png"
+  }
+}
+```
+
+## Pro Multi-Reference Example
+
+```json
+{
+  "model": "qwen-image-3-pro",
+  "input": {
+    "prompt": "Combine the original logo geometry from the first reference with the brushed-metal material and lighting from the second reference, centered premium brand emblem",
+    "image_urls": [
+      "https://storage.poyo.ai/logo.webp",
+      "https://cdn.doculator.org/images/I13NA1X0MGCGMDMC/I13NA1X0MGCGMDMC.jpg"
+    ],
+    "size": "1:1",
+    "resolution": "1K",
+    "output_format": "png"
+  }
+}
+```
