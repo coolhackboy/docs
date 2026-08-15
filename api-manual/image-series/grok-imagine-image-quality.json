@@ -40,7 +40,6 @@
                       "prompt": "A premium product photo of a matte black smart speaker on a marble table, soft studio lighting",
                       "aspect_ratio": "1:1",
                       "resolution": "1K",
-                      "output_format": "png",
                       "n": 1
                     }
                   }
@@ -55,7 +54,6 @@
                       "image_urls": ["https://example.com/source-image.png"],
                       "aspect_ratio": "1:1",
                       "resolution": "2K",
-                      "output_format": "webp",
                       "n": 1
                     }
                   }
@@ -144,18 +142,6 @@
                 "enum": ["1K", "2K"],
                 "default": "1K",
                 "example": "1K"
-              },
-              "output_format": {
-                "type": "string",
-                "description": "Output image format",
-                "enum": ["png", "jpeg", "jpg", "webp"],
-                "default": "png",
-                "example": "png"
-              },
-              "sync_mode": {
-                "type": "boolean",
-                "description": "Optional upstream sync mode flag",
-                "example": false
               }
             }
           }

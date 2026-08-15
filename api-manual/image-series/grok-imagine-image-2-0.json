@@ -41,8 +41,7 @@
                       "n": 1,
                       "aspect_ratio": "16:9",
                       "resolution": "2K",
-                      "quality": "medium",
-                      "output_format": "jpeg"
+                      "quality": "medium"
                     }
                   }
                 },
@@ -55,10 +54,9 @@
                       "prompt": "Keep the subject unchanged and replace the background with a warm modern studio",
                       "image_urls": ["https://example.com/source-image.png"],
                       "n": 1,
-                      "aspect_ratio": "auto",
+                      "aspect_ratio": "1:1",
                       "resolution": "1K",
-                      "quality": "low",
-                      "output_format": "png"
+                      "quality": "low"
                     }
                   }
                 }
@@ -140,22 +138,14 @@
               "aspect_ratio": {
                 "type": "string",
                 "enum": [
-                  "auto",
-                  "2:1",
-                  "20:9",
-                  "19.5:9",
-                  "16:9",
-                  "4:3",
-                  "3:2",
                   "1:1",
                   "2:3",
-                  "3:4",
+                  "3:2",
                   "9:16",
-                  "9:19.5",
-                  "9:20",
-                  "1:2"
+                  "16:9"
                 ],
-                "description": "Output aspect ratio. The default is 1:1 for text-to-image and auto for editing. auto is valid only when image_urls is provided.",
+                "description": "Output aspect ratio",
+                "default": "1:1",
                 "example": "1:1"
               },
               "resolution": {
@@ -171,19 +161,6 @@
                 "default": "medium",
                 "description": "Output quality level",
                 "example": "medium"
-              },
-              "output_format": {
-                "type": "string",
-                "enum": ["jpeg", "png", "webp"],
-                "default": "jpeg",
-                "description": "Output image format",
-                "example": "jpeg"
-              },
-              "sync_mode": {
-                "type": "boolean",
-                "default": false,
-                "description": "Return generated media inline when supported",
-                "example": false
               }
             }
           }

@@ -14,7 +14,7 @@ openapi: "/api-manual/image-series/grok-imagine-image-2-0.json POST /api/generat
 
 Use `grok-imagine-image-2.0` for text-to-image generation and image editing through one model ID.
 
-When `input.image_urls` is empty or omitted, the model creates images from the prompt and defaults to a `1:1` aspect ratio. When `input.image_urls` contains one to three images, the model edits those images and defaults to `auto`, preserving the aspect ratio of the first input image.
+When `input.image_urls` is empty or omitted, the model creates images from the prompt. When `input.image_urls` contains one to three images, the model edits those images. The default aspect ratio is `1:1`.
 
 Use `input.quality` and `input.resolution` to control the output tier, and `input.n` to request up to four output images. Usage depends on the selected output count, quality, resolution, and number of input images.
 
