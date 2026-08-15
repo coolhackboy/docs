@@ -1,0 +1,23 @@
+---
+title: "Grok Imagine Image 2.0 Generation"
+description: "Image generation and editing with selectable quality and resolution"
+icon: "image"
+openapi: "/api-manual/image-series/grok-imagine-image-2-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Grok Imagine Image 2.0 Generation
+
+Use `grok-imagine-image-2.0` for text-to-image generation and image editing through one model ID.
+
+When `input.image_urls` is empty or omitted, the model creates images from the prompt and defaults to a `1:1` aspect ratio. When `input.image_urls` contains one to three images, the model edits those images and defaults to `auto`, preserving the aspect ratio of the first input image.
+
+Use `input.quality` and `input.resolution` to control the output tier, and `input.n` to request up to four output images. Usage depends on the selected output count, quality, resolution, and number of input images.
+
+## Available Models
+
+- **grok-imagine-image-2.0** - Text-to-image generation and multi-image editing

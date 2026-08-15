@@ -49,6 +49,7 @@
       "/api-manual/image-series/wan-2-7-image.json",
       "/api-manual/image-series/z-image.json",
       "/api-manual/image-series/grok-imagine-image.json",
+      "/api-manual/image-series/grok-imagine-image-2-0.json",
       "/api-manual/image-series/grok-imagine-image-quality.json",
       "/api-manual/image-series/kling-o1.json",
       "/api-manual/image-series/kling-o3.json",
@@ -186,7 +187,8 @@
                 "group": "Grok (xAI)",
                 "pages": [
                   "api-manual/image-series/grok-imagine-image",
-                  "api-manual/image-series/grok-imagine-image-quality"
+                  "api-manual/image-series/grok-imagine-image-quality",
+                  "api-manual/image-series/grok-imagine-image-2-0"
                 ]
               },
               {
