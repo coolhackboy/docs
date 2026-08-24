@@ -1,5 +1,5 @@
 ---
-title: "Quickstart"
+title: "Getting Started"
 description: "Make your first PoYo model request and learn the production request lifecycle."
 icon: "rocket"
 ---
@@ -22,7 +22,7 @@ Access image, video, audio, music, 3D, and chat models through one API key. Star
   </Card>
 </CardGroup>
 
-## Available Models & Playground
+## 1. Available Models & Playground
 
 Find the **latest supported models** on our [Model page](https://poyo.ai/models).
 
@@ -30,7 +30,7 @@ Find the **latest supported models** on our [Model page](https://poyo.ai/models)
 - Each model page links to its Playground, where you can test and experiment directly in our UI before calling the API.
 - The Playground is the best place to understand model behavior, parameters, and output formats.
 
-## Pricing
+## 2. Pricing
 
 The **complete and up-to-date pricing list** is available on the [pricing page](https://poyo.ai/pricing).
 
@@ -38,7 +38,7 @@ The **complete and up-to-date pricing list** is available on the [pricing page](
 - For some models, discounts can reach up to 80%.
 - Pricing may change as upstream providers adjust their costs, so always refer to the pricing page for the latest numbers.
 
-## Choose how to integrate
+## 3. Choose how to integrate
 
 | Approach | Best for |
 |---|---|
@@ -47,7 +47,7 @@ The **complete and up-to-date pricing list** is available on the [pricing page](
 | [MCP](/integrations/mcp) | Letting Claude, Cursor, Codex, or VS Code discover and run models |
 | [Agent Skill](/integrations/skill) | Teaching an agent the recommended discovery and execution workflow |
 
-## Creating and Securing Your API Key
+## 4. Creating and Securing Your API Key
 
 Create and manage your API keys on the [API key page](https://poyo.ai/dashboard/api-key).
 
@@ -63,7 +63,7 @@ To help protect your usage, we provide:
 
 These features help prevent accidental overuse and unauthorized requests.
 
-## Required Request Headers
+## 5. Required Request Headers
 
 Every API request **must include** the correct headers:
 
@@ -80,7 +80,7 @@ If these headers are missing or incorrect, you may receive:
 
 Always double-check your headers when debugging authentication issues.
 
-## Make your first generation request
+## 6. Make your first generation request
 
 Generation is asynchronous. Submit a task, save its `task_id`, then poll its status or receive a webhook.
 
@@ -149,7 +149,7 @@ Generation is asynchronous. Submit a task, save its `task_id`, then poll its sta
   A successful submit response means the task was accepted, not that generation has finished.
 </Info>
 
-## Retrieve the result
+## 7. Retrieve the result
 
 ```bash
 curl "https://api.poyo.ai/api/generate/status/TASK_ID" \
@@ -158,7 +158,7 @@ curl "https://api.poyo.ai/api/generate/status/TASK_ID" \
 
 Continue while the task is queued or running. When it finishes, download the returned files to storage you control. For production workloads, prefer [signed webhooks](/api-manual/task-management/webhooks) instead of frequent polling.
 
-## Logs & Task Details
+## 8. Logs & Task Details
 
 Inspect all your historical tasks on the [task history page](https://poyo.ai/dashboard/history).
 
@@ -173,7 +173,7 @@ For each task, you can view:
 
 If you ever suspect incorrect credit usage, this page is the **source of truth** for verification.
 
-## Data Retention Policy
+## 9. Data Retention Policy
 
 Please note our **retention rules**:
 
@@ -182,7 +182,7 @@ Please note our **retention rules**:
 
 If you need long-term access, make sure to download and store results on your side in time.
 
-## Asynchronous Task Model
+## 10. Asynchronous Task Model
 
 All generation tasks on PoYo.ai are **asynchronous**. A successful request returns:
 
@@ -196,7 +196,7 @@ To get the final result, you must either:
 - Provide a callback (webhook) URL in the request, or
 - Actively poll the "Get Task Status" API using the `task_id`
 
-## Rate Limits & Concurrency
+## 11. Rate Limits & Concurrency
 
 By default, we apply the following limits:
 
@@ -211,7 +211,7 @@ If you exceed the limit:
 
 For most users, this is more than sufficient. If you consistently hit 429 errors, you may contact support to request a higher limit - approvals are handled cautiously.
 
-## Before production
+## 12. Before production
 
 - Keep API keys on your server; never expose them in browser or mobile code.
 - Validate inputs against the selected model's current schema.
@@ -220,7 +220,7 @@ For most users, this is more than sufficient. If you consistently hit 429 errors
 - Review [task statuses](/api-manual/task-management/status), [error responses](/api-manual/error-codes), and current [pricing](https://poyo.ai/pricing).
 - Generated media is temporary. Download results promptly and follow the retention policy shown in your account and API documentation.
 
-## Build with an AI assistant
+## 13. Build with an AI assistant
 
 Connect PoYo MCP when an assistant needs live model schemas, pricing, account information, and execution tools:
 
@@ -230,7 +230,7 @@ https://api.poyo.ai/mcp
 
 Start with [PoYo Integrations](/integrations/overview), or go directly to the setup guide for [Claude](/integrations/claude-desktop), [Cursor](/integrations/cursor), [Codex](/integrations/codex), or [VS Code](/integrations/vscode).
 
-## Support
+## 14. Support
 
 Use the support entry in the [PoYo dashboard](https://poyo.ai/dashboard) for the fastest account-aware assistance, or email `support@poyo.ai`.
 
@@ -247,7 +247,7 @@ Recommended support channels are available directly from the dashboard's bottom-
 Support hours: UTC 21:00 - UTC 17:00 (next day).
 Email is available (slower): `support@poyo.ai`.
 
-## Stability Expectations
+## 15. Stability Expectations
 
 We provide access to top-tier, highly competitive APIs at very aggressive pricing. That said:
 
@@ -257,7 +257,7 @@ We provide access to top-tier, highly competitive APIs at very aggressive pricin
 
 In practice, PoYo.ai is stable enough to support production workloads and long-term business growth, but we believe in setting realistic expectations upfront.
 
-## About the Team
+## 16. About the Team
 
 PoYo.ai is built by a **small startup team**.
 
