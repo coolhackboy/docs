@@ -1,55 +1,45 @@
 ---
-title: "PoYo Integrations"
-description: "Connect AI assistants to PoYo models with MCP, or use the CLI and API directly"
+title: "AI and developer integrations"
+description: "Choose MCP, CLI, Agent Skill, or REST for your PoYo workflow."
 icon: "terminal"
 ---
 
-# PoYo Integrations
+# AI and developer integrations
 
-Give Claude, Cursor, Codex, VS Code, and other AI assistants live access to PoYo model discovery, schemas, pricing, and execution.
+Choose an integration based on how you want to work. All options use the same Capability Catalog, authentication, public pricing, asynchronous tasks, and normalized results as the REST API.
 
-## Connect with MCP
+| I want to... | Recommended integration | Start here |
+|---|---|---|
+| Ask an AI client to discover and run models | MCP | [MCP quickstart](/integrations/mcp) |
+| Teach an agent model selection, cost control, and execution workflows | MCP + Agent Skill | [Agent Skill](/integrations/skill) |
+| Run model calls from a terminal or CI | CLI | [CLI](/integrations/cli) |
+| Build an application with HTTP requests | REST API | [API overview](/api-manual/overview) |
 
-PoYo hosts a Streamable HTTP MCP server at:
+## Fastest path
+
+For most AI-client users:
+
+1. Set `POYO_API_KEY`.
+2. Connect to `https://api.poyo.ai/mcp`, or run `npx -y @poyoapi/mcp` for a stdio-only client.
+3. Ask the client to check your account, select a model, show its price, run it, and wait for the returned task.
 
 ```text
-https://api.poyo.ai/mcp
+Use PoYo to check my account, find a suitable image model, and show me its
+price. Generate a cinematic product photo, wait for the task to finish, then
+return the output URL.
 ```
 
-Public model discovery works without authentication. Add a [PoYo API key](/integrations/authentication) as a Bearer token to access account information and run models. Configuring the key when you connect gives your assistant the complete workflow without relying on stale model knowledge.
+See [MCP quickstart](/integrations/mcp) for client configuration, available tools, task polling, and result handling.
 
-<CardGroup cols={2}>
-  <Card title="Claude" icon="robot" href="/integrations/claude-desktop">
-    Connect Claude Code or Claude Desktop.
-  </Card>
-  <Card title="Cursor" icon="arrow-pointer" href="/integrations/cursor">
-    Add PoYo to Cursor's MCP settings.
-  </Card>
-  <Card title="Codex" icon="code" href="/integrations/codex">
-    Configure Codex CLI or the IDE extension.
-  </Card>
-  <Card title="VS Code" icon="window-maximize" href="/integrations/vscode">
-    Add PoYo with a secure input in `mcp.json`.
-  </Card>
-</CardGroup>
+## Integration summary
 
-<Card title="Set up any MCP client" icon="plug" href="/integrations/mcp">
-  Copy a client configuration, verify the connection, and see what you can ask PoYo to do.
-</Card>
-
-## Choose another interface
-
-| If you want to... | Use |
-|---|---|
-| Let an AI assistant find and run models | [MCP](/integrations/mcp) |
-| Automate model calls from a terminal or CI | [PoYo CLI](/integrations/cli) |
-| Add repeatable PoYo guidance to a coding agent | [PoYo Agent Skill](/integrations/skill) |
-| Integrate models directly into an application | [REST API](/api-manual/overview) |
+| Integration | Best for | Install or URL | Availability |
+|---|---|---|---|
+| Remote MCP | Hosted AI clients | `https://api.poyo.ai/mcp` | Available |
+| stdio MCP | Local-only MCP clients | `npx -y @poyoapi/mcp` | Available |
+| CLI | Shell scripts and model execution | `npm install -g @poyoapi/cli` | Available |
+| Agent Skill | Reusable model workflow | `npx skills add PoyoAPI/poyo-devtools` | Repository install |
 
 <Info>
-  MCP is designed for agent-driven work. For application traffic or token-by-token chat output, use the REST API directly.
+  CLI and stdio MCP are local clients, not separately deployed services. The hosted MCP endpoint runs alongside the PoYo API.
 </Info>
-
-## Use the same live model data
-
-MCP, CLI, Agent Skill, and REST integrations share the [Capability Catalog](/integrations/catalog), model schemas, public pricing, authentication, and task lifecycle. Always inspect the current schema before execution instead of hard-coding parameters from an old response.
