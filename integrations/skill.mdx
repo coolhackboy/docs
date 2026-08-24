@@ -26,15 +26,6 @@ The Skill instructs an agent to:
 6. Poll queued/running tasks until they succeed or fail.
 7. Report model ID, credits, status, outputs, and partial failures.
 
-## Attribution
-
-Skill-triggered paid calls must identify their source:
-
-- MCP: `_request_source: "skill"`
-- CLI: `--request-source skill`
-
-This produces `skill-mcp` or `skill-cli` audit attribution without changing pricing.
-
 ## Guardrails
 
 - Never invent a model ID or parameter.
