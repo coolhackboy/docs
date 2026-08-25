@@ -1,0 +1,30 @@
+---
+title: "Wan 3.0 Video Generation"
+description: "Wan 3.0 multimodal video generation API"
+icon: "video"
+openapi: "/api-manual/video-series/wan-3-0-video.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` is returned. If `callback_url` is provided, a POST request is sent when the task finishes or fails.
+2. You can always retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Wan 3.0 Video Generation
+
+Wan 3.0 includes three models for text, start/end frame, and multimodal reference video generation.
+
+## Models
+
+- `wan3.0-text-to-video` — generates video from a required text prompt
+- `wan3.0-image-to-video` — generates video from one or two start/end frame images
+- `wan3.0-reference-to-video` — generates video from multimodal references
+
+## Key Features
+
+- **Duration**: 2–30 seconds
+- **Resolution**: 480p, 720p, or 1080p
+- **Start/End Frames**: Use one or two `image_urls` with the image model
+- **Generated Audio**: Control the output audio track with `audio`
+- **Multimodal References**: Use images, videos, audio clips, documents, or public webpages with the reference model
+- **Reference Labels**: Mention inputs in the prompt as `Image1`, `Video1`, or `Audio1`

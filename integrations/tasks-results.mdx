@@ -58,7 +58,7 @@ On success:
 3. Download generated files to storage you control before temporary URLs expire.
 4. Treat repeated webhook deliveries and status reads as normal.
 
-On failure, keep the task ID and normalized error. Retry only when the error is transient, and reuse the same idempotency key only with the identical request payload.
+On failure, keep the task ID and normalized error. Retry only when the error is transient. Submission retries are not deduplicated, so confirm whether the original request created a task before resubmitting.
 
 <Info>
   `poyo_run_model` waits for at most 30 seconds. If the work is still running, it returns the task ID and `poll_after_seconds` instead of failing the generation.

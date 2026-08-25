@@ -22,15 +22,14 @@ The Skill instructs an agent to:
 2. Search the production Capability Catalog.
 3. Inspect the selected model's schema and pricing.
 4. Choose non-streaming MCP chat, CLI streaming chat, short generation, or asynchronous submission.
-5. Reuse an idempotency key for transport retries.
-6. Poll queued/running tasks until they succeed or fail.
-7. Report model ID, credits, status, outputs, and partial failures.
+5. Poll queued/running tasks until they succeed or fail.
+6. Report model ID, credits, status, outputs, and partial failures.
 
 ## Guardrails
 
 - Never invent a model ID or parameter.
 - Never put an API key in a prompt or committed file.
 - Check credits before expensive or repeated work.
-- Do not blindly retry a paid failure.
+- Do not automatically resubmit a paid request after a timeout or transport failure; first determine whether a task was created.
 - Do not claim completion while a task is queued or running.
 - Preserve task IDs so an interrupted workflow can resume without resubmission.
