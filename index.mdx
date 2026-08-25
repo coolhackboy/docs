@@ -216,7 +216,7 @@ For most users, this is more than sufficient. If you consistently hit 429 errors
 - Keep API keys on your server; never expose them in browser or mobile code.
 - Validate inputs against the selected model's current schema.
 - Handle `401`, `402`, `429`, and transient server failures explicitly.
-- Use an idempotency key when the endpoint supports it so retries do not duplicate paid work.
+- Treat every submission retry as potentially new paid work; confirm whether the original request created a task before resubmitting.
 - Review [task statuses](/api-manual/task-management/status), [error responses](/api-manual/error-codes), and current [pricing](https://poyo.ai/pricing).
 - Generated media is temporary. Download results promptly and follow the retention policy shown in your account and API documentation.
 

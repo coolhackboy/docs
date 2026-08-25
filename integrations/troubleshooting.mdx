@@ -8,7 +8,7 @@ icon: "triangle-exclamation"
 
 | HTTP code | Meaning |
 |---|---|
-| `400` | Invalid input, filter, cursor, or idempotency conflict |
+| `400` | Invalid input, filter, or cursor |
 | `401` | Missing or invalid API key |
 | `402` | Insufficient credits |
 | `403` | Model or task is not available to the API key |
@@ -27,8 +27,6 @@ Common identifiers include:
 - `mcp_model_filter_limit`
 - `mcp_category_filter_limit`
 - `mcp_typed_tool_limit`
-- `idempotency_key_payload_conflict`
-- `idempotency_request_in_progress`
 
 ## Retry decisions
 
@@ -38,10 +36,10 @@ Common identifiers include:
 | Invalid API key or forbidden model | No | Fix credentials or model access |
 | Insufficient credits | No | Add credits or choose a lower-cost model |
 | Rate limited | Yes | Honor `Retry-After` and back off |
-| Transient provider or service failure | Usually | Retry with backoff and the same idempotency key |
+| Transient provider or service failure | Sometimes | Inspect the failure and confirm whether a task was created before resubmitting |
 | Local wait timeout with a task ID | Do not resubmit | Continue checking the existing task |
 
-Do not blindly retry a paid failure. Inspect the normalized error and reuse the same idempotency key only when retrying the identical request.
+Do not blindly retry a paid failure. Submission retries are not deduplicated and may create another task and charge. Inspect the normalized error and confirm whether the original request created a task before resubmitting.
 
 ## Tools are missing
 
