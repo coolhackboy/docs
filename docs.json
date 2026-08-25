@@ -67,6 +67,8 @@
       "/api-manual/video-series/wan2.5-text-to-video.json",
       "/api-manual/video-series/wan-2-6.json",
       "/api-manual/video-series/wan-2-7-video.json",
+      "/api-manual/video-series/wan-3-0-video.json",
+      "/api-manual/video-series/wan-3-0-video-prime.json",
       "/api-manual/video-series/kling-1-6.json",
       "/api-manual/video-series/kling-2-1.json",
       "/api-manual/video-series/kling-2-6.json",
@@ -242,7 +244,9 @@
                   "api-manual/video-series/wan2.5-image-to-video",
                   "api-manual/video-series/wan2.5-text-to-video",
                   "api-manual/video-series/wan-2-6",
-                  "api-manual/video-series/wan-2-7-video"
+                  "api-manual/video-series/wan-2-7-video",
+                  "api-manual/video-series/wan-3-0-video",
+                  "api-manual/video-series/wan-3-0-video-prime"
                 ]
               },
               {

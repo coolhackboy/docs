@@ -1,0 +1,219 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Wan 3.0 Prime Video API",
+    "description": "Wan 3.0 Prime text, image, and multimodal reference video generation.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [{"BearerAuth": []}],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit a Wan 3.0 Prime Video Task",
+        "description": "Generate video with a Wan 3.0 Prime model.",
+        "operationId": "submitWan30PrimeVideoTask",
+        "tags": ["Wan 3.0 Prime Video"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/SubmitRequest"},
+              "examples": {
+                "prime-text-to-video": {
+                  "summary": "Prime text to video model",
+                  "value": {
+                    "model": "wan3.0-prime-text-to-video",
+                    "input": {
+                      "prompt": "A fast-paced cinematic fashion film on a rain-soaked city street.",
+                      "resolution": "720p",
+                      "aspect_ratio": "9:16",
+                      "duration": 10,
+                      "audio": true
+                    }
+                  }
+                },
+                "prime-image-to-video": {
+                  "summary": "Prime image to video model",
+                  "value": {
+                    "model": "wan3.0-prime-image-to-video",
+                    "input": {
+                      "image_urls": ["https://example.com/product.png"],
+                      "prompt": "A polished studio product reveal with smooth rotation and soft highlights.",
+                      "resolution": "1080p",
+                      "duration": 5,
+                      "audio": false
+                    }
+                  }
+                },
+                "prime-reference-to-video": {
+                  "summary": "Prime reference to video model",
+                  "value": {
+                    "model": "wan3.0-prime-reference-to-video",
+                    "input": {
+                      "prompt": "Create a concise product introduction based on this presentation.",
+                      "reference_file_urls": ["https://example.com/product-brief.pdf"],
+                      "resolution": "480p",
+                      "aspect_ratio": "16:9",
+                      "duration": 10,
+                      "audio": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/SubmitResponse"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "Send your API key as `Authorization: Bearer YOUR_API_KEY`."
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "wan3.0-prime-text-to-video",
+              "wan3.0-prime-image-to-video",
+              "wan3.0-prime-reference-to-video"
+            ],
+            "description": "Wan 3.0 Prime public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook callback URL."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 20000,
+                "description": "Required for text-to-video and reference-to-video; optional for image-to-video."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {"type": "string", "format": "uri"},
+                "description": "Image-to-video start frame and optional end frame."
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {"type": "string", "format": "uri"},
+                "description": "Reference images for reference-to-video."
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {"type": "string", "format": "uri"},
+                "description": "Reference videos for reference-to-video."
+              },
+              "reference_audio_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {"type": "string", "format": "uri"},
+                "description": "Reference audio clips for reference-to-video."
+              },
+              "reference_file_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {"type": "string", "format": "uri"},
+                "description": "One reference document. Cannot be combined with reference_link_urls."
+              },
+              "reference_link_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {"type": "string", "format": "uri"},
+                "description": "One publicly accessible webpage. Cannot be combined with reference_file_urls."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": ["480p", "720p", "1080p"],
+                "default": "720p"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": ["adaptive", "16:9", "4:3", "1:1", "3:4", "9:16"],
+                "default": "adaptive"
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 30,
+                "default": 5,
+                "description": "Generated video duration in seconds."
+              },
+              "audio": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to generate an output audio track."
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to enable content safety checking."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {"type": "integer", "example": 200},
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {"type": "string", "example": "task-unified-1787654321-abcd1234"},
+              "status": {"type": "string", "enum": ["not_started"]},
+              "created_time": {"type": "string", "format": "date-time"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

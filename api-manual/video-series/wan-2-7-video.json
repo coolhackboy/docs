@@ -196,7 +196,7 @@
               },
               "multi_shots": {
                 "type": "boolean",
-                "description": "Optional multi-shot control for image, reference, and edit workflows."
+                "description": "Optional multi-shot control for image, reference, and edit models."
               },
               "audio_setting": {
                 "type": "string",
