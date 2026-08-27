@@ -1,0 +1,39 @@
+{
+  "openapi": "3.0.0",
+  "info": {"title": "PoYo Suno Voice Validate API", "version": "1.0.0", "description": "Validate a voice sample and obtain a verification phrase."},
+  "servers": [{"url": "https://api.poyo.ai"}],
+  "security": [{"BearerAuth": []}],
+  "paths": {"/api/generate/submit": {"post": {
+    "operationId": "submitSunoVoiceValidate",
+    "summary": "Validate a voice sample",
+    "requestBody": {"required": true, "content": {"application/json": {
+      "schema": {"$ref": "#/components/schemas/Request"},
+      "example": {"model": "suno-voice-validate", "input": {"voice_url": "https://example.com/voice.mp3", "vocal_start_s": 0, "vocal_end_s": 20, "language": "en"}}
+    }}},
+    "responses": {"200": {"description": "Submitted", "content": {"application/json": {
+      "schema": {"$ref": "#/components/schemas/Response"},
+      "example": {"code": 200, "data": {"task_id": "voice_validate_task_id", "status": "not_started", "created_time": "2026-08-27T10:00:00"}}
+    }}}}
+  }}},
+  "components": {
+    "securitySchemes": {"BearerAuth": {"type": "http", "scheme": "bearer"}},
+    "schemas": {"Request": {
+      "type": "object", "required": ["model", "input"],
+      "properties": {
+        "model": {"type": "string", "enum": ["suno-voice-validate"]},
+        "callback_url": {"type": "string", "format": "uri"},
+        "input": {"type": "object", "additionalProperties": false, "required": ["voice_url", "vocal_start_s", "vocal_end_s"], "properties": {
+          "voice_url": {"type": "string", "format": "uri", "pattern": "^https?://"},
+          "vocal_start_s": {"type": "integer", "minimum": 0, "description": "Start time in seconds; must be less than vocal_end_s."},
+          "vocal_end_s": {"type": "integer", "minimum": 1, "description": "End time in seconds; must be greater than vocal_start_s."},
+          "language": {"type": "string", "default": "en", "enum": ["en", "zh", "es", "fr", "pt", "de", "ja", "ko", "hi", "ru"]}
+        }}
+      }
+    }, "Response": {
+      "type": "object", "required": ["code", "data"], "properties": {
+        "code": {"type": "integer", "example": 200},
+        "data": {"type": "object", "required": ["task_id", "status", "created_time"], "properties": {"task_id": {"type": "string"}, "status": {"type": "string", "enum": ["not_started", "running", "finished", "failed"]}, "created_time": {"type": "string", "format": "date-time"}}}
+      }
+    }}
+  }
+}

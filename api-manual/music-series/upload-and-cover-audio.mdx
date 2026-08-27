@@ -10,6 +10,8 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
+Upload Cover supports `persona_model` (`style_persona` or `voice_persona`) with `persona_id` only in Custom Mode on V5/V5_5. It also supports integer `duration` from 10–360 only when `custom_mode: true` and `mv: V5_5`.
+
 ## Usage Guide
 
 - This endpoint transforms an uploaded audio track into a new style while preserving the original melody
@@ -65,6 +67,8 @@ openapi: "/api-manual/music-series/upload-and-cover-audio.json POST /api/generat
 
 - `audio_weight` (number): Balance weight for preserving original audio features. Range 0-1, up to 2 decimals.
 
-- `persona_id` (string): Persona ID to apply to the covered track. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+- `persona_id` (string): Persona ID to apply to the covered track. Only available when `custom_mode: true` with V5/V5_5. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+
+- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id`, `custom_mode: true`, and V5/V5_5.
 
 

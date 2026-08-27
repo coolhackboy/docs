@@ -1,0 +1,12 @@
+---
+title: "Generate Mashup"
+description: "Blend exactly two audio tracks with Suno"
+icon: "music"
+openapi: "/api-manual/music-series/generate-mashup.json POST /api/generate/submit"
+---
+
+`upload_url_list` must contain exactly two accessible audio URLs. `mv` supports `V4`, `V4_5`, `V4_5ALL`, `V4_5PLUS`, `V5`, and `V5_5`. Custom mode follows Generate Music rules: `style` and `title` are required, and `prompt` is additionally required for vocal output. `duration` is an integer from 10–360 and is only accepted with `custom_mode: true` and `mv: V5_5`.
+
+```json
+{"model":"generate-mashup","callback_url":"https://example.com/webhook","input":{"upload_url_list":["https://example.com/a.mp3","https://example.com/b.mp3"],"custom_mode":true,"instrumental":true,"mv":"V5_5","style":"cinematic electronic","title":"Night Drive","duration":120}}
+```

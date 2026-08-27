@@ -10,15 +10,17 @@ openapi: "/api-manual/music-series/generate-persona.json POST /api/generate/subm
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
+Optional `vocal_start` and `vocal_end` select a 10–30 second source segment and must be supplied together. `style` can describe the intended persona style.
+
 ## Usage Guide
 
 - This endpoint creates a reusable musical persona from an existing audio track
 - Personas capture the vocal style, genre characteristics, and musical personality
-- Once created, personas can be used with the Generate Music endpoint via the `persona_id` parameter
+- Once created, personas can be used with the Generate Music and Extend Music endpoints via the `persona_id` parameter
 
 ## Parameter Details
 
-- `task_id` (required): Task ID from a completed music generation ([Generate](/api-manual/music-series/generate-music), [Extend](/api-manual/music-series/extend-music), [Upload Cover](/api-manual/music-series/upload-and-cover-audio), or [Upload Extend](/api-manual/music-series/upload-and-extend-audio))
+- `task_id` (required): Task ID from a completed [Generate](/api-manual/music-series/generate-music) or [Extend](/api-manual/music-series/extend-music) task
 - `audio_id` (required): Specific audio track identifier from the callback data
 - `name` (required): A descriptive name that captures the musical style or character
 - `description` (required): Detailed description including:
@@ -34,7 +36,5 @@ openapi: "/api-manual/music-series/generate-persona.json POST /api/generate/subm
 - You can apply the `persona_id` to the following endpoints:
   - [Generate Music](/api-manual/music-series/generate-music)
   - [Extend Music](/api-manual/music-series/extend-music)
-  - [Upload And Cover Audio](/api-manual/music-series/upload-and-cover-audio)
-  - [Upload And Extend Audio](/api-manual/music-series/upload-and-extend-audio)
 - Provide detailed descriptions for best results when using the persona
 

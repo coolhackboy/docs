@@ -14,8 +14,9 @@ openapi: "/api-manual/music-series/vocal-remover/stem-split.json POST /api/gener
 
 <Note>
 **Vocal Separation Options:**
-- [separate-vocals](/api-manual/music-series/vocal-remover/separate-vocals): Does not support uploading audio, 2-stem split, based on Suno
-- [stem-split](/api-manual/music-series/vocal-remover/stem-split): Does not support uploading audio, 12-stem split, based on Suno
+- [separate-vocals](/api-manual/music-series/vocal-remover/separate-vocals): Supports PoYo task audio or `upload_url`, 2-stem split, based on Suno
+- [stem-split](/api-manual/music-series/vocal-remover/stem-split): Supports PoYo task audio or `upload_url`, multi-stem split, based on Suno
+- [stem-split-advanced](/api-manual/music-series/vocal-remover/stem-split-advanced): Supports PoYo task audio or `upload_url`, extracts/removes one requested stem
 - [upload-and-separate-vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals): Supports uploading audio, 7-stem split
 </Note>
 
@@ -25,11 +26,13 @@ openapi: "/api-manual/music-series/vocal-remover/stem-split.json POST /api/gener
 
 ## Parameter Details
 
-- `task_id` (required): Task ID from a completed music generation (Generate Music or Extend Music)
-- `audio_id` (required): Specific audio track identifier from the callback data
+- Source A: `task_id` and `audio_id` from a completed PoYo music task
+- Source B: a public `upload_url`
+
+The two source modes are mutually exclusive.
 
 ## Developer Notes
 
-- Stem split can only be performed once per audio track
+- Duplicate submissions are not deduplicated; reuse the returned task when retrying a status query
 - The callback includes download URLs for each separated stem
 

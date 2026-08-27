@@ -10,6 +10,8 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
+`persona_model` accepts `style_persona` or `voice_persona`, requires `persona_id`, and is supported only when `default_param_flag: true` with V5/V5_5.
+
 ## Usage Guide
 
 - This endpoint extends uploaded audio files while preserving the original style
@@ -23,9 +25,9 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
   - Full control over style, title, and other parameters
 
-  - If `instrumental: true`: only `style`, `title`, and `upload_url` are required
+  - If `instrumental: true`: `upload_url`, `mv`, `style`, `title`, and `continue_at` are required
 
-  - If `instrumental: false`: `style`, `title`, `prompt` (used as exact lyrics), and `upload_url` are required
+  - If `instrumental: false`: `upload_url`, `mv`, `style`, `title`, and `continue_at` are required. `prompt` is optional and is used when provided
 
   - Character limits vary by model:
 
@@ -40,7 +42,7 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
 - When `default_param_flag: false`:
 
-  - Only `upload_url` is required. If `instrumental: false`, lyrics will be automatically generated
+  - Only `upload_url` is required; `prompt` is optional. If `instrumental: false` and `prompt` is omitted, lyrics will be automatically generated
 
 ## Developer Notes
 
@@ -49,7 +51,7 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
 ## Optional parameters
 
-- `prompt` (string): Description or lyrics for the extended audio. Required when `default_param_flag` is `true` and `instrumental` is `false`. The prompt will be used strictly as lyrics. When `default_param_flag` is `false`, lyrics will be automatically generated based on the prompt.
+- `prompt` (string): Optional description or lyrics for the extended audio. If omitted for vocal output, lyrics are generated automatically.
 
 - `style` (string): Music style specification. Required when `default_param_flag` is `true`.
 
@@ -65,6 +67,6 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.
 
-- `persona_id` (string): Persona ID to apply to the generated music. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+- `persona_id` (string): Persona ID to apply to the generated music. Only available when `default_param_flag: true` with V5/V5_5. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
 
 

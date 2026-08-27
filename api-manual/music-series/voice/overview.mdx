@@ -1,0 +1,12 @@
+---
+title: "Suno Voice Workflow"
+description: "Validate a voice recording and create a reusable Suno Voice ID"
+icon: "microphone"
+---
+
+1. Submit [Validate Voice](/api-manual/music-series/voice/validate) with a clear solo-vocal segment. The result contains `validate_info`, including the verification phrase.
+2. Record the displayed phrase cleanly, without backing music or effects, then submit [Generate Voice](/api-manual/music-series/voice/generate) using the `task_id` returned by Validate Voice.
+3. Poll [Query Music Detail](/api-manual/music-series/query-music-detail) or use a webhook until the result contains `voice_id`.
+4. Use [Check Voice](/api-manual/music-series/voice/check) with the `task_id` returned by Generate Voice. Its result contains `is_available`. If the phrase expires or cannot be recorded, use [Regenerate Phrase](/api-manual/music-series/voice/regenerate) with the Validate Voice `task_id`, then continue Generate Voice with the new `task_id` returned by Regenerate Phrase.
+
+Voice IDs may expire or become unavailable, so check availability before production use. To use the voice for music generation, pass its ID as `persona_id` and set `persona_model: "voice_persona"` on a supported V5/V5_5 music endpoint.

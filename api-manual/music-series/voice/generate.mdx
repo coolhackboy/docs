@@ -1,0 +1,8 @@
+---
+title: "Generate Suno Voice"
+description: "Create a reusable Voice ID from a verification recording"
+icon: "microphone-lines"
+openapi: "/api-manual/music-series/voice/generate.json POST /api/generate/submit"
+---
+
+Use the `task_id` returned by Validate Voice, or the new `task_id` returned by Regenerate Phrase. `verify_url` must contain a clean recording of the generated phrase. The completed result contains `voice_id` and `voice_status`. Optional metadata includes `voice_name`, `description`, `style`, and `singer_skill_level`.

@@ -1,0 +1,25 @@
+{
+  "openapi": "3.0.0",
+  "info": {"title": "PoYo Suno Voice Check API", "version": "1.0.0", "description": "Check whether a generated Voice ID is available."},
+  "servers": [{"url": "https://api.poyo.ai"}], "security": [{"BearerAuth": []}],
+  "paths": {"/api/generate/submit": {"post": {
+    "operationId": "submitSunoVoiceCheck", "summary": "Check Voice ID availability",
+    "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Request"}, "example": {"model": "suno-voice-check", "input": {"task_id": "voice_generate_task_id"}}}}},
+    "responses": {"200": {"description": "Availability task submitted", "content": {"application/json": {
+      "schema": {"$ref": "#/components/schemas/Response"},
+      "example": {"code": 200, "data": {"task_id": "voice_check_task_id", "status": "not_started", "created_time": "2026-08-27T10:00:00"}}
+    }}}}
+  }}},
+  "components": {"securitySchemes": {"BearerAuth": {"type": "http", "scheme": "bearer"}}, "schemas": {"Request": {
+    "type": "object", "required": ["model", "input"], "properties": {
+      "model": {"type": "string", "enum": ["suno-voice-check"]},
+      "callback_url": {"type": "string", "format": "uri"},
+      "input": {"type": "object", "additionalProperties": false, "required": ["task_id"], "properties": {"task_id": {"type": "string", "minLength": 1, "description": "Task ID returned by Generate Voice."}}}
+    }
+  }, "Response": {
+    "type": "object", "required": ["code", "data"], "properties": {
+      "code": {"type": "integer", "example": 200},
+      "data": {"type": "object", "required": ["task_id", "status", "created_time"], "properties": {"task_id": {"type": "string"}, "status": {"type": "string", "enum": ["not_started", "running", "finished", "failed"]}, "created_time": {"type": "string", "format": "date-time"}}}
+    }
+  }}}
+}

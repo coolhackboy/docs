@@ -164,7 +164,7 @@
                         "credits_amount": 2,
                         "files": [
                           {
-                            "generate_cover": "[{\"file_url\": \"https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/20250825120409_4L9H4h_tmp1_taa0e1_cover_1.png\", \"file_type\": \"image\"}, {\"file_url\": \"https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/20250825120412_8v52pC_tmpwirqh4m6_cover_2.png\", \"file_type\": \"image\"}]"
+                            "generate_cover": [{"file_url": "https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/cover_1.png", "file_type": "image"}, {"file_url": "https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/cover_2.png", "file_type": "image"}]
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",
@@ -218,7 +218,7 @@
                         "credits_amount": 2,
                         "files": [
                           {
-                            "separate_vocals": "{\"vocal_url\": \"xx\", \"instrumental_url\": \"yy\"}"
+                            "separate_vocals": {"vocal_url": "xx", "instrumental_url": "yy"}
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",
@@ -236,7 +236,7 @@
                         "credits_amount": 2,
                         "files": [
                           {
-                            "vocal_removal": "{\"bass\": \"https://storage.poyo.ai/audio/bass.mp3\", \"drums\": \"https://storage.poyo.ai/audio/drums.mp3\", \"piano\": \"https://storage.poyo.ai/audio/piano.mp3\", \"guitar\": \"https://storage.poyo.ai/audio/guitar.mp3\", \"vocals\": \"https://storage.poyo.ai/audio/vocals.mp3\", \"other\": \"https://storage.poyo.ai/audio/other.mp3\"}"
+                            "vocal_removal": {"bass": "https://storage.poyo.ai/audio/bass.mp3", "drums": "https://storage.poyo.ai/audio/drums.mp3", "piano": "https://storage.poyo.ai/audio/piano.mp3", "guitar": "https://storage.poyo.ai/audio/guitar.mp3", "vocals": "https://storage.poyo.ai/audio/vocals.mp3", "other": "https://storage.poyo.ai/audio/other.mp3"}
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",
@@ -254,13 +254,25 @@
                         "credits_amount": 2,
                         "files": [
                           {
-                            "stem_split": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\", \"brass_url\": \"\", \"drums_url\": \"\", \"fx_url\": \"\", \"guitar_url\": \"\", \"keyboard_url\": \"\", \"percussion_url\": \"\", \"strings_url\": \"\", \"synth_url\": \"\", \"vocal_url\": \"\", \"woodwinds_url\": \"\"}"
+                            "stem_split": {"backing_vocals_url": "", "bass_url": "", "brass_url": "", "drums_url": "", "fx_url": "", "guitar_url": "", "keyboard_url": "", "percussion_url": "", "strings_url": "", "synth_url": "", "vocal_url": "", "woodwinds_url": ""}
                           }
                         ],
                         "created_time": "2025-11-25T08:50:13",
                         "error_message": null
                       }
                     }
+                  },
+                  "suno-voice-generate": {
+                    "summary": "Suno Voice Generate result",
+                    "value": {"code": 200, "data": {"task_id": "POYO_VOICE_GENERATE_TASK", "status": "finished", "credits_amount": 0, "progress": 100, "files": [{"voice_status": "success", "voice_id": "voice_abc123"}], "created_time": "2026-08-26T10:00:00", "error_message": null}}
+                  },
+                  "suno-voice-check": {
+                    "summary": "Suno Voice Check result",
+                    "value": {"code": 200, "data": {"task_id": "POYO_VOICE_CHECK_TASK", "status": "finished", "credits_amount": 0, "progress": 100, "files": [{"is_available": true}], "created_time": "2026-08-26T10:01:00", "error_message": null}}
+                  },
+                  "advanced-stem": {
+                    "summary": "Advanced Stem result",
+                    "value": {"code": 200, "data": {"task_id": "POYO_STEM_TASK", "status": "finished", "credits_amount": 20, "progress": 100, "files": [{"origin_data": [{"extract": {"stem_type_group_name": "Guitar", "duration": 194.92, "audio_url": "https://storage.poyo.ai/extract.mp3"}, "remove": {"stem_type_group_name": "Guitar", "duration": 194.92, "audio_url": "https://storage.poyo.ai/remove.mp3"}}]}], "created_time": "2026-08-26T10:00:00", "error_message": null}}
                   },
                   "create-music-video": {
                     "summary": "Music Video Generation",
@@ -341,9 +353,16 @@
                 "example": 10,
                 "description": "Credits charged for the task. This field is returned at the task level and is not repeated inside `files`."
               },
+              "progress": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "example": 100,
+                "description": "Current task progress. Voice tasks may also expose intermediate fields in `files` while running."
+              },
               "files": {
                 "type": "array",
-                "description": "Array of generated files.\n\nThe response fields vary depending on which model created the task. See [Response Fields (files data)](#response-fields-files-data) for details.\n\nEmpty array when task is not finished or has failed.",
+                "description": "Array of generated files or structured task results. Voice tasks may expose intermediate `voice_status` or `validate_info` while running.",
                 "items": {
                   "$ref": "#/components/schemas/AudioFile"
                 }
@@ -379,6 +398,11 @@
             "example": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113627_QIivN2_tmphb8rgpeb_audio_62e4542a-73be-44e1-b397-7716ee7505c6.mp3",
             "description": "Direct URL to download the generated audio file"
           },
+          "stream_audio_url": {"type": "string", "format": "uri", "description": "Streaming audio URL when available."},
+          "model_name": {"type": "string", "description": "Music model name."},
+          "source_audio_url": {"type": "string", "format": "uri", "description": "Source audio URL for derivative tasks."},
+          "source_image_url": {"type": "string", "format": "uri", "description": "Source image URL when available."},
+          "source_stream_audio_url": {"type": "string", "format": "uri", "description": "Source streaming audio URL when available."},
           "image_url": {
             "type": "string",
             "format": "uri",
@@ -427,24 +451,28 @@
             "description": "Converted WAV file URL."
           },
           "separate_vocals": {
-            "type": "string",
-            "example": "{\"vocal_url\": \"xx\", \"instrumental_url\": \"yy\"}",
-            "description": "JSON string containing separated vocal and instrumental URLs."
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "example": {"vocal_url": "xx", "instrumental_url": "yy"},
+            "description": "Separated vocal and instrumental URLs."
           },
           "vocal_removal": {
-            "type": "string",
-            "example": "{\"bass\": \"https://storage.poyo.ai/audio/bass.mp3\", \"drums\": \"https://storage.poyo.ai/audio/drums.mp3\"}",
-            "description": "JSON string containing separated stem URLs."
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "example": {"bass": "https://storage.poyo.ai/audio/bass.mp3", "drums": "https://storage.poyo.ai/audio/drums.mp3"},
+            "description": "Separated stem URLs."
           },
           "stem_split": {
-            "type": "string",
-            "example": "{\"backing_vocals_url\": \"\", \"bass_url\": \"\"}",
-            "description": "JSON string containing full stem separation URLs."
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "example": {"backing_vocals_url": "", "bass_url": ""},
+            "description": "Full stem separation URLs."
           },
           "generate_cover": {
-            "type": "string",
-            "example": "[{\"file_url\": \"https://storage.poyo.ai/audio/cover_1.png\", \"file_type\": \"image\"}]",
-            "description": "JSON string containing generated cover image objects."
+            "type": "array",
+            "items": {"type": "object"},
+            "example": [{"file_url": "https://storage.poyo.ai/audio/cover_1.png", "file_type": "image"}],
+            "description": "Generated cover image objects."
           },
           "persona_id": {
             "type": "string",
@@ -456,7 +484,23 @@
             "format": "uri",
             "example": "https://storage.poyo.ai/video/8FDN1I7M7Q68DDG8/music_video.mp4",
             "description": "Generated video URL."
+          },
+          "validate_info": {"type": "string", "description": "Voice verification phrase."},
+          "voice_id": {"type": "string", "description": "Reusable Suno Voice ID."},
+          "is_available": {"type": "boolean", "description": "Whether a generated Suno Voice is available."},
+          "voice_status": {"type": "string", "description": "Suno Voice processing state."},
+          "error_message": {"type": "string", "nullable": true, "description": "Model-level error information when a structured task result is available."},
+          "error_code": {"nullable": true, "description": "Model error code when available.", "oneOf": [{"type": "string"}, {"type": "integer"}]},
+          "origin_data": {"type": "array", "description": "Advanced stem results.", "items": {"type": "object", "properties": {"extract": {"$ref": "#/components/schemas/AdvancedStemBranch"}, "remove": {"$ref": "#/components/schemas/AdvancedStemBranch"}}}}
           }
+        },
+      "AdvancedStemBranch": {
+        "type": "object",
+        "properties": {
+          "duration": {"type": "number"},
+          "audio_url": {"type": "string", "format": "uri"},
+          "stem_type_group_name": {"type": "string"},
+          "id": {"type": "string"}
         }
       },
       "ErrorResponse": {
@@ -488,4 +532,4 @@
       }
     }
   }
-}
+  }

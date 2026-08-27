@@ -90,7 +90,7 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "callback_url", "input"],
+        "required": ["model", "input"],
         "properties": {
           "model": {
             "type": "string",
@@ -106,7 +106,7 @@
           },
           "input": {
             "type": "object",
-            "required": ["task_id", "audio_id"],
+            "oneOf": [{"required": ["task_id", "audio_id"], "not": {"required": ["upload_url"]}}, {"required": ["upload_url"], "not": {"anyOf": [{"required": ["task_id"]}, {"required": ["audio_id"]}]}}],
             "description": "Input parameters for stem splitting",
             "properties": {
               "task_id": {
@@ -118,7 +118,8 @@
                 "type": "string",
                 "description": "Unique identifier of the specific audio track to process for stem splitting.\n\nThis ID is returned in the callback data after music generation completes.",
                 "example": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc"
-              }
+              },
+              "upload_url": {"type": "string", "format": "uri", "pattern": "^https?://", "description": "HTTP(S) uploaded source; mutually exclusive with task_id/audio_id."}
             }
           }
         }

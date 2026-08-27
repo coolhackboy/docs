@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Extend Music API",
     "description": "Extend or modify existing music by creating a continuation based on a source audio track",
@@ -116,15 +116,14 @@
           "input": {
             "type": "object",
             "required": [
-              "default_param_flag",
-              "audio_id",
-              "mv"
+              "audio_id"
             ],
             "description": "Input parameters for music extension",
             "properties": {
               "default_param_flag": {
                 "type": "boolean",
-                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `prompt`, `style`, `title`, and `continue_at` become required.\n\n- When `false`: Only `audio_id` and `mv` are required.",
+                "default": true,
+                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `mv`, `prompt`, `style`, `title`, and `continue_at` become required.\n\n- When `false`: Only `audio_id` is required.",
                 "example": true
               },
               "audio_id": {
@@ -135,23 +134,21 @@
               "prompt": {
                 "type": "string",
                 "description": "Description of how you want to extend the music.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
-                "maxLength": 3000,
                 "example": "Continue with an energetic chorus section"
               },
               "style": {
                 "type": "string",
                 "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters",
-                "maxLength": 200,
                 "example": "Pop, Upbeat"
               },
               "title": {
                 "type": "string",
                 "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters",
-                "maxLength": 80,
                 "example": "Summer Vibes Extended"
               },
               "continue_at": {
                 "type": "number",
+                "exclusiveMinimum": 0,
                 "description": "The timestamp (in seconds) from which to start the extension.\n\nSpecifies the point in the original track where the extension should begin.\n\nRequired when `default_param_flag` is `true`.",
                 "example": 120
               },
@@ -184,6 +181,7 @@
               },
               "style_weight": {
                 "type": "number",
+                "multipleOf": 0.01,
                 "description": "Controls how strongly the specified style influences the extension.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
                 "minimum": 0,
                 "maximum": 1,
@@ -191,6 +189,7 @@
               },
               "weirdness_constraint": {
                 "type": "number",
+                "multipleOf": 0.01,
                 "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional music\n- Higher values: More experimental and unique outputs",
                 "minimum": 0,
                 "maximum": 1,
@@ -198,6 +197,7 @@
               },
               "audio_weight": {
                 "type": "number",
+                "multipleOf": 0.01,
                 "description": "Balances audio characteristics against other generation factors.\n\nRange: 0-1, up to 2 decimals.\n\nAdjusts the emphasis on audio quality and sonic features in the final output.",
                 "minimum": 0,
                 "maximum": 1,
@@ -207,8 +207,18 @@
                 "type": "string",
                 "description": "Persona ID to apply to the extended music.\n\nOnly available when Custom Mode ( `default_param_flag: true` ) is enabled.\n\nUse this to apply a specific persona style to your music extension.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_123"
-              }
-            }
+              },
+              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, default_param_flag=true, and V5/V5_5."},
+              "instrumental": {"type": "boolean", "description": "Whether the extension is instrumental."}
+            },
+            "allOf": [
+              {"if": {"properties": {"default_param_flag": {"const": true}}}, "then": {"required": ["mv", "prompt", "style", "title", "continue_at"]}},
+              {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"default_param_flag": {"const": true}}}},
+              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5"]}, "default_param_flag": {"const": true}}}},
+              {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
+              {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"const": "V4_5ALL"}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}},
+              {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
+            ]
           }
         }
       },
