@@ -136,7 +136,6 @@ The `files` array content varies depending on which model created the task.
 | `suno-voice-generate` | `voice_id`, `voice_status` | string \| null | Generated voice identifier and creation state |
 | `suno-voice-check` | `is_available` | boolean | Whether the generated voice can currently be used |
 | Suno Voice tasks | `error_message`, `error_code` | string/number \| null | Structured error details when available |
-| `stem-split-advanced` | `origin_data` | array | `extract`/`remove` advanced stem results |
 
 ### JSON Field Details
 
@@ -228,12 +227,6 @@ The `files` array content varies depending on which model created the task.
 
 ```json
 {"task_id":"POYO_VOICE_CHECK_TASK","status":"finished","files":[{"is_available":true}],"created_time":"2026-08-26T10:01:00","error_message":null}
-```
-
-### Advanced Stem
-
-```json
-{"task_id":"POYO_STEM_TASK","status":"finished","files":[{"origin_data":[{"extract":{"stem_type_group_name":"Guitar","duration":194.92,"audio_url":"https://storage.poyo.ai/extract.mp3"},"remove":{"stem_type_group_name":"Guitar","duration":194.92,"audio_url":"https://storage.poyo.ai/remove.mp3"}}]}],"created_time":"2026-08-26T10:00:00","error_message":null}
 ```
 
 ### MiniMax Music 2.6

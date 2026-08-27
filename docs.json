@@ -123,7 +123,6 @@
       "/api-manual/music-series/convert-to-wav.json",
       "/api-manual/music-series/vocal-remover/separate-vocals.json",
       "/api-manual/music-series/vocal-remover/stem-split.json",
-      "/api-manual/music-series/vocal-remover/stem-split-advanced.json",
       "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
       "/api-manual/music-series/voice/validate.json",
       "/api-manual/music-series/voice/generate.json",
@@ -339,7 +338,6 @@
                     "pages": [
                       "api-manual/music-series/vocal-remover/separate-vocals",
                       "api-manual/music-series/vocal-remover/stem-split",
-                      "api-manual/music-series/vocal-remover/stem-split-advanced",
                       "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
                     ]
                   },
