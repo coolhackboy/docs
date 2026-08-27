@@ -1,0 +1,217 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "PoYo Generate Mashup API",
+        "version": "1.0.0",
+        "description": "Blend exactly two audio tracks into a new composition."
+    },
+    "servers": [
+        {
+            "url": "https://api.poyo.ai"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/api/generate/submit": {
+            "post": {
+                "operationId": "submitGenerateMashup",
+                "summary": "Generate a Suno mashup",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request"
+                            },
+                            "example": {
+                                "model": "generate-mashup",
+                                "callback_url": "https://example.com/webhook",
+                                "input": {
+                                    "upload_url_list": [
+                                        "https://example.com/a.mp3",
+                                        "https://example.com/b.mp3"
+                                    ],
+                                    "custom_mode": true,
+                                    "instrumental": true,
+                                    "mv": "V5_5",
+                                    "style": "cinematic",
+                                    "title": "Mashup",
+                                    "duration": 120
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Submitted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "Request": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "input"
+                ],
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "generate-mashup"
+                        ]
+                    },
+                    "callback_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "input": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "upload_url_list",
+                            "mv"
+                        ],
+                        "properties": {
+                            "upload_url_list": {
+                                "type": "array",
+                                "minItems": 2,
+                                "maxItems": 2,
+                                "items": {
+                                    "type": "string",
+                                    "format": "uri",
+                                    "pattern": "^https?://"
+                                }
+                            },
+                            "custom_mode": {
+                                "type": "boolean",
+                                "default": true
+                            },
+                            "instrumental": {
+                                "type": "boolean",
+                                "default": true
+                            },
+                            "mv": {
+                                "type": "string",
+                                "enum": [
+                                    "V4",
+                                    "V4_5",
+                                    "V4_5ALL",
+                                    "V4_5PLUS",
+                                    "V5",
+                                    "V5_5"
+                                ]
+                            },
+                            "prompt": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "style": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "title": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "vocal_gender": {
+                                "type": "string",
+                                "enum": [
+                                    "m",
+                                    "f"
+                                ]
+                            },
+                            "style_weight": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "multipleOf": 0.01
+                            },
+                            "weirdness_constraint": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "multipleOf": 0.01
+                            },
+                            "audio_weight": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "multipleOf": 0.01
+                            },
+                            "duration": {
+                                "type": "integer",
+                                "minimum": 10,
+                                "maximum": 360
+                            }
+                        },
+                        "allOf": [
+                            {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["style", "title"]}},
+                            {"if": {"required": ["custom_mode"], "properties": {"custom_mode": {"const": false}}}, "then": {"required": ["prompt"], "properties": {"prompt": {"maxLength": 500}}}},
+                            {"if": {"required": ["instrumental"], "properties": {"instrumental": {"const": false}}}, "then": {"required": ["prompt"]}},
+                            {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"const": "V5_5"}, "custom_mode": {"const": true}}}},
+                            {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
+                            {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}}
+                        ]
+                    }
+                }
+            },
+            "Response": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "task_id",
+                            "status",
+                            "created_time"
+                        ],
+                        "properties": {
+                            "task_id": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "not_started",
+                                    "running",
+                                    "finished",
+                                    "failed"
+                                ]
+                            },
+                            "created_time": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

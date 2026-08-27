@@ -113,7 +113,11 @@
           },
           "input": {
             "type": "object",
-            "required": ["task_id", "audio_id", "prompt", "tags", "title", "infill_start_s", "infill_end_s", "full_lyrics"],
+            "required": ["tags", "title", "infill_start_s", "infill_end_s", "full_lyrics"],
+            "oneOf": [
+              {"required": ["task_id", "audio_id"], "not": {"required": ["upload_url"]}},
+              {"required": ["upload_url", "mv"], "not": {"anyOf": [{"required": ["task_id"]}, {"required": ["audio_id"]}]}}
+            ],
             "description": "Input parameters for section replacement",
             "properties": {
               "task_id": {
@@ -126,6 +130,8 @@
                 "description": "Unique identifier of the audio track to replace.\n\nThis ID is returned in the callback data after music generation completes.",
                 "example": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc"
               },
+              "upload_url": {"type": "string", "format": "uri", "pattern": "^https?://", "description": "HTTP(S) uploaded source; mutually exclusive with task_id/audio_id."},
+              "mv": {"type": "string", "enum": ["V4", "V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5"], "description": "Required with upload_url."},
               "prompt": {
                 "type": "string",
                 "description": "Text describing the replacement audio content.\n\nDescribe the lyrics, melody, or musical content you want in the replaced section.",
@@ -133,23 +139,27 @@
               },
               "tags": {
                 "type": "string",
+                "pattern": "\\S",
                 "description": "Music style tags.\n\nSpecify genres, moods, or styles for the replacement section (e.g., jazz, electronic, upbeat).",
                 "example": "pop, upbeat"
               },
               "title": {
                 "type": "string",
+                "pattern": "\\S",
                 "description": "Music title.\n\nThe title for the resulting track.",
                 "example": "Summer Dreams"
               },
               "infill_start_s": {
                 "type": "number",
-                "description": "Start time in seconds.\n\nThe beginning of the section to replace. Supports up to 2 decimal places.\n\nMinimum value: 0",
+                "multipleOf": 0.01,
+                "description": "Start time in seconds. The replacement interval must be at least 10 seconds and no more than 50% of the source duration. Supports up to 2 decimal places.",
                 "minimum": 0,
                 "example": 30.00
               },
               "infill_end_s": {
                 "type": "number",
-                "description": "End time in seconds.\n\nThe end of the section to replace. Supports up to 2 decimal places.\n\nMust be greater than `infill_start_s`.",
+                "multipleOf": 0.01,
+                "description": "End time in seconds. Must be greater than `infill_start_s`; the interval must be at least 10 seconds and no more than 50% of the source duration. Supports up to 2 decimal places.",
                 "example": 60.00
               },
               "negative_tags": {
@@ -159,6 +169,7 @@
               },
               "full_lyrics": {
                 "type": "string",
+                "pattern": "\\S",
                 "description": "Complete lyrics after modification.\n\nCombining both modified and unmodified lyrics for the entire track.",
                 "example": "Complete song lyrics including all sections"
               }

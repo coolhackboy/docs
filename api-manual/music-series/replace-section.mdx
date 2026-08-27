@@ -10,6 +10,8 @@ openapi: "/api-manual/music-series/replace-section.json POST /api/generate/submi
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
+Provide exactly one source: either a `task_id` plus `audio_id`, or an uploaded `upload_url` plus `mv`. Uploaded audio can be edited directly. The replacement interval must be at least 10 seconds and cannot exceed 50% of the source duration.
+
 ## Usage Guide
 
 - This endpoint replaces a specific time range of an existing music track with new content
@@ -18,13 +20,13 @@ openapi: "/api-manual/music-series/replace-section.json POST /api/generate/submi
 
 ## Parameter Details
 
-- `task_id` (required): The original task ID from a completed music generation
-- `audio_id` (required): The specific audio track identifier from the callback data
-- `prompt` (required): Description of the replacement content (lyrics or musical description)
+- `task_id` and `audio_id`: Required together when editing a previously generated track; omit both when using `upload_url`
+- `upload_url` and `mv`: Required together when editing uploaded audio; mutually exclusive with `task_id` and `audio_id`
 - `tags` (required): Style tags for the replacement section
 - `title` (required): Title for the resulting track
 - `infill_start_s` (required): Start time in seconds (minimum 0, up to 2 decimals)
 - `infill_end_s` (required): End time in seconds (must be greater than start time)
+- `full_lyrics` (required): Complete lyrics for the entire track after modification
 
 ## Developer Notes
 
@@ -35,6 +37,6 @@ openapi: "/api-manual/music-series/replace-section.json POST /api/generate/submi
 ## Optional parameters
 
 - `negative_tags` (string): Styles to exclude from the replacement section
-- `full_lyrics` (string): Complete lyrics for the entire track after modification
+- `prompt` (string): Description of the replacement content (lyrics or musical description)
 - `callback_url` (string): Webhook URL for receiving completion notifications
 

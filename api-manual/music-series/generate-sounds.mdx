@@ -1,0 +1,12 @@
+---
+title: "Generate Sounds"
+description: "Create sound effects and ambience with Suno"
+icon: "waveform"
+openapi: "/api-manual/music-series/generate-sounds.json POST /api/generate/submit"
+---
+
+Use `mv` `V5` or `V5_5`. `sound_tempo` is an integer from 1–300 BPM; `sound_key` accepts major/minor keys such as `C`, `F#`, `Am`, or `C#m`. Set `sound_loop` for a loopable result and `grab_lyrics` when the prompt contains vocal material.
+
+```json
+{"model":"generate-sounds","input":{"prompt":"Rain on a metal roof with distant thunder","mv":"V5_5","sound_loop":true,"sound_tempo":90,"sound_key":"Cm","grab_lyrics":false}}
+```

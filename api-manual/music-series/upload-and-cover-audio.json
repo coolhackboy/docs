@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Upload and Cover Audio API",
     "description": "Transform audio tracks into new styles while preserving the original melody",
@@ -135,9 +135,6 @@
             "type": "object",
             "required": [
               "upload_url",
-              "prompt",
-              "custom_mode",
-              "instrumental",
               "mv"
             ],
             "description": "Input parameters for audio cover generation",
@@ -145,34 +142,34 @@
               "upload_url": {
                 "type": "string",
                 "format": "uri",
+                "pattern": "^https?://",
                 "description": "The URL for uploading audio files, required regardless of whether `custom_mode` and `instrumental` are true or false.\n\nEnsure the uploaded audio does not exceed 8 minutes in length.\n\n**Note**: For the V4_5ALL model, the uploaded audio must not exceed 1 minute in length.",
                 "example": "https://example.com/audio/my-track.mp3"
               },
               "prompt": {
                 "type": "string",
                 "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation. Maximum 500 characters.\n\nCharacter limits by model in Custom Mode:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
-                "maxLength": 5000,
                 "example": "Transform into an upbeat electronic dance version"
               },
               "style": {
                 "type": "string",
                 "description": "Music style specification for the cover version.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters",
-                "maxLength": 200,
                 "example": "EDM, Electronic"
               },
               "title": {
                 "type": "string",
                 "description": "Title for the covered track.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters",
-                "maxLength": 80,
                 "example": "Dance Remix"
               },
               "custom_mode": {
                 "type": "boolean",
+                "default": true,
                 "description": "Enable advanced parameter customization mode.\n\n- When `true`: Enables full control over style, title, and other parameters. `style` and `title` become required fields.\n\n- When `false`: Simplified mode where only `prompt` is needed for style transformation.",
                 "example": true
               },
               "instrumental": {
                 "type": "boolean",
+                "default": true,
                 "description": "Specifies whether the output should be instrumental (no vocals).\n\n- When `true`: Produces pure instrumental track without any vocals.\n\n- When `false`: Generates music with vocals based on the original track.",
                 "example": false
               },
@@ -205,6 +202,7 @@
               },
               "style_weight": {
                 "type": "number",
+                "multipleOf": 0.01,
                 "description": "Controls how strongly the specified style influences the cover.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values result in stronger adherence to the specified style.",
                 "minimum": 0,
                 "maximum": 1,
@@ -212,6 +210,7 @@
               },
               "weirdness_constraint": {
                 "type": "number",
+                "multipleOf": 0.01,
                 "description": "Controls the level of experimental creativity and unconventional elements.\n\nRange: 0-1, up to 2 decimals.\n\n- Lower values: More conventional music\n- Higher values: More experimental and unique outputs",
                 "minimum": 0,
                 "maximum": 1,
@@ -219,6 +218,7 @@
               },
               "audio_weight": {
                 "type": "number",
+                "multipleOf": 0.01,
                 "description": "Balances how much the original audio characteristics are preserved.\n\nRange: 0-1, up to 2 decimals.\n\nHigher values preserve more of the original melody and structure.",
                 "minimum": 0,
                 "maximum": 1,
@@ -228,8 +228,21 @@
                 "type": "string",
                 "description": "Persona ID to apply to the covered track.\n\nOnly available when Custom Mode ( `custom_mode: true` ) is enabled.\n\nUse this to apply a specific persona style to your audio cover.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_456"
-              }
-            }
+              },
+              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, custom_mode=true, and V5/V5_5."},
+              "duration": {"type": "integer", "minimum": 10, "maximum": 360, "description": "Only with custom_mode=true and mv=V5_5."}
+            },
+            "allOf": [
+              {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["style", "title"]}},
+              {"if": {"required": ["custom_mode"], "properties": {"custom_mode": {"const": false}}}, "then": {"required": ["prompt"], "properties": {"prompt": {"maxLength": 500}}}},
+              {"if": {"required": ["instrumental"], "properties": {"instrumental": {"const": false}}}, "then": {"required": ["prompt"]}},
+              {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"const": "V5_5"}, "custom_mode": {"const": true}}}},
+              {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"custom_mode": {"const": true}}}},
+              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5"]}, "custom_mode": {"const": true}}}},
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4_5ALL"}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}},
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
+            ]
           }
         }
       },

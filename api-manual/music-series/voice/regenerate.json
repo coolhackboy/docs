@@ -1,0 +1,24 @@
+{
+  "openapi": "3.0.0",
+  "info": {"title": "PoYo Suno Voice Regenerate API", "version": "1.0.0", "description": "Request a new verification phrase for a voice validation task."},
+  "servers": [{"url": "https://api.poyo.ai"}], "security": [{"BearerAuth": []}],
+  "paths": {"/api/generate/submit": {"post": {
+    "operationId": "submitSunoVoiceRegenerate", "summary": "Regenerate the verification phrase",
+    "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Request"}, "example": {"model": "suno-voice-regenerate", "input": {"task_id": "voice_validate_task_id"}}}}},
+    "responses": {"200": {"description": "Submitted", "content": {"application/json": {
+      "schema": {"$ref": "#/components/schemas/Response"},
+      "example": {"code": 200, "data": {"task_id": "voice_regenerate_task_id", "status": "not_started", "created_time": "2026-08-27T10:00:00"}}
+    }}}}
+  }}},
+  "components": {"securitySchemes": {"BearerAuth": {"type": "http", "scheme": "bearer"}}, "schemas": {"Request": {
+    "type": "object", "required": ["model", "input"], "properties": {
+      "model": {"type": "string", "enum": ["suno-voice-regenerate"]}, "callback_url": {"type": "string", "format": "uri"},
+      "input": {"type": "object", "additionalProperties": false, "required": ["task_id"], "properties": {"task_id": {"type": "string", "minLength": 1, "description": "Task ID returned by Validate Voice."}}}
+    }
+  }, "Response": {
+    "type": "object", "required": ["code", "data"], "properties": {
+      "code": {"type": "integer", "example": 200},
+      "data": {"type": "object", "required": ["task_id", "status", "created_time"], "properties": {"task_id": {"type": "string"}, "status": {"type": "string", "enum": ["not_started", "running", "finished", "failed"]}, "created_time": {"type": "string", "format": "date-time"}}}
+    }
+  }}}
+}

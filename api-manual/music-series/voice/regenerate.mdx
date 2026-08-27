@@ -1,0 +1,8 @@
+---
+title: "Regenerate Voice Phrase"
+description: "Request a new verification phrase for a Voice validation task"
+icon: "rotate"
+openapi: "/api-manual/music-series/voice/regenerate.json POST /api/generate/submit"
+---
+
+Use the `task_id` returned by Validate Voice when the previous phrase expired or cannot be recorded. The completed result contains the replacement phrase in `validate_info`; continue Generate Voice with the new `task_id` returned by this request.

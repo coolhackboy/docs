@@ -1,0 +1,8 @@
+---
+title: "Validate Suno Voice"
+description: "Extract a verification phrase from a voice sample"
+icon: "microphone"
+openapi: "/api-manual/music-series/voice/validate.json POST /api/generate/submit"
+---
+
+Submit a publicly accessible recording with `vocal_start_s` and `vocal_end_s` selecting a clean vocal segment. The completed result contains `validate_info`; use the returned `task_id` for [Generate Voice](/api-manual/music-series/voice/generate) or [Regenerate Phrase](/api-manual/music-series/voice/regenerate).

@@ -101,6 +101,8 @@
       "/api-manual/3d-series/tripo-h31-3d.json",
       "/api-manual/3d-series/tripo-p1-3d.json",
       "/api-manual/music-series/generate-music.json",
+      "/api-manual/music-series/generate-mashup.json",
+      "/api-manual/music-series/generate-sounds.json",
       "/api-manual/music-series/minimax-music-2.6.json",
       "/api-manual/music-series/elevenlabs-music.json",
       "/api-manual/music-series/elevenlabs-v3-tts.json",
@@ -122,6 +124,10 @@
       "/api-manual/music-series/vocal-remover/separate-vocals.json",
       "/api-manual/music-series/vocal-remover/stem-split.json",
       "/api-manual/music-series/vocal-remover/upload-and-separate-vocals.json",
+      "/api-manual/music-series/voice/validate.json",
+      "/api-manual/music-series/voice/generate.json",
+      "/api-manual/music-series/voice/regenerate.json",
+      "/api-manual/music-series/voice/check.json",
       "/api-manual/music-series/create-music-video.json",
       "/api-manual/music-series/query-music-detail.json",
       "/api-manual/chat-series/chat-completions.json",
@@ -313,6 +319,8 @@
                 "group": "Suno AI",
                 "pages": [
                   "api-manual/music-series/generate-music",
+                  "api-manual/music-series/generate-mashup",
+                  "api-manual/music-series/generate-sounds",
                   "api-manual/music-series/extend-music",
                   "api-manual/music-series/upload-and-cover-audio",
                   "api-manual/music-series/upload-and-extend-audio",
@@ -331,6 +339,16 @@
                       "api-manual/music-series/vocal-remover/separate-vocals",
                       "api-manual/music-series/vocal-remover/stem-split",
                       "api-manual/music-series/vocal-remover/upload-and-separate-vocals"
+                    ]
+                  },
+                  {
+                    "group": "Suno Voice",
+                    "pages": [
+                      "api-manual/music-series/voice/overview",
+                      "api-manual/music-series/voice/validate",
+                      "api-manual/music-series/voice/generate",
+                      "api-manual/music-series/voice/regenerate",
+                      "api-manual/music-series/voice/check"
                     ]
                   },
                   "api-manual/music-series/create-music-video",

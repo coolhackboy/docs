@@ -10,6 +10,8 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
+`instrumental` explicitly controls vocal output. `persona_model` accepts `style_persona` or `voice_persona` with `persona_id` only when `default_param_flag: true` on V5/V5_5.
+
 ## Usage Guide
 
 - This endpoint extends an existing audio track from a specified point
@@ -20,7 +22,9 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
 
 - In Custom Mode ( `default_param_flag: true` ):
 
-  - `prompt`, `style`, `title`, and `continue_at` are **required**
+  - `style`, `title`, and `continue_at` are **required**
+
+  - `prompt` is required for vocal extensions. When `instrumental: true`, `prompt` is not sent.
 
   - `continue_at` specifies the timestamp (in seconds) where extension begins
 
@@ -33,7 +37,7 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
 
 - In Simple Mode ( `default_param_flag: false` ):
 
-  - Only `audio_id` and `mv` are required
+  - Only `audio_id` is required; the source track settings are inherited
 
 ## Developer Notes
 
@@ -53,6 +57,8 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
 
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.
 
-- `persona_id` (string): Persona ID to apply to the extended music. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+- `persona_id` (string): Persona ID to apply to the extended music. Only available when `default_param_flag: true` with V5/V5_5. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+
+- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id`, `default_param_flag: true`, and V5/V5_5.
 
 

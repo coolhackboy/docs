@@ -1,0 +1,187 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PoYo Generate Sounds API",
+        "version": "1.0.0",
+        "description": "Generate sound effects and ambience from a text prompt."
+    },
+    "servers": [
+        {
+            "url": "https://api.poyo.ai"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/api/generate/submit": {
+            "post": {
+                "operationId": "submitGenerateSounds",
+                "summary": "Generate sound effects",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request"
+                            },
+                            "example": {
+                                "model": "generate-sounds",
+                                "input": {
+                                    "prompt": "Rain and distant thunder",
+                                    "mv": "V5_5",
+                                    "sound_loop": true,
+                                    "sound_tempo": 90,
+                                    "sound_key": "Cm",
+                                    "grab_lyrics": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Submitted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "Request": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "input"
+                ],
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "generate-sounds"
+                        ]
+                    },
+                    "callback_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "input": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "prompt",
+                            "mv"
+                        ],
+                        "properties": {
+                            "prompt": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 500
+                            },
+                            "mv": {
+                                "type": "string",
+                                "enum": [
+                                    "V5",
+                                    "V5_5"
+                                ]
+                            },
+                            "sound_loop": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "sound_tempo": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 300
+                            },
+                            "sound_key": {
+                                "type": "string",
+                                "enum": [
+                                    "Cm",
+                                    "C#m",
+                                    "Dm",
+                                    "D#m",
+                                    "Em",
+                                    "Fm",
+                                    "F#m",
+                                    "Gm",
+                                    "G#m",
+                                    "Am",
+                                    "A#m",
+                                    "Bm",
+                                    "C",
+                                    "C#",
+                                    "D",
+                                    "D#",
+                                    "E",
+                                    "F",
+                                    "F#",
+                                    "G",
+                                    "G#",
+                                    "A",
+                                    "A#",
+                                    "B"
+                                ]
+                            },
+                            "grab_lyrics": {
+                                "type": "boolean",
+                                "default": false
+                            }
+                        }
+                    }
+                }
+            },
+            "Response": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "task_id",
+                            "status",
+                            "created_time"
+                        ],
+                        "properties": {
+                            "task_id": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "not_started",
+                                    "running",
+                                    "finished",
+                                    "failed"
+                                ]
+                            },
+                            "created_time": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,8 @@
+---
+title: "Check Suno Voice"
+description: "Check whether a generated Voice ID is still available"
+icon: "circle-check"
+openapi: "/api-manual/music-series/voice/check.json POST /api/generate/submit"
+---
+
+Use the `task_id` returned by Generate Voice. The completed result contains `files[].is_available`; the `voice_id` remains available in the Generate Voice result.

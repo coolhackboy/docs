@@ -38,7 +38,7 @@ openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit
 
 - In Non-custom Mode ( `custom_mode: false` ):
 
-  - `prompt` length limit: 500 characters
+  - `prompt` length limit: 3000 characters
 
   - Other parameters should be left empty
 
@@ -57,5 +57,9 @@ openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals. Example: `0.65` .
 
 - `persona_id` (string): Persona ID to apply to the generated music. Use this to apply a specific persona style to your music generation. Only available when Custom Mode is enabled. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+
+- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id` and V5/V5_5.
+
+- `duration` (integer): Custom length from 10–360 seconds. Only supported when `custom_mode: true` and `mv: V5_5`.
 
 

@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Generate Persona API",
     "description": "Create reusable musical personas from existing audio tracks",
@@ -126,7 +126,7 @@
             "properties": {
               "task_id": {
                 "type": "string",
-                "description": "Unique identifier of the original music generation task.\n\nCan be from Generate Music, Extend Music, Upload Cover, or Upload Extend endpoints.",
+                "description": "Unique identifier of a completed Generate Music or Extend Music task.",
                 "example": "5c79xxxxbe8e"
               },
               "audio_id": {
@@ -136,15 +136,21 @@
               },
               "name": {
                 "type": "string",
+                "pattern": "\\S",
                 "description": "Descriptive name for the persona.\n\nShould capture the musical style or character of the persona.",
                 "example": "Smooth Jazz Singer"
               },
               "description": {
                 "type": "string",
+                "pattern": "\\S",
                 "description": "Detailed description of the Persona's musical characteristics, style, and personality.\n\nInclude details about genre, mood, instrumentation, vocal style, and any unique characteristics.",
                 "example": "A sultry jazz vocalist with smooth, mellow tones. Specializes in late-night jazz ballads with piano accompaniment."
-              }
-            }
+              },
+              "vocal_start": {"type": "number", "minimum": 0, "description": "Start of a 10-30 second segment; requires vocal_end."},
+              "vocal_end": {"type": "number", "minimum": 0, "description": "End of the segment; requires vocal_start, must be greater than vocal_start, and must make the selected range 10-30 seconds."},
+              "style": {"type": "string", "description": "Optional intended persona style."}
+            },
+            "dependentRequired": {"vocal_start": ["vocal_end"], "vocal_end": ["vocal_start"]}
           }
         }
       },
