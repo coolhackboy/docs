@@ -41,6 +41,7 @@
                     "input": {
                       "default_param_flag": true,
                       "audio_id": "audio_abc123",
+                      "instrumental": false,
                       "prompt": "Continue with an energetic chorus section",
                       "style": "Pop, Upbeat",
                       "title": "Summer Vibes Extended",
@@ -123,7 +124,7 @@
               "default_param_flag": {
                 "type": "boolean",
                 "default": true,
-                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `mv`, `prompt`, `style`, `title`, and `continue_at` become required.\n\n- When `false`: Only `audio_id` is required.",
+                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `mv`, `style`, `title`, and `continue_at` become required. `prompt` is additionally required for vocal extensions.\n\n- When `false`: Only `audio_id` is required.",
                 "example": true
               },
               "audio_id": {
@@ -133,7 +134,7 @@
               },
               "prompt": {
                 "type": "string",
-                "description": "Description of how you want to extend the music.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
+                "description": "Description of how you want to extend the music.\n\nRequired for vocal extensions when `default_param_flag` is `true`. It is not sent when `instrumental` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
                 "example": "Continue with an energetic chorus section"
               },
               "style": {
@@ -209,10 +210,11 @@
                 "example": "persona_123"
               },
               "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, default_param_flag=true, and V5/V5_5."},
-              "instrumental": {"type": "boolean", "description": "Whether the extension is instrumental."}
+              "instrumental": {"type": "boolean", "description": "Whether the extension is instrumental. When true, prompt is not sent."}
             },
             "allOf": [
-              {"if": {"properties": {"default_param_flag": {"const": true}}}, "then": {"required": ["mv", "prompt", "style", "title", "continue_at"]}},
+              {"if": {"properties": {"default_param_flag": {"const": true}}}, "then": {"required": ["mv", "style", "title", "continue_at"]}},
+              {"if": {"properties": {"default_param_flag": {"const": true}, "instrumental": {"not": {"const": true}}}}, "then": {"required": ["prompt"]}},
               {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"default_param_flag": {"const": true}}}},
               {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5"]}, "default_param_flag": {"const": true}}}},
               {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
