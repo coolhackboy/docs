@@ -15,7 +15,7 @@
     "schemas": {"Request": {"type": "object", "required": ["model", "input"], "properties": {
       "model": {"type": "string", "enum": ["suno-voice-generate"]}, "callback_url": {"type": "string", "format": "uri"},
       "input": {"type": "object", "additionalProperties": false, "required": ["task_id", "verify_url"], "properties": {
-        "task_id": {"type": "string", "minLength": 1, "description": "Task ID returned by Validate Voice or Regenerate Voice Phrase."}, "verify_url": {"type": "string", "format": "uri", "pattern": "^https?://"},
+        "task_id": {"type": "string", "description": "Task ID returned by Validate Voice or Regenerate Voice Phrase."}, "verify_url": {"type": "string", "format": "uri", "pattern": "^https?://"},
         "voice_name": {"type": "string"}, "description": {"type": "string"}, "style": {"type": "string"},
         "singer_skill_level": {"type": "string", "enum": ["beginner", "intermediate", "advanced", "professional"]}
       }}

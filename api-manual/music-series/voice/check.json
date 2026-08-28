@@ -14,7 +14,7 @@
     "type": "object", "required": ["model", "input"], "properties": {
       "model": {"type": "string", "enum": ["suno-voice-check"]},
       "callback_url": {"type": "string", "format": "uri"},
-      "input": {"type": "object", "additionalProperties": false, "required": ["task_id"], "properties": {"task_id": {"type": "string", "minLength": 1, "description": "Task ID returned by Generate Voice."}}}
+      "input": {"type": "object", "additionalProperties": false, "required": ["task_id"], "properties": {"task_id": {"type": "string", "description": "Task ID returned by Generate Voice."}}}
     }
   }, "Response": {
     "type": "object", "required": ["code", "data"], "properties": {
