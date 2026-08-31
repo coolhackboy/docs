@@ -1,0 +1,118 @@
+---
+title: "Gemini Omni 1.1 Flash"
+description: "Generate videos from text, keyframes, reference images, or a reference video"
+icon: "video"
+openapi: "/api-manual/video-series/gemini-omni-1.1-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, PoYo sends a POST request when the task reaches `finished` or `failed`.
+2. You can always retrieve the latest result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Gemini Omni 1.1 Flash
+
+`gemini-omni-1.1-flash` generates videos from a text prompt, optional first and last frames, ordinary reference images, or one reference video.
+
+## Available Model
+
+- **gemini-omni-1.1-flash** - Text-to-video, first/last-frame generation, reference image generation, and reference-video generation
+
+## Required Parameters
+
+- **prompt**: Text prompt describing the scene, motion, style, camera behavior, and other generation instructions
+
+## Optional Parameters
+
+- **image_urls**: First-frame and optional last-frame image URL array. At most `2` images are allowed
+- **reference_image_urls**: Ordinary reference image URL array. At most `7` images are allowed, or `5` when a reference video is also provided
+- **reference_video_urls**: Reference video URL array. At most `1` video is allowed and its duration must be from `3` to `10` seconds, inclusive
+- **resolution**: `360p`, `720p`, `1080p`, or `4k`. Default is `720p`
+- **duration**: `4`, `6`, `8`, or `10` seconds. Default is `8`. This field does not affect output duration when a reference video is provided
+- **aspect_ratio**: `16:9` or `9:16`. Default is `16:9`
+- **callback_url**: Optional webhook URL for completion notifications
+
+## Input Modes
+
+- **Text to video**: Send `prompt` and optional generation settings
+- **First/last frame video**: Send one or two images in `image_urls`
+- **Reference image video**: Send up to seven images in `reference_image_urls`
+- **Reference video**: Send one video from three to ten seconds in `reference_video_urls`, optionally together with up to five reference images
+
+## Billing
+
+Requests without a reference video are billed by the selected resolution and duration. Requests with a reference video are billed per generation by the selected resolution.
+
+## Notes
+
+- `image_urls` cannot be combined with `reference_image_urls` or `reference_video_urls`
+- Use public HTTPS media URLs, or upload files through the playground before submitting
+- The response returns a `task_id`; query task status to retrieve generated video files
+
+## Submit Examples
+
+### Text to Video
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic night city with neon reflections, a slow camera push-in, and a character walking into frame",
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### First and Last Frames
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "input": {
+    "prompt": "Create a smooth cinematic transition between the opening and closing frames",
+    "image_urls": [
+      "https://example.com/first-frame.webp",
+      "https://example.com/last-frame.webp"
+    ],
+    "resolution": "1080p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### Reference Images
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "input": {
+    "prompt": "Use the product and environment references to create a polished studio campaign video",
+    "reference_image_urls": [
+      "https://example.com/product.webp",
+      "https://example.com/environment.webp"
+    ],
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### Reference Video
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "input": {
+    "prompt": "Follow the motion of the reference video while applying the visual style of the image",
+    "reference_image_urls": ["https://example.com/style.webp"],
+    "reference_video_urls": ["https://example.com/reference.mp4"],
+    "resolution": "720p",
+    "aspect_ratio": "16:9"
+  }
+}
+```

@@ -1,0 +1,338 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Gemini Omni 1.1 Flash API",
+    "description": "Generate videos from text, keyframes, reference images, or a reference video",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Gemini Omni 1.1 Flash Task",
+        "description": "Generate a video from text, keyframes, reference images, or a reference video",
+        "operationId": "submitGeminiOmni11FlashTask",
+        "tags": ["Gemini Omni 1.1 Flash"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic night city with neon reflections and a slow camera push-in",
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "first-last-frame": {
+                  "summary": "First and last frame video",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "input": {
+                      "prompt": "Create a smooth cinematic transition between the two frames",
+                      "image_urls": [
+                        "https://example.com/first-frame.webp",
+                        "https://example.com/last-frame.webp"
+                      ],
+                      "resolution": "1080p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "reference-images": {
+                  "summary": "Reference image video",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "input": {
+                      "prompt": "Use the references to create a polished product campaign video",
+                      "reference_image_urls": [
+                        "https://example.com/product.webp",
+                        "https://example.com/environment.webp"
+                      ],
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "9:16"
+                    }
+                  }
+                },
+                "reference-video": {
+                  "summary": "Reference video generation",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "input": {
+                      "prompt": "Follow the reference motion while applying the supplied visual style",
+                      "reference_image_urls": ["https://example.com/style.webp"],
+                      "reference_video_urls": ["https://example.com/reference.mp4"],
+                      "resolution": "720p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Query Task Status",
+        "operationId": "getGeminiOmni11FlashTaskStatus",
+        "tags": ["Gemini Omni 1.1 Flash"],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Gemini Omni 1.1 Flash model identifier",
+            "enum": ["gemini-omni-1.1-flash"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt for video generation. Maximum length is 20,000 characters.",
+                "minLength": 1,
+                "maxLength": 20000,
+                "example": "A cinematic night city with neon reflections and a slow camera push-in"
+              },
+              "image_urls": {
+                "type": "array",
+                "description": "Optional first-frame and last-frame images. At most two images are supported.",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/first-frame.webp",
+                  "https://example.com/last-frame.webp"
+                ]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "description": "Optional reference images. At most seven images are supported, or five when a reference video is provided.",
+                "minItems": 1,
+                "maxItems": 7,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": ["https://example.com/reference-image.webp"]
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "description": "Optional reference video. At most one video is supported, with a duration from 3 to 10 seconds inclusive.",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": ["https://example.com/reference-video.mp4"],
+                "x-video-duration-seconds": {
+                  "minimum": 3,
+                  "maximum": 10
+                }
+              },
+              "resolution": {
+                "type": "string",
+                "description": "The resolution of the generated video. Available values are 360p, 720p, 1080p, and 4k.",
+                "enum": ["360p", "720p", "1080p", "4k"],
+                "default": "720p",
+                "example": "720p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Output duration in seconds. Default is 8. This field does not affect reference-video generation.",
+                "enum": [4, 6, 8, 10],
+                "default": 8,
+                "example": 8
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "The aspect ratio of the generated video. 16:9 is landscape, and 9:16 is portrait.",
+                "enum": ["16:9", "9:16"],
+                "default": "16:9",
+                "example": "16:9"
+              }
+            },
+            "allOf": [
+              {
+                "not": {
+                  "required": ["image_urls", "reference_image_urls"]
+                }
+              },
+              {
+                "not": {
+                  "required": ["image_urls", "reference_video_urls"]
+                }
+              }
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"]
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"]
+              },
+              "credits_amount": {
+                "type": "number"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "file_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "file_type": {
+                      "type": "string",
+                      "example": "video"
+                    }
+                  }
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "integer"
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
