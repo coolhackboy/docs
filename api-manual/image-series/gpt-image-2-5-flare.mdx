@@ -1,0 +1,95 @@
+---
+title: "GPT Image 2.5 Flare"
+description: "GPT Image 2.5 Flare single-image generation and reference-image editing with background, format, and mask controls."
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-2-5-flare.json POST /api/generate/submit"
+---
+
+<Tip>
+Submission returns a `task_id`. Query progress and results through [Query Task Status](/api-manual/task-management/status), or supply a `callback_url` to receive completion and failure notifications.
+</Tip>
+
+# GPT Image 2.5 Flare
+
+Use `gpt-image-2.5-flare` to generate one image from a prompt or edit up to 16 reference images. A non-empty `image_urls` array selects editing automatically; omit it or pass an empty array for text-to-image generation.
+
+## Parameters
+
+- `prompt` is required and supports up to 32,000 characters.
+- `quality`: `low` (default), `medium`, `high`, `xhigh`, or `max`.
+- `background`: `auto` (default), `transparent`, or `opaque`.
+- `output_format`: `png` (default), `jpeg`, or `webp`. Transparent backgrounds require PNG or WebP.
+- `mask_url`: optional HTTP(S) mask image URL identifying the area to edit; requires non-empty `image_urls`.
+- Reference images must use HTTP(S) URLs. Each request produces one output image.
+
+## Image Size
+
+- `size` defaults to `1:1`. Supported ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
+- `resolution` supports `1K` (default), `2K`, and `4K`. An omitted size uses a square at the selected tier.
+- Explicit `size=auto` is available only with `1K`; the model determines the image size. Select a ratio or custom size for `2K` or `4K`.
+- Dimensions depend on the ratio: `1:1 + 4K` produces 2880×2880; `16:9 + 4K` produces 3840×2160.
+- Custom `WIDTHxHEIGHT` sizes require `2K` or `4K`. Both dimensions must be divisible by 16, the longest edge must not exceed 3840, the aspect ratio must not exceed 3:1, and total pixels must be between 655,360 and 8,294,400. A 3840-pixel edge requires `4K`.
+
+## Examples
+
+### Text To Image
+
+```json
+{
+  "model": "gpt-image-2.5-flare",
+  "input": {
+    "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+    "size": "16:9",
+    "resolution": "2K",
+    "quality": "medium"
+  }
+}
+```
+
+### Image Edit
+
+```json
+{
+  "model": "gpt-image-2.5-flare",
+  "input": {
+    "prompt": "Keep the product and replace the background with a warm modern studio",
+    "image_urls": [
+      "https://example.com/product.png"
+    ],
+    "size": "1:1",
+    "quality": "high"
+  }
+}
+```
+
+### Mask Edit
+
+```json
+{
+  "model": "gpt-image-2.5-flare",
+  "input": {
+    "prompt": "Replace only the masked area with a small vase of flowers",
+    "image_urls": [
+      "https://example.com/room.png"
+    ],
+    "mask_url": "https://example.com/mask.png",
+    "size": "auto"
+  }
+}
+```
+
+### Transparent Background
+
+```json
+{
+  "model": "gpt-image-2.5-flare",
+  "input": {
+    "prompt": "A clean cutout of a small silver robot",
+    "background": "transparent",
+    "output_format": "webp",
+    "size": "1:1",
+    "resolution": "4K",
+    "quality": "xhigh"
+  }
+}
+```

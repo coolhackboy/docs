@@ -32,6 +32,8 @@
       "/api-manual/image-series/gpt-4o-image.json",
       "/api-manual/image-series/gpt-image-1.5.json",
       "/api-manual/image-series/gpt-image-2.json",
+      "/api-manual/image-series/gpt-image-2-5-flare.json",
+      "/api-manual/image-series/gpt-image-2-5-sunburst.json",
       "/api-manual/image-series/qwen-image-3.json",
       "/api-manual/image-series/nano-banana.json",
       "/api-manual/image-series/nano-banana-2.json",
@@ -162,7 +164,9 @@
                 "pages": [
                   "api-manual/image-series/gpt-4o-image",
                   "api-manual/image-series/gpt-image-1.5",
-                  "api-manual/image-series/gpt-image-2"
+                  "api-manual/image-series/gpt-image-2",
+                  "api-manual/image-series/gpt-image-2-5-flare",
+                  "api-manual/image-series/gpt-image-2-5-sunburst"
                 ]
               },
               {
