@@ -176,7 +176,7 @@
                   "4K"
                 ],
                 "default": "1K",
-                "description": "Output resolution tier. Pixel dimensions depend on aspect ratio; a 4K square is 2880x2880."
+                "description": "Output resolution tier. For aspect ratios, actual pixel dimensions may vary by model and generation; inspect the returned image for exact dimensions. Custom WIDTHxHEIGHT specifies exact dimensions."
               },
               "quality": {
                 "type": "string",
@@ -187,7 +187,7 @@
                   "xhigh",
                   "max"
                 ],
-                "default": "low",
+                "default": "high",
                 "description": "Output quality level."
               },
               "background": {

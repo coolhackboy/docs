@@ -16,7 +16,7 @@ Use `gpt-image-2.5-sunburst` to generate one image from a prompt or edit up to 1
 ## Parameters
 
 - `prompt` is required and supports up to 32,000 characters.
-- `quality`: `low` (default), `medium`, `high`, `xhigh`, or `max`.
+- `quality`: `low`, `medium`, `high` (default), `xhigh`, or `max`.
 - `background`: `auto` (default), `transparent`, or `opaque`.
 - `output_format`: `png` (default), `jpeg`, or `webp`. Transparent backgrounds require PNG or WebP.
 - `mask_url`: optional HTTP(S) mask image URL identifying the area to edit; requires non-empty `image_urls`.
@@ -27,7 +27,7 @@ Use `gpt-image-2.5-sunburst` to generate one image from a prompt or edit up to 1
 - `size` defaults to `1:1`. Supported ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
 - `resolution` supports `1K` (default), `2K`, and `4K`. An omitted size uses a square at the selected tier.
 - Explicit `size=auto` is available only with `1K`; the model determines the image size. Select a ratio or custom size for `2K` or `4K`.
-- Dimensions depend on the ratio: `1:1 + 4K` produces 2880×2880; `16:9 + 4K` produces 3840×2160.
+- For aspect ratios, actual pixel dimensions may vary by model and generation. Inspect the returned image for exact dimensions; use a custom size when exact pixels are required.
 - Custom `WIDTHxHEIGHT` sizes require `2K` or `4K`. Both dimensions must be divisible by 16, the longest edge must not exceed 3840, the aspect ratio must not exceed 3:1, and total pixels must be between 655,360 and 8,294,400. A 3840-pixel edge requires `4K`.
 
 ## Examples
