@@ -307,9 +307,15 @@
           },
           "data": {
             "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
-                "type": "string"
+                "type": "string",
+                "example": "task-unified-1790245800-qwen21"
               },
               "status": {
                 "type": "string",
@@ -317,9 +323,19 @@
               },
               "created_time": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2026-09-24T10:30:00Z",
+                "description": "ISO 8601 timestamp when the task was created."
               }
             }
+          }
+        },
+        "example": {
+          "code": 200,
+          "data": {
+            "task_id": "task-unified-1790245800-qwen21",
+            "status": "not_started",
+            "created_time": "2026-09-24T10:30:00Z"
           }
         }
       }
