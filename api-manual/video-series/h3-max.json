@@ -157,14 +157,13 @@
         "required": [
           "prompt"
         ],
-        "description": "At most 12 reference assets in total. Reference video and audio each require reference images. Media metadata and billing tokens are computed by the server.",
+        "description": "At most 12 reference assets in total. All media URLs must use HTTP(S). Reference video and audio each require reference images. Media metadata and billing tokens are computed by the server.",
         "properties": {
           "prompt": {
             "type": "string",
             "minLength": 1,
             "maxLength": 50000,
-            "pattern": "\\S",
-            "description": "Describe the video. Refer to assets as Image 1, Video 1, or Audio 1."
+            "description": "Describe the video. The prompt must not consist only of whitespace. Refer to assets as Image 1, Video 1, or Audio 1."
           },
           "duration": {
             "type": "integer",
@@ -204,8 +203,7 @@
             "maxItems": 2,
             "items": {
               "type": "string",
-              "format": "uri",
-              "pattern": "^https?://"
+              "format": "uri"
             },
             "description": "Starting frame and optional ending frame; mutually exclusive with all references."
           },
@@ -214,8 +212,7 @@
             "maxItems": 9,
             "items": {
               "type": "string",
-              "format": "uri",
-              "pattern": "^https?://"
+              "format": "uri"
             },
             "description": "Subject or style images; required when reference video or audio is supplied. Supported shapes: 1:1, 4:3, 3:4, 16:9, 9:16, 5:2, 2:5."
           },
@@ -224,8 +221,7 @@
             "maxItems": 3,
             "items": {
               "type": "string",
-              "format": "uri",
-              "pattern": "^https?://"
+              "format": "uri"
             },
             "description": "Each clip must be 2–15 seconds; combined video duration must not exceed 15 seconds. Constant 24 fps, square pixels, no rotation metadata, and 16:9 or 9:16 are required. After capping frames at the requested output duration, counted frames must be 48, 120, 240, or 360."
           },
@@ -234,8 +230,7 @@
             "maxItems": 3,
             "items": {
               "type": "string",
-              "format": "uri",
-              "pattern": "^https?://"
+              "format": "uri"
             },
             "description": "Each clip must be 2–15 seconds; combined audio duration must not exceed 15 seconds. Requires 32 kHz and a decoded sample count divisible by 800. Each clip must not exceed the requested output duration."
           }

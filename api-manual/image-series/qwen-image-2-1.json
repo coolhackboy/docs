@@ -149,8 +149,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 5000,
-                "pattern": "\\S",
-                "description": "Describe the desired image or the changes to make."
+                "description": "Describe the desired image or the changes to make. The prompt must not consist only of whitespace."
               },
               "image_urls": {
                 "type": "array",
@@ -158,8 +157,7 @@
                 "maxItems": 10,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://\\S+$"
+                  "format": "uri"
                 },
                 "description": "Omit or use an empty array for text-to-image. Otherwise provide 1-10 publicly accessible HTTP(S) reference URLs in prompt order. JPEG, PNG and WebP; up to 30MB and 25MP per image. Media limits are checked during generation."
               },
@@ -217,8 +215,7 @@
               "mask_url": {
                 "type": "string",
                 "format": "uri",
-                "pattern": "^https?://\\S+$",
-                "description": "Local-edit mask used with exactly one reference image and an opaque background. White areas change; black areas stay unchanged. Match the reference aspect ratio; the mask is scaled to the reference dimensions. Output follows the reference ratio; size and prompt_extend are ignored."
+                "description": "HTTP(S) URL of a local-edit mask used with exactly one reference image and an opaque background. White areas change; black areas stay unchanged. Match the reference aspect ratio; the mask is scaled to the reference dimensions. Output follows the reference ratio; size and prompt_extend are ignored."
               },
               "seed": {
                 "type": "integer",

@@ -159,8 +159,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 50000,
-            "pattern": "\\S",
-            "description": "Text prompt describing the generated video. Required in both modes."
+            "description": "Text prompt describing the generated video. Required in both modes and must not consist only of whitespace."
           },
           "duration": {
             "type": "integer",
