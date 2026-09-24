@@ -1,0 +1,331 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Qwen Image 2.1 API",
+    "description": "Text-to-image, multi-reference generation, transparent backgrounds, and mask editing with Qwen Image 2.1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Qwen Image 2.1 Task",
+        "operationId": "submitQwenImage21Task",
+        "tags": [
+          "Qwen Image 2.1"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text-to-image generation",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "input": {
+                      "prompt": "A bilingual technology poster with the headline Future Vision, precise typography, blue and silver palette",
+                      "size": "3:4",
+                      "resolution": "1K"
+                    }
+                  }
+                },
+                "multi-reference": {
+                  "summary": "Combine reference images",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "input": {
+                      "prompt": "Combine the product in the first image with the colors and lighting of the second image",
+                      "image_urls": [
+                        "https://example.com/product.png",
+                        "https://example.com/style.jpg"
+                      ],
+                      "size": "auto",
+                      "resolution": "2K",
+                      "prompt_extend": false
+                    }
+                  }
+                },
+                "transparent": {
+                  "summary": "Transparent WebP asset",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "input": {
+                      "prompt": "A playful corgi sticker, isolated subject",
+                      "background": "transparent",
+                      "output_format": "webp",
+                      "seed": 20260921
+                    }
+                  }
+                },
+                "mask-edit": {
+                  "summary": "Edit a masked area",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Replace the marked cushion with a blue velvet cushion",
+                      "image_urls": [
+                        "https://example.com/room.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "resolution": "2K",
+                      "output_format": "png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "qwen-image-2.1"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 5000,
+                "pattern": "\\S",
+                "description": "Describe the desired image or the changes to make."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://\\S+$"
+                },
+                "description": "Omit or use an empty array for text-to-image. Otherwise provide 1-10 publicly accessible HTTP(S) reference URLs in prompt order. JPEG, PNG and WebP; up to 30MB and 25MP per image. Media limits are checked during generation."
+              },
+              "size": {
+                "type": "string",
+                "enum": [
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "3:2",
+                  "2:3",
+                  "16:9",
+                  "9:16",
+                  "21:9",
+                  "9:21",
+                  "auto"
+                ],
+                "description": "Output aspect ratio. Defaults to 1:1 for text-to-image and auto for reference images. auto requires at least one reference image. Ignored when mask_url is supplied."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K"
+                ],
+                "default": "1K"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "webp",
+                  "jpeg"
+                ],
+                "default": "png"
+              },
+              "prompt_extend": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enhance the prompt before generation. Ignored when mask_url is supplied."
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "opaque",
+                  "transparent"
+                ],
+                "default": "opaque",
+                "description": "Transparent output requires png or webp and cannot be combined with mask_url."
+              },
+              "mask_url": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https?://\\S+$",
+                "description": "Local-edit mask used with exactly one reference image and an opaque background. White areas change; black areas stay unchanged. Match the reference aspect ratio; the mask is scaled to the reference dimensions. Output follows the reference ratio; size and prompt_extend are ignored."
+              },
+              "seed": {
+                "type": "integer",
+                "description": "Optional random seed. Omit to use a random seed."
+              }
+            },
+            "allOf": [
+              {
+                "not": {
+                  "required": [
+                    "size"
+                  ],
+                  "properties": {
+                    "size": {
+                      "enum": [
+                        "auto"
+                      ]
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "image_urls"
+                    ],
+                    "properties": {
+                      "image_urls": {
+                        "minItems": 1
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "mask_url"
+                  ],
+                  "not": {
+                    "required": [
+                      "image_urls"
+                    ],
+                    "properties": {
+                      "image_urls": {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      "background": {
+                        "enum": [
+                          "opaque"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "background",
+                    "output_format"
+                  ],
+                  "properties": {
+                    "background": {
+                      "enum": [
+                        "transparent"
+                      ]
+                    },
+                    "output_format": {
+                      "enum": [
+                        "jpeg"
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

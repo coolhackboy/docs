@@ -1,0 +1,226 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - H3 Max Turbo API",
+    "description": "Generate videos from text, a first frame, or first and last frames",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit H3 Max Turbo Task",
+        "operationId": "submitH3MaxTurboTask",
+        "tags": [
+          "H3 Max Turbo"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to Video",
+                  "value": {
+                    "model": "h3-max-turbo",
+                    "input": {
+                      "prompt": "A cinematic aerial view of a coastal city at sunrise",
+                      "duration": 5,
+                      "resolution": "768p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "First Frame",
+                  "value": {
+                    "model": "h3-max-turbo",
+                    "input": {
+                      "prompt": "The camera slowly moves forward through the scene",
+                      "duration": 10,
+                      "resolution": "480p",
+                      "image_urls": [
+                        "https://example.com/start.jpg"
+                      ]
+                    }
+                  }
+                },
+                "first-last-frame": {
+                  "summary": "First and Last Frames",
+                  "value": {
+                    "model": "h3-max-turbo",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Daylight gradually turns into sunset",
+                      "duration": 10,
+                      "resolution": "1080p",
+                      "image_urls": [
+                        "https://example.com/start.jpg",
+                        "https://example.com/end.jpg"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "h3-max-turbo"
+            ],
+            "example": "h3-max-turbo"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook callback URL."
+          },
+          "input": {
+            "$ref": "#/components/schemas/H3MaxTurboInput"
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "8FDN1I7M7Q68DDG8"
+              }
+            }
+          }
+        }
+      },
+      "H3MaxTurboInput": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50000,
+            "pattern": "\\S",
+            "description": "Text prompt describing the generated video. Required in both modes."
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 15,
+            "default": 5,
+            "description": "Generated video duration in seconds."
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "768p",
+              "1080p",
+              "480P",
+              "768P",
+              "1080P"
+            ],
+            "default": "768p",
+            "description": "Output resolution: 480p, 768p or 1080p. Uppercase P is also accepted."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "If set to true, the safety checker will be enabled. Defaults to true."
+          },
+          "aspect_ratio": {
+            "type": "string",
+            "enum": [
+              "21:9",
+              "16:9",
+              "4:3",
+              "1:1",
+              "3:4",
+              "9:16"
+            ],
+            "description": "Text-to-video only; defaults to 16:9. Omit when image_urls contains images."
+          },
+          "image_urls": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "First frame and optional last frame, in that order. Use public HTTP(S) image URLs or Base64 images. Omit or pass [] for text-to-video."
+          }
+        },
+        "not": {
+          "required": [
+            "image_urls",
+            "aspect_ratio"
+          ],
+          "properties": {
+            "image_urls": {
+              "minItems": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

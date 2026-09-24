@@ -35,6 +35,7 @@
       "/api-manual/image-series/gpt-image-2-5-flare.json",
       "/api-manual/image-series/gpt-image-2-5-sunburst.json",
       "/api-manual/image-series/qwen-image-3.json",
+      "/api-manual/image-series/qwen-image-2-1.json",
       "/api-manual/image-series/nano-banana.json",
       "/api-manual/image-series/nano-banana-2.json",
       "/api-manual/image-series/nano-banana-2-new.json",
@@ -90,6 +91,8 @@
       "/api-manual/video-series/hailuo-02.json",
       "/api-manual/video-series/hailuo-2-3.json",
       "/api-manual/video-series/hailuo-03.json",
+      "/api-manual/video-series/h3-max.json",
+      "/api-manual/video-series/h3-max-turbo.json",
       "/api-manual/video-series/seedance-1.0-pro.json",
       "/api-manual/video-series/seedance-1-5-pro.json",
       "/api-manual/video-series/seedance-2.json",
@@ -215,6 +218,7 @@
                 "group": "Alibaba",
                 "pages": [
                   "api-manual/image-series/qwen-image-3",
+                  "api-manual/image-series/qwen-image-2-1",
                   "api-manual/image-series/wan-2-7-image-pro",
                   "api-manual/image-series/wan-2-7-image",
                   "api-manual/image-series/z-image"
@@ -290,7 +294,9 @@
                 "pages": [
                   "api-manual/video-series/hailuo-02",
                   "api-manual/video-series/hailuo-2-3",
-                  "api-manual/video-series/hailuo-03"
+                  "api-manual/video-series/hailuo-03",
+                  "api-manual/video-series/h3-max",
+                  "api-manual/video-series/h3-max-turbo"
                 ]
               },
               {

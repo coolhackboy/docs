@@ -1,0 +1,345 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - H3 Max API",
+    "description": "Generate 5–15 second videos from text, keyframes, or image-led multimodal references.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit H3 Max Task",
+        "operationId": "submitH3MaxTask",
+        "tags": [
+          "H3 Max"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text To Video",
+                  "value": {
+                    "model": "h3-max",
+                    "input": {
+                      "prompt": "A cinematic aerial view of a coastal city at sunrise"
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Image To Video",
+                  "value": {
+                    "model": "h3-max",
+                    "input": {
+                      "prompt": "The camera moves forward as daylight turns into sunset",
+                      "duration": 8,
+                      "resolution": "1080p",
+                      "image_urls": [
+                        "https://example.com/start.jpg",
+                        "https://example.com/end.jpg"
+                      ]
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "Reference To Video",
+                  "value": {
+                    "model": "h3-max",
+                    "input": {
+                      "prompt": "Image 1 follows the movement in Video 1 with the atmosphere of Audio 1",
+                      "duration": 10,
+                      "resolution": "768p",
+                      "aspect_ratio": "adaptive",
+                      "reference_image_urls": [
+                        "https://example.com/subject.jpg"
+                      ],
+                      "reference_video_urls": [
+                        "https://example.com/motion.mp4"
+                      ],
+                      "reference_audio_urls": [
+                        "https://example.com/atmosphere.wav"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "h3-max"
+            ],
+            "example": "h3-max"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook callback URL."
+          },
+          "input": {
+            "$ref": "#/components/schemas/H3MaxInput"
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "8FDN1I7M7Q68DDG8"
+              }
+            }
+          }
+        }
+      },
+      "H3MaxInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "prompt"
+        ],
+        "description": "At most 12 reference assets in total. Reference video and audio each require reference images. Media metadata and billing tokens are computed by the server.",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50000,
+            "pattern": "\\S",
+            "description": "Describe the video. Refer to assets as Image 1, Video 1, or Audio 1."
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 15,
+            "default": 5
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "768p",
+              "1080p"
+            ],
+            "default": "768p"
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "If set to true, the safety checker will be enabled. Defaults to true."
+          },
+          "aspect_ratio": {
+            "type": "string",
+            "enum": [
+              "21:9",
+              "16:9",
+              "4:3",
+              "1:1",
+              "3:4",
+              "9:16",
+              "adaptive"
+            ],
+            "description": "Text mode defaults to 16:9 and does not accept adaptive. Reference mode defaults to adaptive. Not accepted with image_urls."
+          },
+          "image_urls": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https?://"
+            },
+            "description": "Starting frame and optional ending frame; mutually exclusive with all references."
+          },
+          "reference_image_urls": {
+            "type": "array",
+            "maxItems": 9,
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https?://"
+            },
+            "description": "Subject or style images; required when reference video or audio is supplied. Supported shapes: 1:1, 4:3, 3:4, 16:9, 9:16, 5:2, 2:5."
+          },
+          "reference_video_urls": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https?://"
+            },
+            "description": "Each clip must be 2–15 seconds; combined video duration must not exceed 15 seconds. Constant 24 fps, square pixels, no rotation metadata, and 16:9 or 9:16 are required. After capping frames at the requested output duration, counted frames must be 48, 120, 240, or 360."
+          },
+          "reference_audio_urls": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https?://"
+            },
+            "description": "Each clip must be 2–15 seconds; combined audio duration must not exceed 15 seconds. Requires 32 kHz and a decoded sample count divisible by 800. Each clip must not exceed the requested output duration."
+          }
+        },
+        "allOf": [
+          {
+            "not": {
+              "required": [
+                "image_urls"
+              ],
+              "properties": {
+                "image_urls": {
+                  "minItems": 1
+                }
+              },
+              "not": {
+                "not": {
+                  "required": [
+                    "aspect_ratio"
+                  ]
+                },
+                "properties": {
+                  "reference_image_urls": {
+                    "maxItems": 0
+                  },
+                  "reference_video_urls": {
+                    "maxItems": 0
+                  },
+                  "reference_audio_urls": {
+                    "maxItems": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "aspect_ratio"
+              ],
+              "properties": {
+                "aspect_ratio": {
+                  "enum": [
+                    "adaptive"
+                  ]
+                },
+                "reference_image_urls": {
+                  "maxItems": 0
+                },
+                "reference_video_urls": {
+                  "maxItems": 0
+                },
+                "reference_audio_urls": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "reference_video_urls"
+              ],
+              "properties": {
+                "reference_video_urls": {
+                  "minItems": 1
+                }
+              },
+              "not": {
+                "required": [
+                  "reference_image_urls"
+                ],
+                "properties": {
+                  "reference_image_urls": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "reference_audio_urls"
+              ],
+              "properties": {
+                "reference_audio_urls": {
+                  "minItems": 1
+                }
+              },
+              "not": {
+                "required": [
+                  "reference_image_urls"
+                ],
+                "properties": {
+                  "reference_image_urls": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+---
+title: "H3 Max Turbo"
+description: "Generate videos from text, a first frame, or first and last frames"
+icon: "video"
+openapi: "/api-manual/video-series/h3-max-turbo.json POST /api/generate/submit"
+---
+
+H3 Max Turbo generates 5–15 second videos at 480p, 768p, or 1080p. Submit a task with `model: "h3-max-turbo"`, then poll its status or provide a `callback_url` to receive the result.
+
+## Generation Modes
+
+- **Text to video:** omit `image_urls` or pass an empty array.
+- **First frame:** provide one image in `image_urls`.
+- **First and last frames:** provide two images in `image_urls`, with the starting frame first and the ending frame second.
+
+Image-guided generation follows the first image's aspect ratio. Omit `aspect_ratio` whenever `image_urls` contains images.
+
+## Parameter Notes
+
+- `prompt` is required in every mode and accepts up to 50,000 characters.
+- `duration` accepts an integer from `5` through `15` seconds and defaults to `5`.
+- `resolution` accepts `480p`, `768p`, or `1080p` and defaults to `768p`. Uppercase `P` is also accepted.
+- `enable_safety_checker` (boolean) enables the safety checker when `true`. Defaults to `true` in every mode; set `false` to disable it.
+- Text-to-video supports `21:9`, `16:9`, `4:3`, `1:1`, `3:4`, and `9:16`. Its default aspect ratio is `16:9`.
+- `image_urls` accepts at most two publicly accessible image URLs or Base64 images.
+- Reference media, custom audio tracks, seed, and prompt-expansion controls are not available for this model.
+
+## Billing
+
+Video generation is billed by output duration and resolution.

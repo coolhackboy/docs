@@ -1,0 +1,100 @@
+---
+title: "Qwen Image 2.1 Generation"
+description: "Text-to-image, multi-reference generation, transparent backgrounds, and mask editing with Qwen Image 2.1"
+icon: "image"
+openapi: "/api-manual/image-series/qwen-image-2-1.json POST /api/generate/submit"
+---
+
+<Tip>
+Submission returns a `task_id`. Retrieve the result through [Query Task Status](/api-manual/task-management/status), or provide a `callback_url` to receive a completion notification.
+</Tip>
+
+# Qwen Image 2.1 Generation
+
+Use **`qwen-image-2.1`** for text-to-image generation, multi-reference image editing, transparent assets, and local edits. Each request produces one image.
+
+Omit `image_urls` or pass an empty array for text-to-image. Provide 1–10 reference image URLs for image-to-image. Reference order matches references in your prompt, such as “the first image”. For stronger detail preservation, use four or fewer reference images.
+
+## Parameters
+
+- `prompt` is required, with non-empty text up to 5,000 characters.
+- `image_urls` accepts up to 10 publicly accessible HTTP(S) reference URLs. JPEG, PNG, and WebP are supported, up to 30MB and 25MP per image. Media limits are checked during generation.
+- `size` supports `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `16:9`, `9:16`, `21:9`, and `9:21`. Reference-image requests also support `auto`. Defaults to `1:1` for text-to-image and `auto` for image-to-image.
+- `resolution` supports `1K` (default) and `2K`.
+- `output_format` supports `png` (default), `webp`, and `jpeg`.
+- `prompt_extend` controls prompt enhancement, enabled by default.
+- `enable_safety_checker` controls content safety checking, enabled by default.
+- `background` supports `opaque` (default) and `transparent`. Transparent output requires PNG or WebP.
+- `mask_url` accepts an HTTP(S) mask URL, used with exactly one reference image and an opaque background.
+- `seed` accepts an optional integer. Omit it to generate with a random seed.
+
+Use `size`, `prompt_extend`, and `enable_safety_checker` as shown above. `negative_prompt` and multiple-image output parameters are not supported.
+
+## Text-to-Image
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "input": {
+    "prompt": "A bilingual technology poster with the headline Future Vision, precise typography, blue and silver palette",
+    "size": "3:4",
+    "resolution": "1K"
+  }
+}
+```
+
+## Multi-Reference Generation
+
+Replace the example URLs with publicly accessible images.
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "input": {
+    "prompt": "Combine the product in the first image with the colors and lighting of the second image",
+    "image_urls": [
+      "https://example.com/product.png",
+      "https://example.com/style.jpg"
+    ],
+    "size": "auto",
+    "resolution": "2K",
+    "prompt_extend": false
+  }
+}
+```
+
+## Transparent Assets
+
+Describe the subject only. Background, scene, or surface descriptions may prevent a transparent result. JPEG cannot carry transparency.
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "input": {
+    "prompt": "A playful corgi sticker, isolated subject",
+    "background": "transparent",
+    "output_format": "webp",
+    "seed": 20260921
+  }
+}
+```
+
+## Mask Editing
+
+White mask areas are edited; black areas stay unchanged. Use a mask with the same aspect ratio as the reference image; its dimensions are scaled to the reference. Exactly one reference image is required, and transparent backgrounds are unavailable in this mode.
+
+The output follows the reference image's aspect ratio. `size` and `prompt_extend` are ignored when a mask is supplied.
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the marked cushion with a blue velvet cushion",
+    "image_urls": ["https://example.com/room.png"],
+    "mask_url": "https://example.com/mask.png",
+    "resolution": "2K",
+    "output_format": "png"
+  }
+}
+```
