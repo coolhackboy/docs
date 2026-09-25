@@ -230,13 +230,6 @@
             "group": "Video Model",
             "pages": [
               {
-                "group": "OpenAI",
-                "pages": [
-                  "api-manual/video-series/sora-2-official",
-                  "api-manual/video-series/sora-2-pro-official"
-                ]
-              },
-              {
                 "group": "Google",
                 "pages": [
                   "api-manual/video-series/veo-3-1",
