@@ -1,0 +1,81 @@
+---
+title: "Seedream-5.0-Flash Image Generation"
+description: "Fast Seedream image generation and reference-image editing"
+icon: "image"
+openapi: "/api-manual/image-series/seedream-5-0-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, a POST request will be sent to it when the task finishes or fails.
+2. You can also retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+# Seedream-5.0-Flash Image Generation
+
+Seedream-5.0-Flash generates images from text or edits images using up to 10 references. Each request produces one image.
+
+## Available Models
+
+- **seedream-5.0-flash** - Text-to-image generation
+- **seedream-5.0-flash-edit** - Image editing with 1–10 reference images
+
+## Size Parameter
+
+`input.size` controls the output aspect ratio. If omitted, the system uses `1:1`:
+
+- Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `2:3`, `3:2`, `21:9`
+
+## Resolution Parameter
+
+`input.resolution` controls the output resolution. If omitted, the system uses `1K`:
+
+- Resolution preset: `1K`, `1.5K`, `2K`
+
+## Pricing
+
+Each request generates one image and uses the current Seedream-5.0-Flash price.
+
+## How to Call
+
+Use the unified submit endpoint: `POST /api/generate/submit`
+
+Text-to-image example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-flash",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A colorful editorial poster for a neighborhood flower shop, with crisp typography and warm morning light",
+      "size": "3:4",
+      "resolution": "1.5K",
+      "output_format": "png"
+    }
+  }'
+```
+
+Edit example:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-flash-edit",
+    "input": {
+      "prompt": "Place the product from the second image on the table in the first image, preserving its shape and label",
+      "image_urls": [
+        "https://example.com/table.jpg",
+        "https://example.com/product.png"
+      ],
+      "size": "4:3",
+      "resolution": "2K",
+      "enable_safety_checker": true
+    }
+  }'
+```

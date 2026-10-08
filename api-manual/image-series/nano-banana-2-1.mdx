@@ -1,0 +1,21 @@
+---
+title: "Nano Banana 2.1 Image Generation"
+description: "Create and edit images with Nano Banana 2.1"
+icon: "image"
+openapi: "/api-manual/image-series/nano-banana-2-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, a POST request will be sent when the task status becomes `finished` or `failed`.
+2. You can also retrieve the result through [Query Task Status](/api-manual/task-management/status).
+</Tip>
+
+# Nano Banana 2.1 Image Generation
+
+Use `nano-banana-2.1` for text-to-image generation. Add `image_urls` to edit one or more reference images with the same model ID. The model supports up to 14 reference images.
+
+## Available Models
+
+- **nano-banana-2.1** - Text-to-image and image-to-image generation
+
+The default `resolution` is `1K`. For text-to-image generation, `size` defaults to `1:1`. When `image_urls` are provided, `size` defaults to `auto`, allowing the model to choose an aspect ratio from the reference images. You can also select a supported ratio explicitly. The `auto` option is only available for image editing.

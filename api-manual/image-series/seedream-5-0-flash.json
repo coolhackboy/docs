@@ -1,0 +1,172 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedream-5.0-Flash API",
+    "description": "Fast Seedream image generation and reference-image editing",
+    "version": "1.0.0"
+  },
+  "servers": [{"url": "https://api.poyo.ai", "description": "Production server"}],
+  "security": [{"BearerAuth": []}],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Seedream-5.0-Flash Generation Task",
+        "description": "Text-to-image and reference-image editing with aspect ratio and resolution controls",
+        "operationId": "submitSeedream50FlashTask",
+        "tags": ["Seedream-5.0-Flash"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/SubmitRequest"},
+              "examples": {
+                "seedream-5-0-flash": {
+                  "summary": "Text-to-Image Generation",
+                  "value": {
+                    "model": "seedream-5.0-flash",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A colorful editorial poster for a neighborhood flower shop, with crisp typography and warm morning light",
+                      "size": "3:4",
+                      "resolution": "1.5K",
+                      "output_format": "png"
+                    }
+                  }
+                },
+                "seedream-5-0-flash-edit": {
+                  "summary": "Image Editing with References",
+                  "value": {
+                    "model": "seedream-5.0-flash-edit",
+                    "input": {
+                      "prompt": "Place the product from the second image on the table in the first image, preserving its shape and label",
+                      "image_urls": ["https://example.com/table.jpg", "https://example.com/product.png"],
+                      "size": "4:3",
+                      "resolution": "2K",
+                      "enable_safety_checker": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SubmitResponse"}}}
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}}
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ErrorResponse"}}}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Seedream-5.0-Flash model identifier",
+            "enum": ["seedream-5.0-flash", "seedream-5.0-flash-edit"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "Input parameters for generation or editing",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 5000,
+                "description": "Generation or edit prompt describing the desired output"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {"type": "string", "format": "uri"},
+                "minItems": 1,
+                "maxItems": 10,
+                "description": "Required for seedream-5.0-flash-edit only; provide 1–10 reference image URLs"
+              },
+              "size": {
+                "type": "string",
+                "description": "Output aspect ratio preset; defaults to 1:1 when omitted",
+                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16", "2:3", "3:2", "21:9"],
+                "default": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution preset; defaults to 1K when omitted",
+                "enum": ["1K", "1.5K", "2K"],
+                "default": "1K"
+              },
+              "output_format": {
+                "type": "string",
+                "description": "Output image format",
+                "enum": ["jpeg", "png"]
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "description": "Safety checker switch; defaults to true when omitted",
+                "default": true
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {"type": "integer", "example": 200},
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {"type": "string", "example": "task-unified-1757165031-uyujaw3d"},
+              "status": {"type": "string", "enum": ["not_started"], "example": "not_started"},
+              "created_time": {"type": "string", "format": "date-time", "example": "2026-10-08T10:30:00"}
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {"type": "integer", "example": 400},
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {"type": "string", "example": "Invalid request parameters"},
+              "type": {"type": "string", "example": "invalid_request_error"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

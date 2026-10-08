@@ -1,0 +1,284 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Nano Banana 2.1 API",
+    "description": "Create and edit images with Nano Banana 2.1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Nano Banana 2.1 Generation Task",
+        "description": "Create images from a prompt or edit up to 14 reference images",
+        "operationId": "submitNanoBanana21Task",
+        "tags": [
+          "Nano Banana 2.1"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text-to-image generation",
+                  "value": {
+                    "model": "nano-banana-2.1",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A warm sunlit studio portrait of an orange cat",
+                      "size": "1:1",
+                      "resolution": "1K"
+                    }
+                  }
+                },
+                "image-to-image": {
+                  "summary": "Reference-image editing",
+                  "value": {
+                    "model": "nano-banana-2.1",
+                    "input": {
+                      "prompt": "Keep the subject and replace the background with a watercolor garden",
+                      "image_urls": [
+                        "https://example.com/reference.png"
+                      ],
+                      "size": "auto",
+                      "resolution": "2K"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Nano Banana 2.1 model identifier",
+            "enum": [
+              "nano-banana-2.1"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "additionalProperties": false,
+            "description": "Image generation or editing parameters.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Describe the image to create or how to edit reference images.",
+                "minLength": 1,
+                "maxLength": 20000,
+                "example": "An orange cat sitting by a window"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 14,
+                "description": "Optional reference image URLs for image editing. When provided, pass an array of 1 to 14 HTTP(S) URLs.",
+                "example": [
+                  "https://example.com/reference.png"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "description": "Output aspect ratio. Defaults to auto when image_urls are provided, otherwise 1:1. auto is only supported for image editing and lets the model choose a ratio from the reference images.",
+                "enum": [
+                  "auto",
+                  "1:1",
+                  "2:3",
+                  "3:2",
+                  "3:4",
+                  "4:3",
+                  "4:5",
+                  "5:4",
+                  "9:16",
+                  "16:9",
+                  "21:9"
+                ],
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "Output resolution.",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "1K",
+                "example": "2K"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started",
+                "description": "Initial task status"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-08T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "HTTP status code"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "Error message describing what went wrong"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "Error type identifier"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
