@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Nano Banana 2.1 Generation Task",
-        "description": "Create images from a prompt or edit up to 14 reference images",
+        "description": "Create images from a prompt or edit up to 10 reference images",
         "operationId": "submitNanoBanana21Task",
         "tags": [
           "Nano Banana 2.1"
@@ -164,8 +164,8 @@
                   "format": "uri"
                 },
                 "minItems": 1,
-                "maxItems": 14,
-                "description": "Optional reference image URLs for image editing. When provided, pass an array of 1 to 14 HTTP(S) URLs.",
+                "maxItems": 10,
+                "description": "Optional reference image URLs for image editing. When provided, pass an array of 1 to 10 HTTP(S) URLs.",
                 "example": [
                   "https://example.com/reference.png"
                 ]
