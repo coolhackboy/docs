@@ -1,0 +1,305 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Gemini 3.8 Flash TTS API",
+    "description": "Generate native WAV speech from a transcript or a two-speaker dialogue with style guidance.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Gemini 3.8 Flash TTS Task",
+        "description": "Generate native WAV speech from a transcript or a two-speaker dialogue with style guidance.",
+        "operationId": "submit_gemini_3_8_flash_tts",
+        "tags": [
+          "Gemini 3.8 Flash TTS"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "model": "gemini-3.8-flash-tts",
+                    "input": {
+                      "text": "Hello! Welcome to PoYo."
+                    }
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "model": "gemini-3.8-flash-tts",
+                    "input": {
+                      "speakers": [
+                        {
+                          "speaker_id": "host",
+                          "voice": "Kore"
+                        },
+                        {
+                          "speaker_id": "guest",
+                          "voice": "Puck"
+                        }
+                      ],
+                      "turns": [
+                        {
+                          "speaker_id": "host",
+                          "text": "Welcome!"
+                        },
+                        {
+                          "speaker_id": "guest",
+                          "text": "Thank you.",
+                          "style_instructions": "Warm and friendly."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task accepted; query the task for final files.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "gemini-3.8-flash-tts"
+            ]
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional completion or failure callback URL."
+          }
+        }
+      },
+      "ModelInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "voice": {
+            "enum": [
+              "Achernar",
+              "Achird",
+              "Algenib",
+              "Algieba",
+              "Alnilam",
+              "Aoede",
+              "Autonoe",
+              "Callirrhoe",
+              "Charon",
+              "Despina",
+              "Enceladus",
+              "Erinome",
+              "Fenrir",
+              "Gacrux",
+              "Iapetus",
+              "Kore",
+              "Laomedeia",
+              "Leda",
+              "Orus",
+              "Pulcherrima",
+              "Puck",
+              "Rasalgethi",
+              "Sadachbia",
+              "Sadaltager",
+              "Schedar",
+              "Sulafat",
+              "Umbriel",
+              "Vindemiatrix",
+              "Zephyr",
+              "Zubenelgenubi"
+            ],
+            "type": "string",
+            "default": "Kore",
+            "description": "Single-speaker voice, default Kore. Omit when using speakers and turns."
+          },
+          "speakers": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "required": [
+                "speaker_id",
+                "voice"
+              ],
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "voice": {
+                  "enum": [
+                    "Achernar",
+                    "Achird",
+                    "Algenib",
+                    "Algieba",
+                    "Alnilam",
+                    "Aoede",
+                    "Autonoe",
+                    "Callirrhoe",
+                    "Charon",
+                    "Despina",
+                    "Enceladus",
+                    "Erinome",
+                    "Fenrir",
+                    "Gacrux",
+                    "Iapetus",
+                    "Kore",
+                    "Laomedeia",
+                    "Leda",
+                    "Orus",
+                    "Pulcherrima",
+                    "Puck",
+                    "Rasalgethi",
+                    "Sadachbia",
+                    "Sadaltager",
+                    "Schedar",
+                    "Sulafat",
+                    "Umbriel",
+                    "Vindemiatrix",
+                    "Zephyr",
+                    "Zubenelgenubi"
+                  ],
+                  "type": "string"
+                },
+                "speaker_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              }
+            },
+            "description": "Required together with turns for dialogue. Exactly two speakers with distinct non-empty speaker_id values. Omit text and top-level voice."
+          },
+          "turns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "required": [
+                "speaker_id",
+                "text"
+              ],
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "speaker_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "style_instructions": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Required together with speakers for dialogue. At least one turn; speaker_id must reference a configured speaker. Each turn supports optional style_instructions."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable input safety checking. Disabling requires account authorization when applicable."
+          },
+          "style_instructions": {
+            "type": "string",
+            "description": "Global delivery style, separate from the transcript."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Single-speaker transcript. Required for single-speaker mode. Omit when using speakers and turns. Complete input is limited to 8192 tokens."
+          }
+        },
+        "description": "Use either text (single speaker) or speakers with turns (dialogue). These modes are mutually exclusive; dialogue cannot include top-level text or voice."
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

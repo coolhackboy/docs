@@ -1,0 +1,216 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Ideogram V4.5 API",
+    "description": "Generate images from a prompt with quality and size controls.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Ideogram V4.5 Task",
+        "description": "Generate images from a prompt with quality and size controls.",
+        "operationId": "submit_ideogram_v4_5",
+        "tags": [
+          "Ideogram V4.5"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "model": "ideogram-v4.5",
+                    "input": {
+                      "prompt": "A ceramic robot with a clean silhouette."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task accepted; query the task for final files.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "ideogram-v4.5"
+            ]
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional completion or failure callback URL."
+          }
+        }
+      },
+      "ModelInput": {
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "quality": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "default": "medium",
+            "type": "string",
+            "description": "Output quality."
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Prompt."
+          },
+          "n": {
+            "minimum": 1,
+            "default": 1,
+            "maximum": 8,
+            "type": "integer",
+            "description": "Number of output images."
+          },
+          "size": {
+            "type": "string",
+            "default": "1:1 HD",
+            "description": "Use 1:1, 1:1 HD, 4:3, 3:4, 16:9, 9:16, or one of these exact sizes: 1024x1024, 1024x3072, 1120x896, 1152x2944, 1152x864, 1248x3328, 1248x832, 1280x3072, 1280x720, 1280x800, 1296x3168, 1440x2560, 1440x2880, 1440x720, 1600x2560, 1664x2496, 1728x2304, 1792x2240, 2048x2048, 2240x1792, 2304x1728, 2496x1664, 2560x1440, 2560x1600, 2880x1440, 2944x1152, 3072x1024, 3072x1280, 3168x1296, 3328x1248, 720x1280, 720x1440, 800x1280, 832x1248, 864x1152, 896x1120.",
+            "enum": [
+              "1:1",
+              "1:1 HD",
+              "4:3",
+              "3:4",
+              "16:9",
+              "9:16",
+              "1024x1024",
+              "1024x3072",
+              "1120x896",
+              "1152x2944",
+              "1152x864",
+              "1248x3328",
+              "1248x832",
+              "1280x3072",
+              "1280x720",
+              "1280x800",
+              "1296x3168",
+              "1440x2560",
+              "1440x2880",
+              "1440x720",
+              "1600x2560",
+              "1664x2496",
+              "1728x2304",
+              "1792x2240",
+              "2048x2048",
+              "2240x1792",
+              "2304x1728",
+              "2496x1664",
+              "2560x1440",
+              "2560x1600",
+              "2880x1440",
+              "2944x1152",
+              "3072x1024",
+              "3072x1280",
+              "3168x1296",
+              "3328x1248",
+              "720x1280",
+              "720x1440",
+              "800x1280",
+              "832x1248",
+              "864x1152",
+              "896x1120"
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

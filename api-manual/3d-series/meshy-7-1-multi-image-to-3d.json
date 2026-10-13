@@ -1,0 +1,313 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Meshy 7.1 Multi Image to 3D API",
+    "description": "Generate a 3D model from 1–4 images of one object; supports standard or 2k geometry.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Meshy 7.1 Multi Image to 3D Task",
+        "description": "Generate a 3D model from 1–4 images of one object; supports standard or 2k geometry.",
+        "operationId": "submit_meshy_7_1_multi_image_to_3d",
+        "tags": [
+          "Meshy 7.1 Multi Image to 3D"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "model": "meshy-7.1-multi-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/front.png",
+                        "https://example.com/back.png"
+                      ],
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task accepted; query the task for final files.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "meshy-7.1-multi-image-to-3d"
+            ]
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional completion or failure callback URL."
+          }
+        }
+      },
+      "ModelInput": {
+        "type": "object",
+        "required": [
+          "image_urls"
+        ],
+        "properties": {
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate textures."
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable remeshing."
+          },
+          "texture_image_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Public image URL or image data URI."
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Apply an animation; requires enable_rigging=true."
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "Target polygons: 100-300000."
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "Animation preset ID, 0-696."
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k"
+            ],
+            "type": "string",
+            "description": "Geometry resolution; multi-image generation does not support 4k."
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "Character height in meters, greater than zero."
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "Character pose; empty string selects no specific pose."
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "Mesh symmetry behavior."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable input safety checking. Disabling requires account authorization when applicable."
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate PBR texture maps."
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "Output mesh topology."
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Rig the generated humanoid character."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "Image urls."
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Texture guidance, at most 600 characters."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "anyOf": [
+                {
+                  "required": [
+                    "enable_pbr"
+                  ],
+                  "properties": {
+                    "enable_pbr": {
+                      "const": true
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "texture_prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "texture_image_url"
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "properties": {
+                "should_texture": {
+                  "const": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

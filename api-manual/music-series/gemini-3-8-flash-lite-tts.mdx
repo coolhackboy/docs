@@ -1,0 +1,68 @@
+---
+title: "Gemini 3.8 Flash Lite TTS"
+description: "Generate native WAV speech from a transcript or a two-speaker dialogue."
+icon: "music"
+openapi: "/api-manual/music-series/gemini-3-8-flash-lite-tts.json POST /api/generate/submit"
+---
+
+Submission returns a `task_id`. Use [Query Task Status](/api-manual/task-management/status) to track completion, or supply `callback_url` for completion and failure notifications.
+
+## Parameters and combinations
+
+Single speaker: supply non-empty `text`, optional `voice` (default `Kore`), and optional `style_instructions`.
+
+Dialogue: omit `text` and top-level `voice`; supply exactly two `speakers` with distinct non-empty `speaker_id` values and a `voice` for each. Supply non-empty `turns`; each turn needs a configured `speaker_id`, non-empty `text`, and optional `style_instructions`.
+
+Single-speaker and dialogue inputs are mutually exclusive. Global `style_instructions` can be used with either mode. The complete input is limited to 8,192 tokens.
+
+`enable_safety_checker` defaults to `true`. Disabling safety checking can require account authorization.
+
+Output is native WAV. There are no `output_format`, `temperature`, `language_code`, or `seed` parameters.
+
+Voices: `Achernar`, `Achird`, `Algenib`, `Algieba`, `Alnilam`, `Aoede`, `Autonoe`, `Callirrhoe`, `Charon`, `Despina`, `Enceladus`, `Erinome`, `Fenrir`, `Gacrux`, `Iapetus`, `Kore`, `Laomedeia`, `Leda`, `Orus`, `Pulcherrima`, `Puck`, `Rasalgethi`, `Sadachbia`, `Sadaltager`, `Schedar`, `Sulafat`, `Umbriel`, `Vindemiatrix`, `Zephyr`, `Zubenelgenubi`.
+
+## Examples
+
+```json
+{
+  "model": "gemini-3.8-flash-lite-tts",
+  "input": {
+    "text": "Hello! Welcome to PoYo."
+  }
+}
+```
+
+```json
+{
+  "model": "gemini-3.8-flash-lite-tts",
+  "input": {
+    "speakers": [
+      {
+        "speaker_id": "host",
+        "voice": "Kore"
+      },
+      {
+        "speaker_id": "guest",
+        "voice": "Puck"
+      }
+    ],
+    "turns": [
+      {
+        "speaker_id": "host",
+        "text": "Welcome!"
+      },
+      {
+        "speaker_id": "guest",
+        "text": "Thank you.",
+        "style_instructions": "Warm and friendly."
+      }
+    ]
+  }
+}
+```
+
+## Task results
+
+The query response uses the common task structure: `task_id`, `status`, `progress`, `files`, and `error_message`. A finished task has `status="finished"`; each result file has `file_url` and `file_type`. Preserve the task ID while polling.
+
+Speech appears as `file_type="audio"`; optional timing JSON appears as `file_type="other"`.

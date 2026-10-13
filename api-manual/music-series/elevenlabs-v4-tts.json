@@ -1,0 +1,226 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - ElevenLabs V4 TTS API",
+    "description": "Generate expressive speech with voice controls, 19 audio formats, and optional timestamps.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit ElevenLabs V4 TTS Task",
+        "description": "Generate expressive speech with voice controls, 19 audio formats, and optional timestamps.",
+        "operationId": "submit_elevenlabs_v4_tts",
+        "tags": [
+          "ElevenLabs V4 TTS"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "model": "elevenlabs-v4-tts",
+                    "input": {
+                      "text": "Hello! Welcome to PoYo."
+                    }
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "model": "elevenlabs-v4-tts",
+                    "input": {
+                      "text": "Welcome to PoYo.",
+                      "timestamps": true,
+                      "output_format": "pcm_24000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task accepted; query the task for final files.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "elevenlabs-v4-tts"
+            ]
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional completion or failure callback URL."
+          }
+        }
+      },
+      "ModelInput": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "output_format": {
+            "type": "string",
+            "enum": [
+              "mp3_22050_32",
+              "mp3_44100_32",
+              "mp3_44100_64",
+              "mp3_44100_96",
+              "mp3_44100_128",
+              "mp3_44100_192",
+              "pcm_8000",
+              "pcm_16000",
+              "pcm_22050",
+              "pcm_24000",
+              "pcm_44100",
+              "pcm_48000",
+              "ulaw_8000",
+              "alaw_8000",
+              "opus_48000_32",
+              "opus_48000_64",
+              "opus_48000_96",
+              "opus_48000_128",
+              "opus_48000_192"
+            ],
+            "default": "mp3_44100_128",
+            "description": "Audio codec, sample rate, and bitrate."
+          },
+          "language_code": {
+            "type": "string",
+            "description": "ISO 639-1 language code."
+          },
+          "apply_text_normalization": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "default": "auto",
+            "description": "Normalize numbers and dates."
+          },
+          "stability": {
+            "type": "number",
+            "default": 0.5,
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Voice stability, from 0 to 1."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000,
+            "pattern": "\\S",
+            "description": "Text."
+          },
+          "voice": {
+            "type": "string",
+            "default": "Rachel",
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Prebuilt voice for single-speaker speech."
+          },
+          "similarity_boost": {
+            "type": "number",
+            "default": 0.75,
+            "maximum": 1,
+            "minimum": 0,
+            "description": "Voice similarity, from 0 to 1."
+          },
+          "timestamps": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return timing data as a separate JSON file when available."
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

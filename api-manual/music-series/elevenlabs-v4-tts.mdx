@@ -1,0 +1,48 @@
+---
+title: "ElevenLabs V4 TTS"
+description: "Generate expressive speech with voice controls, 19 audio formats, and optional timestamps."
+icon: "music"
+openapi: "/api-manual/music-series/elevenlabs-v4-tts.json POST /api/generate/submit"
+---
+
+Submission returns a `task_id`. Use [Query Task Status](/api-manual/task-management/status) to track completion, or supply `callback_url` for completion and failure notifications.
+
+## Parameters and combinations
+
+`text` is required (1–5,000 characters). `voice` defaults to `Rachel`; use a supported voice name or voice ID.
+
+`stability` defaults to 0.5 and `similarity_boost` to 0.75; both accept 0–1.
+
+`language_code` is optional. `apply_text_normalization` accepts `auto` (default), `on`, or `off`. `timestamps` defaults to `false` and adds a separate timing JSON file when available.
+
+`output_format` defaults to `mp3_44100_128`. Supported formats: `mp3_22050_32`, `mp3_44100_32`, `mp3_44100_64`, `mp3_44100_96`, `mp3_44100_128`, `mp3_44100_192`, `pcm_8000`, `pcm_16000`, `pcm_22050`, `pcm_24000`, `pcm_44100`, `pcm_48000`, `ulaw_8000`, `alaw_8000`, `opus_48000_32`, `opus_48000_64`, `opus_48000_96`, `opus_48000_128`, `opus_48000_192`.
+
+MP3 and Opus are encoded audio; PCM is raw audio without a WAV header. µ-law and A-law are telephony formats. Output keeps its original encoding and file extension; use the selected sample rate when decoding raw audio.
+
+## Examples
+
+```json
+{
+  "model": "elevenlabs-v4-tts",
+  "input": {
+    "text": "Hello! Welcome to PoYo."
+  }
+}
+```
+
+```json
+{
+  "model": "elevenlabs-v4-tts",
+  "input": {
+    "text": "Welcome to PoYo.",
+    "timestamps": true,
+    "output_format": "pcm_24000"
+  }
+}
+```
+
+## Task results
+
+The query response uses the common task structure: `task_id`, `status`, `progress`, `files`, and `error_message`. A finished task has `status="finished"`; each result file has `file_url` and `file_type`. Preserve the task ID while polling.
+
+Speech appears as `file_type="audio"`; optional timing JSON appears as `file_type="other"`.
