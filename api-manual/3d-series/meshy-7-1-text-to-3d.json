@@ -116,12 +116,11 @@
           "model_type": {
             "enum": [
               "standard",
-              "lowpoly",
               "smart-topology"
             ],
             "type": "string",
             "default": "standard",
-            "description": "Mesh generation method."
+            "description": "Mesh generation method. Lowpoly is not supported by this model version."
           },
           "texture_image_url": {
             "type": "string",
@@ -149,7 +148,7 @@
             "type": "integer",
             "minimum": 100,
             "maximum": 300000,
-            "description": "100-300000 polygons. Smart topology: maximum 15000, default 4000 when omitted. Remesh controls are ignored for lowpoly."
+            "description": "100-300000 polygons. Smart topology: maximum 15000, default 4000 when omitted."
           },
           "animation_action_id": {
             "type": "integer",
@@ -165,7 +164,7 @@
               "4k"
             ],
             "type": "string",
-            "description": "Geometry resolution; multi-image generation does not support 4k."
+            "description": "Geometry resolution. Only available when model_type is standard (the default); omit for smart-topology."
           },
           "rigging_height_meters": {
             "exclusiveMinimum": 0,
@@ -276,6 +275,20 @@
               "properties": {
                 "target_polycount": {
                   "maximum": 15000
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "geometry_resolution"
+              ]
+            },
+            "then": {
+              "properties": {
+                "model_type": {
+                  "const": "standard"
                 }
               }
             }

@@ -11,9 +11,9 @@ Submission returns a `task_id`. Use [Query Task Status](/api-manual/task-managem
 
 `prompt` is required (1–600 characters). `mode=full` (default) generates textures; `preview` generates geometry only. Optional `seed` and `enable_prompt_expansion` (default `false`) are available.
 
-`model_type` accepts `standard` (default), `lowpoly`, or `smart-topology`. Optional `geometry_resolution` accepts `standard`, `2k`, or `4k`.
+`model_type` accepts `standard` (default) or `smart-topology`. Lowpoly is not supported by this model version. Optional `geometry_resolution` accepts `standard`, `2k`, or `4k`. It is only available when `model_type` is `standard`; omit it for `smart-topology`.
 
-`topology` accepts `triangle` (default) or `quad`. `target_polycount` accepts 100–300,000 and defaults to 30,000; Smart Topology defaults to 4,000 and allows at most 15,000. Remesh controls are ignored in lowpoly mode.
+`topology` accepts `triangle` (default) or `quad`. `target_polycount` accepts 100–300,000 and defaults to 30,000; Smart Topology defaults to 4,000 and allows at most 15,000.
 
 `should_remesh` defaults to `true`; `symmetry_mode` accepts `off`, `auto` (default), or `on`; `pose_mode` accepts an empty string (default), `a-pose`, or `t-pose`.
 
