@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Omni Moderation Review",
-        "description": "Queue a review of text, HTTPS images, or both. FREE (0 credits). Returns a not_started task immediately; poll task status or provide callback_url for completion. A flagged review completes with status finished. Streaming is not supported.",
+        "description": "Queue a review of text, at most one HTTPS image URL, or both. FREE (0 credits). Returns a not_started task immediately; poll task status or provide callback_url for completion. A flagged review completes with status finished. Streaming is not supported.",
         "operationId": "submitOmniModerationTask",
         "tags": [
           "Moderation"
@@ -278,16 +278,17 @@
           "input": {
             "type": "object",
             "additionalProperties": false,
-            "description": "At least one of prompt or image_urls is required; both may be provided. Provide non-whitespace text or at least one HTTPS image URL.",
+            "description": "At least one of prompt or image_urls is required; both may be provided. Provide non-whitespace text or one HTTPS image URL. image_urls accepts at most one HTTPS image URL, and prompt may accompany the image.",
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "Text to review. Optional when image_urls contains at least one image.",
+                "description": "Text to review. Optional when image_urls contains one image; may be provided together with the image.",
                 "example": "A peaceful mountain landscape."
               },
               "image_urls": {
                 "type": "array",
-                "description": "Images to review, as HTTPS URLs. Optional when prompt contains non-whitespace text.",
+                "maxItems": 1,
+                "description": "At most one HTTPS image URL to review. Optional when prompt contains non-whitespace text; prompt may accompany the image.",
                 "items": {
                   "type": "string",
                   "format": "uri",

@@ -7,7 +7,7 @@ openapi: "/api-manual/moderation-series/omni-moderation.json POST /api/generate/
 
 **Price: FREE (0 credits)**
 
-Omni Moderation reviews text, HTTPS images, or both using OpenAI `omni-moderation-latest`. Submit a review through the unified generation endpoint, then poll [Get Task Status](/api-manual/task-management/status) with the returned `task_id` or receive an optional callback.
+Omni Moderation reviews text, at most one HTTPS image, or both using OpenAI `omni-moderation-latest`. Submit a review through the unified generation endpoint, then poll [Get Task Status](/api-manual/task-management/status) with the returned `task_id` or receive an optional callback.
 
 Submission immediately returns `status: "not_started"`. The review runs asynchronously and moves through `running` to `finished` or `failed`.
 
@@ -21,10 +21,10 @@ Callbacks are supported through the optional outer `callback_url` field. Streami
 |-------|------|-------------|
 | `model` | string | Must be `omni-moderation-latest` |
 | `callback_url` | string (URI) | Optional webhook URL for task completion or failure |
-| `input.prompt` | string | Optional text to review |
-| `input.image_urls` | string[] | Optional images, as HTTPS URLs |
+| `input.prompt` | string | Optional text to review; may accompany one image |
+| `input.image_urls` | string[] | Optional array containing at most one HTTPS image URL |
 
-**At least one of `prompt` or `image_urls` is required; both may be provided.** Use non-whitespace text or a non-empty list of HTTPS image URLs. Empty input is rejected.
+**At least one of `prompt` or `image_urls` is required; both may be provided.** Use non-whitespace text, one HTTPS image URL, or both. `image_urls` remains an array and accepts at most one image. Submit multiple images as separate tasks. Empty input is rejected.
 
 ## Submit a Review
 
