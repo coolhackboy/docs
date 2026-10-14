@@ -1,0 +1,118 @@
+---
+title: "Meshy 7.1 3D"
+description: "Generate 3D models from text, one image, or 1–4 images, with optional textures, rigging, and animation."
+icon: "cube"
+openapi: "/api-manual/3d-series/meshy-7-1-3d.json POST /api/generate/submit"
+---
+
+Submission returns a `task_id`. Use [Query Task Status](/api-manual/task-management/status) to track completion, or supply `callback_url` for completion and failure notifications.
+
+Meshy 7.1 supports three generation modes through separate model IDs.
+
+## Available models
+
+| Model | Required input |
+| --- | --- |
+| `meshy-7.1-text-to-3d` | `prompt`: 1–600 characters, containing non-whitespace text |
+| `meshy-7.1-image-to-3d` | `image_urls`: exactly one image |
+| `meshy-7.1-multi-image-to-3d` | `image_urls`: 1–4 images of the same object from different angles |
+
+Image inputs and `texture_image_url` accept public HTTP(S) image URLs or image data URIs.
+
+## Parameters and combinations
+
+All parameters appear in one list. Each description identifies model-specific requirements, supported values, and defaults.
+
+| Parameter | Description |
+| --- | --- |
+| `model` | Required. Select one of the three model IDs listed above. |
+| `input` | Required. Object containing the generation parameters below. Fields marked as required for a model must be supplied when that model is selected. |
+| `callback_url` | Optional completion or failure callback URL. |
+| `input.prompt` | Required only for meshy-7.1-text-to-3d; omit for image models. Use 1–600 characters containing non-whitespace text. |
+| `input.image_urls` | Required for image models; omit for meshy-7.1-text-to-3d. meshy-7.1-image-to-3d requires exactly 1 image; meshy-7.1-multi-image-to-3d accepts 1–4 images of the same object from different angles. Each item accepts a public HTTP(S) image URL or image data URI. |
+| `input.mode` | Only for meshy-7.1-text-to-3d. preview returns geometry only; full includes textures. Default: full. |
+| `input.model_type` | Only for meshy-7.1-text-to-3d and meshy-7.1-image-to-3d; omit for meshy-7.1-multi-image-to-3d. Accepts standard (default) or smart-topology. Lowpoly is not supported. |
+| `input.geometry_resolution` | meshy-7.1-text-to-3d and meshy-7.1-image-to-3d accept standard, 2k, or 4k only when model_type is standard (the default); omit for smart-topology. meshy-7.1-multi-image-to-3d accepts only standard or 2k and does not support 4k. |
+| `input.topology` | Output mesh topology for all models: triangle (default) or quad. |
+| `input.target_polycount` | Target polygons for all models: 100–300000; default 30000. For meshy-7.1-text-to-3d and meshy-7.1-image-to-3d with model_type=smart-topology: 100–15000, default 4000 when omitted. |
+| `input.should_remesh` | Enable remeshing for all models. Default: true. |
+| `input.symmetry_mode` | Mesh symmetry behavior for all models: off, auto (default), or on. |
+| `input.should_texture` | Only for meshy-7.1-image-to-3d and meshy-7.1-multi-image-to-3d; omit for meshy-7.1-text-to-3d. Generate textures; default true. For multi-image generation, must remain true when enable_pbr=true or texture guidance is supplied. |
+| `input.enable_pbr` | Generate PBR texture maps for all models. Default: false. For meshy-7.1-multi-image-to-3d, requires should_texture=true. |
+| `input.pose_mode` | Character pose for all models: a-pose, t-pose, or an empty string (default) for no specific pose. |
+| `input.seed` | Only for meshy-7.1-text-to-3d. Integer random seed; omit to select automatically. |
+| `input.enable_prompt_expansion` | Only for meshy-7.1-text-to-3d. Expand the prompt before generation. Default: false. |
+| `input.texture_prompt` | Optional texture guidance for all models, at most 600 characters. For meshy-7.1-multi-image-to-3d, requires should_texture=true. |
+| `input.texture_image_url` | Optional texture guidance for all models; accepts a public HTTP(S) image URL or image data URI. For meshy-7.1-multi-image-to-3d, requires should_texture=true. |
+| `input.enable_rigging` | Rig the generated humanoid character for all models. Default: false. Must be true when enable_animation=true. |
+| `input.rigging_height_meters` | Character height in meters for all models when rigging is enabled; must be greater than zero. Default: 1.7. |
+| `input.enable_animation` | Apply an animation for all models; requires enable_rigging=true. Default: false. |
+| `input.animation_action_id` | Animation preset ID for all models: integer from 0 to 696. Default: 92. |
+| `input.enable_safety_checker` | Enable input safety checking for all models. Default: true. Disabling requires account authorization when applicable. |
+
+Optional features can change the task price; inspect the live Catalog before submitting.
+
+## Examples
+
+### Text to 3D with rigging and animation
+
+```json
+{
+  "model": "meshy-7.1-text-to-3d",
+  "input": {
+    "prompt": "A ceramic robot with a clean silhouette.",
+    "enable_rigging": true,
+    "enable_animation": true
+  }
+}
+```
+
+### Text to 3D with Smart Topology preview
+
+```json
+{
+  "model": "meshy-7.1-text-to-3d",
+  "input": {
+    "prompt": "A ceramic robot.",
+    "mode": "preview",
+    "model_type": "smart-topology"
+  }
+}
+```
+
+### Single image to 3D with rigging and animation
+
+```json
+{
+  "model": "meshy-7.1-image-to-3d",
+  "input": {
+    "image_urls": [
+      "https://example.com/front.png"
+    ],
+    "enable_rigging": true,
+    "enable_animation": true
+  }
+}
+```
+
+### Multiple images to 3D with rigging and animation
+
+```json
+{
+  "model": "meshy-7.1-multi-image-to-3d",
+  "input": {
+    "image_urls": [
+      "https://example.com/front.png",
+      "https://example.com/back.png"
+    ],
+    "enable_rigging": true,
+    "enable_animation": true
+  }
+}
+```
+
+## Task results
+
+The query response uses the common task structure: `task_id`, `status`, `progress`, `files`, and `error_message`. A finished task has `status="finished"`; each result file has `file_url` and `file_type`. Preserve the task ID while polling.
+
+3D assets appear as `file_type="3d"`, with thumbnails and textures as images. Rigged meshes and animation assets are returned when requested and available.

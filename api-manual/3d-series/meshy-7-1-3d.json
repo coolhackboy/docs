@@ -1,0 +1,934 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Meshy 7.1 3D API",
+    "description": "Generate 3D geometry or textured models from text, one image, or 1–4 images, with optional rigging and animation.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Meshy 7.1 3D Task",
+        "description": "Generate 3D geometry or textured models from text, one image, or 1–4 images, with optional rigging and animation.",
+        "operationId": "submit_meshy_7_1_3d",
+        "tags": [
+          "Meshy 7.1 3D"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-3d": {
+                  "summary": "Text to 3D",
+                  "value": {
+                    "model": "meshy-7.1-text-to-3d",
+                    "input": {
+                      "prompt": "A ceramic robot with a clean silhouette.",
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                },
+                "text-to-3d-preview": {
+                  "summary": "Text to 3D — Smart Topology Preview",
+                  "value": {
+                    "model": "meshy-7.1-text-to-3d",
+                    "input": {
+                      "prompt": "A ceramic robot.",
+                      "mode": "preview",
+                      "model_type": "smart-topology"
+                    }
+                  }
+                },
+                "image-to-3d": {
+                  "summary": "Image to 3D",
+                  "value": {
+                    "model": "meshy-7.1-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/front.png"
+                      ],
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                },
+                "multi-image-to-3d": {
+                  "summary": "Multi Image to 3D",
+                  "value": {
+                    "model": "meshy-7.1-multi-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/front.png",
+                        "https://example.com/back.png"
+                      ],
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task accepted; query the task for final files.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "meshy-7.1-text-to-3d",
+              "meshy-7.1-image-to-3d",
+              "meshy-7.1-multi-image-to-3d"
+            ],
+            "description": "Select meshy-7.1-text-to-3d for text, meshy-7.1-image-to-3d for exactly one image, or meshy-7.1-multi-image-to-3d for 1–4 images."
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional completion or failure callback URL."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "meshy-7.1-text-to-3d"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/TextTo3DInput"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "meshy-7.1-image-to-3d"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/ImageTo3DInput"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "meshy-7.1-multi-image-to-3d"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/MultiImageTo3DInput"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ModelInput": {
+        "type": "object",
+        "description": "Unified parameter list. Required fields, supported values, and defaults depend on model as described for each parameter.",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Required only for meshy-7.1-text-to-3d; omit for image models. Use 1–600 characters containing non-whitespace text."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "Required for image models; omit for meshy-7.1-text-to-3d. meshy-7.1-image-to-3d requires exactly 1 image; meshy-7.1-multi-image-to-3d accepts 1–4 images of the same object from different angles. Each item accepts a public HTTP(S) image URL or image data URI."
+          },
+          "mode": {
+            "enum": [
+              "preview",
+              "full"
+            ],
+            "type": "string",
+            "description": "Only for meshy-7.1-text-to-3d. preview returns geometry only; full includes textures. Default: full."
+          },
+          "model_type": {
+            "enum": [
+              "standard",
+              "smart-topology"
+            ],
+            "type": "string",
+            "description": "Only for meshy-7.1-text-to-3d and meshy-7.1-image-to-3d; omit for meshy-7.1-multi-image-to-3d. Accepts standard (default) or smart-topology. Lowpoly is not supported."
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k",
+              "4k"
+            ],
+            "type": "string",
+            "description": "meshy-7.1-text-to-3d and meshy-7.1-image-to-3d accept standard, 2k, or 4k only when model_type is standard (the default); omit for smart-topology. meshy-7.1-multi-image-to-3d accepts only standard or 2k and does not support 4k."
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "Output mesh topology for all models: triangle (default) or quad."
+          },
+          "target_polycount": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "Target polygons for all models: 100–300000; default 30000. For meshy-7.1-text-to-3d and meshy-7.1-image-to-3d with model_type=smart-topology: 100–15000, default 4000 when omitted."
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable remeshing for all models. Default: true."
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "Mesh symmetry behavior for all models: off, auto (default), or on."
+          },
+          "should_texture": {
+            "type": "boolean",
+            "description": "Only for meshy-7.1-image-to-3d and meshy-7.1-multi-image-to-3d; omit for meshy-7.1-text-to-3d. Generate textures; default true. For multi-image generation, must remain true when enable_pbr=true or texture guidance is supplied."
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate PBR texture maps for all models. Default: false. For meshy-7.1-multi-image-to-3d, requires should_texture=true."
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "Character pose for all models: a-pose, t-pose, or an empty string (default) for no specific pose."
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Only for meshy-7.1-text-to-3d. Integer random seed; omit to select automatically."
+          },
+          "enable_prompt_expansion": {
+            "type": "boolean",
+            "default": false,
+            "description": "Only for meshy-7.1-text-to-3d. Expand the prompt before generation. Default: false."
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Optional texture guidance for all models, at most 600 characters. For meshy-7.1-multi-image-to-3d, requires should_texture=true."
+          },
+          "texture_image_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Optional texture guidance for all models; accepts a public HTTP(S) image URL or image data URI. For meshy-7.1-multi-image-to-3d, requires should_texture=true."
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Rig the generated humanoid character for all models. Default: false. Must be true when enable_animation=true."
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "Character height in meters for all models when rigging is enabled; must be greater than zero. Default: 1.7."
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Apply an animation for all models; requires enable_rigging=true. Default: false."
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "Animation preset ID for all models: integer from 0 to 696. Default: 92."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable input safety checking for all models. Default: true. Disabling requires account authorization when applicable."
+          }
+        },
+        "additionalProperties": false
+      },
+      "TextTo3DInput": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable remeshing."
+          },
+          "model_type": {
+            "enum": [
+              "standard",
+              "smart-topology"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Mesh generation method. Lowpoly is not supported by this model version."
+          },
+          "texture_image_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Public image URL or image data URI."
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Random seed; omit to select automatically."
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Apply an animation; requires enable_rigging=true."
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Prompt."
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "100-300000 polygons. Smart topology: maximum 15000, default 4000 when omitted."
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "Animation preset ID, 0-696."
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k",
+              "4k"
+            ],
+            "type": "string",
+            "description": "Geometry resolution. Only available when model_type is standard (the default); omit for smart-topology."
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "Character height in meters, greater than zero."
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "Character pose; empty string selects no specific pose."
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "Mesh symmetry behavior."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable input safety checking. Disabling requires account authorization when applicable."
+          },
+          "mode": {
+            "enum": [
+              "preview",
+              "full"
+            ],
+            "type": "string",
+            "default": "full",
+            "description": "preview returns geometry only; full includes textures."
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate PBR texture maps."
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Rig the generated humanoid character."
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "Output mesh topology."
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Texture guidance, at most 600 characters."
+          },
+          "enable_prompt_expansion": {
+            "type": "boolean",
+            "default": false,
+            "description": "Expand the prompt before generation."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model_type"
+              ],
+              "properties": {
+                "model_type": {
+                  "const": "smart-topology"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "target_polycount": {
+                  "maximum": 15000
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "geometry_resolution"
+              ]
+            },
+            "then": {
+              "properties": {
+                "model_type": {
+                  "const": "standard"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ImageTo3DInput": {
+        "type": "object",
+        "required": [
+          "image_urls"
+        ],
+        "properties": {
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate textures."
+          },
+          "model_type": {
+            "enum": [
+              "standard",
+              "smart-topology"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "Mesh generation method. Lowpoly is not supported by this model version."
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable remeshing."
+          },
+          "texture_image_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Public image URL or image data URI."
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Apply an animation; requires enable_rigging=true."
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "100-300000 polygons. Smart topology: maximum 15000, default 4000 when omitted."
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "Animation preset ID, 0-696."
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k",
+              "4k"
+            ],
+            "type": "string",
+            "description": "Geometry resolution. Only available when model_type is standard (the default); omit for smart-topology."
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "Character height in meters, greater than zero."
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "Character pose; empty string selects no specific pose."
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "Mesh symmetry behavior."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable input safety checking. Disabling requires account authorization when applicable."
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate PBR texture maps."
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Rig the generated humanoid character."
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "Output mesh topology."
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Texture guidance, at most 600 characters."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "Image urls."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model_type"
+              ],
+              "properties": {
+                "model_type": {
+                  "const": "smart-topology"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "target_polycount": {
+                  "maximum": 15000
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "geometry_resolution"
+              ]
+            },
+            "then": {
+              "properties": {
+                "model_type": {
+                  "const": "standard"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MultiImageTo3DInput": {
+        "type": "object",
+        "required": [
+          "image_urls"
+        ],
+        "properties": {
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate textures."
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable remeshing."
+          },
+          "texture_image_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Public image URL or image data URI."
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Apply an animation; requires enable_rigging=true."
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "Target polygons: 100-300000."
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "Animation preset ID, 0-696."
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k"
+            ],
+            "type": "string",
+            "description": "Geometry resolution; multi-image generation does not support 4k."
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "Character height in meters, greater than zero."
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "Character pose; empty string selects no specific pose."
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "Mesh symmetry behavior."
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable input safety checking. Disabling requires account authorization when applicable."
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "Generate PBR texture maps."
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "Output mesh topology."
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "Rig the generated humanoid character."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "Image urls."
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Texture guidance, at most 600 characters."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "anyOf": [
+                {
+                  "required": [
+                    "enable_pbr"
+                  ],
+                  "properties": {
+                    "enable_pbr": {
+                      "const": true
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "texture_prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "texture_image_url"
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "properties": {
+                "should_texture": {
+                  "const": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

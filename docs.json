@@ -31,14 +31,11 @@
       "/api-manual/moderation-series/omni-moderation.json",
         "/integrations/capability-catalog.json",
       "/api-manual/image-series/ideogram-v4-5.json",
-      "/api-manual/image-series/ideogram-v4-5-edit.json",
       "/api-manual/music-series/elevenlabs-v4-tts.json",
       "/api-manual/music-series/elevenlabs-v4-turbo-tts.json",
       "/api-manual/music-series/gemini-3-8-flash-lite-tts.json",
       "/api-manual/music-series/gemini-3-8-flash-tts.json",
-      "/api-manual/3d-series/meshy-7-1-text-to-3d.json",
-      "/api-manual/3d-series/meshy-7-1-image-to-3d.json",
-      "/api-manual/3d-series/meshy-7-1-multi-image-to-3d.json",
+      "/api-manual/3d-series/meshy-7-1-3d.json",
       "/api-manual/image-series/gpt-4o-image.json",
       "/api-manual/image-series/gpt-image-1.5.json",
       "/api-manual/image-series/gpt-image-2.json",
@@ -177,8 +174,7 @@
               {
                 "group": "Ideogram",
                 "pages": [
-                  "api-manual/image-series/ideogram-v4-5",
-                  "api-manual/image-series/ideogram-v4-5-edit"
+                  "api-manual/image-series/ideogram-v4-5"
                 ]
               },
               {
@@ -445,9 +441,7 @@
                 "group": "Meshy",
                 "pages": [
                   "api-manual/3d-series/meshy-6-3d",
-                  "api-manual/3d-series/meshy-7-1-text-to-3d",
-                  "api-manual/3d-series/meshy-7-1-image-to-3d",
-                  "api-manual/3d-series/meshy-7-1-multi-image-to-3d"
+                  "api-manual/3d-series/meshy-7-1-3d"
                 ]
               },
               {
@@ -566,6 +560,28 @@
       "href": "https://poyo.ai/models"
     }
   },
+  "redirects": [
+    {
+      "source": "/api-manual/image-series/ideogram-v4-5-edit",
+      "destination": "/api-manual/image-series/ideogram-v4-5",
+      "permanent": true
+    },
+    {
+      "source": "/api-manual/3d-series/meshy-7-1-text-to-3d",
+      "destination": "/api-manual/3d-series/meshy-7-1-3d",
+      "permanent": true
+    },
+    {
+      "source": "/api-manual/3d-series/meshy-7-1-image-to-3d",
+      "destination": "/api-manual/3d-series/meshy-7-1-3d",
+      "permanent": true
+    },
+    {
+      "source": "/api-manual/3d-series/meshy-7-1-multi-image-to-3d",
+      "destination": "/api-manual/3d-series/meshy-7-1-3d",
+      "permanent": true
+    }
+  ],
   "contextual": {
     "options": [
       "copy",

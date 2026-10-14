@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Ideogram V4.5 API",
-    "description": "Generate images from a prompt with quality and size controls.",
+    "description": "Generate images from a prompt or edit one primary image with references, optional masks, and precision controls.",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,7 +19,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Ideogram V4.5 Task",
-        "description": "Generate images from a prompt with quality and size controls.",
+        "description": "Generate images from a prompt or edit one primary image with references, optional masks, and precision controls.",
         "operationId": "submit_ideogram_v4_5",
         "tags": [
           "Ideogram V4.5"
@@ -32,11 +32,41 @@
                 "$ref": "#/components/schemas/SubmitRequest"
               },
               "examples": {
-                "example-1": {
+                "text-to-image": {
+                  "summary": "Text-to-image generation",
                   "value": {
                     "model": "ideogram-v4.5",
                     "input": {
                       "prompt": "A ceramic robot with a clean silhouette."
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "Edit one primary image",
+                  "value": {
+                    "model": "ideogram-v4.5-edit",
+                    "input": {
+                      "prompt": "Replace the background with a blue studio.",
+                      "image_urls": [
+                        "https://example.com/source.png"
+                      ]
+                    }
+                  }
+                },
+                "masked-edit": {
+                  "summary": "High-precision edit with a mask and reference",
+                  "value": {
+                    "model": "ideogram-v4.5-edit",
+                    "input": {
+                      "prompt": "Replace the black mask area with flowers.",
+                      "image_urls": [
+                        "https://example.com/source.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "reference_image_urls": [
+                        "https://example.com/flowers.png"
+                      ],
+                      "edit_precision": "high"
                     }
                   }
                 }
@@ -77,8 +107,10 @@
           "model": {
             "type": "string",
             "enum": [
-              "ideogram-v4.5"
-            ]
+              "ideogram-v4.5",
+              "ideogram-v4.5-edit"
+            ],
+            "description": "Use ideogram-v4.5 for text-to-image generation or ideogram-v4.5-edit for image editing."
           },
           "input": {
             "$ref": "#/components/schemas/ModelInput"
@@ -88,9 +120,122 @@
             "format": "uri",
             "description": "Optional completion or failure callback URL."
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "ideogram-v4.5"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/GenerationInput"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "ideogram-v4.5-edit"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/EditInput"
+                }
+              }
+            }
+          }
+        ]
       },
       "ModelInput": {
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Required for both ideogram-v4.5 and ideogram-v4.5-edit. Generation or editing prompt, 1–10,000 characters with non-whitespace content."
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "Required only for ideogram-v4.5-edit; not supported by ideogram-v4.5. Exactly one primary source image, supplied as a public HTTP(S) image URL or image data URI."
+          },
+          "reference_image_urls": {
+            "maxItems": 4,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "description": "Optional, ideogram-v4.5-edit only. Up to four reference images without mask_url, or at most three with mask_url. Supply public HTTP(S) image URLs or image data URIs."
+          },
+          "mask_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Optional, ideogram-v4.5-edit only. Public HTTP(S) image URL or image data URI. Must match the primary image dimensions and contain both black (edit) and white (preserve) areas; image-content requirements are checked during processing. Requires size=auto or omitted size."
+          },
+          "n": {
+            "minimum": 1,
+            "default": 1,
+            "maximum": 8,
+            "type": "integer",
+            "description": "Number of output images for both models. Integer from 1 to 8; defaults to 1."
+          },
+          "quality": {
+            "enum": [
+              "very_low",
+              "low",
+              "medium",
+              "high"
+            ],
+            "default": "medium",
+            "type": "string",
+            "description": "Output quality; defaults to medium for both models. ideogram-v4.5 accepts low, medium, and high. ideogram-v4.5-edit also accepts very_low."
+          },
+          "size": {
+            "type": "string",
+            "description": "ideogram-v4.5 defaults to 1:1 HD and accepts 1:1, 1:1 HD, 4:3, 3:4, 16:9, 9:16, or these exact sizes: 1024x1024, 1024x3072, 1120x896, 1152x2944, 1152x864, 1248x3328, 1248x832, 1280x3072, 1280x720, 1280x800, 1296x3168, 1440x2560, 1440x2880, 1440x720, 1600x2560, 1664x2496, 1728x2304, 1792x2240, 2048x2048, 2240x1792, 2304x1728, 2496x1664, 2560x1440, 2560x1600, 2880x1440, 2944x1152, 3072x1024, 3072x1280, 3168x1296, 3328x1248, 720x1280, 720x1440, 800x1280, 832x1248, 864x1152, 896x1120. ideogram-v4.5-edit defaults to auto, which preserves the source size. A mask or edit_precision=high requires auto or omitted size. Explicit ratio presets or custom WIDTHxHEIGHT sizes require an unmasked regular edit. Custom edit dimensions must each be at least 256 and divisible by 32, total at most 4,194,304 pixels, and aspect ratio at most 6:1.",
+            "pattern": "^(auto|1:1|1:1 HD|4:3|3:4|16:9|9:16|[0-9]+x[0-9]+)$"
+          },
+          "edit_precision": {
+            "enum": [
+              "regular",
+              "high"
+            ],
+            "type": "string",
+            "description": "Optional, ideogram-v4.5-edit only. Defaults to regular for image editing. high enables high-precision editing with unchanged-pixel restoration and requires size=auto or omitted size."
+          }
+        }
+      },
+      "GenerationInput": {
         "additionalProperties": false,
         "type": "object",
         "required": [
@@ -171,6 +316,120 @@
             ]
           }
         }
+      },
+      "EditInput": {
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "prompt",
+          "image_urls"
+        ],
+        "properties": {
+          "mask_url": {
+            "type": "string",
+            "pattern": "^(https?://\\S+|data:image/\\S+)$",
+            "description": "Same dimensions as the source. Black edits; white preserves; both regions are required."
+          },
+          "reference_image_urls": {
+            "maxItems": 4,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "description": "Up to four reference images; at most three when mask_url is provided."
+          },
+          "edit_precision": {
+            "enum": [
+              "regular",
+              "high"
+            ],
+            "default": "regular",
+            "type": "string",
+            "description": "regular edit or high-precision edit with unchanged-pixel restoration."
+          },
+          "quality": {
+            "enum": [
+              "very_low",
+              "low",
+              "medium",
+              "high"
+            ],
+            "default": "medium",
+            "type": "string",
+            "description": "Output quality."
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "Prompt."
+          },
+          "n": {
+            "minimum": 1,
+            "default": 1,
+            "maximum": 8,
+            "type": "integer",
+            "description": "Number of output images."
+          },
+          "size": {
+            "type": "string",
+            "default": "auto",
+            "description": "auto preserves the source size. Explicit sizes require an unmasked regular edit. Minimum dimension 256; multiples of 32; at most 4194304 pixels; aspect ratio at most 6:1.",
+            "pattern": "^(auto|1:1|1:1 HD|4:3|3:4|16:9|9:16|[0-9]+x[0-9]+)$"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(https?://\\S+|data:image/\\S+)$",
+              "description": "Public image URL or image data URI."
+            },
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "Exactly one primary source image."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "mask_url"
+              ]
+            },
+            "then": {
+              "properties": {
+                "reference_image_urls": {
+                  "maxItems": 3
+                },
+                "size": {
+                  "const": "auto"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "edit_precision"
+              ],
+              "properties": {
+                "edit_precision": {
+                  "const": "high"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "size": {
+                  "const": "auto"
+                }
+              }
+            }
+          }
+        ]
       },
       "SubmitResponse": {
         "type": "object",
