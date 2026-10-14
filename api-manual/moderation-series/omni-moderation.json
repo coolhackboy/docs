@@ -1,0 +1,521 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Omni Moderation API",
+    "description": "Omni Moderation reviews text and HTTPS images asynchronously through OpenAI. FREE (0 credits). Submit through the unified generation API and poll task status or receive a callback with the complete OpenAI response in output. Streaming is not supported.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Omni Moderation Review",
+        "description": "Queue a review of text, HTTPS images, or both. FREE (0 credits). Returns a not_started task immediately; poll task status or provide callback_url for completion. A flagged review completes with status finished. Streaming is not supported.",
+        "operationId": "submitOmniModerationTask",
+        "tags": [
+          "Moderation"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-only": {
+                  "summary": "Review text — FREE (0 credits)",
+                  "value": {
+                    "model": "omni-moderation-latest",
+                    "input": {
+                      "prompt": "A peaceful mountain landscape."
+                    }
+                  }
+                },
+                "image-only": {
+                  "summary": "Review an HTTPS image — FREE (0 credits)",
+                  "value": {
+                    "model": "omni-moderation-latest",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/image.jpg"
+                      ]
+                    }
+                  }
+                },
+                "text-and-image": {
+                  "summary": "Review text and an image — FREE (0 credits)",
+                  "value": {
+                    "model": "omni-moderation-latest",
+                    "input": {
+                      "prompt": "A mountain view at sunset.",
+                      "image_urls": [
+                        "https://example.com/image.jpg"
+                      ]
+                    }
+                  }
+                },
+                "with-callback": {
+                  "summary": "Review with a completion callback — FREE (0 credits)",
+                  "value": {
+                    "model": "omni-moderation-latest",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A peaceful mountain landscape."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task queued with status not_started. Poll GET /api/generate/status/{task_id} or receive the optional callback after completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "task_id": "MODERATION_TASK_ID",
+                    "status": "not_started",
+                    "created_time": "2026-10-14T10:00:00"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid model input or unsupported stream parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid API key."
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Get Omni Moderation Review",
+        "description": "Query the task. When finished, data.output contains the complete OpenAI moderation response, files is empty, and credits_amount is 0.",
+        "operationId": "getOmniModerationTask",
+        "tags": [
+          "Moderation"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Task identifier returned by the submit endpoint."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current task status and completed review when available.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "task_id": "MODERATION_TASK_ID",
+                    "status": "finished",
+                    "credits_amount": 0,
+                    "files": [],
+                    "output": {
+                      "id": "modr_example",
+                      "model": "omni-moderation-latest",
+                      "results": [
+                        {
+                          "flagged": false,
+                          "categories": {
+                            "harassment": false,
+                            "harassment/threatening": false,
+                            "hate": false,
+                            "hate/threatening": false,
+                            "illicit": false,
+                            "illicit/violent": false,
+                            "self-harm": false,
+                            "self-harm/intent": false,
+                            "self-harm/instructions": false,
+                            "sexual": false,
+                            "sexual/minors": false,
+                            "violence": false,
+                            "violence/graphic": false
+                          },
+                          "category_scores": {
+                            "harassment": 0.00001,
+                            "harassment/threatening": 0.00001,
+                            "hate": 0.00001,
+                            "hate/threatening": 0.00001,
+                            "illicit": 0.00001,
+                            "illicit/violent": 0.00001,
+                            "self-harm": 0.00001,
+                            "self-harm/intent": 0.00001,
+                            "self-harm/instructions": 0.00001,
+                            "sexual": 0.00001,
+                            "sexual/minors": 0.00001,
+                            "violence": 0.00001,
+                            "violence/graphic": 0.00001
+                          },
+                          "category_applied_input_types": {
+                            "harassment": [
+                              "text"
+                            ],
+                            "harassment/threatening": [
+                              "text"
+                            ],
+                            "hate": [
+                              "text"
+                            ],
+                            "hate/threatening": [
+                              "text"
+                            ],
+                            "illicit": [
+                              "text"
+                            ],
+                            "illicit/violent": [
+                              "text"
+                            ],
+                            "self-harm": [
+                              "text"
+                            ],
+                            "self-harm/intent": [
+                              "text"
+                            ],
+                            "self-harm/instructions": [
+                              "text"
+                            ],
+                            "sexual": [
+                              "text"
+                            ],
+                            "sexual/minors": [
+                              "text"
+                            ],
+                            "violence": [
+                              "text"
+                            ],
+                            "violence/graphic": [
+                              "text"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "created_time": "2026-10-14T10:00:00",
+                    "progress": 100,
+                    "error_message": null
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "description": "Queue an asynchronous Omni Moderation review. Provide optional callback_url for completion notifications. Streaming is not supported.",
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "omni-moderation-latest"
+            ],
+            "description": "Public model identifier.",
+            "example": "omni-moderation-latest"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook callback URL. On task completion or failure, the POST body is the status response data object without the outer code/data wrapper.",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "At least one of prompt or image_urls is required; both may be provided. Provide non-whitespace text or at least one HTTPS image URL.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text to review. Optional when image_urls contains at least one image.",
+                "example": "A peaceful mountain landscape."
+              },
+              "image_urls": {
+                "type": "array",
+                "description": "Images to review, as HTTPS URLs. Optional when prompt contains non-whitespace text.",
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://",
+                  "description": "HTTPS URL of an image to review."
+                },
+                "example": [
+                  "https://example.com/image.jpg"
+                ]
+              }
+            },
+            "not": {
+              "properties": {
+                "prompt": {
+                  "not": {
+                    "pattern": "\\S"
+                  }
+                },
+                "image_urls": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "description": "Use this task identifier with GET /api/generate/status/{task_id}.",
+                "example": "MODERATION_TASK_ID"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "description": "Initial queued status. Review execution proceeds asynchronously after submission."
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "credits_amount",
+              "files",
+              "created_time",
+              "progress"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "description": "finished means the review completed, including when results[].flagged is true."
+              },
+              "credits_amount": {
+                "type": "number",
+                "const": 0,
+                "description": "FREE: Omni Moderation charges 0 credits."
+              },
+              "files": {
+                "type": "array",
+                "maxItems": 0,
+                "items": {
+                  "type": "object"
+                },
+                "description": "Always empty for Omni Moderation. Read the structured review from output."
+              },
+              "output": {
+                "$ref": "#/components/schemas/ModerationOutput",
+                "description": "Complete OpenAI response, available when the review has finished."
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "error_message": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Task execution error, if the request failed. Content flagged by a completed review is not an execution error."
+              }
+            }
+          }
+        }
+      },
+      "ModerationOutput": {
+        "type": "object",
+        "description": "Complete OpenAI Moderations API response, preserved without converting the review into a generated file.",
+        "required": [
+          "id",
+          "model",
+          "results"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "OpenAI moderation response identifier."
+          },
+          "model": {
+            "type": "string",
+            "description": "Model identifier returned by OpenAI; it may resolve to a dated model version."
+          },
+          "results": {
+            "type": "array",
+            "description": "Moderation classifications returned by OpenAI.",
+            "items": {
+              "type": "object",
+              "required": [
+                "flagged",
+                "categories",
+                "category_scores",
+                "category_applied_input_types"
+              ],
+              "additionalProperties": true,
+              "properties": {
+                "flagged": {
+                  "type": "boolean",
+                  "description": "Whether OpenAI classified the reviewed content as flagged. true is a completed review, not a task failure."
+                },
+                "categories": {
+                  "type": "object",
+                  "description": "OpenAI category names mapped to classification booleans.",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  }
+                },
+                "category_scores": {
+                  "type": "object",
+                  "description": "OpenAI category names mapped to confidence scores.",
+                  "additionalProperties": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "category_applied_input_types": {
+                  "type": "object",
+                  "description": "Input modalities used for each category.",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "text",
+                        "image"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

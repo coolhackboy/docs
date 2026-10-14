@@ -1,0 +1,204 @@
+---
+title: "Omni Moderation"
+description: "Review text and HTTPS images asynchronously with OpenAI. FREE (0 credits)."
+icon: "shield-check"
+openapi: "/api-manual/moderation-series/omni-moderation.json POST /api/generate/submit"
+---
+
+**Price: FREE (0 credits)**
+
+Omni Moderation reviews text, HTTPS images, or both using OpenAI `omni-moderation-latest`. Submit a review through the unified generation endpoint, then poll [Get Task Status](/api-manual/task-management/status) with the returned `task_id` or receive an optional callback.
+
+Submission immediately returns `status: "not_started"`. The review runs asynchronously and moves through `running` to `finished` or `failed`.
+
+<Info>
+Callbacks are supported through the optional outer `callback_url` field. Streaming is not supported; do not send `stream`.
+</Info>
+
+## Input
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `model` | string | Must be `omni-moderation-latest` |
+| `callback_url` | string (URI) | Optional webhook URL for task completion or failure |
+| `input.prompt` | string | Optional text to review |
+| `input.image_urls` | string[] | Optional images, as HTTPS URLs |
+
+**At least one of `prompt` or `image_urls` is required; both may be provided.** Use non-whitespace text or a non-empty list of HTTPS image URLs. Empty input is rejected.
+
+## Submit a Review
+
+```bash
+curl -X POST https://api.poyo.ai/api/generate/submit \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "omni-moderation-latest",
+    "input": {
+      "prompt": "A peaceful mountain landscape."
+    }
+  }'
+```
+
+To review an image together with text:
+
+```json
+{
+  "model": "omni-moderation-latest",
+  "input": {
+    "prompt": "A mountain view at sunset.",
+    "image_urls": [
+      "https://example.com/image.jpg"
+    ]
+  }
+}
+```
+
+For image-only review, omit `prompt`. To receive the completed task through a webhook, provide `callback_url` outside `input`:
+
+```json
+{
+  "model": "omni-moderation-latest",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A peaceful mountain landscape."
+  }
+}
+```
+
+### Submit Response
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "MODERATION_TASK_ID",
+    "status": "not_started",
+    "created_time": "2026-10-14T10:00:00"
+  }
+}
+```
+
+## Retrieve the Result
+
+```bash
+curl https://api.poyo.ai/api/generate/status/MODERATION_TASK_ID \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Poll until `data.status` becomes `finished` or `failed`. A completed review returns the full OpenAI response in `data.output`; `data.files` is empty and `data.credits_amount` is `0`.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `data.output.id` | string | OpenAI moderation response identifier |
+| `data.output.model` | string | Model identifier returned by OpenAI, which may be a dated model version |
+| `data.output.results` | array | OpenAI review results |
+| `data.output.results[].flagged` | boolean | Whether OpenAI flagged the reviewed content |
+| `data.output.results[].categories` | object | Classification booleans by category |
+| `data.output.results[].category_scores` | object | Confidence scores by category |
+| `data.output.results[].category_applied_input_types` | object | Input modalities used for each category |
+
+`status: "finished"` means that the review completed. A result with `flagged: true` is a successful review that detected content, and does not make the task `failed`. Check `data.error_message` only when the task itself fails.
+
+## Callback Body
+
+When `callback_url` is provided, PoYo sends a POST request when the task becomes `finished` or `failed`. The body is the status response's `data` object, without the outer `code` and `data` wrapper. It includes `task_id`, `status`, `credits_amount: 0`, `files: []`, and the completed OpenAI response in `output` when available. Failed tasks expose `error_message`.
+
+See [Webhook Callbacks](/api-manual/task-management/webhooks) for signature verification.
+
+## Completed Status Response Example
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "MODERATION_TASK_ID",
+    "status": "finished",
+    "credits_amount": 0,
+    "files": [],
+    "output": {
+      "id": "modr_example",
+      "model": "omni-moderation-latest",
+      "results": [
+        {
+          "flagged": false,
+          "categories": {
+            "harassment": false,
+            "harassment/threatening": false,
+            "hate": false,
+            "hate/threatening": false,
+            "illicit": false,
+            "illicit/violent": false,
+            "self-harm": false,
+            "self-harm/intent": false,
+            "self-harm/instructions": false,
+            "sexual": false,
+            "sexual/minors": false,
+            "violence": false,
+            "violence/graphic": false
+          },
+          "category_scores": {
+            "harassment": 0.00001,
+            "harassment/threatening": 0.00001,
+            "hate": 0.00001,
+            "hate/threatening": 0.00001,
+            "illicit": 0.00001,
+            "illicit/violent": 0.00001,
+            "self-harm": 0.00001,
+            "self-harm/intent": 0.00001,
+            "self-harm/instructions": 0.00001,
+            "sexual": 0.00001,
+            "sexual/minors": 0.00001,
+            "violence": 0.00001,
+            "violence/graphic": 0.00001
+          },
+          "category_applied_input_types": {
+            "harassment": [
+              "text"
+            ],
+            "harassment/threatening": [
+              "text"
+            ],
+            "hate": [
+              "text"
+            ],
+            "hate/threatening": [
+              "text"
+            ],
+            "illicit": [
+              "text"
+            ],
+            "illicit/violent": [
+              "text"
+            ],
+            "self-harm": [
+              "text"
+            ],
+            "self-harm/intent": [
+              "text"
+            ],
+            "self-harm/instructions": [
+              "text"
+            ],
+            "sexual": [
+              "text"
+            ],
+            "sexual/minors": [
+              "text"
+            ],
+            "violence": [
+              "text"
+            ],
+            "violence/graphic": [
+              "text"
+            ]
+          }
+        }
+      ]
+    },
+    "created_time": "2026-10-14T10:00:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```

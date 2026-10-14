@@ -28,6 +28,7 @@
     },
     "openapi": [
       "/openapi.json",
+      "/api-manual/moderation-series/omni-moderation.json",
         "/integrations/capability-catalog.json",
       "/api-manual/image-series/ideogram-v4-5.json",
       "/api-manual/image-series/ideogram-v4-5-edit.json",
@@ -462,6 +463,12 @@
                   "api-manual/3d-series/tripo-p1-3d"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Moderation Model",
+            "pages": [
+              "api-manual/moderation-series/omni-moderation"
             ]
           },
           {

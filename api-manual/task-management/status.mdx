@@ -6,7 +6,7 @@ openapi: "/openapi.json GET /api/generate/status/{task_id}"
 
 # Get Task Status
 
-Query the execution status of image, video, audio, and 3D generation tasks and retrieve results when complete.
+Query the execution status of image, video, audio, 3D, and content moderation tasks and retrieve results when complete.
 
 ## Endpoint
 
@@ -66,6 +66,7 @@ Authorization: Bearer YOUR_API_KEY
 | `data.task_id` | string | Unique task identifier |
 | `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
 | `data.credits_amount` | number | Credits charged for the task |
+| `data.output` | object | Optional structured model output. Omni Moderation returns the complete OpenAI moderation response here, with `files: []` and `credits_amount: 0` |
 | `data.files` | array | Generated media files (when status is `finished`) |
 | `data.files[].file_url` | string | Direct URL to generated file |
 | `data.files[].file_type` | string | Type of generated file: `image`, `video`, `audio`, `3d`, or `other` |
@@ -79,13 +80,15 @@ Authorization: Bearer YOUR_API_KEY
 | `data.progress` | integer | Completion percentage (0-100) |
 | `data.error_message` | string | Error description (when status is `failed`) |
 
+For [Omni Moderation](/api-manual/moderation-series/omni-moderation), inspect `data.output.results[].flagged` after the status becomes `finished`. A `flagged: true` result means the review completed and detected content; it does not make the task `failed`. Omni Moderation is FREE (0 credits), runs asynchronously, and supports callbacks through `callback_url`. Streaming is not supported. Its callback body is the same task data object returned here, including `output` when available and `credits_amount: 0`.
+
 ### Status Values
 
 | Status | Description |
 |--------|-------------|
 | `not_started` | Task is queued, waiting to be processed |
 | `running` | Task is currently being generated |
-| `finished` | Task completed successfully, results available in `files` |
+| `finished` | Task completed successfully, results available in `files` or `output` |
 | `failed` | Task failed, error details in `error_message` |
 
 ## Response Examples by Status
@@ -651,7 +654,7 @@ except RuntimeError as e:
 </Info>
 
 <Tip>
-  **Webhooks**: Instead of polling, you can provide a `callback_url` when submitting tasks to receive automatic notifications. See the [Quick Start guide](/guides/getting-started/quickstart#webhook-callbacks).
+  **Webhooks**: For models that support callbacks, you can provide a `callback_url` when submitting tasks to receive automatic notifications. Omni Moderation callbacks include the same `output` object as status queries. See the [Quick Start guide](/guides/getting-started/quickstart#webhook-callbacks).
 </Tip>
 
 ## Next Steps

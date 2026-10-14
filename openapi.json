@@ -344,6 +344,11 @@
                 "example": 2,
                 "description": "Credits charged for the task"
               },
+              "output": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Optional structured model output. Omni Moderation returns the complete OpenAI moderation response here after the task finishes; its files array is empty."
+              },
               "files": {
                 "type": "array",
                 "description": "Generated media files (populated when status is finished)",
