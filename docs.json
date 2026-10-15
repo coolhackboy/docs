@@ -542,6 +542,17 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Security & Best Practices",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "platform-security/end-user-identification"
+            ]
+          }
+        ]
       }
     ],
     "global": {}

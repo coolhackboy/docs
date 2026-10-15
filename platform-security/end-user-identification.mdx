@@ -1,0 +1,121 @@
+---
+title: "End-user identification (X-End-User-ID)"
+description: "Send X-End-User-ID on unified generation and native Chat so you can block one caller on an API key."
+icon: "id-card"
+---
+
+# Guides
+
+Put a stable ID for the person using your app in the `X-End-User-ID` header. PoYo stores that ID against the API key that sent it. You can block that person later without rotating or disabling the key.
+
+## Where it applies
+
+Send the header on:
+
+- Unified generation: `POST https://api.poyo.ai/api/generate/submit`
+- Native Chat:
+  - `POST /v1/chat/completions`
+  - `POST /v1/responses`
+  - `POST /v1/messages` (Claude Messages, authenticated with `x-api-key`)
+  - `POST /v1beta/models/{model}:generateContent` and `:streamGenerateContent`
+
+## API key switch
+
+On the [API Key page](https://poyo.ai/dashboard/api-key), open the **End users** dialog for that API key. The switch is **Require an end user ID**.
+
+Turn on **Require an end user ID** in the End users dialog for that API key. Generation and chat requests must then include `X-End-User-ID`. If it is missing, `POST /api/generate/submit` and native Chat return HTTP 400 and `message` is `end_user_id_required`.
+
+While **Require an end user ID** is off, requests without the header keep working. PoYo does not look up a block. A request that sends the header is still checked for a block on that ID. The first time an ID is seen, PoYo records it.
+
+## Header and ID rules
+
+| | |
+|---|---|
+| Header name | `X-End-User-ID` |
+| Value | 1–128 characters, case-sensitive, matching `^[A-Za-z0-9._:-]{1,128}$` |
+
+`User-1` and `user-1` are different IDs. Characters outside that set, an empty value, or a value longer than 128 characters return HTTP 400 with `message` `invalid_end_user_id`.
+
+```
+X-End-User-ID: YOUR_END_USER_ID
+```
+
+## Block an end user
+
+A block applies to **this API key + this end-user ID**. Other IDs on the same key still work, and the key itself stays active.
+
+On the [API Key page](https://poyo.ai/dashboard/api-key), open the **End users** dialog. There you can turn **Require an end user ID** on or off, search recorded IDs, block an ID, and unblock it.
+
+A blocked ID returns HTTP 403 and `message` is `end_user_blocked`. The check runs when the header is present. It also runs for every submit and native Chat request when **Require an end user ID** is on, because those requests must include the header.
+
+## Errors
+
+Read `error.message` to tell these cases apart.
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "end_user_id_required",
+    "type": "http_error"
+  }
+}
+```
+
+| HTTP | `error.message` | When |
+|---|---|---|
+| 400 | `invalid_end_user_id` | The header value does not match the ID rule |
+| 400 | `end_user_id_required` | **Require an end user ID** is on and the header is missing |
+| 403 | `end_user_blocked` | This ID is blocked on this API key |
+
+`invalid_end_user_id` and `end_user_blocked` use the same JSON shape. Only `code` and `error.message` change.
+
+## Submit example
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --header 'X-End-User-ID: user_123' \
+  --data '{
+    "model": "gpt-image-2",
+    "input": {
+      "prompt": "A red bicycle on a quiet street"
+    }
+  }'
+```
+
+## Chat example
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --header 'X-End-User-ID: user_123' \
+  --data '{
+    "model": "gpt-5.2",
+    "messages": [
+      {"role": "user", "content": "Say hello in one sentence."}
+    ]
+  }'
+```
+
+Claude Messages uses the same `X-End-User-ID` header next to `x-api-key`:
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/v1/messages \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'anthropic-version: 2023-06-01' \
+  --header 'Content-Type: application/json' \
+  --header 'X-End-User-ID: user_123' \
+  --data '{
+    "model": "claude-sonnet-4-5-20250929",
+    "max_tokens": 256,
+    "messages": [
+      {"role": "user", "content": "Say hello in one sentence."}
+    ]
+  }'
+```
