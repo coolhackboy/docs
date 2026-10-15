@@ -23,7 +23,7 @@ Send the header on:
 
 On the [API Key page](https://poyo.ai/dashboard/api-key), open the **End users** dialog for that API key. The switch is **Require an end user ID**.
 
-Turn on **Require an end user ID** in the End users dialog for that API key. Generation and chat requests must then include `X-End-User-ID`. If it is missing, `POST /api/generate/submit` and native Chat return HTTP 400 and `message` is `end_user_id_required`.
+Turn on **Require an end user ID** in the End users dialog for that API key. Generation and chat requests must then include `X-End-User-ID`. If it is missing, `POST /api/generate/submit` and native Chat return HTTP 400 and `message` is `The X-End-User-ID header is missing. This API key requires it on generation and chat requests.`
 
 While **Require an end user ID** is off, requests without the header keep working. PoYo does not look up a block. A request that sends the header is still checked for a block on that ID. The first time an ID is seen, PoYo records it.
 
@@ -34,7 +34,7 @@ While **Require an end user ID** is off, requests without the header keep workin
 | Header name | `X-End-User-ID` |
 | Value | 1–128 characters, case-sensitive, matching `^[A-Za-z0-9._:-]{1,128}$` |
 
-`User-1` and `user-1` are different IDs. Characters outside that set, an empty value, or a value longer than 128 characters return HTTP 400 with `message` `invalid_end_user_id`.
+`User-1` and `user-1` are different IDs. Characters outside that set, or a value longer than 128 characters, return HTTP 400 with `message` `End user ID is invalid. Use 1-128 characters: letters, numbers, and . _ : -.`. An empty or whitespace-only value is treated as a missing header.
 
 ```
 X-End-User-ID: YOUR_END_USER_ID
@@ -56,19 +56,19 @@ Read `error.message` to tell these cases apart.
 {
   "code": 400,
   "error": {
-    "message": "end_user_id_required",
+    "message": "The X-End-User-ID header is missing. This API key requires it on generation and chat requests.",
     "type": "http_error"
   }
 }
 ```
 
-| HTTP | `error.message` | When |
-|---|---|---|
-| 400 | `invalid_end_user_id` | The header value does not match the ID rule |
-| 400 | `end_user_id_required` | **Require an end user ID** is on and the header is missing |
-| 403 | `end_user_blocked` | This ID is blocked on this API key |
+| HTTP | `code` | `error.type` | `error.message` | When |
+|---|---|---|---|---|
+| 400 | 400 | `http_error` | `End user ID is invalid. Use 1-128 characters: letters, numbers, and . _ : -.` | The header value does not match the ID rule |
+| 400 | 400 | `http_error` | `The X-End-User-ID header is missing. This API key requires it on generation and chat requests.` | **Require an end user ID** is on and the header is missing or empty |
+| 403 | 403 | `permission_error` | `end_user_blocked` | This ID is blocked on this API key |
 
-`invalid_end_user_id` and `end_user_blocked` use the same JSON shape. Only `code` and `error.message` change.
+The invalid-ID response uses the same JSON shape as the example. Only `error.message` changes. A blocked ID uses `code` 403 and `error.type` `permission_error`.
 
 ## Submit example
 
