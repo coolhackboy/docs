@@ -1,6 +1,6 @@
 ---
 title: "Sora 2 Pro Official"
-description: "Official Sora 2 Pro text-to-video and image-to-video generation"
+description: "The Sora 2 Pro Official API generates 4–20 second video from text or one first-frame image at 720p, 1024p, or 1080p, in 16:9, 9:16, or auto when an image is provided."
 icon: "video"
 openapi: "/api-manual/video-series/sora-2-pro-official.json POST /api/generate/submit"
 ---
@@ -10,28 +10,22 @@ openapi: "/api-manual/video-series/sora-2-pro-official.json POST /api/generate/s
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Sora 2 Pro Official
-
 `sora-2-pro-official` supports text-to-video generation and optional single-image guided generation with fixed 4s, 8s, 12s, 16s, and 20s durations.
 
-## Available Model
+## Models
 
 - **sora-2-pro-official** - Official Sora 2 Pro text-to-video and image-to-video generation
 
-## Required Parameters
+## Required parameters
 
 - **prompt**: Text prompt for video generation
 
-## Optional Parameters
+## Optional parameters
 
 - **image_urls**: Optional reference image array. Maximum `1` image. Providing this field enables image-to-video mode
 - **aspect_ratio**: `16:9` or `9:16` for text-to-video; `auto`, `16:9`, or `9:16` for image-to-video. Default is `16:9` for text-to-video and `auto` for image-to-video
 - **duration**: `4`, `8`, `12`, `16`, or `20`. Default is `4`
 - **resolution**: `720p`, `1024p`, or `1080p`. Default is `1024p`
-
-## Credit Billing
-
-Billing is calculated based on the selected output `resolution` and video `duration` in seconds.
 
 ## Notes
 

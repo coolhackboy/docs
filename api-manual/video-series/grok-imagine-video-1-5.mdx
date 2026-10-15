@@ -1,16 +1,14 @@
 ---
 title: "Grok Imagine Video 1.5"
-description: "Text, image, and reference-to-video generation with Grok Imagine Video 1.5"
+description: "The Grok Imagine Video 1.5 API generates 1–15 second videos from text or one first-frame image at up to 1080p, or from up to seven reference images at up to 720p."
 icon: "video"
 openapi: "/api-manual/video-series/grok-imagine-video-1-5.json POST /api/generate/submit"
 ---
 
 <Tip>
-1. After submission, a `task_id` is returned. If you provide a `callback_url`, PoYo sends a POST request when the task reaches `finished` or `failed`.
-2. You can always retrieve the latest result through [Query Task Status](/api-manual/task-management/status).
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Grok Imagine Video 1.5
 
 Use `grok-imagine-video-1.5` for three generation modes with 1–15 second outputs:
 
@@ -29,9 +27,5 @@ Use `grok-imagine-video-1.5` for three generation modes with 1–15 second outpu
 - **duration**: integer from `1` to `15`. Default: `6` for text/image mode and `8` for reference mode.
 - **aspect_ratio**: `16:9`, `4:3`, `3:2`, `1:1`, `2:3`, `3:4`, or `9:16`. Available only for text and reference modes; default: `16:9`.
 - **callback_url**: optional completion webhook URL.
-
-## Billing
-
-Billing depends on the selected resolution, output duration, and number of input images. See the [Grok Imagine Video 1.5 model page](https://poyo.ai/models/grok-imagine-video-1-5) for current pricing.
 
 Use public HTTPS image URLs or upload images through the playground before submitting.

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling 3.0 Turbo API",
-    "description": "Fast video generation with Kling 3.0 Turbo standard and pro models",
+    "description": "The Kling 3.0 Turbo API generates 3–15 second 720p or 1080p video from text or a first frame, with optional multi-shot prompts.",
     "version": "1.0.0"
   },
   "servers": [

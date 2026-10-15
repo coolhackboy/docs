@@ -1,6 +1,6 @@
 ---
 title: "Capability Catalog"
-description: "Discover current PoYo models, JSON Schemas, protocols, and pricing"
+description: "Discover current PoYo models, JSON Schemas, and protocols"
 icon: "list"
 openapi: "/integrations/capability-catalog.json GET /v1/catalog/models"
 ---
@@ -13,8 +13,7 @@ Use it when model availability changes faster than an application release:
 
 1. Search by workload, modality, or keyword.
 2. Read the selected model's current schema and examples.
-3. Show pricing before paid execution.
-4. Cache the response and revalidate with its ETag.
+3. Cache the response and revalidate with its ETag.
 
 ## Endpoints
 
@@ -54,7 +53,6 @@ Each model includes:
 - `input_schema` and `output_schema`
 - examples and supported chat protocols
 - streaming, callback, and execution-mode flags
-- public credit pricing
 - a stable MCP-compatible `tool_name`
 
 ## Caching

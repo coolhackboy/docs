@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Ideogram V4.5 API",
-    "description": "Generate images from a prompt or edit one primary image with references, optional masks, and precision controls.",
+    "description": "The Ideogram 4.5 API generates images from a prompt or edits one primary image. Edits can add up to four reference images, or three when a mask is set, and high precision keeps unedited pixels.",
     "version": "1.0.0"
   },
   "servers": [

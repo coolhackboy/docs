@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedance 2.5 API",
-    "description": "Generate videos with Seedance 2.5 from text, frames, or multimodal references",
+    "description": "The Seedance 2.5 API generates a 4–30 second video from text, first and last frames, or image, video, and audio references at 480p, 720p, or 1080p.",
     "version": "1.0.0"
   },
   "servers": [{"url": "https://api.poyo.ai", "description": "Production server"}],

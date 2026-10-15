@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Sora 2 Beta API",
-    "description": "Text-to-video and optional image-guided video generation",
+    "description": "The Sora 2 Beta API generates a 4, 8, or 12 second 16:9 or 9:16 video from text, with an optional single reference image.",
     "version": "1.0.0"
   },
   "servers": [

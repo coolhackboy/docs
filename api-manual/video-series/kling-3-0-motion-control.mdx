@@ -1,6 +1,6 @@
 ---
 title: "Kling 3.0 Motion Control"
-description: "Reference image and reference video motion transfer"
+description: "The Kling 3.0 Motion Control API transfers motion from one reference video onto one image at 720p or 1080p. Video orientation allows up to 30 seconds and an optional facial element; image orientation allows up to 10 seconds."
 icon: "video"
 openapi: "/api-manual/video-series/kling-3-0-motion-control.json POST /api/generate/submit"
 ---
@@ -10,21 +10,19 @@ openapi: "/api-manual/video-series/kling-3-0-motion-control.json POST /api/gener
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Kling 3.0 Motion Control
-
 `kling-3.0-motion-control` combines one reference image and one reference video to transfer motion to the target character.
 
-## Available Model
+## Models
 
 - **kling-3.0-motion-control** - Motion transfer from reference video to reference image
 
-## Required Parameters
+## Required parameters
 
 - **image_urls**: Exactly `1` reference image
 - **video_urls**: Exactly `1` reference video
 - **character_orientation**: `image` or `video`
 
-## Optional Parameters
+## Optional parameters
 
 - **prompt**: Optional scene prompt
 - **resolution**: `720p` or `1080p`. Default is `720p`

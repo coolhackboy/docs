@@ -180,7 +180,7 @@
         "required": [
           "prompt"
         ],
-        "description": "At most 12 reference assets in total. All media URLs must use HTTP(S). Reference video and audio each require reference images. Media metadata and billing tokens are computed by the server.",
+        "description": "At most 12 reference assets in total. All media URLs must use HTTP(S). Reference video and audio each require reference images. Media metadata is computed by the server.",
         "properties": {
           "prompt": {
             "type": "string",

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Flux 2 API",
-    "description": "32B parameter image generation model from Black Forest Labs with multi-reference support and superior text rendering",
+    "description": "The FLUX.2 API generates or edits images. Pro models target high-fidelity production output, and Flex models trade speed against quality. Editing accepts up to 8 reference images, with output up to 2K.",
     "version": "1.0.0"
   },
   "servers": [

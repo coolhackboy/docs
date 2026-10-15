@@ -1,41 +1,71 @@
 ---
 title: "Gemini 3.8 Flash Lite TTS"
-description: "Generate native WAV speech from a transcript or a two-speaker dialogue."
+description: "The Gemini 3.8 Flash Lite TTS API converts a transcript or a two-speaker dialogue into WAV speech using preset voices and optional style instructions. The complete input is limited to 8,192 tokens."
 icon: "music"
 openapi: "/api-manual/music-series/gemini-3-8-flash-lite-tts.json POST /api/generate/submit"
 ---
 
-Submission returns a `task_id`. Use [Query Task Status](/api-manual/task-management/status) to track completion, or supply `callback_url` for completion and failure notifications.
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
 
-## Parameters and combinations
+`gemini-3.8-flash-lite-tts` converts a transcript or a two-speaker dialogue into native WAV speech. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
-Single speaker: supply non-empty `text`, optional `voice` (default `Kore`), and optional `style_instructions`.
+## Models
 
-Dialogue: omit `text` and top-level `voice`; supply exactly two `speakers` with distinct non-empty `speaker_id` values and a `voice` for each. Supply non-empty `turns`; each turn needs a configured `speaker_id`, non-empty `text`, and optional `style_instructions`.
+- **gemini-3.8-flash-lite-tts** - Gemini 3.8 Flash Lite text-to-speech generation
 
-Single-speaker and dialogue inputs are mutually exclusive. Global `style_instructions` can be used with either mode. The complete input is limited to 8,192 tokens.
+## Required parameters
 
-`enable_safety_checker` defaults to `true`. Disabling safety checking can require account authorization.
+Single-speaker and dialogue inputs are mutually exclusive.
 
-Output is native WAV. There are no `output_format`, `temperature`, `language_code`, or `seed` parameters.
+- **text**: Required for single-speaker synthesis. Non-empty transcript. Omit when using `speakers` and `turns`
+- **speakers**: Required for dialogue, together with `turns`. Exactly two speakers. Each item includes:
+  - `speaker_id`: Distinct non-empty speaker alias
+  - `voice`: Gemini voice preset
+- **turns**: Required for dialogue, together with `speakers`. At least one turn. Each item includes:
+  - `speaker_id`: Must match a configured speaker
+  - `text`: Non-empty turn text
+  - `style_instructions`: Optional delivery direction for that turn
 
-Voices: `Achernar`, `Achird`, `Algenib`, `Algieba`, `Alnilam`, `Aoede`, `Autonoe`, `Callirrhoe`, `Charon`, `Despina`, `Enceladus`, `Erinome`, `Fenrir`, `Gacrux`, `Iapetus`, `Kore`, `Laomedeia`, `Leda`, `Orus`, `Pulcherrima`, `Puck`, `Rasalgethi`, `Sadachbia`, `Sadaltager`, `Schedar`, `Sulafat`, `Umbriel`, `Vindemiatrix`, `Zephyr`, `Zubenelgenubi`.
+Dialogue requests must omit top-level `text` and top-level `voice`. The complete input is limited to 8,192 tokens.
+
+## Optional parameters
+
+- **voice**: Voice preset for single-speaker synthesis. Default: `Kore`. Omit for dialogue
+- **style_instructions**: Global delivery style, separate from the transcript. Can be used with either mode
+- **enable_safety_checker**: Enable input safety checking. Default: `true`. Disabling can require account authorization
+- **callback_url**: Optional webhook URL for task completion notification
+
+## Voice Presets
+
+Supported values: `Achernar`, `Achird`, `Algenib`, `Algieba`, `Alnilam`, `Aoede`, `Autonoe`, `Callirrhoe`, `Charon`, `Despina`, `Enceladus`, `Erinome`, `Fenrir`, `Gacrux`, `Iapetus`, `Kore`, `Laomedeia`, `Leda`, `Orus`, `Pulcherrima`, `Puck`, `Rasalgethi`, `Sadachbia`, `Sadaltager`, `Schedar`, `Sulafat`, `Umbriel`, `Vindemiatrix`, `Zephyr`, `Zubenelgenubi`.
 
 ## Examples
+
+### Single speaker
 
 ```json
 {
   "model": "gemini-3.8-flash-lite-tts",
+  "callback_url": "https://your-domain.com/callback",
   "input": {
-    "text": "Hello! Welcome to PoYo."
+    "text": "Hello! Welcome to PoYo.",
+    "voice": "Kore",
+    "style_instructions": "Warm, confident product narrator with clear pacing."
   }
 }
 ```
 
+### Two-speaker dialogue
+
 ```json
 {
   "model": "gemini-3.8-flash-lite-tts",
+  "callback_url": "https://your-domain.com/callback",
   "input": {
+    "style_instructions": "Conversational podcast tone with distinct speaker energy.",
     "speakers": [
       {
         "speaker_id": "host",
@@ -61,8 +91,8 @@ Voices: `Achernar`, `Achird`, `Algenib`, `Algieba`, `Alnilam`, `Aoede`, `Autonoe
 }
 ```
 
-## Task results
+## Notes
 
-The query response uses the common task structure: `task_id`, `status`, `progress`, `files`, and `error_message`. A finished task has `status="finished"`; each result file has `file_url` and `file_type`. Preserve the task ID while polling.
-
-Speech appears as `file_type="audio"`; optional timing JSON appears as `file_type="other"`.
+- Output is native WAV. This model has no `output_format`, `temperature`, `language_code`, or `seed` parameter.
+- Query status through the standard task status API.
+- Successful responses return `files`. Generated speech uses `file_type: audio`. Optional timing JSON uses `file_type: other`.

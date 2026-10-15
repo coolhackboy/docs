@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Omni Flash API",
-    "description": "Text, image, and video input generation with Omni Flash",
+    "description": "The Omni Flash API generates 4–10 second 16:9 or 9:16 video from text, one image, exactly three reference images, or one input video at 720p, 1080p, or 4K.",
     "version": "1.0.0"
   },
   "servers": [

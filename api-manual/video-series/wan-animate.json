@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Wan Animate API",
-    "description": "AI-powered character animation and replacement based on Alibaba's Wan2.2-Animate model",
+    "description": "The Wan Animate API animates a character image from a reference video, or replaces a person in a video while keeping their motion and expressions, at up to 720p.",
     "version": "1.0.0"
   },
   "servers": [

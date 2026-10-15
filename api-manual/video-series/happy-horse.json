@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Happy Horse API",
-    "description": "Alibaba Happy Horse text-to-video, image-to-video, reference-to-video, and video-edit workflows",
+    "description": "The Happy Horse API generates 3–15 second 720p or 1080p video from text, one first frame, or up to nine reference images, or edits a source video while keeping or replacing its audio.",
     "version": "1.0.0"
   },
   "servers": [
@@ -162,7 +162,7 @@
               "video_url": {
                 "type": "string",
                 "format": "uri",
-                "description": "Source video URL for video-edit. Supported source duration is 3-60 seconds. Billing is based on the probed source video duration, capped at 15 seconds.",
+                "description": "Source video URL for video-edit. Supported source duration is 3-60 seconds. Output follows the source video and truncates longer input to the first 15 seconds.",
                 "example": "https://example.com/source-video.mp4"
               },
               "aspect_ratio": {

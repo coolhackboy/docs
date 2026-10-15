@@ -120,11 +120,11 @@ Ask your assistant:
 
 ```text
 Use PoYo to check my account, find an image model for a cinematic product
-photo, show its input schema and price, and explain which execution tool
+photo, show its input schema, and explain which execution tool
 you would use. Do not run a paid request yet.
 ```
 
-A working connection can call `poyo_account`, `poyo_search_models`, `poyo_get_model_schema`, and `poyo_get_pricing`.
+A working connection can call `poyo_account`, `poyo_search_models`, and `poyo_get_model_schema`.
 
 ## Available tools
 
@@ -134,7 +134,6 @@ A working connection can call `poyo_account`, `poyo_search_models`, `poyo_get_mo
 |---|---|
 | `poyo_search_models` | Search models by query, service type, category, or tags |
 | `poyo_get_model_schema` | Read current input/output schemas, examples, protocols, and capabilities |
-| `poyo_get_pricing` | Check public credit pricing before execution |
 
 ### Execution
 
@@ -155,21 +154,15 @@ A working connection can call `poyo_account`, `poyo_search_models`, `poyo_get_mo
 
 ### Generate an image
 
-> "Find a suitable image model for a cinematic product photo, show me its price, then generate the image."
+> "Find a suitable image model for a cinematic product photo, then generate the image."
 
-The assistant searches the catalog, checks the model schema and pricing, then calls `poyo_run_model`.
+The assistant searches the catalog, checks the model schema, then calls `poyo_run_model`.
 
 ### Turn an image into video
 
 > "Find a model that accepts this image, create a five-second video, and wait for the result."
 
 The assistant inspects compatible models, calls `poyo_submit_job`, and polls the returned `task_id` with `poyo_check_job`.
-
-### Check pricing first
-
-> "Compare the prices of suitable image-to-video models. Do not run them."
-
-The assistant uses live catalog and pricing data without making a paid generation request.
 
 ## Load typed model tools
 
@@ -189,7 +182,7 @@ Use `poyo_run_model` for short work and `poyo_submit_job` for long-running media
 
 1. Your MCP client sends a tool request to PoYo, with a Bearer token when the tool requires authentication.
 2. Public discovery reads the live Capability Catalog without account access.
-3. Authenticated tools apply the same access, balance, routing, and billing rules as the public API.
+3. Authenticated tools apply the same access, balance, and routing rules as the public API.
 
 ## Troubleshooting
 

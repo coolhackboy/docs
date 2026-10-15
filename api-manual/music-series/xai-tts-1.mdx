@@ -1,6 +1,6 @@
 ---
 title: "xAI TTS 1"
-description: "Generate low-latency expressive multilingual speech using xAI TTS 1"
+description: "The xAI TTS 1 API converts up to 15,000 characters of text into speech with one of five voices, a BCP-47 language code or automatic detection, and inline delivery tags. Choose the codec, sample rate, and MP3 bitrate."
 icon: "music"
 openapi: "/api-manual/music-series/xai-tts-1.json POST /api/generate/submit"
 ---
@@ -10,21 +10,19 @@ openapi: "/api-manual/music-series/xai-tts-1.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# xAI TTS 1
-
 `xai-tts-1` converts a text into low-latency expressive speech audio using xAI TTS through fal. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
-## Available Model
+## Models
 
 - **xai-tts-1** - xAI TTS v1 text-to-speech generation
 
-## Required Parameters
+## Required parameters
 
 - **text**: Text to convert to speech
   - Length: `1-15000` characters
   - Supports expressive speech tags such as `[laugh]`, `[pause]`, `[sigh]`, `<whisper>text</whisper>`, and `<slow>text</slow>`
 
-## Optional Parameters
+## Optional parameters
 
 - **voice**: Voice preset. Supported values: `eve`, `ara`, `rex`, `sal`, `leo`. Default: `eve`
 - **language_code**: BCP-47 language code or `auto` for automatic detection. Default: `auto`
@@ -37,13 +35,7 @@ openapi: "/api-manual/music-series/xai-tts-1.json POST /api/generate/submit"
 
 Supported values: `auto`, `en`, `ar-EG`, `ar-SA`, `ar-AE`, `bn`, `zh`, `fr`, `de`, `hi`, `id`, `it`, `ja`, `ko`, `pt-BR`, `pt-PT`, `ru`, `es-MX`, `es-ES`, `tr`, `vi`.
 
-## Credit Billing
-
-Billing is calculated by text length: `2.4` credits per `1000` characters, equal to `$0.012` per `1000` characters.
-
-## Request Example
-
-Estimated usage: `140` billable characters, `0.336000` credits.
+## Examples
 
 ```json
 {

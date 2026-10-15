@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Grok Imagine Video API",
-    "description": "High-quality Video Generation with Grok Imagine",
+    "description": "The Grok Imagine API generates a 6 or 10 second video from text or an image in 1:1, 2:3, 3:2, 16:9, or 9:16.",
     "version": "1.0.0"
   },
   "servers": [

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Omni Moderation API",
-    "description": "Omni Moderation reviews text and HTTPS images asynchronously through OpenAI. FREE (0 credits). Submit through the unified generation API and poll task status or receive a callback with the complete OpenAI response in output. Streaming is not supported.",
+    "description": "Omni Moderation reviews text and HTTPS images asynchronously through OpenAI. Submit through the unified generation API and poll task status or receive a callback with the complete OpenAI response in output. Streaming is not supported.",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Omni Moderation Review",
-        "description": "Queue a review of text, at most one HTTPS image URL, or both. FREE (0 credits). Returns a not_started task immediately; poll task status or provide callback_url for completion. A flagged review completes with status finished. Streaming is not supported.",
+        "description": "Queue a review of text, at most one HTTPS image URL, or both. Returns a not_started task immediately; poll task status or provide callback_url for completion. A flagged review completes with status finished. Streaming is not supported.",
         "operationId": "submitOmniModerationTask",
         "tags": [
           "Moderation"
@@ -34,7 +34,7 @@
               },
               "examples": {
                 "text-only": {
-                  "summary": "Review text — FREE (0 credits)",
+                  "summary": "Review text",
                   "value": {
                     "model": "omni-moderation-latest",
                     "input": {
@@ -43,7 +43,7 @@
                   }
                 },
                 "image-only": {
-                  "summary": "Review an HTTPS image — FREE (0 credits)",
+                  "summary": "Review an HTTPS image",
                   "value": {
                     "model": "omni-moderation-latest",
                     "input": {
@@ -54,7 +54,7 @@
                   }
                 },
                 "text-and-image": {
-                  "summary": "Review text and an image — FREE (0 credits)",
+                  "summary": "Review text and an image",
                   "value": {
                     "model": "omni-moderation-latest",
                     "input": {
@@ -66,7 +66,7 @@
                   }
                 },
                 "with-callback": {
-                  "summary": "Review with a completion callback — FREE (0 credits)",
+                  "summary": "Review with a completion callback",
                   "value": {
                     "model": "omni-moderation-latest",
                     "callback_url": "https://your-domain.com/callback",
@@ -392,7 +392,7 @@
               "credits_amount": {
                 "type": "number",
                 "const": 0,
-                "description": "FREE: Omni Moderation charges 0 credits."
+                "description": "Credits charged for the task."
               },
               "files": {
                 "type": "array",

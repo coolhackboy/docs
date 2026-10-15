@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedance 2 API",
-    "description": "Video generation with Seedance 2 and Seedance 2 Fast",
+    "description": "The Seedance 2 API generates a 4–15 second video from text, up to two frames, or image, video, and audio references. A faster variant is limited to 480p and 720p.",
     "version": "1.0.0"
   },
   "servers": [

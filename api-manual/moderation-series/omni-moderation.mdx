@@ -1,11 +1,9 @@
 ---
 title: "Omni Moderation"
-description: "Review text and HTTPS images asynchronously with OpenAI. FREE (0 credits)."
+description: "Review text and HTTPS images asynchronously with OpenAI."
 icon: "shield-check"
 openapi: "/api-manual/moderation-series/omni-moderation.json POST /api/generate/submit"
 ---
-
-**Price: FREE (0 credits)**
 
 Omni Moderation reviews text, at most one HTTPS image, or both using OpenAI `omni-moderation-latest`. Submit a review through the unified generation endpoint, then poll [Get Task Status](/api-manual/task-management/status) with the returned `task_id` or receive an optional callback.
 

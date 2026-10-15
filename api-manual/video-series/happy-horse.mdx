@@ -1,6 +1,6 @@
 ---
 title: "Happy Horse"
-description: "Alibaba Happy Horse text-to-video, image-to-video, reference-to-video, and video-edit workflows"
+description: "The Happy Horse API generates 3–15 second 720p or 1080p video from text, one first frame, or up to nine reference images, or edits a source video while keeping or replacing its audio."
 icon: "video"
 openapi: "/api-manual/video-series/happy-horse.json POST /api/generate/submit"
 ---
@@ -10,15 +10,13 @@ openapi: "/api-manual/video-series/happy-horse.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Happy Horse
-
 `happy-horse` supports text-to-video, image-to-video, reference-to-video, and video-edit through one public model ID.
 
-## Available Model
+## Models
 
 - **happy-horse** - Alibaba Happy Horse 1.0 video generation and editing
 
-## Workflows
+## Input modes
 
 ### Text to Video
 
@@ -38,16 +36,16 @@ Do not combine `reference_image_urls` with `image_urls`.
 
 Send `video_url` with a required edit `prompt`. Optional `reference_image_urls` can guide the edit; refer to them as `@Image1`, `@Image2`, and so on. `audio_setting` controls whether Happy Horse decides audio handling automatically or preserves the original audio.
 
-The source video must be 3-60 seconds. Video-edit billing uses the probed source video duration, capped at 15 seconds, because output follows the source video and truncates longer input to the first 15 seconds.
+The source video must be 3-60 seconds. Output follows the source video and truncates longer input to the first 15 seconds.
 
-## Required Parameters
+## Required parameters
 
 - **model**: `happy-horse`
 - **input.prompt**: Required for text-to-video, reference-to-video, and video-edit. Optional for image-to-video. Maximum length is 5,000 non-Chinese characters or 2,500 Chinese characters.
 - **input.video_url**: Required for video-edit.
 - **input.reference_image_urls**: Required for reference-to-video.
 
-## Optional Parameters
+## Optional parameters
 
 - **image_urls**: Single-item first-frame image URL array for image-to-video
 - **reference_image_urls**: 1-9 images for reference-to-video, or up to 5 optional images for video-edit
@@ -63,4 +61,4 @@ The source video must be 3-60 seconds. Video-edit billing uses the probed source
 - `image_urls` must resolve to exactly one image and is only for image-to-video.
 - `reference_image_urls` selects reference-to-video unless `video_url` is present, in which case it is treated as optional video-edit reference imagery.
 - For text-to-video and reference-to-video, omit `video_url` and use `aspect_ratio`.
-- For video-edit, omit `duration`; the backend probes the source video duration for validation and duration-based billing.
+- For video-edit, omit `duration`; the backend probes the source video duration for validation.

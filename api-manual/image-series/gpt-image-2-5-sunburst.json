@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - GPT Image 2.5 Sunburst API",
-    "description": "GPT Image 2.5 Sunburst single-image generation and reference-image editing with background, format, and mask controls.",
+    "description": "The GPT Image 2.5 Sunburst API generates one image from a prompt or edits up to 16 reference images. Use it when editing precision matters, with masks, transparent backgrounds, and 1K to 4K output.",
     "version": "1.0.0"
   },
   "servers": [

@@ -1,16 +1,14 @@
 ---
 title: "Wan-2.7-Image"
-description: "Image generation with unified text-to-image and image editing support, including custom image sizes"
+description: "The Wan 2.7 Image API generates images from text or edits one to four reference images. Return one to four images at a preset size or a custom width and height."
 icon: "image"
 openapi: "/api-manual/image-series/wan-2-7-image.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Wan-2.7-Image
 
 `wan-2.7-image` is an image model with unified text-to-image and image editing support.
 
@@ -19,9 +17,17 @@ It uses a unified request shape:
 - If `input.image_urls` is omitted, the request is handled as text-to-image
 - If `input.image_urls` is provided, the request is handled as edit mode automatically
 
-## Available Model
+## Models
 
 - **wan-2.7-image** - Unified text-to-image and image editing model
+
+## Parameters
+
+- `prompt` - Required prompt
+- `size` - Preset output size, or a custom `{ width, height }` object
+- `n` - Number of images, `1-4`
+- `seed` - Optional random seed
+- `image_urls` - Reference images for editing, `1-4` images required. Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt
 
 ## Size Parameter
 
@@ -47,15 +53,7 @@ For custom image sizes, you can pass `width` and `height` as an object:
 }
 ```
 
-## Supported Parameters
-
-- `prompt` - Required prompt
-- `size` - Preset output size, or a custom `{ width, height }` object
-- `n` - Number of images, `1-4`
-- `seed` - Optional random seed
-- `image_urls` - Reference images for editing, `1-4` images required. Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt
-
-## How to Call
+## Examples
 
 Use the unified submit endpoint: `POST /api/generate/submit`
 
@@ -112,8 +110,4 @@ Custom size example:
   }
 }
 ```
-
-
-
-
 

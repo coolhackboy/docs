@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Meshy 6 3D API",
-    "description": "Meshy 6 text-to-3D, image-to-3D, and multi-image-to-3D generation",
+    "description": "The Meshy 6 3D API generates a 3D mesh from text, one image, or 1–4 images of the same object. Textures, PBR maps, humanoid rigging, and a preset animation can be requested, with GLB, FBX, OBJ, USDZ, and STL among the documented outputs.",
     "version": "1.0.0"
   },
   "servers": [

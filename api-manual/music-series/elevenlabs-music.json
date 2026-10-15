@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - ElevenLabs Music API",
-    "description": "Generate studio-grade music from text inputs or structured composition plans using ElevenLabs Music. PoYo pricing is $0.64 per started minute, equal to 128 credits per started minute.",
+    "description": "The ElevenLabs Music API generates music from either a text brief or a structured composition plan. Text requests can set a length from 3 to 600 seconds or request instrumental output; each composition-plan section is 3 to 120 seconds.",
     "version": "1.0.0"
   },
   "servers": [

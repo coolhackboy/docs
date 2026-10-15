@@ -1,56 +1,63 @@
 ---
 title: "Meshy 7.1 3D"
-description: "Generate 3D models from text, one image, or 1–4 images, with optional textures, rigging, and animation."
+description: "The Meshy 7.1 3D API generates a 3D mesh from text, one image, or 1–4 images, with optional textures, PBR maps, humanoid rigging, and a preset animation. Text and single-image tasks can use standard, 2K, or 4K geometry; multi-image tasks accept standard or 2K."
 icon: "cube"
 openapi: "/api-manual/3d-series/meshy-7-1-3d.json POST /api/generate/submit"
 ---
 
-Submission returns a `task_id`. Use [Query Task Status](/api-manual/task-management/status) to track completion, or supply `callback_url` for completion and failure notifications.
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
 
-Meshy 7.1 supports three generation modes through separate model IDs.
+Meshy 7.1 supports text-to-3D, single image-to-3D, and multi-image-to-3D generation through three public model IDs. Optional textures, rigging, and animation can be requested on the same task.
 
-## Available models
+## Models
 
-| Model | Required input |
-| --- | --- |
-| `meshy-7.1-text-to-3d` | `prompt`: 1–600 characters, containing non-whitespace text |
-| `meshy-7.1-image-to-3d` | `image_urls`: exactly one image |
-| `meshy-7.1-multi-image-to-3d` | `image_urls`: 1–4 images of the same object from different angles |
+- **meshy-7.1-text-to-3d** - Generate a 3D model from a prompt
+- **meshy-7.1-image-to-3d** - Generate a 3D model from one image
+- **meshy-7.1-multi-image-to-3d** - Generate a 3D model from 1-4 images of the same object
+
+## Required parameters
+
+- **model**: `meshy-7.1-text-to-3d`, `meshy-7.1-image-to-3d`, or `meshy-7.1-multi-image-to-3d`
+- **input.prompt**: Required for `meshy-7.1-text-to-3d`. Use `1-600` characters containing non-whitespace text. Omit for image models
+- **input.image_urls**: Required for image models. Use exactly 1 image for `meshy-7.1-image-to-3d`, and 1-4 images for `meshy-7.1-multi-image-to-3d`. Omit for text-to-3D
 
 Image inputs and `texture_image_url` accept public HTTP(S) image URLs or image data URIs.
 
-## Parameters and combinations
+## Optional parameters
 
-All parameters appear in one list. Each description identifies model-specific requirements, supported values, and defaults.
+- **mode**: Text-to-3D only. `preview` returns geometry only; `full` includes textures. Default is `full`
+- **model_type**: Text-to-3D and single image-to-3D only. `standard` or `smart-topology`. Default is `standard`. Omit for multi-image generation. Lowpoly is not supported
+- **geometry_resolution**: `standard`, `2k`, or `4k` for text-to-3D and single image-to-3D when `model_type` is `standard`. Omit when `model_type` is `smart-topology`. Multi-image generation accepts only `standard` or `2k`
+- **topology**: `triangle` or `quad`. Default is `triangle`
+- **target_polycount**: Target polygon count from `100` to `300000`. Default is `30000`. For text-to-3D and single image-to-3D with `model_type=smart-topology`, the range is `100-15000` and the default is `4000` when omitted
+- **should_remesh**: Whether to enable remeshing. Default is `true`
+- **symmetry_mode**: `off`, `auto`, or `on`. Default is `auto`
+- **should_texture**: Image models only. Whether to generate textures. Default is `true`. For multi-image generation, this must remain `true` when `enable_pbr` is `true` or texture guidance is supplied
+- **enable_pbr**: Generate PBR maps such as metallic, roughness, and normal maps. Default is `false`. Multi-image generation requires `should_texture=true`
+- **pose_mode**: `a-pose`, `t-pose`, or an empty string for no specific pose
+- **seed**: Text-to-3D only. Integer seed. Omit to select a seed automatically
+- **enable_prompt_expansion**: Text-to-3D only. Whether to expand the prompt before generation. Default is `false`
+- **texture_prompt**: Optional texture guidance, at most `600` characters. Multi-image generation requires `should_texture=true`
+- **texture_image_url**: Optional texture guidance image. Multi-image generation requires `should_texture=true`
+- **enable_rigging**: Whether to rig a humanoid character. Default is `false`. Must be `true` when `enable_animation` is `true`
+- **rigging_height_meters**: Character height in meters when rigging is enabled. Must be greater than zero. Default is `1.7`
+- **enable_animation**: Whether to apply an animation preset. Requires `enable_rigging=true`. Default is `false`
+- **animation_action_id**: Animation preset ID from `0` to `696`. Default is `92`
+- **enable_safety_checker**: Whether to enable input safety checking. Default is `true`. Disabling can require account authorization
+- **callback_url**: Optional webhook URL for task completion notification
 
-| Parameter | Description |
-| --- | --- |
-| `model` | Required. Select one of the three model IDs listed above. |
-| `input` | Required. Object containing the generation parameters below. Fields marked as required for a model must be supplied when that model is selected. |
-| `callback_url` | Optional completion or failure callback URL. |
-| `input.prompt` | Required only for meshy-7.1-text-to-3d; omit for image models. Use 1–600 characters containing non-whitespace text. |
-| `input.image_urls` | Required for image models; omit for meshy-7.1-text-to-3d. meshy-7.1-image-to-3d requires exactly 1 image; meshy-7.1-multi-image-to-3d accepts 1–4 images of the same object from different angles. Each item accepts a public HTTP(S) image URL or image data URI. |
-| `input.mode` | Only for meshy-7.1-text-to-3d. preview returns geometry only; full includes textures. Default: full. |
-| `input.model_type` | Only for meshy-7.1-text-to-3d and meshy-7.1-image-to-3d; omit for meshy-7.1-multi-image-to-3d. Accepts standard (default) or smart-topology. Lowpoly is not supported. |
-| `input.geometry_resolution` | meshy-7.1-text-to-3d and meshy-7.1-image-to-3d accept standard, 2k, or 4k only when model_type is standard (the default); omit for smart-topology. meshy-7.1-multi-image-to-3d accepts only standard or 2k and does not support 4k. |
-| `input.topology` | Output mesh topology for all models: triangle (default) or quad. |
-| `input.target_polycount` | Target polygons for all models: 100–300000; default 30000. For meshy-7.1-text-to-3d and meshy-7.1-image-to-3d with model_type=smart-topology: 100–15000, default 4000 when omitted. |
-| `input.should_remesh` | Enable remeshing for all models. Default: true. |
-| `input.symmetry_mode` | Mesh symmetry behavior for all models: off, auto (default), or on. |
-| `input.should_texture` | Only for meshy-7.1-image-to-3d and meshy-7.1-multi-image-to-3d; omit for meshy-7.1-text-to-3d. Generate textures; default true. For multi-image generation, must remain true when enable_pbr=true or texture guidance is supplied. |
-| `input.enable_pbr` | Generate PBR texture maps for all models. Default: false. For meshy-7.1-multi-image-to-3d, requires should_texture=true. |
-| `input.pose_mode` | Character pose for all models: a-pose, t-pose, or an empty string (default) for no specific pose. |
-| `input.seed` | Only for meshy-7.1-text-to-3d. Integer random seed; omit to select automatically. |
-| `input.enable_prompt_expansion` | Only for meshy-7.1-text-to-3d. Expand the prompt before generation. Default: false. |
-| `input.texture_prompt` | Optional texture guidance for all models, at most 600 characters. For meshy-7.1-multi-image-to-3d, requires should_texture=true. |
-| `input.texture_image_url` | Optional texture guidance for all models; accepts a public HTTP(S) image URL or image data URI. For meshy-7.1-multi-image-to-3d, requires should_texture=true. |
-| `input.enable_rigging` | Rig the generated humanoid character for all models. Default: false. Must be true when enable_animation=true. |
-| `input.rigging_height_meters` | Character height in meters for all models when rigging is enabled; must be greater than zero. Default: 1.7. |
-| `input.enable_animation` | Apply an animation for all models; requires enable_rigging=true. Default: false. |
-| `input.animation_action_id` | Animation preset ID for all models: integer from 0 to 696. Default: 92. |
-| `input.enable_safety_checker` | Enable input safety checking for all models. Default: true. Disabling requires account authorization when applicable. |
+## Output
 
-Optional features can change the task price; inspect the live Catalog before submitting.
+The task result is returned as a file list. Available items may include:
+
+- 3D assets with `file_type: 3d`
+- thumbnails and textures as images
+- rigged meshes and animation assets when those options are enabled and the files are available
+
+Each file item includes `file_url` and `file_type`.
 
 ## Examples
 
@@ -59,6 +66,7 @@ Optional features can change the task price; inspect the live Catalog before sub
 ```json
 {
   "model": "meshy-7.1-text-to-3d",
+  "callback_url": "https://your-domain.com/callback",
   "input": {
     "prompt": "A ceramic robot with a clean silhouette.",
     "enable_rigging": true,
@@ -72,6 +80,7 @@ Optional features can change the task price; inspect the live Catalog before sub
 ```json
 {
   "model": "meshy-7.1-text-to-3d",
+  "callback_url": "https://your-domain.com/callback",
   "input": {
     "prompt": "A ceramic robot.",
     "mode": "preview",
@@ -80,11 +89,12 @@ Optional features can change the task price; inspect the live Catalog before sub
 }
 ```
 
-### Single image to 3D with rigging and animation
+### Single image to 3D
 
 ```json
 {
   "model": "meshy-7.1-image-to-3d",
+  "callback_url": "https://your-domain.com/callback",
   "input": {
     "image_urls": [
       "https://example.com/front.png"
@@ -95,11 +105,12 @@ Optional features can change the task price; inspect the live Catalog before sub
 }
 ```
 
-### Multiple images to 3D with rigging and animation
+### Multiple images to 3D
 
 ```json
 {
   "model": "meshy-7.1-multi-image-to-3d",
+  "callback_url": "https://your-domain.com/callback",
   "input": {
     "image_urls": [
       "https://example.com/front.png",
@@ -111,8 +122,8 @@ Optional features can change the task price; inspect the live Catalog before sub
 }
 ```
 
-## Task results
+## Notes
 
-The query response uses the common task structure: `task_id`, `status`, `progress`, `files`, and `error_message`. A finished task has `status="finished"`; each result file has `file_url` and `file_type`. Preserve the task ID while polling.
-
-3D assets appear as `file_type="3d"`, with thumbnails and textures as images. Rigged meshes and animation assets are returned when requested and available.
+- `meshy-7.1-image-to-3d` accepts exactly one image in `image_urls`.
+- `meshy-7.1-multi-image-to-3d` accepts 1-4 images. Images should show the same object from different angles.
+- The API returns asynchronous task status. Poll the unified task status endpoint or use `callback_url`.

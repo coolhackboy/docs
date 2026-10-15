@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O3-Image API",
-    "description": "A high-expressiveness image generation model optimized for strong semantic understanding and scene composition, ideal for creative and narrative-driven visuals",
+    "description": "The Kling O3 API generates images from a prompt or edits 1 to 10 reference images. Resolution is 1K, 2K, or 4K, and optional elements can lock a character or object.",
     "version": "1.0.0"
   },
   "servers": [
@@ -216,7 +216,7 @@
               },
               "n": {
                 "type": "integer",
-                "description": "Number of images to generate (1-9). Billing is based on the selected resolution and `n`.",
+                "description": "Number of images to generate (1-9).",
                 "minimum": 1,
                 "maximum": 9,
                 "default": 1,

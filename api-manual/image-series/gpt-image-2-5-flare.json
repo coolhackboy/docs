@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - GPT Image 2.5 Flare API",
-    "description": "GPT Image 2.5 Flare single-image generation and reference-image editing with background, format, and mask controls.",
+    "description": "The GPT Image 2.5 Flare API generates one image from a prompt or edits up to 16 reference images. It is the faster GPT Image 2.5 option and supports masks, transparent backgrounds, and 1K to 4K output.",
     "version": "1.0.0"
   },
   "servers": [

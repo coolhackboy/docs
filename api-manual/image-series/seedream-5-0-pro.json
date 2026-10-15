@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedream-5.0-Pro API",
-    "description": "Flagship Seedream image generation and editing model with precise prompt following, layout control, and multi-image reference editing",
+    "description": "The Seedream 5.0 Pro API generates images from text or edits up to 10 reference images. Output resolution is 1K or 2K across preset aspect ratios.",
     "version": "1.0.0"
   },
   "servers": [

@@ -1,6 +1,6 @@
 ---
 title: "Kling 2.1"
-description: "Standard and Pro image-to-video generation"
+description: "The Kling 2.1 API animates a required first-frame image for 5 or 10 seconds. Pro can also take an optional last frame."
 icon: "video"
 openapi: "/api-manual/video-series/kling-2-1.json POST /api/generate/submit"
 ---
@@ -10,21 +10,19 @@ openapi: "/api-manual/video-series/kling-2-1.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Kling 2.1
-
 Kling 2.1 provides two public models under the same request format: `kling-2.1/standard` and `kling-2.1/pro`.
 
-## Available Models
+## Models
 
 - **kling-2.1/standard** - Start-frame guided image-to-video
 - **kling-2.1/pro** - Start-frame guided image-to-video with optional end frame
 
-## Required Parameters
+## Required parameters
 
 - **prompt**: Text prompt for generation
 - **start_image_url**: Required first frame image
 
-## Optional Parameters
+## Optional parameters
 
 - **duration**: `5` or `10`. Default is `5`
 - **end_image_url**: Optional, only supported by `kling-2.1/pro`

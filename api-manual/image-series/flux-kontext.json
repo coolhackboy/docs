@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Flux Kontext API",
-    "description": "Image generation and image editing models powered by Black Forest Labs Flux Kontext",
+    "description": "The FLUX.1 Kontext API generates images from text or edits one reference image with Pro or Max. Aspect ratios run from 21:9 to 9:21, and edit requests use only the first image URL.",
     "version": "1.0.0"
   },
   "servers": [

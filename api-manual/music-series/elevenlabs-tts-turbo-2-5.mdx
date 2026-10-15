@@ -1,6 +1,6 @@
 ---
 title: "ElevenLabs TTS Turbo v2.5"
-description: "Generate low-latency multilingual speech using ElevenLabs TTS Turbo v2.5"
+description: "The ElevenLabs TTS Turbo v2.5 API converts up to 40,000 characters of text into speech with a selectable voice, speed from 0.7 to 1.2, and an optional ISO 639-1 language code. Previous and next text can be supplied to keep narration continuous across requests."
 icon: "music"
 openapi: "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json POST /api/generate/submit"
 ---
@@ -10,22 +10,19 @@ openapi: "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json POST /api/gener
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# ElevenLabs TTS Turbo v2.5
-
 `elevenlabs-tts-turbo-2-5` converts text inputs into low-latency multilingual speech audio. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
-## Available Model
+## Models
 
 - **elevenlabs-tts-turbo-2-5** - ElevenLabs TTS Turbo v2.5 text-to-speech generation
 
-## Required Parameters
+## Required parameters
 
 - **text**: Text to convert to speech
   - Length: `1-40000` characters
-  - Billing is calculated from `text.trim().length`
   - Use `previous_text` and `next_text` when splitting long-form narration into multiple requests
 
-## Optional Parameters
+## Optional parameters
 
 - **voice**: Voice name or compatible voice ID for speech generation. Default: `Rachel`
 - **stability**: Voice stability from `0` to `1`. Default: `0.5`
@@ -38,15 +35,9 @@ openapi: "/api-manual/music-series/elevenlabs-tts-turbo-2-5.json POST /api/gener
 - **language_code**: Optional ISO 639-1 code used to enforce a target language, such as `en`, `fr`, `de`, `ja`, `vi`, `hu`, or `no`
 - **apply_text_normalization**: `auto`, `on`, or `off`. Default: `auto`
 
-## Credit Billing
-
-Billing is calculated by trimmed text length: `8` credits per `1000` characters. PoYo is priced at `$0.04 / 1000 characters`; the Fal reference price is `$0.05 / 1000 characters`.
-
-## Request Examples
+## Examples
 
 ### Low-latency product voiceover
-
-Estimated usage: `126` billable characters, `1.008000` credits.
 
 ```json
 {
@@ -67,8 +58,6 @@ Estimated usage: `126` billable characters, `1.008000` credits.
 
 ### Localized pickup notification
 
-Estimated usage: `88` billable characters, `0.704000` credits.
-
 ```json
 {
   "model": "elevenlabs-tts-turbo-2-5",
@@ -87,8 +76,6 @@ Estimated usage: `88` billable characters, `0.704000` credits.
 ```
 
 ### Long-form continuity
-
-Estimated usage: `97` billable characters, `0.776000` credits.
 
 ```json
 {
@@ -110,8 +97,6 @@ Estimated usage: `97` billable characters, `0.776000` credits.
 
 ### Expressive host intro
 
-Estimated usage: `108` billable characters, `0.864000` credits.
-
 ```json
 {
   "model": "elevenlabs-tts-turbo-2-5",
@@ -131,6 +116,5 @@ Estimated usage: `108` billable characters, `0.864000` credits.
 ## Notes
 
 - PoYo's public parameter name is `text`.
-- Fal reference pricing is `$0.05 / 1000 characters`; PoYo pricing is `$0.04 / 1000 characters`.
 - Query status through the standard task status API.
 - Successful responses return `files`, where the generated speech uses `file_type: audio`.

@@ -1,6 +1,6 @@
 ---
 title: "MiniMax Music 2.6"
-description: "Generate complete music tracks from a style prompt, lyrics, or instrumental instructions"
+description: "The MiniMax Music 2.6 API generates a complete track from a style prompt, using supplied lyrics, lyrics generated from the prompt, or instrumental-only mode. Audio can be returned as MP3, WAV, or PCM at the documented sample rates and bitrates."
 icon: "music"
 openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/submit"
 ---
@@ -10,13 +10,13 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-## Usage Guide
+## Features
 
 - This endpoint generates complete tracks with singing, backing music, and detailed arrangements from a style prompt
 - You can provide custom lyrics, let the model optimize lyrics from the prompt, or enable instrumental mode for music without vocals
 - Final results are returned asynchronously through `callback_url` or [Query Task Status](/api-manual/task-management/status)
 
-## Parameter Details
+## Parameters
 
 - `prompt` (required): Music prompt describing style, mood, genre, instrumentation, tempo, or scene
   - Length: `10-2000` characters
@@ -40,7 +40,7 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
   - `format`: `mp3`, `wav`, `pcm`
   - Only these three keys are supported
 
-## Developer Notes
+## Notes
 
 - If both `is_instrumental` and `lyrics_optimizer` are `false`, provide `lyrics` to avoid validation errors
 - `lyrics_optimizer` follows the upstream MiniMax Music 2.6 schema. If the upstream service rejects an optimized-lyrics request, retry with explicit `lyrics`

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "General Chat API",
-    "description": "Unified chat API interface supporting all text generation models.",
+    "description": "The General Chat API is a model-agnostic endpoint compatible with the OpenAI Chat Completions request shape. Send a model id and messages, and optionally request a server-sent event stream.",
     "version": "1.0.0"
   },
   "servers": [

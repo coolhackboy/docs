@@ -1,15 +1,14 @@
 ---
 title: "GPT Image 2.5 Sunburst"
-description: "GPT Image 2.5 Sunburst single-image generation and reference-image editing with background, format, and mask controls."
+description: "The GPT Image 2.5 Sunburst API generates one image from a prompt or edits up to 16 reference images. Use it when editing precision matters, with masks, transparent backgrounds, and 1K to 4K output."
 icon: "image"
 openapi: "/api-manual/image-series/gpt-image-2-5-sunburst.json POST /api/generate/submit"
 ---
 
 <Tip>
-Submission returns a `task_id`. Query progress and results through [Query Task Status](/api-manual/task-management/status), or supply a `callback_url` to receive completion and failure notifications.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# GPT Image 2.5 Sunburst
 
 Use `gpt-image-2.5-sunburst` to generate one image from a prompt or edit up to 16 reference images. A non-empty `image_urls` array selects editing automatically; omit it or pass an empty array for text-to-image generation.
 

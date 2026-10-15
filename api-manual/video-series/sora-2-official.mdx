@@ -1,6 +1,6 @@
 ---
 title: "Sora 2 Official"
-description: "Text-to-video and optional image-guided video generation"
+description: "The Sora 2 Official API generates a 4–20 second 16:9 or 9:16 video from text, with an optional single reference image."
 icon: "video"
 openapi: "/api-manual/video-series/sora-2-official.json POST /api/generate/submit"
 ---
@@ -10,19 +10,17 @@ openapi: "/api-manual/video-series/sora-2-official.json POST /api/generate/submi
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Sora 2 Official
-
 `sora-2-official` supports text-to-video generation and optional single-image guided generation with fixed 4s, 8s, 12s, 16s, and 20s durations.
 
-## Available Model
+## Models
 
 - **sora-2-official** - Text-to-video with optional reference image
 
-## Required Parameters
+## Required parameters
 
 - **prompt**: Text prompt for video generation
 
-## Optional Parameters
+## Optional parameters
 
 - **duration**: `4`, `8`, `12`, `16`, or `20`. Default is `4`
 - **aspect_ratio**: `16:9` or `9:16`. Default is `16:9`

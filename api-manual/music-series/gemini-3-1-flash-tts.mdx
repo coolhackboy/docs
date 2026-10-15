@@ -1,6 +1,6 @@
 ---
 title: "Gemini 3.1 Flash TTS"
-description: "Generate expressive multilingual speech using Gemini 3.1 Flash TTS"
+description: "The Gemini 3.1 Flash TTS API converts text into single-speaker or two-speaker speech using a preset voice, inline delivery tags, and optional style instructions. Set an optional language, and return MP3, WAV, or Opus audio."
 icon: "music"
 openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/submit"
 ---
@@ -10,15 +10,13 @@ openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Gemini 3.1 Flash TTS
-
 `gemini-3-1-flash-tts` converts text inputs into expressive speech audio using Google's Gemini 3.1 Flash TTS model. Results are returned as task `files`, matching the standard image, video, 3D, and audio task response structure.
 
-## Available Model
+## Models
 
 - **gemini-3-1-flash-tts** - Gemini 3.1 Flash text-to-speech generation
 
-## Required Parameters
+## Required parameters
 
 - **text**: Text to convert to speech
   - Length: `1-50000` characters
@@ -26,7 +24,7 @@ openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/
   - Supports expressive audio tags such as `[sigh]`, `[laughing]`, `[whispering]`, and `[short pause]`
   - For multi-speaker synthesis, prefix text lines with speaker aliases that match `speakers[].speaker_id`
 
-## Optional Parameters
+## Optional parameters
 
 - **style_instructions**: Optional style, delivery, pace, accent, tone, or emotional direction applied to the request
 - **voice**: Voice preset for single-speaker synthesis. Ignored when `speakers` is set. Default: `Kore`
@@ -41,15 +39,9 @@ openapi: "/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/
 
 Supported values: `Achernar`, `Achird`, `Algenib`, `Algieba`, `Alnilam`, `Aoede`, `Autonoe`, `Callirrhoe`, `Charon`, `Despina`, `Enceladus`, `Erinome`, `Fenrir`, `Gacrux`, `Iapetus`, `Kore`, `Laomedeia`, `Leda`, `Orus`, `Pulcherrima`, `Puck`, `Rasalgethi`, `Sadachbia`, `Sadaltager`, `Schedar`, `Sulafat`, `Umbriel`, `Vindemiatrix`, `Zephyr`, `Zubenelgenubi`.
 
-## Credit Billing
-
-Billing is calculated by text length plus style instruction length: `24` credits per `1000` characters.
-
-## Request Examples
+## Examples
 
 ### Single speaker with audio tags
-
-Estimated usage: `152` billable characters, `3.648000` credits.
 
 ```json
 {
@@ -67,8 +59,6 @@ Estimated usage: `152` billable characters, `3.648000` credits.
 
 ### Multilingual store assistant
 
-Estimated usage: `185` billable characters, `4.440000` credits.
-
 ```json
 {
   "model": "gemini-3-1-flash-tts",
@@ -85,8 +75,6 @@ Estimated usage: `185` billable characters, `4.440000` credits.
 ```
 
 ### Two speaker podcast
-
-Estimated usage: `200` billable characters, `4.800000` credits.
 
 ```json
 {

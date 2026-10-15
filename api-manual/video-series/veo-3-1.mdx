@@ -1,36 +1,34 @@
 ---
-title: "VEO 3.1 Video Generation"
-description: "Lite, fast, and high-quality video generation with Google's VEO 3.1"
+title: "VEO 3.1"
+description: "The VEO 3.1 API generates 8-second videos from text. Fast and quality models can also start from an image, and quality output can reach 4K."
 icon: "video"
 openapi: "/api-manual/video-series/veo-3-1.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# VEO 3.1 Video Generation
 
 Generate lite, fast, or high-quality videos with Google's VEO 3.1 model. All models support text-to-video. `veo3.1-fast` and `veo3.1-quality` also support image-to-video.
 
-## Available Models
+## Models
 
 - **veo3.1-fast** - Fast 8-second generation
 - **veo3.1-lite** - Lite 8-second generation
 - **veo3.1-quality** - High-quality 8-second generation
 
-## Duration Options
-
-- **All VEO 3.1 models on this page** - 8 seconds
-
-## Key Features
+## Features
 
 - Asynchronous processing that returns a `task_id` for status tracking
 - All models support text-to-video
 - `veo3.1-fast` and `veo3.1-quality` support image-to-video
 - Supports up to 4k output resolution
 - Generated video URLs are valid for 24 hours
+
+## Duration Options
+
+- **All VEO 3.1 models on this page** - 8 seconds
 
 ## Advanced Parameters
 
@@ -55,6 +53,3 @@ Generate lite, fast, or high-quality videos with Google's VEO 3.1 model. All mod
 
 - `720p` (default), `1080p`, or `4k`
 
-## Pricing
-
-Pricing varies by model and resolution. See the model page for current credit rates.

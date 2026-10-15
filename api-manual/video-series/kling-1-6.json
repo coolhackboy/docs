@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling 1.6 API",
-    "description": "Kling 1.6 Standard and Pro video generation through the PoYo API",
+    "description": "The Kling 1.6 API generates 5 or 10 second video from text or a first frame. Pro can also set a last frame.",
     "version": "1.0.0"
   },
   "servers": [

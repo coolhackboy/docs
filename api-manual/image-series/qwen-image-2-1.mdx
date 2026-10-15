@@ -1,15 +1,14 @@
 ---
-title: "Qwen Image 2.1 Generation"
-description: "Text-to-image, multi-reference generation, transparent backgrounds, and mask editing with Qwen Image 2.1"
+title: "Qwen Image 2.1"
+description: "The Qwen Image 2.1 API generates one image from text, combines up to 10 reference images, or applies a mask edit. Output is 1K or 2K, and backgrounds can be opaque or transparent."
 icon: "image"
 openapi: "/api-manual/image-series/qwen-image-2-1.json POST /api/generate/submit"
 ---
 
 <Tip>
-Submission returns a `task_id`. Retrieve the result through [Query Task Status](/api-manual/task-management/status), or provide a `callback_url` to receive a completion notification.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Qwen Image 2.1 Generation
 
 Use **`qwen-image-2.1`** for text-to-image generation, multi-reference image editing, transparent assets, and local edits. Each request produces one image.
 

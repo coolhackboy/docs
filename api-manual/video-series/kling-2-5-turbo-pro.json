@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling 2.5 Turbo Pro API",
-    "description": "Prompt-based video generation with optional start and end frame guidance",
+    "description": "The Kling 2.5 Turbo Pro API generates a 5 or 10 second video from a prompt, with an optional first frame, last frame, or both.",
     "version": "1.0.0"
   },
   "servers": [

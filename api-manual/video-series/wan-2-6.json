@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Wan 2.6 API",
-    "description": "Multi-shot 1080p video generation with Alibaba Wan 2.6 models",
+    "description": "The Wan 2.6 API generates or restyles video at 720p or 1080p for 5, 10, or 15 seconds, with multi-shot composition. Video-to-video is limited to 10 seconds.",
     "version": "1.0.0"
   },
   "servers": [

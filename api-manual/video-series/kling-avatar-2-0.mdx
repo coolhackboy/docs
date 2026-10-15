@@ -1,6 +1,6 @@
 ---
 title: "Kling Avatar 2.0"
-description: "Audio-driven avatar video generation with Kling Avatar 2.0 Standard and Pro"
+description: "The Kling Avatar 2.0 API generates an avatar video from one character image and a driving audio track of 2–60 seconds, with an optional prompt."
 icon: "video"
 openapi: "/api-manual/video-series/kling-avatar-2-0.json POST /api/generate/submit"
 ---
@@ -10,28 +10,21 @@ openapi: "/api-manual/video-series/kling-avatar-2-0.json POST /api/generate/subm
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Kling Avatar 2.0
-
 `kling-avatar-2.0/standard` and `kling-avatar-2.0/pro` create an audio-driven avatar video from one reference image and one driving audio file.
 
-## Available Models
+## Models
 
 - **kling-avatar-2.0/standard** - Standard avatar video generation
 - **kling-avatar-2.0/pro** - Pro avatar video generation with higher quality
 
-## Required Parameters
+## Required parameters
 
 - **image_urls**: Reference image array. Exactly `1` image is supported, and `image_urls[0]` is used as the avatar image
 - **audio_url**: Driving audio URL. Audio duration must be between `2` and `60` seconds
 
-## Optional Parameters
+## Optional parameters
 
 - **prompt**: Optional text prompt for the avatar video
-
-## Credit Billing
-
-Billing is calculated from the detected audio duration, rounded up to the nearest second.
-Credit usage depends on the selected model and detected audio duration.
 
 ## Notes
 

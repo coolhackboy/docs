@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - ElevenLabs V3 TTS API",
-    "description": "Generate speech audio from text using ElevenLabs V3",
+    "description": "The ElevenLabs V3 TTS API converts up to 5,000 characters of text into speech using one of the listed preset voices. An optional ISO 639-1 language code can enforce the language, and timestamps can be returned as a separate file.",
     "version": "1.0.0"
   },
   "servers": [

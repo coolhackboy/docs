@@ -1,15 +1,16 @@
 ---
-title: "Seedance 2.5 Video Generation"
-description: "Generate videos with Seedance 2.5 from text, frames, or multimodal references"
+title: "Seedance 2.5"
+description: "The Seedance 2.5 API generates a 4–30 second video from text, first and last frames, or image, video, and audio references at 480p, 720p, or 1080p."
 icon: "video"
 openapi: "/api-manual/video-series/seedance-2.5.json POST /api/generate/submit"
 ---
 
 <Tip>
-The API returns a `task_id`. Use the unified [Query Task Status](/api-manual/task-management/status) endpoint, or provide `callback_url` to receive the final result.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-## Model
+## Models
 
 Use `seedance-2.5` for text-to-video, first/last-frame generation, and multimodal reference-to-video.
 
@@ -19,7 +20,7 @@ Use `seedance-2.5` for text-to-video, first/last-frame generation, and multimoda
 - Use `image_urls` with one starting frame and an optional ending frame.
 - Use `reference_image_urls`, `reference_video_urls`, and `reference_audio_urls` for multimodal references. Mention them in the prompt as `@Image1`, `@Video1`, or `@Audio1`.
 
-## Important notes
+## Notes
 
 - `prompt`, `duration`, and `resolution` are required.
 - `duration` accepts integer values from 4 to 30 seconds.

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Grok Imagine Video 1.5 API",
-    "description": "Text, image, and reference-to-video generation with Grok Imagine Video 1.5",
+    "description": "The Grok Imagine Video 1.5 API generates 1–15 second videos from text or one first-frame image at up to 1080p, or from up to seven reference images at up to 720p.",
     "version": "1.1.0"
   },
   "servers": [{ "url": "https://api.poyo.ai", "description": "Production server" }],

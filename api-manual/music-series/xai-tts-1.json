@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - xAI TTS 1 API",
-    "description": "Generate low-latency expressive multilingual speech using xAI TTS 1",
+    "description": "The xAI TTS 1 API converts up to 15,000 characters of text into speech with one of five voices, a BCP-47 language code or automatic detection, and inline delivery tags. Choose the codec, sample rate, and MP3 bitrate.",
     "version": "1.0.0"
   },
   "servers": [

@@ -1,21 +1,21 @@
 ﻿---
 title: "Kling-o3"
-description: "A high-expressiveness image generation model optimized for strong semantic understanding and scene composition, ideal for creative and narrative-driven visuals"
+description: "The Kling O3 API generates images from a prompt or edits 1 to 10 reference images. Resolution is 1K, 2K, or 4K, and optional elements can lock a character or object."
 icon: "image"
 openapi: "/api-manual/image-series/kling-o3.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-## Available Model
+## Models
 
 - **kling-o3-image** - Prompt-only image generation
 - **kling-o3-image-edit** - Image editing with reference images
 
-## Supported Parameters
+## Parameters
 
 - `prompt` - Required generation or editing prompt
 - `image_urls` - Optional reference image URLs, `1-10` images, used for image editing mode
@@ -33,13 +33,7 @@ openapi: "/api-manual/image-series/kling-o3.json POST /api/generate/submit"
   - `reference_image_urls`: optional array of additional public image URLs
 - `elements` is optional and should only be used when you need stronger subject consistency
 
-## Billing Notes
-
-Billing is based on the selected resolution and the output count specified by `n`.
-
-- Total charge depends on the selected resolution and `n`
-
-## How to Call
+## Examples
 
 Use the unified submit endpoint: `POST /api/generate/submit`
 

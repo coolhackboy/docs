@@ -1,15 +1,14 @@
 ---
-title: "Flux 3 Video Generation"
-description: "Create, guide, and extend videos with Flux 3"
+title: "Flux 3"
+description: "The Flux 3 API generates a video from text, one starting image, first and last frames, or up to ten keyframes, or continues an existing MP4."
 icon: "video"
 openapi: "/api-manual/video-series/flux-3.json POST /api/generate/submit"
 ---
 
 <Tip>
-The submit endpoint returns a `task_id`. Use the unified [Query Task Status](/api-manual/task-management/status) endpoint, or provide `callback_url` to receive the finished or failed result.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Flux 3 Video Generation
 
 Select a model based on the source media you want to provide:
 

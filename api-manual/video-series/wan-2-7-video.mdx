@@ -1,16 +1,14 @@
 ---
-title: "Wan 2.7 Video Generation"
-description: "Wan 2.7 Video API"
+title: "Wan 2.7"
+description: "The Wan 2.7 API generates or edits 720p or 1080p video from text, one or two frames, reference media, or a source video. Text and image requests can include an audio URL."
 icon: "video"
 openapi: "/api-manual/video-series/wan-2-7-video.json POST /api/generate/submit"
 ---
 
 <Tip>
-1. After submission, a `task_id` is returned. If `callback_url` is provided, a POST request is sent when the task finishes or fails.
-2. You can always retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Wan 2.7 Video Generation
 
 Wan 2.7 includes four models for text, start/end frame, reference-guided generation, and video editing.
 
@@ -21,7 +19,7 @@ Wan 2.7 includes four models for text, start/end frame, reference-guided generat
 - `wan2.7-reference-to-video` — generates video from reference images or videos
 - `wan2.7-edit-video` — edits an input video with an optional reference image
 
-## Key Features
+## Features
 
 - **Duration**: 5, 10, or 15 seconds for text generation; 2–15 seconds for image generation; 2–10 seconds for reference generation and video editing
 - **Resolution**: 720p or 1080p

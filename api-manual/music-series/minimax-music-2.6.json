@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - MiniMax Music 2.6 API",
-    "description": "Generate complete music tracks from a style prompt, lyrics, or instrumental instructions",
+    "description": "The MiniMax Music 2.6 API generates a complete track from a style prompt, using supplied lyrics, lyrics generated from the prompt, or instrumental-only mode. Audio can be returned as MP3, WAV, or PCM at the documented sample rates and bitrates.",
     "version": "1.0.0"
   },
   "servers": [

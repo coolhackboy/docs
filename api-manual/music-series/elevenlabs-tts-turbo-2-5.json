@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - ElevenLabs TTS Turbo v2.5 API",
-    "description": "Generate low-latency multilingual speech using ElevenLabs TTS Turbo v2.5. PoYo pricing is $0.04 per 1000 characters; Fal reference pricing is $0.05 per 1000 characters.",
+    "description": "The ElevenLabs TTS Turbo v2.5 API converts up to 40,000 characters of text into speech with a selectable voice, speed from 0.7 to 1.2, and an optional ISO 639-1 language code. Previous and next text can be supplied to keep narration continuous across requests.",
     "version": "1.0.0"
   },
   "servers": [
@@ -20,7 +20,7 @@
     "/api/generate/submit": {
       "post": {
         "summary": "Submit ElevenLabs TTS Turbo v2.5 Task",
-        "description": "Convert a text into low-latency speech audio. PoYo pricing is $0.04 per 1000 characters, compared with Fal at $0.05 per 1000 characters.",
+        "description": "Convert a text into low-latency speech audio.",
         "operationId": "submitElevenLabsTtsTurbo25Task",
         "tags": [
           "ElevenLabs TTS Turbo v2.5"
@@ -34,8 +34,7 @@
               },
               "examples": {
                 "product-voiceover": {
-                  "summary": "Low-latency product voiceover (1.008000 credits)",
-                  "description": "126 billable characters.",
+                  "summary": "Low-latency product voiceover",
                   "value": {
                     "model": "elevenlabs-tts-turbo-2-5",
                     "callback_url": "https://your-domain.com/callback",
@@ -52,8 +51,7 @@
                   }
                 },
                 "localized-notification": {
-                  "summary": "Localized pickup notification (0.704000 credits)",
-                  "description": "88 billable characters.",
+                  "summary": "Localized pickup notification",
                   "value": {
                     "model": "elevenlabs-tts-turbo-2-5",
                     "callback_url": "https://your-domain.com/callback",
@@ -70,8 +68,7 @@
                   }
                 },
                 "long-form-continuity": {
-                  "summary": "Long-form continuity (0.776000 credits)",
-                  "description": "97 billable characters. Context fields are not billed by PoYo for this model.",
+                  "summary": "Long-form continuity",
                   "value": {
                     "model": "elevenlabs-tts-turbo-2-5",
                     "callback_url": "https://your-domain.com/callback",
@@ -89,8 +86,7 @@
                   }
                 },
                 "expressive-host-intro": {
-                  "summary": "Expressive host intro (0.864000 credits)",
-                  "description": "108 billable characters.",
+                  "summary": "Expressive host intro",
                   "value": {
                     "model": "elevenlabs-tts-turbo-2-5",
                     "callback_url": "https://your-domain.com/callback",
@@ -263,7 +259,7 @@
           },
           "text": {
             "type": "string",
-            "description": "Text to convert to speech. Billing is calculated from the trimmed text length.",
+            "description": "Text to convert to speech.",
             "minLength": 1,
             "maxLength": 40000,
             "example": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."

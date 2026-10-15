@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Qwen Image 2.1 API",
-    "description": "Text-to-image, multi-reference generation, transparent backgrounds, and mask editing with Qwen Image 2.1",
+    "description": "The Qwen Image 2.1 API generates one image from text, combines up to 10 reference images, or applies a mask edit. Output is 1K or 2K, and backgrounds can be opaque or transparent.",
     "version": "1.0.0"
   },
   "servers": [

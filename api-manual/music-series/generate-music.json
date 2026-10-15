@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Generate Music API",
-    "description": "AI-powered music generation with customizable styles and vocals",
+    "description": "The Generate Music API generates songs from a prompt, or in custom mode from style, title, and lyrics, using model versions V4 through V5.5. A custom length from 10 to 360 seconds is available only for V5.5 in custom mode.",
     "version": "1.0.0"
   },
   "servers": [

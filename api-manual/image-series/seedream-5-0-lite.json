@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedream-5.0-Lite API",
-    "description": "Advanced image generation model with support for text-to-image, image-to-image, and multi-image reference capabilities",
+    "description": "The Seedream 5.0 Lite API generates images from text or edits up to 10 reference images. Output can be 2K, 3K, a preset ratio, or a custom width and height.",
     "version": "1.0.0"
   },
   "servers": [

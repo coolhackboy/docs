@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Gemini Omni 1.1 Flash API",
-    "description": "Generate videos from text, keyframes, reference images, or a reference video",
+    "description": "The Gemini Omni 1.1 Flash API generates 4–10 second videos from text, one or two keyframes, up to seven reference images, or one 3–10 second reference video at 360p to 4K.",
     "version": "1.0.0"
   },
   "servers": [

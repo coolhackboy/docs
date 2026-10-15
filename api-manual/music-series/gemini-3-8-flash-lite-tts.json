@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Gemini 3.8 Flash Lite TTS API",
-    "description": "Generate native WAV speech from a transcript or a two-speaker dialogue.",
+    "description": "The Gemini 3.8 Flash Lite TTS API converts a transcript or a two-speaker dialogue into WAV speech using preset voices and optional style instructions. The complete input is limited to 8,192 tokens.",
     "version": "1.0.0"
   },
   "servers": [

@@ -1,6 +1,6 @@
 ---
 title: "Hailuo 2.3"
-description: "Text-to-video and optional first-frame guided generation"
+description: "The Hailuo 2.3 API generates a video from text, optionally guided by one first frame, at 768p for 6 or 10 seconds or at 1080p for 6 seconds."
 icon: "video"
 openapi: "/api-manual/video-series/hailuo-2-3.json POST /api/generate/submit"
 ---
@@ -10,19 +10,17 @@ openapi: "/api-manual/video-series/hailuo-2-3.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Hailuo 2.3
-
 `hailuo-2.3` supports prompt-only generation and optional first-frame guided generation.
 
-## Available Model
+## Models
 
 - **hailuo-2.3** - Text-to-video with optional `start_image_url`
 
-## Required Parameters
+## Required parameters
 
 - **prompt**: Text prompt for video generation
 
-## Optional Parameters
+## Optional parameters
 
 - **duration**: `6` or `10`. Default is `6`
 - **resolution**: `768p` or `1080p`. Default is `768p`

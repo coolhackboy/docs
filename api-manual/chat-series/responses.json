@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Responses API",
-    "description": "OpenAI-compatible Responses API for text, multimodal input, tools, and streaming.",
+    "description": "The Responses API is an OpenAI-compatible endpoint for plain text or structured image input. Tool calls and server-sent event streaming are available when the selected model supports them.",
     "version": "1.0.0"
   },
   "servers": [

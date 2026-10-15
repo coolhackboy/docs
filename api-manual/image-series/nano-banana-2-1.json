@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Nano Banana 2.1 API",
-    "description": "Create and edit images with Nano Banana 2.1",
+    "description": "The Nano Banana 2.1 API generates an image from a prompt or edits up to 10 reference images. The default resolution is 1K, and editing can leave the aspect ratio on auto.",
     "version": "1.0.0"
   },
   "servers": [

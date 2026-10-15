@@ -1,24 +1,22 @@
 ---
-title: "Seedance 1.5 Pro Video Generation"
-description: "High-quality video generation with Seedance 1.5 Pro"
+title: "Seedance 1.5 Pro"
+description: "The Seedance 1.5 Pro API generates video from text or an image, with an optional generated audio track."
 icon: "video"
 openapi: "/api-manual/video-series/seedance-1-5-pro.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Seedance 1.5 Pro Video Generation
 
 Generate high-quality videos using Seedance 1.5 Pro by ByteDance. Supports both text-to-video and image-to-video workflows, with control over aspect ratio, resolution, duration, and optional audio generation.
 
-## Available Model
+## Models
 
 - **seedance-1.5-pro** - Video generation with text-to-video and image-to-video support
 
-## Key Features
+## Features
 
 - **Flexible Modes**: Text-to-video and image-to-video
 - **Aspect Ratio Control**: Flexible output aspect ratios

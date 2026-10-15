@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Nano Banana API",
-    "description": "Fast Image Generation powered by Gemini 2.5 Flash",
+    "description": "The Nano Banana API generates or edits images with Google's Gemini 2.5 Flash Image model. It is the earlier fast option in the Nano Banana series.",
     "version": "1.0.0"
   },
   "servers": [

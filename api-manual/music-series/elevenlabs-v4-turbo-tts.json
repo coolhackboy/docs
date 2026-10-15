@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - ElevenLabs V4 Turbo TTS API",
-    "description": "Generate fast speech with voice controls, 19 audio formats, and optional timestamps.",
+    "description": "The ElevenLabs V4 Turbo TTS API converts up to 5,000 characters of text into lower-latency speech with voice, stability, and similarity controls. Choose one of 19 audio formats, and optionally receive timestamps as a separate file.",
     "version": "1.0.0"
   },
   "servers": [

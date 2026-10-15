@@ -1,25 +1,23 @@
 ---
-title: "Nano Banana 2 Lite Image Generation"
-description: "Google's fastest and most cost-efficient Gemini Image model for rapid ideation, low-latency creative drafts, and high-throughput image generation"
+title: "Nano Banana 2 Lite"
+description: "The Nano Banana 2 Lite API generates images from text or edits reference images. It is the fast Gemini 3.1 Flash Lite Image model, and output aspect ratio can be set explicitly."
 icon: "image"
 openapi: "/api-manual/image-series/nano-banana-2-lite.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Nano Banana 2 Lite Image Generation
 
 Nano Banana 2 Lite is Google's fastest and most cost-efficient Gemini Image model, corresponding to Gemini 3.1 Flash Lite Image. It is designed for rapid ideation, low-latency creative drafts, high-throughput generation, and scaled image pipelines where speed and cost matter most.
 
-## Available Models
+## Models
 
 - **nano-banana-2-lite** - Text-to-image generation
 - **nano-banana-2-lite-edit** - Image editing with reference images
 
-## Input Parameters
+## Parameters
 
 - `prompt` - Required. Text instruction for the generated or edited image.
 - `image_urls` - Required for `nano-banana-2-lite-edit`. Not supported for `nano-banana-2-lite`.
@@ -27,7 +25,9 @@ Nano Banana 2 Lite is Google's fastest and most cost-efficient Gemini Image mode
 
 Supported `size` values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`.
 
-## Text-to-Image Example
+## Examples
+
+### Text-to-Image Example
 
 ```json
 {
@@ -40,7 +40,7 @@ Supported `size` values: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`
 }
 ```
 
-## Image Editing Example
+### Image Editing Example
 
 ```json
 {

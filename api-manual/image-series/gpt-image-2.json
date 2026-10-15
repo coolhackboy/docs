@@ -217,7 +217,7 @@
               },
               "resolution": {
                 "type": "string",
-                "description": "Output image resolution. `1K` (default): standard resolution (1x credits). `2K`: high resolution (2x credits). `4K`: ultra-high resolution, true 4K billing (4x credits) applies only to `16:9`, `9:16`, `21:9`, or custom sizes with a 3840-pixel edge; other 4K selections are billed as 2K.",
+                "description": "Output image resolution. `1K` (default): standard resolution. `2K`: high resolution. `4K`: ultra-high resolution applies to `16:9`, `9:16`, `21:9`, or custom sizes with a 3840-pixel edge; other 4K selections are downgraded to 2K.",
                 "enum": ["1K", "2K", "4K"],
                 "default": "1K",
                 "example": "1K"

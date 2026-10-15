@@ -1,23 +1,23 @@
 ---
-title: "Hailuo 03 Video Generation"
+title: "Hailuo 03"
 description: "Generate 2K videos from text, keyframes, or multimodal references"
 icon: "video"
 openapi: "/api-manual/video-series/hailuo-03.json POST /api/generate/submit"
 ---
 
 <Tip>
-1. A successful submission returns a `task_id`. When `callback_url` is provided, the result is posted to that URL after the task finishes or fails.
-2. You can always retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-## Capabilities
+## Features
 
 - **Text-to-Video**: Generate a video directly from a prompt.
 - **Image-to-Video**: Provide one starting frame and an optional ending frame through `image_urls`.
 - **Reference-to-Video**: Guide the result with reference images, videos, and audio.
 - **2K Output**: The current output resolution is fixed at `2K`.
 
-## Input Modes
+## Input modes
 
 - With no media input, the request uses text-to-video mode.
 - `image_urls` selects image-to-video mode. It accepts one starting frame and an optional second ending frame.
@@ -26,7 +26,7 @@ openapi: "/api-manual/video-series/hailuo-03.json POST /api/generate/submit"
 - Reference images, videos, and audio can be combined in one reference-to-video request.
 - Reference audio cannot be the only reference input. Include at least one reference image or reference video.
 
-## Parameter Notes
+## Notes
 
 - `prompt` is required and accepts up to 2,000 characters.
 - `duration` accepts an integer from `5` through `15` seconds and defaults to `5`.
@@ -40,6 +40,3 @@ openapi: "/api-manual/video-series/hailuo-03.json POST /api/generate/submit"
 - Mention reference assets in the prompt by modality and order, such as `Image 1`, `Video 1`, and `Audio 1`.
 - All media URLs must be publicly accessible and directly downloadable.
 
-## Billing
-
-Video generation is billed by duration. When reference videos are used, their input duration is also included in duration-based billing.

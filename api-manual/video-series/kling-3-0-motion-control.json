@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling 3.0 Motion Control API",
-    "description": "Reference image and reference video motion transfer",
+    "description": "The Kling 3.0 Motion Control API transfers motion from one reference video onto one image at 720p or 1080p. Video orientation allows up to 30 seconds and an optional facial element; image orientation allows up to 10 seconds.",
     "version": "1.0.0"
   },
   "servers": [

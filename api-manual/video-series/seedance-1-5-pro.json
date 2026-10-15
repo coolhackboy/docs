@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedance 1.5 Pro API",
-    "description": "High-quality Video Generation with Seedance 1.5 Pro",
+    "description": "The Seedance 1.5 Pro API generates video from text or an image, with an optional generated audio track.",
     "version": "1.0.0"
   },
   "servers": [

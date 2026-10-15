@@ -2,7 +2,7 @@
     "openapi":  "3.0.0",
     "info":  {
                  "title":  "PoYo AI - Wan-2.7-Image-Pro API",
-                 "description":  "High-quality image generation model with unified text-to-image and image editing support, including custom image sizes",
+                 "description":  "The Wan 2.7 Image Pro API generates or edits images, using up to four reference images and up to four outputs. Size can be a listed preset or a custom width and height.",
                  "version":  "1.0.0"
              },
     "servers":  [

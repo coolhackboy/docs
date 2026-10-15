@@ -1,34 +1,32 @@
 ---
-title: "Seedance 2 Video Generation"
-description: "Video generation with Seedance 2 and Seedance 2 Fast"
+title: "Seedance 2"
+description: "The Seedance 2 API generates a 4–15 second video from text, up to two frames, or image, video, and audio references. A faster variant is limited to 480p and 720p."
 icon: "video"
 openapi: "/api-manual/video-series/seedance-2.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-## Available Models
+## Models
 
 - **seedance-2** - Standard Seedance 2 video generation model
 - **seedance-2-fast** - Faster, lower-cost Seedance 2 variant
 
-## Key Features
+## Features
 
 - **Text-to-Video**: Generate videos directly from prompt text
 - **First and Last Frame Control**: Use up to 2 images as the first and last frame
 - **Multimodal Reference**: Guide generation with reference images, videos, and audio
 - **Optional Audio**: Request generated audio together with the video
 
-## Variant Notes
+## Notes
 
 - `seedance-2` is the default standard-quality variant
 - `seedance-2` supports `480p`, `720p`, `1080p`, and `4k`
-- `seedance-2-fast` uses the same input schema but is optimized for lower latency and lower credit cost, and supports `480p` and `720p` only
-
-## Important Notes
+- `seedance-2-fast` uses the same input schema but is optimized for lower latency, and supports `480p` and `720p` only
 
 - `prompt` must be between 3 and 20,000 characters.
 - `image_urls` is used for image-to-video mode and supports up to 2 images only:
@@ -45,7 +43,3 @@ openapi: "/api-manual/video-series/seedance-2.json POST /api/generate/submit"
 - `resolution` supports `1080p` and `4k` only for `seedance-2`. `seedance-2-fast` remains limited to `480p` and `720p`.
 - All remote URLs should be publicly accessible and directly downloadable.
 
-## Credits Reference
-
-- Credits are calculated based on video duration and selected resolution.
-- If `reference_video_urls` is provided, the final credit cost may differ from requests without video references.

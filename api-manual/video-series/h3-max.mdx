@@ -1,15 +1,14 @@
 ---
-title: "H3 Max Video Generation"
+title: "H3 Max"
 description: "Create videos from text, keyframes, or multimodal references"
 icon: "video"
 openapi: "/api-manual/video-series/h3-max.json POST /api/generate/submit"
 ---
 
-<Note>
-Check the live model catalog for availability before submitting a request.
-</Note>
-
-Successful submissions return a `task_id`. Use [Query Task Status](/api-manual/task-management/status) to retrieve the result, or supply `callback_url` at the top level to receive a notification when the task finishes or fails.
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
 
 ## Input modes
 
@@ -38,9 +37,9 @@ Starting and ending frames cannot be combined with any reference assets. Referen
 
 Media URLs must be publicly accessible HTTP(S) download links. Mention references in the prompt as `Image 1`, `Video 1`, and `Audio 1`, following the order in each list.
 
-The server checks reference metadata before submitting. If it cannot reliably determine the reference usage, the request is rejected before credits are charged.
+The server checks reference metadata before submitting. If it cannot reliably determine the reference usage, the request is rejected.
 
-Reference images currently support `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `5:2`, and `2:5` shapes. Reference videos must use a constant 24 fps, square pixels, no rotation metadata, and a `16:9` or `9:16` shape. After limiting the counted frames to the requested output duration, the frame count must be 48, 120, 240, or 360. Reference audio must be 32 kHz with a decoded sample count divisible by 800, and each clip must not exceed the requested output duration. Other media formats or timing patterns are rejected before charging.
+Reference images currently support `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `5:2`, and `2:5` shapes. Reference videos must use a constant 24 fps, square pixels, no rotation metadata, and a `16:9` or `9:16` shape. After limiting the counted frames to the requested output duration, the frame count must be 48, 120, 240, or 360. Reference audio must be 32 kHz with a decoded sample count divisible by 800, and each clip must not exceed the requested output duration. Other media formats or timing patterns are rejected.
 
 ## Examples
 
@@ -78,6 +77,3 @@ Reference images currently support `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `5:2`, a
 }
 ```
 
-## Billing
-
-Output charges depend on duration and resolution. Each reference request includes a shared reference allowance; material above that allowance incurs an additional fee. The server calculates reference usage across images, video, and audio together. Do not supply token counts or media metadata in your request.

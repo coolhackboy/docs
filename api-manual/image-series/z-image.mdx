@@ -1,16 +1,14 @@
 ﻿---
-title: "Z-Image Generation"
-description: "High-quality image generation with unified text-to-image and image editing support"
+title: "Z-Image"
+description: "The Z-Image API generates an image from a prompt or edits exactly one reference image. Text-to-image requires an aspect ratio of 1:1, 4:3, 3:4, 16:9, or 9:16."
 icon: "image"
 openapi: "/api-manual/image-series/z-image.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Z-Image Generation
 
 Generate high-quality images using the Z-Image model. Supports both text-to-image and image editing with a unified request shape.
 
@@ -19,23 +17,18 @@ Generate high-quality images using the Z-Image model. Supports both text-to-imag
 - If `input.image_urls` is omitted, the request is handled as text-to-image
 - If `input.image_urls` is provided, the request is handled as image editing automatically
 
-## Available Model
+## Models
 
 - **z-image** - Unified text-to-image and image editing model
 
-## Supported Parameters
+## Parameters
 
 - `prompt` - Required prompt, max `1000` characters
 - `size` - Required for text-to-image, optional for image editing. Supported values: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`
 - `image_urls` - Optional reference image array for editing, must contain exactly `1` image URL
 - `enable_safety_checker` - Optional boolean safety checker switch, defaults to `true`
 
-## Notes
-
-- `input.image_urls[0]` is used as the edit reference image
-- When `image_urls` is present, `size` can be omitted
-
-## How to Call
+## Examples
 
 Use the unified submit endpoint: `POST /api/generate/submit`
 
@@ -76,5 +69,8 @@ curl --request POST \
   }'
 ```
 
+## Notes
 
+- `input.image_urls[0]` is used as the edit reference image
+- When `image_urls` is present, `size` can be omitted
 

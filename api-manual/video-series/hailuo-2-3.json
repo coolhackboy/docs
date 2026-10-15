@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Hailuo 2.3 API",
-    "description": "Text-to-video and optional first-frame guided generation",
+    "description": "The Hailuo 2.3 API generates a video from text, optionally guided by one first frame, at 768p for 6 or 10 seconds or at 1080p for 6 seconds.",
     "version": "1.0.0"
   },
   "servers": [

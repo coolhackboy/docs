@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - VEO 3.1 Official API",
-    "description": "Official VEO 3.1 video generation with duration, audio control, and image-guided modes.",
+    "description": "The VEO 3.1 Official API generates 4, 6, or 8 second videos from text or images, with optional silent output. Quality models can output 4K; three reference images are fixed at 8 seconds.",
     "version": "1.0.0"
   },
   "servers": [

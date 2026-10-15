@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedream-4 API",
-    "description": "Image generation model powered by ByteDance Seedream-4 with support for text-to-image and image editing",
+    "description": "The Seedream 4.0 API generates images from text or edits reference images. Resolution is 1K, 2K, or 4K, and the number of reference images plus outputs cannot exceed 15.",
     "version": "1.0.0"
   },
   "servers": [

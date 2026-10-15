@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling 2.1 API",
-    "description": "Standard and Pro image-to-video generation",
+    "description": "The Kling 2.1 API animates a required first-frame image for 5 or 10 seconds. Pro can also take an optional last frame.",
     "version": "1.0.0"
   },
   "servers": [

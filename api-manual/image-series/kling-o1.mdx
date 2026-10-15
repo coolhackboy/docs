@@ -1,20 +1,20 @@
 ﻿---
 title: "Kling-o1"
-description: "A high-consistency image generation model optimized for precise reference alignment and fine detail control, ideal for character and product-focused use cases"
+description: "The Kling O1 API edits images using 1 to 10 reference images and optional character or object elements. Output is 1K or 2K, in preset aspect ratios or auto."
 icon: "image"
 openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-## Available Model
+## Models
 
 - **kling-o1-image-edit** - Image editing with reference images and optional element guidance
 
-## Supported Parameters
+## Parameters
 
 - `prompt` - Required editing prompt
 - `image_urls` - Required reference image URLs, `1-10` images
@@ -24,13 +24,7 @@ openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 - `output_format` - `jpeg`, `png`, `webp`
 - `n` - Number of output images, `1-9`
 
-## Billing Notes
-
-Billing is based on the selected resolution and the output count specified by `n`.
-
-- Total charge depends on the selected resolution and `n`
-
-## How to Call
+## Examples
 
 Use the unified submit endpoint: `POST /api/generate/submit`
 

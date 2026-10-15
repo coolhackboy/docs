@@ -1,6 +1,6 @@
 ---
 title: "Runway Gen-4.5"
-description: "Video generation with optional reference image, 5s and 10s durations"
+description: "The Runway Gen-4.5 API generates a 5 or 10 second video from text, with an optional single reference image, in 16:9, 9:16, 4:3, 3:4, 1:1, or 21:9."
 icon: "video"
 openapi: "/api-manual/video-series/runway-gen-4-5.json POST /api/generate/submit"
 ---
@@ -10,19 +10,17 @@ openapi: "/api-manual/video-series/runway-gen-4-5.json POST /api/generate/submit
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-# Runway Gen-4.5
-
 `runway-gen-4.5` is exposed through the unified submit endpoint with text-to-video and optional single-image guidance.
 
-## Available Model
+## Models
 
 - **runway-gen-4.5** - Text-to-video generation
 
-## Required Parameters
+## Required parameters
 
 - **prompt**: Text prompt for generation
 
-## Optional Parameters
+## Optional parameters
 
 - **duration**: `5` or `10`. Default is `5`
 - **aspect_ratio**: `16:9`, `9:16`, `4:3`, `3:4`, `1:1`, or `21:9`. Default is `16:9`

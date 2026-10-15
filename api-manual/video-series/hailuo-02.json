@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Hailuo 02 API",
-    "description": "Advanced Video Generation with Hailuo 02",
+    "description": "The Hailuo 02 API generates text or image videos at 512P or 768P for 6 or 10 seconds, or at 1080P for 6 seconds. A last frame is optional and requires 768P.",
     "version": "1.0.0"
   },
   "servers": [

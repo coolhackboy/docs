@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Wan 2.7 Video API",
-    "description": "Wan 2.7 Video API",
+    "description": "The Wan 2.7 API generates or edits 720p or 1080p video from text, one or two frames, reference media, or a source video. Text and image requests can include an audio URL.",
     "version": "1.0.0"
   },
   "servers": [

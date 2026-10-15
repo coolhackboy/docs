@@ -1,24 +1,22 @@
 ---
 title: "Kling 2.6 Motion Control"
-description: "Advanced motion transfer with character animation"
+description: "The Kling 2.6 Motion Control API transfers motion from a 3–30 second reference video onto one character image at 720p or 1080p. Image orientation caps the result at 10 seconds; video orientation allows up to 30 seconds."
 icon: "video"
 openapi: "/api-manual/video-series/kling-2.6-motion-control.json POST /api/generate/submit"
 ---
 
 <Tip>
 1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
-2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Kling 2.6 Motion Control
 
 Transfer motion from reference videos to character images with precise motion control. Create dynamic character animations by combining static images with motion reference videos while controlling scene details through text prompts.
 
-## Available Model
+## Models
 
 - **kling-2.6-motion-control** - Motion transfer from video to character image
 
-## Key Features
+## Features
 
 - **Motion Transfer**: Transfer real human motion, gestures, and expressions from reference videos to character images
 - **Character Animation**: Animate static characters with dynamic motion patterns
@@ -26,7 +24,7 @@ Transfer motion from reference videos to character images with precise motion co
 - **Scene Control**: Control scene details and environment through optional text prompts
 - **Flexible Resolution**: Choose between 720p (standard) or 1080p (high quality) output
 
-## Required Parameters
+## Required parameters
 
 - **image_urls**: Single character image showing the subject's head, shoulders, and torso
 - **video_urls**: Single reference video (3-30 seconds) for motion transfer
@@ -35,6 +33,6 @@ Transfer motion from reference videos to character images with precise motion co
   - `"video"` - Maintains consistency with character orientation from the reference video (maximum 30-second output)
 - **resolution**: Output resolution (`"720p"` or `"1080p"`)
 
-## Optional Parameters
+## Optional parameters
 
 - **prompt**: Text description of the desired output scene (max 2,500 characters)

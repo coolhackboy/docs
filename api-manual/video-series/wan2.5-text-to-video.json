@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Wan 2.5 Text-to-Video API",
-    "description": "Text-to-video generation with Alibaba Wan 2.5",
+    "description": "The Wan 2.5 Text-to-Video API generates a 5 or 10 second video from text at 480p, 720p, or 1080p, with an optional audio URL.",
     "version": "1.0.0"
   },
   "servers": [

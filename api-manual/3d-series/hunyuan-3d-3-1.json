@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Hunyuan 3D v3.1 API",
-    "description": "Hunyuan 3D v3.1 Pro and Rapid text-to-3D and image-to-3D generation",
+    "description": "The Hunyuan 3D v3.1 API generates a 3D model from text or one image with Pro or Rapid. Pro can take extra views, a face-count target, PBR materials, or a geometry-only GLB; Rapid can return a textured model or an untextured white model.",
     "version": "1.0.0"
   },
   "servers": [

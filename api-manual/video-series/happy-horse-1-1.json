@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Happy Horse 1.1 API",
-    "description": "Happy Horse 1.1 text-to-video, image-to-video, and reference-to-video modes",
+    "description": "The Happy Horse 1.1 API generates a 3–15 second 720p or 1080p video from text, one first-frame image, or one to nine reference images.",
     "version": "1.0.0"
   },
   "servers": [

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling 3.0 4K API",
-    "description": "Native 4K Video Generation with Kling 3.0/4K",
+    "description": "The Kling 3.0 4K API generates native 4K video of 3–15 seconds from text or start and end frames, with optional native audio and multi-shot prompts.",
     "version": "1.0.0"
   },
   "servers": [

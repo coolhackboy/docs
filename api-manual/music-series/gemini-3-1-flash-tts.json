@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Gemini 3.1 Flash TTS API",
-    "description": "Generate expressive multilingual speech using Gemini 3.1 Flash TTS",
+    "description": "The Gemini 3.1 Flash TTS API converts text into single-speaker or two-speaker speech using a preset voice, inline delivery tags, and optional style instructions. Set an optional language, and return MP3, WAV, or Opus audio.",
     "version": "1.0.0"
   },
   "servers": [
@@ -34,8 +34,7 @@
               },
               "examples": {
                 "single-audio-tags-mp3": {
-                  "summary": "Single speaker with audio tags (3.648000 credits)",
-                  "description": "152 billable characters: 101 text characters + 51 style instruction characters.",
+                  "summary": "Single speaker with audio tags",
                   "value": {
                     "model": "gemini-3-1-flash-tts",
                     "callback_url": "https://your-domain.com/callback",
@@ -49,8 +48,7 @@
                   }
                 },
                 "multilingual-store-wav": {
-                  "summary": "Multilingual single voice output (4.440000 credits)",
-                  "description": "185 billable characters: 133 text characters + 52 style instruction characters.",
+                  "summary": "Multilingual single voice output",
                   "value": {
                     "model": "gemini-3-1-flash-tts",
                     "callback_url": "https://your-domain.com/callback",
@@ -65,8 +63,7 @@
                   }
                 },
                 "two-speaker-podcast-ogg": {
-                  "summary": "Two speaker podcast dialogue (4.800000 credits)",
-                  "description": "200 billable characters: 143 text characters + 57 style instruction characters.",
+                  "summary": "Two speaker podcast dialogue",
                   "value": {
                     "model": "gemini-3-1-flash-tts",
                     "callback_url": "https://your-domain.com/callback",

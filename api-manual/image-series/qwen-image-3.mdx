@@ -1,19 +1,18 @@
 ---
-title: "Qwen Image 3 Generation"
-description: "Unified text-to-image and reference-image generation with Qwen Image 3"
+title: "Qwen Image 3"
+description: "The Qwen Image 3 API generates images from text or from one to three reference images, including Qwen Image 3 Pro. Both support 1K and 2K output, negative prompts, and natural-language edits."
 icon: "image"
 openapi: "/api-manual/image-series/qwen-image-3.json POST /api/generate/submit"
 ---
 
 <Tip>
-After submission, a `task_id` is returned. You can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint or provide a `callback_url` to receive a completion notification.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Qwen Image 3 Generation
 
 Qwen Image 3 supports text-to-image and multi-reference image generation for posters, product visuals, typography, and natural-language image editing.
 
-## Available Models
+## Models
 
 - **qwen-image-3** - Standard image generation with 1K and 2K output
 - **qwen-image-3-pro** - Higher-quality image generation with 1K and 2K output
@@ -31,7 +30,9 @@ Both models use a unified endpoint. Omit `image_urls` for text-to-image generati
 - `seed` accepts values from 0 to 2,147,483,647.
 - `enable_safety_checker` controls content safety checking.
 
-## Pro Text-to-Image Example
+## Examples
+
+### Pro Text-to-Image Example
 
 ```json
 {
@@ -48,7 +49,7 @@ Both models use a unified endpoint. Omit `image_urls` for text-to-image generati
 }
 ```
 
-## Standard Reference-Image Example
+### Standard Reference-Image Example
 
 ```json
 {
@@ -64,7 +65,7 @@ Both models use a unified endpoint. Omit `image_urls` for text-to-image generati
 }
 ```
 
-## Pro 2K Reference-Image Example
+### Pro 2K Reference-Image Example
 
 ```json
 {
@@ -79,7 +80,7 @@ Both models use a unified endpoint. Omit `image_urls` for text-to-image generati
 }
 ```
 
-## Pro Multi-Reference Example
+### Pro Multi-Reference Example
 
 ```json
 {

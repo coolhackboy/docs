@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling Avatar 2.0 API",
-    "description": "Audio-driven avatar video generation with Kling Avatar 2.0 Standard and Pro",
+    "description": "The Kling Avatar 2.0 API generates an avatar video from one character image and a driving audio track of 2–60 seconds, with an optional prompt.",
     "version": "1.0.0"
   },
   "servers": [

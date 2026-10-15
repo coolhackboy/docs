@@ -1,16 +1,14 @@
 ---
-title: "Wan 3.0 Prime Video Generation"
-description: "Wan 3.0 Prime multimodal video generation API"
+title: "Wan 3.0 Prime"
+description: "The Wan 3.0 Prime API generates a 2–30 second 480p, 720p, or 1080p video from text, frames, or multimodal references, with controllable generated audio."
 icon: "video"
 openapi: "/api-manual/video-series/wan-3-0-video-prime.json POST /api/generate/submit"
 ---
 
 <Tip>
-1. After submission, a `task_id` is returned. If `callback_url` is provided, a POST request is sent when the task finishes or fails.
-2. You can always retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Wan 3.0 Prime Video Generation
 
 Wan 3.0 Prime includes three models for text, start/end frame, and multimodal reference video generation.
 
@@ -20,7 +18,7 @@ Wan 3.0 Prime includes three models for text, start/end frame, and multimodal re
 - `wan3.0-prime-image-to-video` — generates video from one or two start/end frame images
 - `wan3.0-prime-reference-to-video` — generates video from multimodal references
 
-## Key Features
+## Features
 
 - **Duration**: 2–30 seconds
 - **Resolution**: 480p, 720p, or 1080p

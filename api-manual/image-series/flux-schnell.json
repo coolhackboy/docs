@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Flux Schnell API",
-    "description": "Flux Schnell fast text-to-image generation API",
+    "description": "The FLUX.1 Schnell API generates images quickly from a text prompt. Output size can be a preset ratio, a high-definition square, or a custom WIDTHxHEIGHT value.",
     "version": "1.0.0"
   },
   "servers": [

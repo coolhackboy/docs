@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Seedream-5.0-Flash API",
-    "description": "Fast Seedream image generation and reference-image editing",
+    "description": "The Seedream 5.0 Flash API generates one image from text or edits 1 to 10 reference images. Resolution is 1K, 1.5K, or 2K.",
     "version": "1.0.0"
   },
   "servers": [{"url": "https://api.poyo.ai", "description": "Production server"}],

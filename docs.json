@@ -172,12 +172,6 @@
             "group": "Image Model",
             "pages": [
               {
-                "group": "Ideogram",
-                "pages": [
-                  "api-manual/image-series/ideogram-v4-5"
-                ]
-              },
-              {
                 "group": "OpenAI",
                 "pages": [
                   "api-manual/image-series/gpt-4o-image",
@@ -239,6 +233,12 @@
                   "api-manual/image-series/wan-2-7-image-pro",
                   "api-manual/image-series/wan-2-7-image",
                   "api-manual/image-series/z-image"
+                ]
+              },
+              {
+                "group": "Ideogram",
+                "pages": [
+                  "api-manual/image-series/ideogram-v4-5"
                 ]
               }
             ]
@@ -389,9 +389,9 @@
                 "pages": [
                   "api-manual/music-series/elevenlabs-music",
                   "api-manual/music-series/elevenlabs-v3-tts",
+                  "api-manual/music-series/elevenlabs-tts-turbo-2-5",
                   "api-manual/music-series/elevenlabs-v4-tts",
-                  "api-manual/music-series/elevenlabs-v4-turbo-tts",
-                  "api-manual/music-series/elevenlabs-tts-turbo-2-5"
+                  "api-manual/music-series/elevenlabs-v4-turbo-tts"
                 ]
               },
               {

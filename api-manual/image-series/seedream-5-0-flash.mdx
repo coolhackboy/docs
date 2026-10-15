@@ -1,20 +1,18 @@
 ---
-title: "Seedream-5.0-Flash Image Generation"
-description: "Fast Seedream image generation and reference-image editing"
+title: "Seedream-5.0-Flash"
+description: "The Seedream 5.0 Flash API generates one image from text or edits 1 to 10 reference images. Resolution is 1K, 1.5K, or 2K."
 icon: "image"
 openapi: "/api-manual/image-series/seedream-5-0-flash.json POST /api/generate/submit"
 ---
 
 <Tip>
-1. After submission, a `task_id` will be returned. If you provided a `callback_url`, a POST request will be sent to it when the task finishes or fails.
-2. You can also retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
-
-# Seedream-5.0-Flash Image Generation
 
 Seedream-5.0-Flash generates images from text or edits images using up to 10 references. Each request produces one image.
 
-## Available Models
+## Models
 
 - **seedream-5.0-flash** - Text-to-image generation
 - **seedream-5.0-flash-edit** - Image editing with 1–10 reference images
@@ -31,11 +29,7 @@ Seedream-5.0-Flash generates images from text or edits images using up to 10 ref
 
 - Resolution preset: `1K`, `1.5K`, `2K`
 
-## Pricing
-
-Each request generates one image and uses the current Seedream-5.0-Flash price.
-
-## How to Call
+## Examples
 
 Use the unified submit endpoint: `POST /api/generate/submit`
 

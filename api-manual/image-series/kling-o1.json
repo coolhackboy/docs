@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O1-Image-Edit API",
-    "description": "A high-consistency image generation model optimized for precise reference alignment and fine detail control, ideal for character and product-focused use cases",
+    "description": "The Kling O1 API edits images using 1 to 10 reference images and optional character or object elements. Output is 1K or 2K, in preset aspect ratios or auto.",
     "version": "1.0.0"
   },
   "servers": [
@@ -210,7 +210,7 @@
               },
               "n": {
                 "type": "integer",
-                "description": "Number of images to generate (1-9). Billing is based on the selected resolution and `n`.",
+                "description": "Number of images to generate (1-9).",
                 "minimum": 1,
                 "maximum": 9,
                 "default": 1,

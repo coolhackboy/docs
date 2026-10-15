@@ -80,7 +80,7 @@ Authorization: Bearer YOUR_API_KEY
 | `data.progress` | integer | Completion percentage (0-100) |
 | `data.error_message` | string | Error description (when status is `failed`) |
 
-For [Omni Moderation](/api-manual/moderation-series/omni-moderation), inspect `data.output.results[].flagged` after the status becomes `finished`. A `flagged: true` result means the review completed and detected content; it does not make the task `failed`. Omni Moderation is FREE (0 credits), runs asynchronously, and supports callbacks through `callback_url`. Streaming is not supported. Its callback body is the same task data object returned here, including `output` when available and `credits_amount: 0`.
+For [Omni Moderation](/api-manual/moderation-series/omni-moderation), inspect `data.output.results[].flagged` after the status becomes `finished`. A `flagged: true` result means the review completed and detected content; it does not make the task `failed`. Omni Moderation runs asynchronously, and supports callbacks through `callback_url`. Streaming is not supported. Its callback body is the same task data object returned here, including `output` when available and `credits_amount: 0`.
 
 ### Status Values
 
@@ -648,10 +648,6 @@ except RuntimeError as e:
 <Warning>
   **Content Validity**: Generated images and videos are accessible for **24 hours** after creation. Download and save your content promptly.
 </Warning>
-
-<Info>
-  **Credits**: Credits are only deducted when the task status becomes `finished`. Failed tasks do not consume credits.
-</Info>
 
 <Tip>
   **Webhooks**: For models that support callbacks, you can provide a `callback_url` when submitting tasks to receive automatic notifications. Omni Moderation callbacks include the same `output` object as status queries. See the [Quick Start guide](/guides/getting-started/quickstart#webhook-callbacks).
