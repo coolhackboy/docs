@@ -120,7 +120,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "pattern": "^https?://"
+                  "format": "uri"
                 },
                 "minItems": 1,
                 "maxItems": 1,
@@ -129,8 +129,7 @@
               "audio_url": {
                 "type": "string",
                 "format": "uri",
-                "pattern": "^https?://",
-                "description": "Driving audio URL. Audio must be 4–300 seconds long and no larger than 15 MB."
+                "description": "Driving audio URL. Audio must be 4–300 seconds long and no larger than 15 MB. Use a publicly accessible HTTP or HTTPS URL."
               },
               "prompt": {
                 "type": "string",
