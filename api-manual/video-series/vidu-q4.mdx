@@ -1,6 +1,6 @@
 ---
 title: "Vidu Q4"
-description: "Generate a 3–16 second video from text, one starting frame, or reference images and audio, at resolutions from 540p to 4k."
+description: "Generate a 3–16 second video from one starting frame or reference images, with optional reference audio, at resolutions from 540p to 4k."
 icon: "video"
 openapi: "/api-manual/video-series/vidu-q4.json POST /api/generate/submit"
 ---
@@ -10,44 +10,43 @@ openapi: "/api-manual/video-series/vidu-q4.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-Vidu Q4 creates videos from text, animates a starting frame, or uses reference images and audio to guide the result.
+Vidu Q4 animates a starting frame or uses reference images to guide the result. Reference audio can optionally accompany reference images.
 
 ## Models
 
-- **vidu-q4** — Text-to-video, image-to-video, and reference-to-video generation
+- **vidu-q4** — Image-to-video and reference-to-video generation
 
 ## Features
 
 - Generate videos from 3 to 16 seconds long.
-- Animate one starting-frame image or guide a video with up to 12 reference images and 3 reference audio files.
+- Animate one starting-frame image or guide a video with 1–12 reference images and up to 3 optional reference audio files.
 - Choose an output resolution from 540p to 4k.
-- Generate an optional audio track in text-to-video and reference-to-video modes.
+- Generate an optional audio track in reference-to-video mode.
 
 ## Input modes
 
-- **Text-to-video**: Provide `prompt` without image or audio references.
 - **Image-to-video**: Provide exactly one URL in `image_urls`. `prompt` is optional. Do not combine this mode with `reference_image_urls` or `reference_audio_urls`, and do not send `aspect_ratio` or `generate_audio`.
-- **Reference-to-video**: Provide `prompt` and one or both of `reference_image_urls` and `reference_audio_urls`. Do not send `image_urls`.
+- **Reference-to-video**: Provide `prompt` and 1–12 URLs in `reference_image_urls`. `reference_audio_urls` is optional and must accompany reference images. Do not send `image_urls`.
 
 ## Required parameters
 
-- `prompt` (string): Required for text-to-video and reference-to-video. Must contain 1–5,000 characters and cannot be blank.
+- `prompt` (string): Required for reference-to-video. Must contain 1–5,000 characters and cannot be blank.
 - `image_urls` (array of strings): Required for image-to-video. Must contain exactly one starting-frame image URL.
+- `reference_image_urls` (array of strings): Required for reference-to-video. Must contain 1–12 reference image URLs.
 
 ## Optional parameters
 
 - `prompt` (string): Optional for image-to-video, with a maximum of 5,000 characters.
-- `reference_image_urls` (array of strings): Up to 12 reference image URLs for reference-to-video.
-- `reference_audio_urls` (array of strings): Up to 3 reference audio URLs for reference-to-video. Each file must be MP3 and 3–12 seconds long.
+- `reference_audio_urls` (array of strings): Optional audio accompanying `reference_image_urls`, up to 3 files. Each file must be MP3 and 3–12 seconds long. Audio cannot be used without reference images.
 - `duration` (integer): Output duration from 3 to 16 seconds. Defaults to `5`.
 - `resolution` (string): `540p`, `720p`, `1080p`, `2k`, or `4k`. Defaults to `720p`.
-- `aspect_ratio` (string): `16:9`, `9:16`, `4:3`, `3:4`, or `1:1`. Defaults to `16:9`. Available for text-to-video and reference-to-video only.
-- `generate_audio` (boolean): Generate an audio track. Defaults to `false`. Available for text-to-video and reference-to-video only.
+- `aspect_ratio` (string): `16:9`, `9:16`, `4:3`, `3:4`, or `1:1`. Defaults to `16:9`. Available for reference-to-video only.
+- `generate_audio` (boolean): Generate an audio track. Defaults to `false`. Available for reference-to-video only.
 - `enable_safety_checker` (boolean): Enable content safety checks. Defaults to `true`.
 
 ## Examples
 
-The request examples show text generation, animation of one starting frame with an optional prompt, and generation guided by reference images and audio. All three modes use the same `vidu-q4` model ID.
+The request examples show animation of one starting frame with an optional prompt, and generation guided by reference images with optional audio. Both modes use the same `vidu-q4` model ID.
 
 ## Notes
 
