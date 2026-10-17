@@ -1,0 +1,42 @@
+---
+title: "OmniHuman 2.0"
+description: "Animate one character image with a 4–300 second driving audio track and optional performance instructions."
+icon: "video"
+openapi: "/api-manual/video-series/omnihuman-2-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+OmniHuman 2.0 creates an audio-driven character video from one image and a driving audio file. Use an optional prompt to guide the character's motion and performance.
+
+## Models
+
+- **omnihuman-2.0** — Audio-driven character animation
+
+## Features
+
+- Animate one character image with a driving audio track.
+- Guide motion and performance with an optional text prompt.
+
+## Required parameters
+
+- `image_urls` (array of strings): Exactly one character image URL.
+- `audio_url` (string): Driving audio URL. Audio must be 4–300 seconds long and no larger than 15 MB.
+
+## Optional parameters
+
+- `prompt` (string): Optional instructions for motion and performance.
+
+## Examples
+
+The request example uses only the required `image_urls` and `audio_url` fields. Add `prompt` inside `input` when performance instructions are needed.
+
+## Notes
+
+- Put all generation parameters inside `input`.
+- Images must use publicly accessible HTTP or HTTPS URLs.
+- `audio_url` must be a publicly accessible HTTP or HTTPS URL.
+- A separate `duration` parameter is not accepted; the driving audio determines the requested performance length.

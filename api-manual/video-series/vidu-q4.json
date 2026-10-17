@@ -1,0 +1,295 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Vidu Q4",
+    "description": "Generate video from text, one starting frame, or reference images and audio.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit a Vidu Q4 video task",
+        "operationId": "submit_vidu_q4",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "vidu-q4",
+                    "input": {
+                      "prompt": "A slow cinematic tracking shot through a sunlit forest.",
+                      "duration": 5,
+                      "resolution": "720p",
+                      "aspect_ratio": "16:9",
+                      "generate_audio": false
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Animate one starting frame",
+                  "value": {
+                    "model": "vidu-q4",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/start-frame.png"
+                      ]
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "Video guided by reference images and audio",
+                  "value": {
+                    "model": "vidu-q4",
+                    "input": {
+                      "prompt": "Animate the character from the reference image with movement guided by the reference audio.",
+                      "reference_image_urls": [
+                        "https://example.com/character.png"
+                      ],
+                      "reference_audio_urls": [
+                        "https://example.com/reference.mp3"
+                      ],
+                      "duration": 5,
+                      "resolution": "720p"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "vidu-q4"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure notifications."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "Video instructions, up to 5,000 characters. Required and non-empty for text-to-video and reference-to-video; optional for image-to-video."
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^https?://"
+                },
+                "minItems": 1,
+                "maxItems": 1,
+                "description": "Exactly one starting-frame image for image-to-video. Cannot be combined with reference_image_urls or reference_audio_urls. Use publicly accessible HTTP or HTTPS URLs."
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^https?://"
+                },
+                "minItems": 1,
+                "maxItems": 12,
+                "description": "Reference images for reference-to-video. Supports up to 12 images. Use publicly accessible HTTP or HTTPS URLs."
+              },
+              "reference_audio_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^https?://"
+                },
+                "minItems": 1,
+                "maxItems": 3,
+                "description": "Reference audio for reference-to-video. Supports up to 3 MP3 files, each 3–12 seconds long. Use publicly accessible HTTP or HTTPS URLs."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 16,
+                "default": 5,
+                "description": "Output duration in whole seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "540p",
+                  "720p",
+                  "1080p",
+                  "2k",
+                  "4k"
+                ],
+                "default": "720p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "4:3",
+                  "3:4",
+                  "1:1"
+                ],
+                "default": "16:9",
+                "description": "Output aspect ratio for text-to-video and reference-to-video. Do not send this field for image-to-video."
+              },
+              "generate_audio": {
+                "type": "boolean",
+                "default": false,
+                "description": "Generate an audio track for text-to-video or reference-to-video. Do not send this field for image-to-video."
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enable content safety checks."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792190000-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-17T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

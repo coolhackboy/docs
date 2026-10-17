@@ -110,6 +110,8 @@
       "/api-manual/video-series/happy-horse.json",
       "/api-manual/video-series/happy-horse-1-1.json",
       "/api-manual/video-series/runway-gen-4-5.json",
+      "/api-manual/video-series/vidu-q4.json",
+      "/api-manual/video-series/omnihuman-2-0.json",
       "/api-manual/task-management/3d-status.json",
       "/api-manual/3d-series/meshy-6-3d.json",
       "/api-manual/3d-series/hunyuan-3d-3-1.json",
@@ -307,6 +309,18 @@
                   "api-manual/video-series/hailuo-03",
                   "api-manual/video-series/h3-max",
                   "api-manual/video-series/h3-max-turbo"
+                ]
+              },
+              {
+                "group": "Vidu",
+                "pages": [
+                  "api-manual/video-series/vidu-q4"
+                ]
+              },
+              {
+                "group": "ByteDance",
+                "pages": [
+                  "api-manual/video-series/omnihuman-2-0"
                 ]
               },
               {
