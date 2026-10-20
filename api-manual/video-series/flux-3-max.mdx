@@ -1,0 +1,62 @@
+---
+title: "Flux 3 Max"
+description: "Create videos from text, starting and ending images, or positioned keyframes, with optional audio."
+icon: "video"
+openapi: "/api-manual/video-series/flux-3-max.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Flux 3 Max creates videos from a text description, animates starting and ending images, or connects images placed on a timeline. Describe the desired scene, motion, camera behavior, and audio in the prompt.
+
+## Models
+
+- **flux-3-max/text-to-video** — Video generation from text
+- **flux-3-max/image-to-video** — Video generation from a starting image and an optional ending image
+- **flux-3-max/keyframes-to-video** — Video generation from positioned keyframes
+
+## Features
+
+- Generate 5–20 seconds of video at 720p or 1080p.
+- Generate audio alongside the video or disable it with `sound: false`.
+- Guide transitions with a starting and ending image or up to 10 positioned keyframes.
+
+## Input modes
+
+| Model | Required media input |
+| --- | --- |
+| `flux-3-max/text-to-video` | None |
+| `flux-3-max/image-to-video` | 1–2 ordered URLs in `image_urls` |
+| `flux-3-max/keyframes-to-video` | 1–10 objects in `keyframes` |
+
+Text mode accepts no media fields. Image mode accepts `image_urls` only, with the starting image first and the optional ending image second. Keyframe mode accepts `keyframes` only.
+
+## Required parameters
+
+- `prompt` (string): Non-empty description of the video, including motion, camera behavior, and desired audio.
+- `image_urls` (array of strings): Required for image mode only. Supply one starting image URL, optionally followed by one ending image URL.
+- `keyframes` (array of objects): Required for keyframe mode only. Supply 1–10 objects containing `image_url` and `frame_index`.
+
+## Optional parameters
+
+- `duration` (integer): Output duration from 5 through 20 seconds. Defaults to 5.
+- `resolution` (string): `720p` (default) or `1080p`.
+- `aspect_ratio` (string): `auto` (default), `21:9`, `2:1`, `16:9`, `4:3`, `1:1`, `3:4`, or `9:16`.
+- `sound` (boolean): Generate audio. Defaults to `true`.
+
+## Examples
+
+The OpenAPI examples cover text generation, a starting image, starting and ending images, and positioned keyframes.
+
+For a transition between two images, select `flux-3-max/image-to-video` and supply both URLs in `image_urls` in starting-frame then ending-frame order.
+
+For positioned images, select `flux-3-max/keyframes-to-video`. Set each `frame_index` on a 24 fps timeline. For a 5-second video, positions can range from 0 through 120, inclusive.
+
+## Notes
+
+Image URLs must be publicly accessible HTTP(S) URLs for PNG, JPEG, or WebP images. Each keyframe position must be unique and cannot exceed `duration × 24`.
+
+With `aspect_ratio: "auto"`, text mode uses `16:9`; image and keyframe modes follow the first image. Keep media fields inside `input` and `callback_url` at the request's top level.

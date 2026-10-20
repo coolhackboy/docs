@@ -1,0 +1,68 @@
+---
+title: "Flux 3 Klein"
+description: "Generate or edit images with reference images and output up to 4K."
+icon: "image"
+openapi: "/api-manual/image-series/flux-3-klein.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Flux 3 Klein creates images from text and edits or combines reference images. Use it for product photography, illustrations, and reference-based compositions.
+
+## Models
+
+- **flux-3-klein** — Text-to-image generation
+- **flux-3-klein-edit** — Image editing with up to 10 references
+
+## Features
+
+- Generate 1–4 images per request in PNG, JPEG, or WebP.
+- Choose 1K, 2K, or 4K output with an aspect ratio or exact pixel dimensions.
+- Edit or combine up to 10 reference images.
+
+## Input modes
+
+| Mode | Model | Input |
+| --- | --- | --- |
+| Text to image | `flux-3-klein` | Describe the target image in `prompt`. |
+| Image editing | `flux-3-klein-edit` | Supply `prompt` and 1–10 URLs in `image_urls`. |
+
+The generation model does not accept reference images. For editing, refer to images in their supplied order, such as “the first image”.
+
+## Required parameters
+
+- `prompt` (string): Non-empty description of the complete target image, including the subject, framing, background, lighting, and desired edits.
+- `image_urls` (array of strings): Required for `flux-3-klein-edit` only. Supply 1–10 publicly accessible HTTP(S) reference image URLs.
+
+## Optional parameters
+
+- `size` (string): `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, or an exact `WIDTHxHEIGHT` value. Defaults to `1:1` in both modes.
+- `resolution` (string): `1K`, `2K`, or `4K`. Defaults to `1K`; custom pixel dimensions require an explicit matching value.
+- `n` (integer): Number of output images, from 1 through 4. Defaults to 1.
+- `output_format` (string): `png` (default), `jpeg`, or `webp`.
+- `enable_safety_checker` (boolean): Enable content safety checking. Defaults to `true`.
+
+## Size
+
+For an aspect ratio, `resolution` sets the long edge to 1024, 2048, or 4096 pixels. The short edge follows the requested ratio and is rounded to the nearest multiple of 16.
+
+For custom `WIDTHxHEIGHT` dimensions, each side must be 256–4096 pixels and divisible by 16. Supply `resolution` explicitly using the tier determined by the longer side:
+
+| Longer side | Required resolution |
+| --- | --- |
+| 256–1024 pixels | `1K` |
+| Above 1024 through 2048 pixels | `2K` |
+| Above 2048 through 4096 pixels | `4K` |
+
+For example, `size: "1536x1024"` requires `resolution: "2K"`.
+
+## Examples
+
+The OpenAPI examples include generation, reference editing, and custom dimensions.
+
+## Notes
+
+Keep all generation parameters inside `input`; `callback_url` belongs at the request's top level.

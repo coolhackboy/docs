@@ -1,0 +1,598 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Flux 3 Max API",
+    "description": "Create videos from text, starting and ending images, or positioned keyframes, with optional generated audio.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit a Flux 3 Max task",
+        "operationId": "submitFlux3MaxTask",
+        "tags": [
+          "Flux 3 Max"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Generate from text",
+                  "value": {
+                    "model": "flux-3-max/text-to-video",
+                    "input": {
+                      "prompt": "A red panda walks through a sunlit forest",
+                      "duration": 5,
+                      "resolution": "720p"
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Animate a starting image",
+                  "value": {
+                    "model": "flux-3-max/image-to-video",
+                    "input": {
+                      "prompt": "The camera slowly moves closer",
+                      "image_urls": [
+                        "https://example.com/start.png"
+                      ]
+                    }
+                  }
+                },
+                "first-last-frame": {
+                  "summary": "Animate between starting and ending images",
+                  "value": {
+                    "model": "flux-3-max/image-to-video",
+                    "input": {
+                      "prompt": "Transition smoothly from sunrise to sunset",
+                      "image_urls": [
+                        "https://example.com/start.png",
+                        "https://example.com/end.png"
+                      ],
+                      "duration": 8,
+                      "sound": false
+                    }
+                  }
+                },
+                "keyframes-to-video": {
+                  "summary": "Animate positioned keyframes",
+                  "value": {
+                    "model": "flux-3-max/keyframes-to-video",
+                    "input": {
+                      "prompt": "Move smoothly through both scenes",
+                      "duration": 5,
+                      "keyframes": [
+                        {
+                          "image_url": "https://example.com/frame-1.png",
+                          "frame_index": 0
+                        },
+                        {
+                          "image_url": "https://example.com/frame-2.png",
+                          "frame_index": 120
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "Use Authorization: Bearer PoYo_API_KEY."
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "flux-3-max/text-to-video",
+              "flux-3-max/image-to-video",
+              "flux-3-max/keyframes-to-video"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for finished or failed task notifications."
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S",
+                "description": "Describe the scene, motion, camera behavior, and desired audio."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://\\S+$"
+                },
+                "description": "Required for flux-3-max/image-to-video only. Supply one starting image and an optional ending image, in this order. Do not combine with keyframes."
+              },
+              "keyframes": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "$ref": "#/components/schemas/Keyframe"
+                },
+                "description": "Required for flux-3-max/keyframes-to-video only. Supply 1-10 images with unique frame_index values from 0 through duration * 24. Do not combine with image_urls."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 20,
+                "default": 5,
+                "description": "Output duration in seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "21:9",
+                  "2:1",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "9:16"
+                ],
+                "default": "auto",
+                "description": "Output aspect ratio. auto uses 16:9 for text input and follows the first image for image or keyframe input."
+              },
+              "sound": {
+                "type": "boolean",
+                "default": true,
+                "description": "Generate audio with the video."
+              }
+            },
+            "description": "Parameters for the selected model. Media fields are required only for their corresponding mode."
+          }
+        },
+        "description": "Create videos from text, starting and ending images, or positioned keyframes, with optional generated audio.",
+        "x-poyo-model-requests": {
+          "$ref": "#/components/schemas/ModelRequests"
+        }
+      },
+      "TextToVideoRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "flux-3-max/text-to-video"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for finished or failed task notifications."
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S",
+                "description": "Describe the scene, motion, camera behavior, and desired audio."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 20,
+                "default": 5,
+                "description": "Output duration in seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "21:9",
+                  "2:1",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "9:16"
+                ],
+                "default": "auto",
+                "description": "Output aspect ratio. auto uses 16:9 for text input and follows the first image for image or keyframe input."
+              },
+              "sound": {
+                "type": "boolean",
+                "default": true,
+                "description": "Generate audio with the video."
+              }
+            }
+          }
+        },
+        "description": "Generate a 5-20 second video from text with optional audio. Does not accept media input."
+      },
+      "ImageToVideoRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "flux-3-max/image-to-video"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for finished or failed task notifications."
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt",
+              "image_urls"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S",
+                "description": "Describe the scene, motion, camera behavior, and desired audio."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 20,
+                "default": 5,
+                "description": "Output duration in seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "21:9",
+                  "2:1",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "9:16"
+                ],
+                "default": "auto",
+                "description": "Output aspect ratio. auto uses 16:9 for text input and follows the first image for image or keyframe input."
+              },
+              "sound": {
+                "type": "boolean",
+                "default": true,
+                "description": "Generate audio with the video."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://\\S+$"
+                },
+                "description": "One starting image, optionally followed by an ending image. PNG, JPEG, and WebP are supported."
+              }
+            }
+          }
+        },
+        "description": "Generate a 5-20 second video from one starting image and an optional ending image, with optional audio."
+      },
+      "KeyframesToVideoRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "flux-3-max/keyframes-to-video"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for finished or failed task notifications."
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt",
+              "keyframes"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S",
+                "description": "Describe the scene, motion, camera behavior, and desired audio."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 20,
+                "default": 5,
+                "description": "Output duration in seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "21:9",
+                  "2:1",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "9:16"
+                ],
+                "default": "auto",
+                "description": "Output aspect ratio. auto uses 16:9 for text input and follows the first image for image or keyframe input."
+              },
+              "sound": {
+                "type": "boolean",
+                "default": true,
+                "description": "Generate audio with the video."
+              },
+              "keyframes": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "$ref": "#/components/schemas/Keyframe"
+                },
+                "description": "Positioned images on a 24 fps timeline. frame_index values must be unique and no greater than duration * 24."
+              }
+            }
+          }
+        },
+        "description": "Generate a 5-20 second video using 1-10 keyframe images at unique positions on a 24 fps timeline, with optional audio."
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [
+              200
+            ],
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792468800-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-20T12:00:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      },
+      "Keyframe": {
+        "type": "object",
+        "required": [
+          "image_url",
+          "frame_index"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://\\S+$",
+            "description": "Public PNG, JPEG, or WebP image URL."
+          },
+          "frame_index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Unique frame position from 0 through duration * 24, inclusive."
+          }
+        }
+      },
+      "ModelRequests": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/TextToVideoRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ImageToVideoRequest"
+          },
+          {
+            "$ref": "#/components/schemas/KeyframesToVideoRequest"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "model",
+          "mapping": {
+            "flux-3-max/text-to-video": "#/components/schemas/TextToVideoRequest",
+            "flux-3-max/image-to-video": "#/components/schemas/ImageToVideoRequest",
+            "flux-3-max/keyframes-to-video": "#/components/schemas/KeyframesToVideoRequest"
+          }
+        }
+      }
+    }
+  }
+}
