@@ -1,6 +1,6 @@
 ---
 title: "Kling 4.0"
-description: "Generate 3–30 second videos from text, reference images, reference videos, and named subjects at 720p or 1080p."
+description: "Generate 3–30 second videos from text, reference images, and reference videos at 720p or 1080p."
 icon: "video"
 openapi: "/api-manual/video-series/kling-4-0.json POST /api/generate/submit"
 ---
@@ -10,7 +10,7 @@ openapi: "/api-manual/video-series/kling-4-0.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-Kling 4.0 creates videos from a text prompt and optional visual references. Combine reference images, reference videos, and named subjects to guide appearance, movement, and scene composition.
+Kling 4.0 creates videos from a text prompt and optional visual references. Combine reference images and reference videos to guide appearance, movement, and scene composition.
 
 ## Models
 
@@ -20,12 +20,11 @@ Kling 4.0 creates videos from a text prompt and optional visual references. Comb
 
 - **Flexible duration**: Generate 3–30 second videos at `720p` or `1080p`.
 - **Visual references**: Supply up to 10 reference images and up to 5 reference videos. Refer to them in the prompt as `@image_1` and `@video_1`, using their positions in the corresponding arrays.
-- **Named subjects**: Define up to 7 subjects with images or a video, then refer to each subject as `@name` in the prompt.
 - **Aspect ratios**: Use `auto`, `16:9`, `9:16`, `1:1`, or `21:9`.
 
 ## Required parameters
 
-- `prompt` (string): Video instructions, 1–8,000 characters. Reference uploaded materials with `@image_1`, `@video_1`, or the subject's `@name`.
+- `prompt` (string): Video instructions, 1–8,000 characters. Reference uploaded materials with `@image_1` or `@video_1`.
 
 ## Optional parameters
 
@@ -34,25 +33,16 @@ Kling 4.0 creates videos from a text prompt and optional visual references. Comb
 - `aspect_ratio` (string): `auto`, `16:9`, `9:16`, `1:1`, or `21:9`. When omitted, the ratio adapts to supplied materials; without materials, it defaults to `16:9`.
 - `reference_image_urls` (array of strings): Up to 10 publicly accessible HTTP or HTTPS image URLs.
 - `reference_video_urls` (array of strings): Up to 5 publicly accessible HTTP or HTTPS video URLs. Each video must last 3–30 seconds.
-- `kling_elements` (array of objects): Up to 7 named subjects. Each object accepts:
-  - `name` (string, required): A unique subject name, 1–20 characters, using Chinese characters, English letters, digits, or underscores. Names are unique without regard to case.
-  - `element_input_urls` (array of strings): 2–4 publicly accessible HTTP or HTTPS images of the subject.
-  - `element_input_video_urls` (array of strings): Exactly one publicly accessible HTTP or HTTPS video of the subject, lasting 3–8 seconds.
-
-Provide exactly one of `element_input_urls` and `element_input_video_urls` for each subject.
 
 ## Examples
 
 - **Text-to-video**: Send a `prompt` without reference materials. Set `duration`, `resolution`, or `aspect_ratio` only when needed.
 - **Reference images**: Supply `reference_image_urls` and refer to the first image as `@image_1`.
 - **Reference videos**: Supply `reference_video_urls` and use `@video_1` to refer to the first video.
-- **Named subjects**: Define a subject named `hero` in `kling_elements` and use `@hero` in the prompt. Subjects can be combined with reference images and videos.
 
 The request examples in the API playground demonstrate these inputs.
 
 ## Notes
 
-- Across `reference_video_urls` and video-based subjects, provide at most 5 videos with a combined duration of at most 30 seconds. At most 3 subjects may use videos.
-- The number of reference images, reference videos, and subjects combined cannot exceed 15. Images inside a subject do not count separately toward this limit.
-- Subject names cannot use reserved names such as `image_1`, `video_1`, `keyframe_1`, `object_1`, `audio_1`, `first_frame`, or `last_frame`. Numbered reserved names remain prohibited for any index and letter case.
+- Provide at most 10 reference images and at most 5 reference videos. The combined duration of all reference videos cannot exceed 30 seconds.
 - Reference indexes start at 1 and follow the order of the corresponding input array. Use publicly accessible media URLs and omit unused optional fields.

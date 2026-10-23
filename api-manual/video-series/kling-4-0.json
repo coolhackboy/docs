@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Kling 4.0",
-    "description": "Generate videos from text, reference images, reference videos, and named subjects.",
+    "description": "Generate videos from text, reference images, and reference videos.",
     "version": "1.0.0"
   },
   "servers": [
@@ -60,29 +60,6 @@
                       "prompt": "Recreate the camera movement from @video_1 in a snowy mountain landscape.",
                       "reference_video_urls": [
                         "https://example.com/camera-motion.mp4"
-                      ],
-                      "duration": 10
-                    }
-                  }
-                },
-                "named-subject": {
-                  "summary": "Combine a named image subject and a reference video",
-                  "value": {
-                    "model": "kling-4.0",
-                    "callback_url": "https://your-domain.com/callback",
-                    "input": {
-                      "prompt": "@hero crosses a city square with the camera movement from @video_1.",
-                      "reference_video_urls": [
-                        "https://example.com/camera-motion.mp4"
-                      ],
-                      "kling_elements": [
-                        {
-                          "name": "hero",
-                          "element_input_urls": [
-                            "https://example.com/hero-front.png",
-                            "https://example.com/hero-side.png"
-                          ]
-                        }
                       ],
                       "duration": 10
                     }
@@ -162,14 +139,14 @@
             "required": [
               "prompt"
             ],
-            "description": "Text instructions with optional reference images, reference videos, and named subjects. Reference images, reference videos, and subjects combined must not exceed 15. Across reference videos and video subjects, at most 5 videos with a total duration of at most 30 seconds are allowed.",
+            "description": "Text instructions with up to 10 reference images and up to 5 reference videos. The combined duration of all reference videos must not exceed 30 seconds.",
             "properties": {
               "prompt": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 8000,
                 "pattern": "\\S",
-                "description": "Video instructions. Use @image_1 and @video_1 to reference the first item in the corresponding reference array, or @name to reference a named subject. Reference indexes start at 1."
+                "description": "Video instructions. Use @image_1 and @video_1 to reference the first item in the corresponding reference array. Reference indexes start at 1."
               },
               "duration": {
                 "type": "integer",
@@ -220,55 +197,7 @@
                   "format": "uri",
                   "pattern": "^https?://"
                 },
-                "description": "Publicly accessible HTTP or HTTPS reference videos, each lasting 3-30 seconds. Reference them as @video_1, @video_2, and so on, in array order. Together with video-based subjects, at most 5 videos with a combined duration of at most 30 seconds are allowed."
-              },
-              "kling_elements": {
-                "type": "array",
-                "maxItems": 7,
-                "description": "Up to 7 named subjects, at most 3 of which may use video inputs. Names must be unique without regard to case. Each subject counts as one material toward the combined limit of 15 reference images, reference videos, and subjects; images within a subject do not count separately.",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "name"
-                  ],
-                  "description": "Provide exactly one of element_input_urls and element_input_video_urls.",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 20,
-                      "pattern": "^[A-Za-z0-9_\u4e00-\u9fff]+$",
-                      "description": "Subject name, using Chinese characters, English letters, digits, or underscores. Reference it as @name in the prompt. Names must be unique without regard to case. Reserved names image_N, video_N, keyframe_N, object_N, audio_N (for any numbered index), first_frame, and last_frame are prohibited in every letter case."
-                    },
-                    "element_input_urls": {
-                      "type": "array",
-                      "minItems": 2,
-                      "maxItems": 4,
-                      "items": {
-                        "type": "string",
-                        "format": "uri",
-                        "pattern": "^https?://"
-                      },
-                      "description": "2-4 publicly accessible HTTP or HTTPS images of this subject. Provide exactly one of element_input_urls and element_input_video_urls."
-                    },
-                    "element_input_video_urls": {
-                      "type": "array",
-                      "minItems": 1,
-                      "maxItems": 1,
-                      "x-video-duration-seconds": {
-                        "minimum": 3,
-                        "maximum": 8
-                      },
-                      "items": {
-                        "type": "string",
-                        "format": "uri",
-                        "pattern": "^https?://"
-                      },
-                      "description": "Exactly one publicly accessible HTTP or HTTPS video of this subject, lasting 3-8 seconds. Provide exactly one of element_input_urls and element_input_video_urls. Subject videos count toward the shared 5-video and 30-second limits."
-                    }
-                  }
-                }
+                "description": "Publicly accessible HTTP or HTTPS reference videos, each lasting 3-30 seconds. Reference them as @video_1, @video_2, and so on, in array order. Provide at most 5 videos with a combined duration of at most 30 seconds."
               }
             }
           }
