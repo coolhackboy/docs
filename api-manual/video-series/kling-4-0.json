@@ -180,8 +180,7 @@
                 "maxItems": 10,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://"
+                  "format": "uri"
                 },
                 "description": "Up to 10 publicly accessible HTTP or HTTPS reference image URLs. Reference them as @image_1, @image_2, and so on, in array order."
               },
@@ -194,8 +193,7 @@
                 },
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://"
+                  "format": "uri"
                 },
                 "description": "Publicly accessible HTTP or HTTPS reference videos, each lasting 3-30 seconds. Reference them as @video_1, @video_2, and so on, in array order. Provide at most 5 videos with a combined duration of at most 30 seconds."
               }

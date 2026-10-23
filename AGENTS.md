@@ -35,6 +35,8 @@ api-manual/{series}/{name}.json
 
 OpenAPI 使用 3.0.0，`servers` 为 `https://api.poyo.ai`。提交成功响应是 `code: 200`，`data` 里有 `task_id`、`status: not_started`、`created_time`。参数错误和未授权分别是 400、401，body 为 `error.message` 与 `error.type`。参数说明写在 `description` 里；已经有 `example` 字段时，description 里不要再写一遍 Example。
 
+URL 参数（包括 URL 数组的 `items`）使用 `type: string` 和 `format: uri`。公开可访问及 HTTP/HTTPS 要求写在 `description` 中，不要添加 `pattern: "^https?://"`，否则 Mintlify 会在参数下额外显示 `Pattern` 正则。
+
 ### Frontmatter
 
 `title` 只写模型名，例如 `Nano Banana`、`Sora 2`、`Kling 3.0`。不要在标题后追加 Generation、Video Generation、Image Generation 或 API。侧栏已经挂在 Image / Video / Music / 3D 分组下。
