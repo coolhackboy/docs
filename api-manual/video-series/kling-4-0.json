@@ -1,0 +1,348 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kling 4.0",
+    "description": "Generate videos from text, reference images, reference videos, and named subjects.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit a Kling 4.0 video task",
+        "operationId": "submit_kling_4_0",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Generate video from a text prompt",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "A paper boat floats through a miniature city at sunset."
+                    }
+                  }
+                },
+                "reference-image": {
+                  "summary": "Guide the video with a reference image",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "The character in @image_1 walks along a sunlit forest trail.",
+                      "reference_image_urls": [
+                        "https://example.com/character.png"
+                      ],
+                      "duration": 10,
+                      "resolution": "1080p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "reference-video": {
+                  "summary": "Guide movement with a reference video",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "Recreate the camera movement from @video_1 in a snowy mountain landscape.",
+                      "reference_video_urls": [
+                        "https://example.com/camera-motion.mp4"
+                      ],
+                      "duration": 10
+                    }
+                  }
+                },
+                "named-subject": {
+                  "summary": "Combine a named image subject and a reference video",
+                  "value": {
+                    "model": "kling-4.0",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "@hero crosses a city square with the camera movement from @video_1.",
+                      "reference_video_urls": [
+                        "https://example.com/camera-motion.mp4"
+                      ],
+                      "kling_elements": [
+                        {
+                          "name": "hero",
+                          "element_input_urls": [
+                            "https://example.com/hero-front.png",
+                            "https://example.com/hero-side.png"
+                          ]
+                        }
+                      ],
+                      "duration": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "kling-4.0"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure notifications."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "Text instructions with optional reference images, reference videos, and named subjects. Reference images, reference videos, and subjects combined must not exceed 15. Across reference videos and video subjects, at most 5 videos with a total duration of at most 30 seconds are allowed.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 8000,
+                "pattern": "\\S",
+                "description": "Video instructions. Use @image_1 and @video_1 to reference the first item in the corresponding reference array, or @name to reference a named subject. Reference indexes start at 1."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 30,
+                "default": 5,
+                "description": "Output duration in whole seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "21:9"
+                ],
+                "description": "Output aspect ratio. When omitted, adapts to supplied materials; without materials, defaults to 16:9."
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://"
+                },
+                "description": "Up to 10 publicly accessible HTTP or HTTPS reference image URLs. Reference them as @image_1, @image_2, and so on, in array order."
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "maxItems": 5,
+                "x-video-duration-seconds": {
+                  "minimum": 3,
+                  "maximum": 30
+                },
+                "items": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://"
+                },
+                "description": "Publicly accessible HTTP or HTTPS reference videos, each lasting 3-30 seconds. Reference them as @video_1, @video_2, and so on, in array order. Together with video-based subjects, at most 5 videos with a combined duration of at most 30 seconds are allowed."
+              },
+              "kling_elements": {
+                "type": "array",
+                "maxItems": 7,
+                "description": "Up to 7 named subjects, at most 3 of which may use video inputs. Names must be unique without regard to case. Each subject counts as one material toward the combined limit of 15 reference images, reference videos, and subjects; images within a subject do not count separately.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name"
+                  ],
+                  "description": "Provide exactly one of element_input_urls and element_input_video_urls.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20,
+                      "pattern": "^[A-Za-z0-9_\u4e00-\u9fff]+$",
+                      "description": "Subject name, using Chinese characters, English letters, digits, or underscores. Reference it as @name in the prompt. Names must be unique without regard to case. Reserved names image_N, video_N, keyframe_N, object_N, audio_N (for any numbered index), first_frame, and last_frame are prohibited in every letter case."
+                    },
+                    "element_input_urls": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 4,
+                      "items": {
+                        "type": "string",
+                        "format": "uri",
+                        "pattern": "^https?://"
+                      },
+                      "description": "2-4 publicly accessible HTTP or HTTPS images of this subject. Provide exactly one of element_input_urls and element_input_video_urls."
+                    },
+                    "element_input_video_urls": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "x-video-duration-seconds": {
+                        "minimum": 3,
+                        "maximum": 8
+                      },
+                      "items": {
+                        "type": "string",
+                        "format": "uri",
+                        "pattern": "^https?://"
+                      },
+                      "description": "Exactly one publicly accessible HTTP or HTTPS video of this subject, lasting 3-8 seconds. Provide exactly one of element_input_urls and element_input_video_urls. Subject videos count toward the shared 5-video and 30-second limits."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792741800-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-23T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
