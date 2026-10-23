@@ -145,8 +145,7 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 8000,
-                "pattern": "\\S",
-                "description": "Video instructions. Use @image_1 and @video_1 to reference the first item in the corresponding reference array. Reference indexes start at 1."
+                "description": "Video instructions. Must contain at least one non-whitespace character. Use @image_1 and @video_1 to reference the first item in the corresponding reference array. Reference indexes start at 1."
               },
               "duration": {
                 "type": "integer",
