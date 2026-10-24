@@ -1,6 +1,6 @@
 ---
 title: "Kling 4.0"
-description: "Generate 3–30 second videos from text, reference images, and reference videos at 720p or 1080p."
+description: "Generate videos from text, first and last frames, or visual references, and edit an existing video at 720p or 1080p."
 icon: "video"
 openapi: "/api-manual/video-series/kling-4-0.json POST /api/generate/submit"
 ---
@@ -10,39 +10,64 @@ openapi: "/api-manual/video-series/kling-4-0.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-Kling 4.0 creates videos from a text prompt and optional visual references. Combine reference images and reference videos to guide appearance, movement, and scene composition.
+Kling 4.0 creates videos from text, animates first and last frames, combines visual references, or edits an existing video. The supplied media selects the mode automatically.
 
 ## Models
 
-- **kling-4.0** — Text and reference-guided video generation
+- **kling-4.0** — Text-to-video, image-to-video, reference-to-video, and video editing
 
 ## Features
 
 - **Flexible duration**: Generate 3–30 second videos at `720p` or `1080p`.
-- **Visual references**: Supply up to 10 reference images and up to 5 reference videos. Refer to them in the prompt as `@image_1` and `@video_1`, using their positions in the corresponding arrays.
+- **First and last frames**: Animate one starting image, optionally supplying an ending image.
+- **Visual references**: Guide appearance and movement with reference images, reference videos, and subjects defined by images or a video.
+- **Multi-shot prompts**: Describe separate shots with their own durations.
+- **Video editing**: Supply a source video and describe the changes. Omit `duration` to retain the source video's duration.
 - **Aspect ratios**: Use `auto`, `16:9`, `9:16`, `1:1`, or `21:9`.
+
+## Input modes
+
+| Mode | Selected when |
+| --- | --- |
+| Video editing | `video_url` is provided |
+| Reference-to-video | Reference images, reference videos, or `kling_elements` are non-empty |
+| Image-to-video | `image_urls` is non-empty without reference materials |
+| Text-to-video | No media is provided |
+
+In reference mode, `image_urls` may contain one optional starting frame. In image mode, it may contain a starting frame followed by an ending frame; omit `aspect_ratio`. Editing accepts reference images and image-based subjects; it does not accept `image_urls`, reference videos, video-based subjects, `multi_prompt`, or `aspect_ratio`.
 
 ## Required parameters
 
-- `prompt` (string): Video instructions, 1–8,000 characters. Must contain at least one non-whitespace character. Reference uploaded materials with `@image_1` or `@video_1`.
+- `prompt` (string): Video instructions, 1–26,000 characters, containing at least one non-whitespace character. Provide either `prompt` or `multi_prompt`, never both. Editing requires `prompt`.
+- `multi_prompt` (array of objects): Alternative to `prompt` for generation modes. Each shot contains a non-empty `prompt` of up to 512 characters and an optional integer `duration` of 1–30 seconds, defaulting to 5. The shot durations must total 3–30 seconds. If top-level `duration` is also supplied, it must match that total.
 
 ## Optional parameters
 
-- `duration` (integer): Output duration from 3 to 30 seconds. Default: `5`.
+- `duration` (integer): Output duration from 3 to 30 seconds. Ordinary generation defaults to `5`; multi-shot generation follows the shot total. In editing, omit this field to retain the source video's duration; chargeable output duration is rounded up to whole seconds.
 - `resolution` (string): `720p` or `1080p`. Default: `720p`.
-- `aspect_ratio` (string): `auto`, `16:9`, `9:16`, `1:1`, or `21:9`. When omitted, the ratio adapts to supplied materials; without materials, it defaults to `16:9`.
+- `aspect_ratio` (string): `auto`, `16:9`, `9:16`, `1:1`, or `21:9`, for text and reference modes. When omitted, the ratio adapts to supplied materials; without materials, it defaults to `16:9`. Omit this field in image and editing modes.
+- `image_urls` (array of strings): One starting image and, in image mode only, an optional ending image, in that order. Reference mode allows only the starting image.
+- `video_url` (string): Source video for editing. Must last 3–30 seconds.
 - `reference_image_urls` (array of strings): Up to 10 publicly accessible HTTP or HTTPS image URLs.
 - `reference_video_urls` (array of strings): Up to 5 publicly accessible HTTP or HTTPS video URLs. Each video must last 3–30 seconds.
+- `kling_elements` (array of objects): Up to 7 subjects. Each subject supplies exactly one of:
+  - `element_input_urls` (array of strings): 2–4 images, with the frontal view first and additional reference views after it.
+  - `element_input_video_urls` (array of strings): Exactly one 3–30 second video. At most 3 subjects may use videos; video-based subjects cannot be used in editing.
+
+Subjects use their positions in the array and require no names. Refer to them as `@Element1`, `@Element2`, and so on. Reference images and reference videos use `@Image1` and `@Video1`; existing `@image_1` and `@video_1` references remain supported.
 
 ## Examples
 
 - **Text-to-video**: Send a `prompt` without reference materials. Set `duration`, `resolution`, or `aspect_ratio` only when needed.
-- **Reference images**: Supply `reference_image_urls` and refer to the first image as `@image_1`.
-- **Reference videos**: Supply `reference_video_urls` and use `@video_1` to refer to the first video.
+- **First and last frames**: Put the starting image first in `image_urls`, followed by the optional ending image.
+- **Visual references**: Combine `reference_image_urls`, `reference_video_urls`, or `kling_elements`, and refer to them by their positions.
+- **Multi-shot generation**: Supply `multi_prompt` and omit `prompt`. Use shot durations to control the sequence.
+- **Video editing**: Supply `video_url` and `prompt`. Omit `duration` to keep the original duration, or select a new duration explicitly.
 
 The request examples in the API playground demonstrate these inputs.
 
 ## Notes
 
-- Provide at most 10 reference images and at most 5 reference videos. The combined duration of all reference videos cannot exceed 30 seconds.
+- In reference mode, the optional starting frame and reference images together cannot exceed 10 images. The number of starting frames, reference images, reference videos, and subjects combined cannot exceed 15. Images inside a subject count as one subject, not as separate materials.
+- Reference videos and video-based subjects must have a combined original duration of at most 30 seconds. Each reference video or subject video must last 3–30 seconds.
 - Reference indexes start at 1 and follow the order of the corresponding input array. Use publicly accessible media URLs and omit unused optional fields.
