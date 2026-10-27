@@ -18,6 +18,10 @@ The hosted server uses stateless Streamable HTTP at `https://api.poyo.ai/mcp`. I
 
 Set `POYO_API_KEY` in the environment that starts your client, then use the matching configuration. The key is optional for public discovery, but configuring it now enables account and execution tools.
 
+<Note>
+  `export POYO_API_KEY=...` or `$env:POYO_API_KEY=...` applies only to the current terminal session. Apps launched from the desktop, such as Cursor, VS Code, or the Codex app, do not see it. For Skill and CLI use without MCP, `npx -y @poyoapi/cli auth login` avoids this; see the [Quickstart](/integrations/quickstart).
+</Note>
+
 <Tabs>
   <Tab title="Claude Code">
     ```bash
@@ -25,6 +29,8 @@ Set `POYO_API_KEY` in the environment that starts your client, then use the matc
       https://api.poyo.ai/mcp \
       --header "Authorization: Bearer $POYO_API_KEY"
     ```
+
+    The shell expands `$POYO_API_KEY` when you run this, so the actual key is saved in your Claude Code MCP config.
 
     See the [Claude guide](/integrations/claude-desktop) for Claude Desktop and native Windows setup.
   </Tab>

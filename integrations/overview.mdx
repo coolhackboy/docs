@@ -1,44 +1,41 @@
 ---
-title: "AI and developer integrations"
-description: "Choose MCP, CLI, Agent Skill, or REST for your PoYo workflow."
+title: "AI agents and developer tools"
+description: "Choose an Agent Skill, CLI, MCP, or REST for your PoYo workflow."
 icon: "terminal"
 ---
 
-# AI and developer integrations
+# AI agents and developer tools
 
-Choose an integration based on how you want to work. All options use the same Capability Catalog, authentication, asynchronous tasks, and normalized results as the REST API.
+Choose a path based on how you want to work. All options use the same Capability Catalog, authentication, asynchronous tasks, and normalized results as the REST API.
 
-| I want to... | Recommended integration | Start here |
+| I want to... | Recommended path | Start here |
 |---|---|---|
-| Ask an AI client to discover and run models | MCP | [MCP quickstart](/integrations/mcp) |
-| Teach an agent model selection, cost control, and execution workflows | MCP + Agent Skill | [Agent Skill](/integrations/skill) |
+| Ask a coding agent (Claude Code, Codex, Cursor) to pick and run models | Agent Skill + CLI | [Quickstart](/integrations/quickstart) |
+| Give an AI client PoYo tools it can call directly | MCP (optionally + Agent Skill) | [MCP quickstart](/integrations/mcp) |
 | Run model calls from a terminal or CI | CLI | [CLI](/integrations/cli) |
 | Build an application with HTTP requests | REST API | [API overview](/api-manual/overview) |
 
+The Agent Skill works with either MCP or the CLI. If MCP is not connected, it runs models through `npx @poyoapi/cli`.
+
 ## Fastest path
 
-For most AI-client users:
+For Claude Code, Codex, or Cursor, no MCP setup is needed:
 
-1. Set `POYO_API_KEY`.
-2. Connect to `https://api.poyo.ai/mcp`, or run `npx -y @poyoapi/mcp` for a stdio-only client.
-3. Ask the client to check your account, select a model, show its price, run it, and wait for the returned task.
-
-```text
-Use PoYo to check my account, find a suitable image model, and show me its
-price. Generate a cinematic product photo, wait for the task to finish, then
-return the output URL.
+```bash
+npx -y @poyoapi/cli auth login
+npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
 ```
 
-See [MCP quickstart](/integrations/mcp) for client configuration, available tools, task polling, and result handling.
+Then reopen the agent and ask it to generate an image with PoYo. See the [Quickstart](/integrations/quickstart) for each client, verification, and an example prompt. To give your client PoYo tools directly, see [MCP quickstart](/integrations/mcp).
 
 ## Integration summary
 
 | Integration | Best for | Install or URL | Availability |
 |---|---|---|---|
+| Agent Skill | Model selection, cost control, and task workflow for coding agents | `npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models` | Repository install |
+| CLI | Shell scripts, CI, and Skill execution without MCP | `npx -y @poyoapi/cli` (optional: `npm install -g @poyoapi/cli`) | Available |
 | Remote MCP | Hosted AI clients | `https://api.poyo.ai/mcp` | Available |
 | stdio MCP | Local-only MCP clients | `npx -y @poyoapi/mcp` | Available |
-| CLI | Shell scripts and model execution | `npm install -g @poyoapi/cli` | Available |
-| Agent Skill | Reusable model workflow | `npx skills add PoyoAPI/poyo-devtools` | Repository install |
 
 <Info>
   CLI and stdio MCP are local clients, not separately deployed services. The hosted MCP endpoint runs alongside the PoYo API.

@@ -14,6 +14,24 @@ The Skill is distributed from the `poyo-devtools` repository under:
 skills/poyo-ai-models
 ```
 
+It works with or without MCP. If PoYo MCP is connected, the agent can use MCP tools. Otherwise it runs models through the [PoYo CLI](/integrations/cli) with `npx @poyoapi/cli`.
+
+## Install
+
+Run this in your project directory, replacing `claude-code` with `codex` or `cursor` as needed. Add `--global` to install it for all projects, or omit `--agent` to choose another client interactively:
+
+```bash
+npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
+```
+
+For the full setup, including saving your API key and an example prompt, see the [Quickstart](/integrations/quickstart).
+
+## How it executes
+
+- **MCP connected:** the agent calls PoYo MCP tools such as `poyo_search_models`, `poyo_run_model`, and `poyo_check_job`. See [Connect with MCP](/integrations/mcp).
+- **No MCP:** the agent runs `npx @poyoapi/cli`, for example `submit MODEL_ID ...` followed by `task wait TASK_ID`. The CLI uses the key saved by `auth login`.
+- **Streaming chat:** the agent uses the CLI, because MCP `poyo_chat` returns one complete result.
+
 ## Workflow
 
 The Skill instructs an agent to:
@@ -32,3 +50,23 @@ The Skill instructs an agent to:
 - Do not automatically resubmit a request after a timeout or transport failure; first determine whether a task was created.
 - Do not claim completion while a task is queued or running.
 - Preserve task IDs so an interrupted workflow can resume without resubmission.
+
+## Troubleshooting
+
+### Authentication fails after `auth login`
+
+Credential priority is `--api-key`, then `POYO_API_KEY`, then the system keyring, then local config. An old or invalid `POYO_API_KEY` environment variable overrides the key saved by `auth login`. Check which source is used:
+
+```bash
+npx -y @poyoapi/cli auth status
+```
+
+The output shows the source, such as `(environment)` or `(keyring)`. Unset the stale variable or update it.
+
+### `npx skills add` fails with "Failed to clone"
+
+The installer clones from GitHub. Make sure your network can reach `github.com`, and configure a proxy for git if needed.
+
+### JSON input breaks on Windows
+
+Inline `--input '{...}'` JSON is often broken by shell quoting on Windows. Prefer schema flags such as `--prompt "..." --resolution 1K`, or put the request in a file and pass `--input-file`.

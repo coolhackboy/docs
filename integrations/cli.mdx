@@ -32,7 +32,7 @@ Credential priority is:
 3. System keyring
 4. Local config fallback
 
-Prefer the environment or keyring so the key does not enter shell history.
+Prefer the environment or keyring so the key does not enter shell history. An old or invalid `POYO_API_KEY` overrides the key saved by `auth login`; `auth status` shows the source in use, such as `(environment)` or `(keyring)`.
 
 ## Discover models
 
@@ -71,6 +71,10 @@ poyo task wait TASK_ID --timeout 300
 ```
 
 `run` submits and waits. `submit` returns immediately unless `--wait` is provided.
+
+<Tip>
+  On Windows, inline `--input '{...}'` JSON is often broken by shell quoting. Prefer schema flags such as `--prompt "..." --resolution 1K`, or use `--input-file`.
+</Tip>
 
 ## stdio MCP
 

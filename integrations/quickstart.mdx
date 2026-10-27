@@ -1,0 +1,81 @@
+---
+title: "Quickstart"
+description: "Generate your first image from Claude Code, Codex, or Cursor in three steps."
+icon: "rocket"
+---
+
+# Quickstart
+
+Use PoYo from a coding agent with the Agent Skill and the PoYo CLI. No MCP setup is needed.
+
+Requirements:
+
+- A PoYo API key. Create one on the [API key page](https://poyo.ai/dashboard/api-key).
+- Node.js 20 or later for the CLI. The Skill installer needs Node.js 18 or later.
+- Network access to `github.com`. `npx skills add` clones the Skill from GitHub.
+
+<Steps>
+  <Step title="Save your API key">
+    ```bash
+    npx -y @poyoapi/cli auth login
+    ```
+
+    Paste your API key once. It is stored in the system keyring, or in a local config file if no keyring is available. Then verify it:
+
+    ```bash
+    npx -y @poyoapi/cli account
+    ```
+
+    The output shows your email and credits.
+  </Step>
+  <Step title="Install the Skill">
+    Run this in your project directory:
+
+    <Tabs>
+      <Tab title="Claude Code">
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
+        ```
+      </Tab>
+      <Tab title="Codex">
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent codex --yes
+        ```
+      </Tab>
+      <Tab title="Cursor">
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent cursor --yes
+        ```
+      </Tab>
+      <Tab title="Other clients">
+        Omit `--agent` to choose a client interactively:
+
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models
+        ```
+      </Tab>
+    </Tabs>
+
+    Add `--global` to install the Skill for all projects instead of the current one.
+  </Step>
+  <Step title="Ask the agent">
+    Restart or reopen the agent so it loads the Skill, then ask in plain language:
+
+    ```text
+    Use PoYo to generate one image of an orange cat on a windowsill in morning
+    light. Generate only 1, tell me the model and price first, then give me the
+    image URL and credits used.
+    ```
+
+    For video, also ask the agent to wait until the task finishes and return the video URL.
+  </Step>
+</Steps>
+
+The agent searches the catalog, checks the model schema and price, submits the task through the CLI, waits for it to finish, and returns the result.
+
+## If something fails
+
+- **Invalid API key after `auth login`:** an existing `POYO_API_KEY` environment variable takes priority over the saved key. Run `npx -y @poyoapi/cli auth status` to see the source, then unset or update the variable.
+- **`npx skills add` fails with "Failed to clone":** your network cannot reach `github.com`. Configure a proxy for git and retry.
+
+See [Agent Skill](/integrations/skill) for how the Skill executes and more troubleshooting. To give your client PoYo tools directly, see [Connect with MCP](/integrations/mcp).

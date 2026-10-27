@@ -29,7 +29,9 @@ For an ephemeral environment:
 export POYO_API_KEY="YOUR_API_KEY"
 ```
 
-Credential priority is `--api-key`, `POYO_API_KEY`, system keyring, then local config fallback.
+`export POYO_API_KEY=...` (or `$env:POYO_API_KEY=...` in PowerShell) applies only to the current terminal session. Apps launched from the desktop, such as Cursor, VS Code, or the Codex app, do not see it. `auth login` avoids this for CLI and Agent Skill use.
+
+Credential priority is `--api-key`, `POYO_API_KEY`, system keyring, then local config fallback. An old or invalid `POYO_API_KEY` overrides the key saved by `auth login`. Run `poyo auth status` to see the source in use, such as `(environment)` or `(keyring)`.
 
 ## Security
 

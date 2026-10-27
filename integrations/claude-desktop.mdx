@@ -18,6 +18,12 @@ claude mcp add --transport http poyo \
   --header "Authorization: Bearer $POYO_API_KEY"
 ```
 
+<Note>
+  Your shell expands `$POYO_API_KEY` when you run this command, so the actual key is written into Claude Code's MCP configuration. With the default local scope, it is stored in your user Claude config, not in the project. Do not share that config file.
+</Note>
+
+To use Claude Code without MCP, follow the [Quickstart](/integrations/quickstart).
+
 ## Claude Desktop
 
 Node.js 20 or later is required. Add this server to the Claude Desktop developer configuration, then restart Claude:

@@ -39,6 +39,10 @@ If your Cursor version does not support authenticated remote servers, use the st
   Keep the API key in an environment variable when possible. Do not commit a configuration containing it.
 </Warning>
 
+`${env:POYO_API_KEY}` reads the environment Cursor was started with. A variable set with `export` or `$env:` in a terminal applies only to that session, so Cursor launched from the desktop does not see it.
+
+To use Cursor without MCP, follow the [Quickstart](/integrations/quickstart) with `--agent cursor`.
+
 ## Verify
 
 Ask Cursor: `Use PoYo to find image models, inspect one model's schema, and show its price. Do not run it.`

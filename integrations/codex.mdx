@@ -10,6 +10,10 @@ Codex CLI and the IDE extension read MCP configuration from `~/.codex/config.tom
 
 Set `POYO_API_KEY` before starting Codex, then add:
 
+<Note>
+  `export POYO_API_KEY=...` or `$env:POYO_API_KEY=...` applies only to the current terminal session. The Codex app and IDE extension do not see it unless they are started from that session or the variable is set at the system or user level.
+</Note>
+
 ```toml
 [mcp_servers.poyo]
 url = "https://api.poyo.ai/mcp"
@@ -38,7 +42,7 @@ See [Choose MCP tools](/integrations/mcp-filtering) for filter behavior and limi
 
 ## Add workflow guidance
 
-The `poyo-ai-models` Agent Skill adds model selection, execution, and task-waiting guidance. It complements MCP rather than replacing it. See [PoYo Agent Skill](/integrations/skill).
+The `poyo-ai-models` Agent Skill adds model selection, execution, and task-waiting guidance. It works with MCP or the CLI. To use Codex without MCP, follow the [Quickstart](/integrations/quickstart) with `--agent codex`.
 
 ## Verify
 
