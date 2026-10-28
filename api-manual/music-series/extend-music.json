@@ -117,14 +117,15 @@
           "input": {
             "type": "object",
             "required": [
-              "audio_id"
+              "audio_id",
+              "mv"
             ],
             "description": "Input parameters for music extension",
             "properties": {
               "default_param_flag": {
                 "type": "boolean",
                 "default": true,
-                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `mv`, `style`, `title`, and `continue_at` become required. `prompt` is additionally required for vocal extensions.\n\n- When `false`: Only `audio_id` is required.",
+                "description": "Controls whether to use custom parameters or inherit from the source audio.\n\n- When `true`: Enables custom parameter mode. `mv`, `style`, `title`, and `continue_at` become required. `prompt` is additionally required for vocal extensions.\n\n- When `false`: `audio_id` and `mv` are required.",
                 "example": true
               },
               "audio_id": {
@@ -134,17 +135,17 @@
               },
               "prompt": {
                 "type": "string",
-                "description": "Description of how you want to extend the music.\n\nRequired for vocal extensions when `default_param_flag` is `true`. It is not sent when `instrumental` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
+                "description": "Description of how you want to extend the music.\n\nRequired for vocal extensions when `default_param_flag` is `true`. It is not sent when `instrumental` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 5000 characters",
                 "example": "Continue with an energetic chorus section"
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters",
+                "description": "Music style specification for the extended section.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 1000 characters",
                 "example": "Pop, Upbeat"
               },
               "title": {
                 "type": "string",
-                "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters",
+                "description": "Title for the extended track.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 100 characters",
                 "example": "Summer Vibes Extended"
               },
               "continue_at": {
@@ -155,14 +156,17 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for music extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration",
+                "description": "AI model version for music extension.\n\n- **V5**: Superior musical expressiveness with faster generation\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: Enhanced tonal richness with new creative approaches, max 8 min duration\n- **V4_5**: Improved prompt intelligence and faster generation, max 8 min duration\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min duration\n- **V4**: Improved vocal quality, max 4 min duration\n- **V6**: Greater musical expression with more natural vocals.\n- **V6_MINI**: Lightweight and fast.\n- **V6_WILD**: Bolder, more distinctive musical expression.",
                 "enum": [
                   "V4",
                   "V4_5",
                   "V4_5ALL",
                   "V4_5PLUS",
                   "V5",
-                  "V5_5"
+                  "V5_5",
+                "V6",
+                "V6_MINI",
+                "V6_WILD"
                 ],
                 "example": "V5_5"
               },
@@ -209,17 +213,17 @@
                 "description": "Persona ID to apply to the extended music.\n\nOnly available when Custom Mode ( `default_param_flag: true` ) is enabled.\n\nUse this to apply a specific persona style to your music extension.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_123"
               },
-              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, default_param_flag=true, and V5/V5_5."},
+              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, default_param_flag=true, and V5, V5_5, V6, V6_MINI, or V6_WILD."},
               "instrumental": {"type": "boolean", "description": "Whether the extension is instrumental. When true, prompt is not sent."}
             },
             "allOf": [
               {"if": {"properties": {"default_param_flag": {"const": true}}}, "then": {"required": ["mv", "style", "title", "continue_at"]}},
               {"if": {"properties": {"default_param_flag": {"const": true}, "instrumental": {"not": {"const": true}}}}, "then": {"required": ["prompt"]}},
               {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"default_param_flag": {"const": true}}}},
-              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5"]}, "default_param_flag": {"const": true}}}},
+              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}, "default_param_flag": {"const": true}}}},
               {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
               {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"const": "V4_5ALL"}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}},
-              {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
+              {"if": {"properties": {"default_param_flag": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
             ]
           }
         }

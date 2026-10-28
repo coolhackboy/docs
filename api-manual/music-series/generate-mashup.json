@@ -91,7 +91,9 @@
                         "additionalProperties": false,
                         "required": [
                             "upload_url_list",
-                            "mv"
+                            "mv",
+                            "style",
+                            "title"
                         ],
                         "properties": {
                             "upload_url_list": {
@@ -120,7 +122,10 @@
                                     "V4_5ALL",
                                     "V4_5PLUS",
                                     "V5",
-                                    "V5_5"
+                                    "V5_5",
+                                    "V6",
+                                    "V6_MINI",
+                                    "V6_WILD"
                                 ]
                             },
                             "prompt": {
@@ -164,15 +169,18 @@
                                 "type": "integer",
                                 "minimum": 10,
                                 "maximum": 360
-                            }
+                            },
+                            "lyrics": {"type": "string", "maxLength": 5000},
+                            "variety": {"type": "integer", "minimum": 0, "maximum": 4},
+                            "persona_id": {"type": "string"},
+                            "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"]}
                         },
                         "allOf": [
-                            {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["style", "title"]}},
-                            {"if": {"required": ["custom_mode"], "properties": {"custom_mode": {"const": false}}}, "then": {"required": ["prompt"], "properties": {"prompt": {"maxLength": 500}}}},
-                            {"if": {"required": ["instrumental"], "properties": {"instrumental": {"const": false}}}, "then": {"required": ["prompt"]}},
-                            {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"const": "V5_5"}, "custom_mode": {"const": true}}}},
+                            {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"enum": ["V5_5", "V6", "V6_MINI", "V6_WILD"]}}}},
+                            {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}}}},
                             {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
-                            {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}}
+                            {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4_5ALL"}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}},
+                            {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
                         ]
                     }
                 }

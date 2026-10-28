@@ -131,7 +131,7 @@
                 "example": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc"
               },
               "upload_url": {"type": "string", "format": "uri", "pattern": "^https?://", "description": "HTTP(S) uploaded source; mutually exclusive with task_id/audio_id."},
-              "mv": {"type": "string", "enum": ["V4", "V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5"], "description": "Required with upload_url."},
+              "mv": {"type": "string", "enum": ["V4", "V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5", "V6", "V6_MINI", "V6_WILD"], "description": "Required with upload_url."},
               "prompt": {
                 "type": "string",
                 "description": "Text describing the replacement audio content.\n\nDescribe the lyrics, melody, or musical content you want in the replaced section.",

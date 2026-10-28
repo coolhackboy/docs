@@ -1,6 +1,6 @@
 ﻿---
 title: "Generate Music"
-description: "The Generate Music API generates songs from a prompt, or in custom mode from style, title, and lyrics, using model versions V4 through V5.5. A custom length from 10 to 360 seconds is available only for V5.5 in custom mode."
+description: "The Generate Music API generates songs from a prompt, lyrics, or reference media, using model versions V4 through V6. A custom length from 10 to 360 seconds is available for V5.5, V6, V6 Mini, and V6 Wild in custom mode."
 icon: "music"
 openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit"
 ---
@@ -20,9 +20,11 @@ openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit
 
 - In Custom Mode ( `custom_mode: true` ):
 
-  - If `instrumental: true` : `style` and `title` are required
+  - `title` is required
 
-  - If `instrumental: false` : `style`, `prompt`, and `title` are required
+  - At least one of `style`, `lyrics`, or `negative_tags` is required
+
+  - `prompt` is optional. When `lyrics` is also provided, `lyrics` is used as the sung text
 
   - Character limits vary by model:
 
@@ -36,11 +38,15 @@ openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit
 
     - **V5_5**: `prompt` 5000 characters, `style` 1000 characters
 
+    - **V6, V6_MINI, and V6_WILD**: `lyrics` 5000 characters, `style` 1000 characters
+
 - In Non-custom Mode ( `custom_mode: false` ):
 
   - `prompt` length limit: 3000 characters
 
-  - Other parameters should be left empty
+  - Provide `prompt`, or at least one of `style`, `lyrics`, `image_urls`, `video_urls`, or `audio_urls`
+
+  - `image_urls`, `video_urls`, and `audio_urls` are only accepted in this mode. Together with `style` and `lyrics`, the attachment count must not exceed 10
 
 ## Developer Notes
 
@@ -58,8 +64,14 @@ openapi: "/api-manual/music-series/generate-music.json POST /api/generate/submit
 
 - `persona_id` (string): Persona ID to apply to the generated music. Use this to apply a specific persona style to your music generation. Only available when Custom Mode is enabled. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
 
-- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id` and V5/V5_5.
+- `lyrics` (string): Lyrics content, maximum 5000 characters. In custom mode it takes priority over `prompt`.
 
-- `duration` (integer): Custom length from 10–360 seconds. Only supported when `custom_mode: true` and `mv: V5_5`.
+- `variety` (integer): Diversity from 0 to 4. Only applied when `custom_mode` is `true`.
+
+- `image_urls`, `video_urls`, `audio_urls`: Reference files for non-custom mode. Images allow up to 5 URLs and video allows 1 URL.
+
+- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id` and V5, V5_5, V6, V6_MINI, or V6_WILD.
+
+- `duration` (integer): Custom length from 10–360 seconds. Only supported when `custom_mode: true` and `mv` is `V5_5`, `V6`, `V6_MINI`, or `V6_WILD`.
 
 

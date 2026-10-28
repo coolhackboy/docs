@@ -10,13 +10,13 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
-`instrumental` explicitly controls vocal output. `persona_model` accepts `style_persona` or `voice_persona` with `persona_id` only when `default_param_flag: true` on V5/V5_5.
+`instrumental` explicitly controls vocal output. `persona_model` accepts `style_persona` or `voice_persona` with `persona_id` only when `default_param_flag: true` on V5, V5_5, V6, V6_MINI, or V6_WILD.
 
 ## Usage Guide
 
 - This endpoint extends an existing audio track from a specified point
 - You can customize the extension with new style, prompt, and title, or inherit from the original track
-- Use `default_param_flag` to control whether to use custom parameters or original track settings
+- `mv` is required. Use `default_param_flag` to control whether custom `style`, `title`, and `continue_at` are required
 
 ## Parameter Details
 
@@ -34,10 +34,11 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
     - **V4_5ALL**: `prompt` 5000 characters, `style` 1000 characters, `title` 80 characters
     - **V5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
     - **V5_5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
+    - **V6, V6_MINI, and V6_WILD**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
 
 - In Simple Mode ( `default_param_flag: false` ):
 
-  - Only `audio_id` is required; the source track settings are inherited
+  - `audio_id` and `mv` are required; the source track settings are inherited
 
 ## Developer Notes
 
@@ -57,8 +58,8 @@ openapi: "/api-manual/music-series/extend-music.json POST /api/generate/submit"
 
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.
 
-- `persona_id` (string): Persona ID to apply to the extended music. Only available when `default_param_flag: true` with V5/V5_5. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+- `persona_id` (string): Persona ID to apply to the extended music. Only available when `default_param_flag: true` with V5, V5_5, V6, V6_MINI, or V6_WILD. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
 
-- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id`, `default_param_flag: true`, and V5/V5_5.
+- `persona_model` (string): `style_persona` or `voice_persona`. Requires `persona_id`, `default_param_flag: true`, and V5, V5_5, V6, V6_MINI, or V6_WILD.
 
 

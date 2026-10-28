@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PoYo AI - Generate Music API",
-    "description": "The Generate Music API generates songs from a prompt, or in custom mode from style, title, and lyrics, using model versions V4 through V5.5. A custom length from 10 to 360 seconds is available only for V5.5 in custom mode.",
+    "description": "The Generate Music API generates songs from a prompt, or in custom mode from style, title, and lyrics, using model versions V4 through V6. A custom length from 10 to 360 seconds is available for V5.5, V6, V6 Mini, and V6 Wild in custom mode.",
     "version": "1.0.0"
   },
   "servers": [
@@ -137,7 +137,7 @@
             "properties": {
               "prompt": {
                 "type": "string",
-                "description": "A description of the desired audio content.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be strictly used as the lyrics and sung in the generated track.\n  Character limits by model:\n  - **V4**: Maximum 3000 characters\n  - **V4_5 & V4_5PLUS**: Maximum 5000 characters\n  - **V4_5ALL**: Maximum 5000 characters\n  - **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea, and lyrics will be automatically generated based on it (not strictly matching the input). Maximum 3000 characters.\n  Example: \"A short relaxing piano tune\"",
+                "description": "A description of the desired audio content.\n\n- In Custom Mode ( `custom_mode: true` ): Optional when `lyrics` is provided. Otherwise the prompt is used as lyrics when `instrumental` is `false`.\n  Character limits by model:\n  - **V4**: Maximum 3000 characters\n  - **V4_5 & V4_5PLUS**: Maximum 5000 characters\n  - **V4_5ALL**: Maximum 5000 characters\n  - **V5**: Maximum 5000 characters\n  - **V5_5, V6, V6_MINI, and V6_WILD**: Maximum 5000 characters\n\n- In Non-custom Mode ( `custom_mode: false` ): The prompt serves as the core idea. Maximum 3000 characters. A request may instead provide style, lyrics, or reference media.\n  Example: \"A short relaxing piano tune\"",
                 "example": "A calm and relaxing piano track with soft melodies"
               },
               "custom_mode": {
@@ -154,7 +154,7 @@
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters",
+                "description": "Music style specification defining genre, mood, or artistic direction.\n\nIn custom mode, provide `style`, `lyrics`, or `negative_tags`. `style` itself is optional when one of the other two is present.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 1000 characters",
                 "example": "Classical"
               },
               "title": {
@@ -164,14 +164,17 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for music generation.\n\n- **V5**: Superior musical expression, faster generation.\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: V4_5PLUS delivers richer sound, new ways to create, max 8 min.\n- **V4_5**: V4_5 enables smarter prompts, faster generations, max 8 min.\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min.\n- **V4**: V4 improves vocal quality, max 4 min.",
+                "description": "AI model version for music generation.\n\n- **V5**: Superior musical expression, faster generation.\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: V4_5PLUS delivers richer sound, new ways to create, max 8 min.\n- **V4_5**: V4_5 enables smarter prompts, faster generations, max 8 min.\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min.\n- **V4**: V4 improves vocal quality, max 4 min.\n- **V6**: Greater musical expression with more natural vocals.\n- **V6_MINI**: Lightweight and fast.\n- **V6_WILD**: Bolder, more distinctive musical expression.",
                 "enum": [
                   "V4",
                   "V4_5",
                   "V4_5ALL",
                   "V4_5PLUS",
                   "V5",
-                  "V5_5"
+                  "V5_5",
+                  "V6",
+                  "V6_MINI",
+                  "V6_WILD"
                 ],
                 "example": "V5_5"
               },
@@ -215,21 +218,25 @@
               },
               "persona_id": {
                 "type": "string",
-                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation. Persona IDs are obtained through the persona creation endpoint.\n\nOnly available when Custom Mode is enabled.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
+                "description": "Persona ID to apply to the generated music.\n\nUse this to apply a specific persona style to your music generation. Persona IDs are obtained through the persona creation endpoint.\n\nOnly available in custom mode with mv set to V5, V5_5, V6, V6_MINI, or V6_WILD.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_123"
               },
-              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, custom_mode=true, and V5/V5_5."},
-              "duration": {"type": "integer", "minimum": 10, "maximum": 360, "description": "Only with custom_mode=true and mv=V5_5."}
+              "lyrics": {"type": "string", "maxLength": 5000, "description": "Lyrics for the generated track. In custom mode, lyrics take priority over prompt. In non-custom mode, lyrics can be sent together with prompt. Maximum 5000 characters."},
+              "variety": {"type": "integer", "minimum": 0, "maximum": 4, "description": "Result diversity from 0 to 4. Only applied when custom_mode is true. Default is 1."},
+              "image_urls": {"type": "array", "maxItems": 5, "items": {"type": "string", "format": "uri"}, "description": "Image references. Only when custom_mode is false. Up to 5 HTTP(S) URLs."},
+              "video_urls": {"type": "array", "maxItems": 1, "items": {"type": "string", "format": "uri"}, "description": "Video reference. Only when custom_mode is false. Up to 1 HTTP(S) URL."},
+              "audio_urls": {"type": "array", "items": {"type": "string", "format": "uri"}, "description": "Audio references. Only when custom_mode is false. HTTP(S) URLs."},
+              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, custom_mode=true, and V5, V5_5, V6, V6_MINI, or V6_WILD."},
+              "duration": {"type": "integer", "minimum": 10, "maximum": 360, "description": "Only with custom_mode=true and mv set to V5_5, V6, V6_MINI, or V6_WILD."}
             },
             "allOf": [
-              {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["style", "title"]}},
-              {"if": {"required": ["custom_mode"], "properties": {"custom_mode": {"const": false}}}, "then": {"required": ["prompt"], "properties": {"prompt": {"maxLength": 3000}}}},
-              {"if": {"required": ["instrumental"], "properties": {"instrumental": {"const": false}}}, "then": {"required": ["prompt"]}},
-              {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"const": "V5_5"}, "custom_mode": {"const": true}}}},
+              {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["title"], "anyOf": [{"required": ["style"]}, {"required": ["lyrics"]}, {"required": ["negative_tags"]}]}},
+              {"if": {"properties": {"custom_mode": {"const": false}}}, "then": {"anyOf": [{"required": ["prompt"]}, {"required": ["style"]}, {"required": ["lyrics"]}, {"required": ["image_urls"]}, {"required": ["video_urls"]}, {"required": ["audio_urls"]}], "properties": {"prompt": {"maxLength": 3000}}}},
+              {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"enum": ["V5_5", "V6", "V6_MINI", "V6_WILD"]}, "custom_mode": {"const": true}}}},
               {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"custom_mode": {"const": true}}}},
-              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5"]}, "custom_mode": {"const": true}}}},
+              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}, "custom_mode": {"const": true}}}},
               {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
-              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}}
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}}
             ]
           }
         }

@@ -10,11 +10,11 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
 </Tip>
 
-`persona_model` accepts `style_persona` or `voice_persona`, requires `persona_id`, and is supported only when `default_param_flag: true` with V5/V5_5.
+`persona_model` accepts `style_persona` or `voice_persona`, requires `persona_id`, and is supported only when `default_param_flag: true` with V5, V5_5, V6, V6_MINI, or V6_WILD.
 
 ## Usage Guide
 
-- This endpoint extends uploaded audio files while preserving the original style
+- This endpoint is always custom mode. `default_param_flag: false` is rejected
 - Upload an existing audio track and specify where to continue from
 - The AI generates additional content that seamlessly blends with the original
 - Uploaded audio files must not exceed 8 minutes in length (**Note**: For V4_5ALL model, max 1 minute)
@@ -39,14 +39,11 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
     - **V5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
     - **V5_5**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
-
-- When `default_param_flag: false`:
-
-  - Only `upload_url` is required; `prompt` is optional. If `instrumental: false` and `prompt` is omitted, lyrics will be automatically generated
+    - **V6, V6_MINI, and V6_WILD**: `prompt` 5000 characters, `style` 1000 characters, `title` 100 characters
 
 ## Developer Notes
 
-- Recommendation: Use `default_param_flag: false` for quick extensions that maintain the original style
+- `default_param_flag` must be omitted or `true`. `false` is rejected.
 - The `continue_at` parameter determines where the extension begins - set it to the point where you want new content to start
 
 ## Optional parameters
@@ -55,7 +52,7 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
 - `style` (string): Music style specification. Required when `default_param_flag` is `true`.
 
-- `title` (string): Track title for the extended audio. Character limits vary by model (V4: 80, V4_5 & V4_5PLUS & V5: 100, V4_5ALL: 80).
+- `title` (string): Track title for the extended audio. Character limits vary by model (V4 and V4_5ALL: 80; V4_5, V4_5PLUS, V5, V5_5, V6, V6_MINI, and V6_WILD: 100).
 
 - `negative_tags` (string): Music styles to exclude from generation.
 
@@ -67,6 +64,6 @@ openapi: "/api-manual/music-series/upload-and-extend-audio.json POST /api/genera
 
 - `audio_weight` (number): Balance weight for audio features. Range 0-1, up to 2 decimals.
 
-- `persona_id` (string): Persona ID to apply to the generated music. Only available when `default_param_flag: true` with V5/V5_5. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
+- `persona_id` (string): Persona ID to apply to the generated music. Only available when `default_param_flag: true` with V5, V5_5, V6, V6_MINI, or V6_WILD. How to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).
 
 

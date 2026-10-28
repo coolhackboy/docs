@@ -98,7 +98,10 @@
                                 "type": "string",
                                 "enum": [
                                     "V5",
-                                    "V5_5"
+                                    "V5_5",
+                                    "V6",
+                                    "V6_MINI",
+                                    "V6_WILD"
                                 ]
                             },
                             "sound_loop": {

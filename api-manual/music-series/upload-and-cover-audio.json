@@ -134,11 +134,12 @@
           "input": {
             "type": "object",
             "required": [
-              "upload_url",
               "mv"
             ],
             "description": "Input parameters for audio cover generation",
             "properties": {
+              "task_id": {"type": "string", "description": "Parent music task ID. Use together with audio_id instead of upload_url."},
+              "audio_id": {"type": "string", "description": "Audio ID from the parent music task. Use together with task_id instead of upload_url."},
               "upload_url": {
                 "type": "string",
                 "format": "uri",
@@ -148,17 +149,17 @@
               },
               "prompt": {
                 "type": "string",
-                "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation. Maximum 500 characters.\n\nCharacter limits by model in Custom Mode:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters",
+                "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation. Maximum 500 characters.\n\nCharacter limits by model in Custom Mode:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 5000 characters",
                 "example": "Transform into an upbeat electronic dance version"
               },
               "style": {
                 "type": "string",
-                "description": "Music style specification for the cover version.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters",
+                "description": "Music style specification for the cover version.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 1000 characters",
                 "example": "EDM, Electronic"
               },
               "title": {
                 "type": "string",
-                "description": "Title for the covered track.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters",
+                "description": "Title for the covered track.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 100 characters",
                 "example": "Dance Remix"
               },
               "custom_mode": {
@@ -175,14 +176,17 @@
               },
               "mv": {
                 "type": "string",
-                "description": "AI model version for audio cover generation.\n\n- **V5**: Superior musical expression, faster generation.\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: V4_5PLUS delivers richer sound, new ways to create, max 8 min.\n- **V4_5**: V4_5 enables smarter prompts, faster generations, max 8 min.\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min.\n- **V4**: V4 improves vocal quality, max 4 min.",
+                "description": "AI model version for audio cover generation.\n\n- **V5**: Superior musical expression, faster generation.\n- **V5_5**: Personalized model tuned to your unique taste.\n- **V4_5PLUS**: V4_5PLUS delivers richer sound, new ways to create, max 8 min.\n- **V4_5**: V4_5 enables smarter prompts, faster generations, max 8 min.\n- **V4_5ALL**: V4_5ALL enables smarter prompts, faster generations, max 8 min.\n- **V4**: V4 improves vocal quality, max 4 min.\n- **V6**: Greater musical expression with more natural vocals.\n- **V6_MINI**: Lightweight and fast.\n- **V6_WILD**: Bolder, more distinctive musical expression.",
                 "enum": [
                   "V4",
                   "V4_5",
                   "V4_5ALL",
                   "V4_5PLUS",
                   "V5",
-                  "V5_5"
+                  "V5_5",
+                "V6",
+                "V6_MINI",
+                "V6_WILD"
                 ],
                 "example": "V5_5"
               },
@@ -229,19 +233,20 @@
                 "description": "Persona ID to apply to the covered track.\n\nOnly available when Custom Mode ( `custom_mode: true` ) is enabled.\n\nUse this to apply a specific persona style to your audio cover.\n\nHow to generate persona_id, visit [generate-persona](/api-manual/music-series/generate-persona).",
                 "example": "persona_456"
               },
-              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, custom_mode=true, and V5/V5_5."},
-              "duration": {"type": "integer", "minimum": 10, "maximum": 360, "description": "Only with custom_mode=true and mv=V5_5."}
+              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona type; requires persona_id, custom_mode=true, and V5, V5_5, V6, V6_MINI, or V6_WILD."},
+              "duration": {"type": "integer", "minimum": 10, "maximum": 360, "description": "Only with custom_mode=true and mv set to V5_5, V6, V6_MINI, or V6_WILD."}
             },
             "allOf": [
+              {"anyOf": [{"required": ["upload_url"]}, {"required": ["task_id", "audio_id"]}]},
               {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["style", "title"]}},
               {"if": {"required": ["custom_mode"], "properties": {"custom_mode": {"const": false}}}, "then": {"required": ["prompt"], "properties": {"prompt": {"maxLength": 500}}}},
               {"if": {"required": ["instrumental"], "properties": {"instrumental": {"const": false}}}, "then": {"required": ["prompt"]}},
-              {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"const": "V5_5"}, "custom_mode": {"const": true}}}},
+              {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"enum": ["V5_5", "V6", "V6_MINI", "V6_WILD"]}, "custom_mode": {"const": true}}}},
               {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"custom_mode": {"const": true}}}},
-              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5"]}, "custom_mode": {"const": true}}}},
+              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}, "custom_mode": {"const": true}}}},
               {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
               {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4_5ALL"}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}},
-              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5PLUS", "V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 100}}}}
             ]
           }
         }
