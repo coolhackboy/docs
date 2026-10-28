@@ -1,0 +1,53 @@
+---
+title: "PixVerse V6 Max"
+description: "Generate a 1–15 second video from text or one image, with optional native audio, at 360p to 1080p."
+icon: "video"
+openapi: "/api-manual/video-series/pixverse-v6-max.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+PixVerse V6 Max turns a text prompt or a single image into a short video. Use it for product shots, simple scene animation, and clips that can include a native soundtrack.
+
+## Models
+
+- **pixverse-v6-max** — Text-to-video and single-image-to-video generation
+
+## Features
+
+- Generate videos from 1 to 15 seconds.
+- Create a clip from text, or animate exactly one image.
+- Choose 360p, 540p, 720p, or 1080p output.
+- Optionally generate a native audio track.
+
+## Input modes
+
+- **Text-to-video**: Omit `image_urls`. `prompt` is required. `aspect_ratio` selects the frame.
+- **Image-to-video**: Provide exactly one URL in `image_urls`. `prompt` is optional. The output follows the image, so do not send `aspect_ratio`.
+
+## Required parameters
+
+- `prompt` (string): Required for text-to-video. Must contain 1–5,000 characters and cannot be blank.
+- `image_urls` (array of strings): Required for image-to-video. Must contain exactly one public image URL.
+
+## Optional parameters
+
+- `prompt` (string): Optional for image-to-video, with a maximum of 2,048 characters. Cannot be blank when provided.
+- `duration` (integer): Output length from 1 to 15 seconds. Defaults to `5`.
+- `resolution` (string): `360p`, `540p`, `720p`, or `1080p`. Defaults to `540p`.
+- `aspect_ratio` (string): `16:9`, `9:16`, `4:3`, `3:4`, `1:1`, `2:3`, `3:2`, or `21:9`. Defaults to `16:9`. Text-to-video only.
+- `audio` (boolean): Generate a native audio track. Defaults to `false`.
+
+## Examples
+
+The request examples show a text-to-video clip with an explicit frame, and an image animation that omits `aspect_ratio`. Both use the `pixverse-v6-max` model ID.
+
+## Notes
+
+- Put all generation parameters inside `input`.
+- Image-to-video accepts one JPEG, PNG, or WebP image over a public HTTP or HTTPS URL.
+- Do not send two or more images, a first and last frame, or a source video.
+- Pixel dimensions follow the model’s native output for the selected resolution.

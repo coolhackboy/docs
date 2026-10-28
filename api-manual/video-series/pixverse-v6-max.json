@@ -1,0 +1,258 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PixVerse V6 Max",
+    "description": "Generate a 1-15 second video from text or one image, with optional native audio.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit a PixVerse V6 Max video task",
+        "operationId": "submit_pixverse_v6_max",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Generate a video from text",
+                  "value": {
+                    "model": "pixverse-v6-max",
+                    "input": {
+                      "prompt": "A blue glass marble rolls across a clean white table in warm morning light",
+                      "duration": 5,
+                      "resolution": "540p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "Animate one image",
+                  "value": {
+                    "model": "pixverse-v6-max",
+                    "input": {
+                      "prompt": "Animate this product with gentle movement",
+                      "image_urls": [
+                        "https://example.com/product.jpg"
+                      ],
+                      "duration": 5,
+                      "resolution": "540p"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "pixverse-v6-max"
+            ],
+            "description": "Public model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure notifications. Use a publicly accessible HTTP or HTTPS URL."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Text-to-video requires prompt and omits image_urls. Image-to-video requires exactly one image_urls item and does not accept aspect_ratio.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "Required for text-to-video, up to 5,000 characters. Optional for image-to-video, up to 2,048 characters. Cannot be blank."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Exactly one public HTTP or HTTPS image URL for image-to-video. JPEG, PNG, or WebP. Do not send this field for text-to-video."
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 15,
+                "default": 5,
+                "description": "Output duration in whole seconds."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "360p",
+                  "540p",
+                  "720p",
+                  "1080p"
+                ],
+                "default": "540p",
+                "description": "Output video resolution."
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "4:3",
+                  "3:4",
+                  "1:1",
+                  "2:3",
+                  "3:2",
+                  "21:9"
+                ],
+                "default": "16:9",
+                "description": "Frame for text-to-video. Do not send this field for image-to-video."
+              },
+              "audio": {
+                "type": "boolean",
+                "default": false,
+                "description": "Generate a native audio track. Defaults to silent video."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792190000-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-28T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
