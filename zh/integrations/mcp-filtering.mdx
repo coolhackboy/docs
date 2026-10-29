@@ -1,0 +1,39 @@
+---
+title: "选择 MCP 工具"
+description: "通过 PoYo MCP 筛选参数暴露模型专属工具"
+icon: "toolbox"
+---
+
+# 选择 MCP 工具
+
+默认的 [PoYo MCP 接口](/zh/integrations/mcp)暴露一组精简工具，用于发现模型、检查 schema 和执行任务。大多数情况下从它开始即可。
+
+## 使用类型化工具
+
+当集成需要模型专属的工具名和 JSON Schema 时，添加筛选参数：
+
+```text
+https://api.poyo.ai/mcp?models=flux-schnell,tripo3d-h3.1-text-to-3d
+```
+
+类型化模式会暴露 `poyo_flux_dev` 这类工具。它们的输入 schema 直接来自实时能力目录。`poyo_check_job` 和 `poyo_account` 仍然可用。
+
+## 选择筛选方式
+
+| 筛选参数 | 适用场景 | 取舍 |
+|---|---|---|
+| `models=MODEL_A,MODEL_B` | 集成需要一组稳定且经过审核的模型 | 添加模型时需要更新 URL |
+| `categories=image,video` | 用户需要探索一个不断变化的分类 | 工具集会随目录变化而增多 |
+
+<Warning>
+  不要在同一个 URL 中同时使用 `models` 和 `categories`。
+</Warning>
+
+## 限制
+
+- 最多选择 20 个明确的模型。
+- 最多选择 3 个分类。
+- 展开后的接口最多暴露 30 个模型工具。
+- 修改筛选参数后，重启 MCP 服务器或客户端以刷新工具列表。
+
+生产集成优先使用明确的模型 ID。探索时使用分类筛选，等模型集合需要保持可预期时再切换为模型 ID。

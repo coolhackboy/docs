@@ -1,0 +1,24 @@
+---
+title: "Wan Animate"
+description: "Wan Animate API 可根据参考视频让角色图片动起来，或替换视频中的人物并保留其动作和表情，最高 720p。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/wan-animate.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Wan Animate 基于阿里巴巴的 Wan2.2-Animate 模型，这是一个 14B 参数的开源数字人视频生成模型。它能准确捕捉参考视频中的面部表情和身体动作，并应用到目标图片上，实现自然的角色动画和角色替换，同时保留真实的光照和色彩。
+
+## 模型
+
+- **wan-animate-replace** - 用源图片中的角色替换视频中的角色，同时保留表情和动作
+- **wan-animate-move** - 使用参考视频中的动作让角色图片动起来
+
+## 分辨率
+
+- **480p** - 标清（默认）
+- **580p** - 增强清晰度
+- **720p** - 高清质量

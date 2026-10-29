@@ -1,0 +1,85 @@
+---
+title: "H3 Max"
+description: "根据文本、关键帧或多模态参考创建视频"
+icon: "video"
+openapi: "/zh/api-manual/video-series/h3-max.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **h3-max** — H3 Max
+
+## 输入模式
+
+| 模式 | 输入 |
+| --- | --- |
+| 文生视频 | 只提供提示词，不提供媒体。 |
+| 图生视频 | 提供 `image_urls`，包含起始帧，可选再加结束帧。 |
+| 参考生视频 | 提供 `reference_image_urls`；可选再加参考视频和音频。 |
+
+起始帧和结束帧不能与任何参考素材同时使用。参考视频和音频始终需要至少一张参考图片。空数组不会选择任何模式。
+
+## 必填参数
+
+- `prompt` 为必填，最多 50,000 个字符。
+
+## 可选参数
+
+- `duration` 为 5 到 15 秒的整数；默认为 5。
+- `resolution` 为 `480p`、`768p` 或 `1080p`；默认为 `768p`。
+- `enable_safety_checker` (boolean) 为 `true` 时启用安全检查。所有模式下默认为 `true`；设为 `false` 可关闭。
+- `image_urls` 最多接受 2 张图片，按起始帧、结束帧顺序排列。
+- `reference_image_urls` 最多接受 9 张图片。
+- `reference_video_urls` 最多接受 3 个片段。每个片段必须为 2–15 秒，总时长不得超过 15 秒。
+- `reference_audio_urls` 最多接受 3 个片段，同样每个 2–15 秒，总时长最多 15 秒。
+- 参考图片、视频和音频合计最多 12 个文件。
+- 文本模式支持 `21:9`、`16:9`、`4:3`、`1:1`、`3:4` 和 `9:16`，默认为 `16:9`。
+- 参考模式支持相同的比例，另加 `adaptive`，且 `adaptive` 为其默认值。
+- 图片模式跟随起始图片；不要传 `aspect_ratio`。
+
+媒体 URL 必须是可公开访问的 HTTP(S) 下载链接。在提示词中按各列表顺序以 `Image 1`、`Video 1` 和 `Audio 1` 引用参考素材。
+
+服务端会在提交前检查参考素材的元数据。如果无法可靠判断参考素材的用法，请求会被拒绝。
+
+参考图片目前支持 `1:1`、`4:3`、`3:4`、`16:9`、`9:16`、`5:2` 和 `2:5` 形状。参考视频必须使用恒定 24 fps、方形像素、无旋转元数据，且形状为 `16:9` 或 `9:16`。将计入的帧数限制在请求的输出时长内后，帧数必须为 48、120、240 或 360。参考音频必须为 32 kHz，解码后的采样数能被 800 整除，且每个片段不得超过请求的输出时长。其他媒体格式或时长模式会被拒绝。
+
+## 示例
+
+```json Text to video
+{
+  "model": "h3-max",
+  "input": {"prompt": "A cinematic aerial view of a coastal city at sunrise"}
+}
+```
+
+```json Starting and ending frames
+{
+  "model": "h3-max",
+  "input": {
+    "prompt": "The camera glides forward as daylight turns into sunset",
+    "duration": 8,
+    "resolution": "1080p",
+    "image_urls": ["https://example.com/start.jpg", "https://example.com/end.jpg"]
+  }
+}
+```
+
+```json Multimodal references
+{
+  "model": "h3-max",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Image 1 follows the movement in Video 1 with the atmosphere of Audio 1",
+    "duration": 10,
+    "resolution": "768p",
+    "reference_image_urls": ["https://example.com/subject.jpg"],
+    "reference_video_urls": ["https://example.com/motion.mp4"],
+    "reference_audio_urls": ["https://example.com/atmosphere.wav"]
+  }
+}
+```

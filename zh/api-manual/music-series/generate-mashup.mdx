@@ -1,0 +1,12 @@
+---
+title: "生成混搭"
+description: "使用 Suno 混合恰好两条音轨"
+icon: "music"
+openapi: "/zh/api-manual/music-series/generate-mashup.json POST /api/generate/submit"
+---
+
+`upload_url_list` 必须包含恰好两个可访问的音频 URL。`mv` 支持 `V4` 到 `V6_WILD`。`style` 和 `title` 为必填。`duration` 为 10–360 的整数，`V5_5`、`V6`、`V6_MINI` 和 `V6_WILD` 支持该参数。
+
+```json
+{"model":"generate-mashup","callback_url":"https://example.com/webhook","input":{"upload_url_list":["https://example.com/a.mp3","https://example.com/b.mp3"],"custom_mode":true,"instrumental":true,"mv":"V5_5","style":"cinematic electronic","title":"Night Drive","duration":120}}
+```

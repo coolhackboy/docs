@@ -1,0 +1,56 @@
+---
+title: "Vidu Q4"
+description: "根据一张起始帧或参考图片生成 3–16 秒的视频，可选附带参考音频，分辨率从 540p 到 4k。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/vidu-q4.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Vidu Q4 可让起始帧动起来，或使用参考图片引导生成结果。参考图片可选搭配参考音频。
+
+## 模型
+
+- **vidu-q4** — 图生视频和参考生视频
+
+## 功能
+
+- 生成 3 到 16 秒的视频。
+- 让一张起始帧图片动起来，或使用 1–12 张参考图片及最多 3 个可选参考音频文件引导视频。
+- 可选择 540p 到 4k 的输出分辨率。
+- 在参考生视频模式下可选生成音轨。
+
+## 输入模式
+
+- **图生视频**：在 `image_urls` 中提供恰好一个 URL。`prompt` 为可选。此模式不能与 `reference_image_urls` 或 `reference_audio_urls` 同时使用，也不要传 `aspect_ratio` 或 `generate_audio`。
+- **参考生视频**：提供 `prompt`，并在 `reference_image_urls` 中提供 1–12 个 URL。`reference_audio_urls` 为可选，且必须与参考图片一起使用。不要传 `image_urls`。
+
+## 必填参数
+
+- `prompt` (string)：参考生视频时必填。长度必须为 1–5,000 个字符，且不能为空白。
+- `image_urls` (array of strings)：图生视频时必填。必须包含恰好一个起始帧图片 URL。
+- `reference_image_urls` (array of strings)：参考生视频时必填。必须包含 1–12 个参考图片 URL。
+
+## 可选参数
+
+- `prompt` (string)：图生视频时可选，最多 5,000 个字符。
+- `reference_audio_urls` (array of strings)：搭配 `reference_image_urls` 的可选音频，最多 3 个文件。每个文件必须为 MP3，时长 3–12 秒。没有参考图片时不能使用音频。
+- `duration` (integer)：输出时长，3 到 16 秒。默认为 `5`。
+- `resolution` (string)：`540p`、`720p`、`1080p`、`2k` 或 `4k`。默认为 `720p`。
+- `aspect_ratio` (string)：`16:9`、`9:16`、`4:3`、`3:4` 或 `1:1`。默认为 `16:9`。仅用于参考生视频。
+- `generate_audio` (boolean)：生成音轨。默认为 `false`。仅用于参考生视频。
+- `enable_safety_checker` (boolean)：启用内容安全检查。默认为 `true`。
+
+## 示例
+
+请求示例展示了带可选提示词的单张起始帧动画，以及由参考图片引导、可选附带音频的生成。两种模式使用同一个 `vidu-q4` model ID。
+
+## 注意事项
+
+- 所有生成参数都放在 `input` 中。
+- 图片必须使用可公开访问的 HTTP 或 HTTPS URL。
+- 参考音频必须使用可公开访问的 HTTP 或 HTTPS URL。
+- 图生视频会拒绝 `aspect_ratio` 和 `generate_audio`，即使 `generate_audio` 为 `false` 也会拒绝。

@@ -1,0 +1,130 @@
+---
+title: "查询音乐详情"
+description: "查询音乐生成任务的详细结果"
+icon: "music"
+openapi: "/zh/api-manual/music-series/query-music-detail.json GET /api/generate/detail/music"
+---
+
+## 使用指南
+
+- 音乐系列中的所有 POST 提交请求都可以通过此接口查询结果。不同模型返回的[响应字段](#files-数据响应字段)不同。
+
+## 参数详情
+
+- `task_id`（必填）：音乐生成提交接口返回的唯一任务标识
+
+## 开发者说明
+
+- 轮询此接口以检查任务完成状态
+- 任务完成前 `files` 数组通常为空。语音任务在运行中可能返回中间状态的 `voice_status` 或 `validate_info`。
+- 任务失败时，查看 `error_message` 字段获取详情
+- 单个任务生成多个变体时，可能返回多个音频文件
+- `minimax-music-2.6` 的详情响应返回 `audio_id`、`audio_url`、`title`、`duration` 和 `prompt`
+- `credits_amount` 在任务层级返回，与 `task_id`、`status` 和 `files` 并列，不会在 `files` 的每一项中重复出现。
+
+## 任务数据响应字段
+
+| 字段 | 类型 | 说明 |
+|-------|------|-------------|
+| `task_id` | string | 唯一任务标识 |
+| `status` | string | 任务状态：`not_started`、`running`、`finished`、`failed` |
+| `credits_amount` | number | 该任务扣除的积分 |
+| `progress` | number | 当前任务进度，范围 0 到 100 |
+| `files` | array | 生成的音乐结果文件或特定任务的结果对象 |
+| `created_time` | string | 任务创建时间，ISO 8601 格式 |
+| `error_message` | string \| null | 任务失败时的错误信息 |
+
+## files 数据响应字段
+
+`files` 数组的内容取决于创建任务的模型。
+
+| 模型 | 字段 | 类型 | 说明 |
+|-------|-------|------|-------------|
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `audio_id` | string | 音频文件的唯一标识 |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `audio_url` | string | 音频文件的直接下载 URL |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `image_url` | string | 封面图 URL |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `title` | string | 曲目标题 |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `tags` | string | 风格标签 |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `duration` | number | 音频时长（秒） |
+| `generate-music`, `extend-music`, `upload-and-cover-audio`, `upload-and-extend-audio`, `add-instrumental`, `add-vocals`, `replace-section` | `prompt` | string | 生成时使用的提示词 |
+| `generate-mashup`, `generate-sounds` | `audio_id`, `audio_url`, `stream_audio_url`, `image_url`, `title`, `tags`, `prompt`, `duration` | mixed | 生成的音频字段（如有） |
+| 标准音乐结果 | `model_name`, `source_audio_url`, `source_image_url`, `source_stream_audio_url` | string | 模型及衍生来源元数据（如有） |
+| `minimax-music-2.6` | `audio_id` | string | 生成音频文件的唯一标识 |
+| `minimax-music-2.6` | `audio_url` | string | 生成音频文件的直接下载 URL |
+| `minimax-music-2.6` | `title` | string | 根据提交的提示词生成的曲目标题 |
+| `minimax-music-2.6` | `duration` | number | 音频时长（秒） |
+| `minimax-music-2.6` | `prompt` | string | 生成时使用的原始提示词 |
+| `get-timestamped-lyrics` | `timestampe_lyrics` | string | 带时间戳的歌词 |
+| `generate-lyrics` | `title` | string | 歌词标题 |
+| `generate-lyrics` | `text` | string | 完整歌词内容 |
+| `boost-music-style` | `style` | string | 增强后的音乐风格 |
+| `convert-to-wav` | `wav_url` | string | 转换后 WAV 文件的 URL |
+| `separate-vocals` | `separate_vocals` | object | 分离后的音频 URL。[查看详情](#separate-vocals) |
+| `upload-and-separate-vocals` | `vocal_removal` | object | 分离后的音轨 URL。[查看详情](#upload-and-separate-vocals) |
+| `stem-split` | `stem_split` | object | 完整音轨分离 URL。[查看详情](#stem-split) |
+| `generate-music-cover` | `generate_cover` | array | 生成的封面图。[查看详情](#generate-music-cover) |
+| `generate-persona` | `persona_id` | string | 生成的 persona 标识 |
+| `create-music-video` | `video_url` | string | 生成的视频 URL |
+| `suno-voice-validate`, `suno-voice-regenerate` | `validate_info`, `voice_status` | string \| null | 验证短语及当前验证状态 |
+| `suno-voice-generate` | `voice_id`, `voice_status` | string \| null | 生成的语音标识及创建状态 |
+| `suno-voice-check` | `is_available` | boolean | 生成的语音当前是否可用 |
+| Suno Voice 任务 | `error_message`, `error_code` | string/number \| null | 结构化错误详情（如有） |
+
+### Voice Generate 结果示例
+
+```json
+{"task_id":"POYO_VOICE_GENERATE_TASK","status":"finished","credits_amount":0,"progress":100,"files":[{"voice_status":"success","voice_id":"voice_abc123"}],"error_message":null}
+```
+
+### Voice Validate 或 Regenerate 结果示例
+
+```json
+{"task_id":"POYO_VOICE_VALIDATE_TASK","status":"finished","credits_amount":0,"progress":100,"files":[{"voice_status":"wait_validating","validate_info":"Read the displayed verification phrase clearly."}],"error_message":null}
+```
+
+### Voice Check 结果示例
+
+```json
+{"task_id":"POYO_VOICE_CHECK_TASK","status":"finished","credits_amount":0,"progress":100,"files":[{"is_available":true}],"error_message":null}
+```
+
+### JSON 字段详情
+
+#### separate-vocals
+
+`separate_vocals` 字段：
+- `vocal_url` - 提取出的人声音轨 URL
+- `instrumental_url` - 伴奏音轨 URL
+
+#### upload-and-separate-vocals
+
+`vocal_removal` 字段：
+- `bass` - 贝斯音轨 URL
+- `drums` - 鼓音轨 URL
+- `piano` - 钢琴音轨 URL
+- `guitar` - 吉他音轨 URL
+- `vocals` - 人声音轨 URL
+- `other` - 其他音频元素 URL
+
+#### stem-split
+
+`stem_split` 字段：
+- `backing_vocals_url` - 和声 URL
+- `bass_url` - 贝斯音轨 URL
+- `brass_url` - 铜管乐器 URL
+- `drums_url` - 鼓音轨 URL
+- `fx_url` - 音效 URL
+- `guitar_url` - 吉他音轨 URL
+- `keyboard_url` - 键盘音轨 URL
+- `percussion_url` - 打击乐音轨 URL
+- `strings_url` - 弦乐音轨 URL
+- `synth_url` - 合成器音轨 URL
+- `vocal_url` - 主唱人声 URL
+- `woodwinds_url` - 木管乐器音轨 URL
+- `piano_url` - 钢琴音轨 URL
+
+#### generate-music-cover
+
+`generate_cover` 是包含封面图对象的 JSON 数组：
+- `file_url` - 生成的封面图 URL
+- `file_type` - 文件类型（例如 `image`）

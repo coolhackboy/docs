@@ -1,0 +1,19 @@
+---
+title: "Nano Banana 2.1"
+description: "Nano Banana 2.1 API 根据提示词生成图像，或编辑最多 10 张参考图。默认分辨率为 1K，编辑时宽高比可保持为 auto。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/nano-banana-2-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `nano-banana-2.1` 进行文生图。添加 `image_urls` 后，可用同一个 model ID 编辑一张或多张参考图。该模型最多支持 10 张参考图。
+
+## 模型
+
+- **nano-banana-2.1** - 文生图和图生图生成
+
+`resolution` 默认值为 `1K`。文生图时，`size` 默认为 `1:1`。提供 `image_urls` 时，`size` 默认为 `auto`，由模型根据参考图选择宽高比。你也可以显式选择支持的比例。`auto` 选项仅在图像编辑时可用。

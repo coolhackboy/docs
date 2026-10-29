@@ -1,0 +1,45 @@
+---
+title: "Hailuo 03"
+description: "根据文本、关键帧或多模态参考生成 2K 视频"
+icon: "video"
+openapi: "/zh/api-manual/video-series/hailuo-03.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **hailuo-03** — Hailuo 03
+
+## 功能
+
+- **文生视频**：直接根据提示词生成视频。
+- **图生视频**：通过 `image_urls` 提供一个起始帧和一个可选的结束帧。
+- **参考生视频**：通过参考图片、视频和音频引导生成结果。
+- **2K 输出**：当前输出分辨率固定为 `2K`。
+
+## 输入模式
+
+- 没有媒体输入时，请求使用文生视频模式。
+- `image_urls` 会选择图生视频模式。它接受一个起始帧和一个可选的第二张结束帧。
+- `reference_image_urls`、`reference_video_urls` 或 `reference_audio_urls` 中任意一个都会选择参考生视频模式。
+- `image_urls` 不能与任何 `reference_*_urls` 字段同时使用。
+- 参考图片、视频和音频可以在同一个参考生视频请求中组合使用。
+- 参考音频不能作为唯一的参考输入。请至少包含一张参考图片或一段参考视频。
+
+## 注意事项
+
+- `prompt` 为必填，最多 2,000 个字符。
+- `duration` 接受 `5` 到 `15` 秒的整数，默认为 `5`。
+- `resolution` 当前只接受 `2K`。
+- 文生视频支持 `21:9`、`16:9`、`4:3`、`1:1`、`3:4` 和 `9:16`。默认为 `16:9`。
+- 参考生视频支持相同的固定宽高比，另加 `adaptive`。默认为 `adaptive`。
+- 图生视频跟随第一张图片的宽高比，因此该模式不接受 `aspect_ratio`。
+- `reference_image_urls` 最多接受 9 张图片。
+- `reference_video_urls` 最多接受 3 个视频片段。每个片段应为 2–15 秒，总时长最多 15 秒。
+- `reference_audio_urls` 最多接受 3 个音频片段。每个片段应为 2–15 秒，总时长最多 15 秒。
+- 在提示词中按模态和顺序引用参考素材，例如 `Image 1`、`Video 1` 和 `Audio 1`。
+- 所有媒体 URL 都必须可公开访问且可直接下载。

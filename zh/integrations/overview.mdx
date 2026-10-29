@@ -1,0 +1,44 @@
+---
+title: "AI Agent 与开发者工具"
+description: "为你的 PoYo 工作流选择 Agent Skill、CLI、MCP 或 REST。"
+icon: "terminal"
+---
+
+# AI Agent 与开发者工具
+
+根据你的工作方式选择接入路径。所有方式都与 REST API 使用相同的能力目录（Capability Catalog）、认证、异步任务和标准化结果。
+
+| 我想要…… | 推荐路径 | 从这里开始 |
+|---|---|---|
+| 让编程 Agent（Claude Code、Codex、Cursor）选择并运行模型 | Agent Skill + CLI | [快速开始](/zh/integrations/quickstart) |
+| 为 AI 客户端提供可直接调用的 PoYo 工具 | MCP（可选搭配 Agent Skill） | [MCP 快速开始](/zh/integrations/mcp) |
+| 在终端或 CI 中运行模型调用 | CLI | [CLI](/zh/integrations/cli) |
+| 通过 HTTP 请求构建应用 | REST API | [API 概览](/zh/api-manual/overview) |
+| 在无代码自动化流程中接入 PoYo | n8n 社区节点 | [n8n](/zh/integrations/n8n) |
+| 在可视化节点画布上使用 PoYo 模型 | ComfyUI 自定义节点 | [ComfyUI](/zh/integrations/comfyui) |
+
+Agent Skill 可以搭配 MCP 或 CLI 使用。如果未连接 MCP，它会通过 `npx @poyoapi/cli` 运行模型。
+
+## 最快路径
+
+对于 Claude Code、Codex 或 Cursor，无需配置 MCP：
+
+```bash
+npx -y @poyoapi/cli auth login
+npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
+```
+
+然后重新打开 Agent，让它用 PoYo 生成一张图片。各客户端的配置、验证方法和示例提示词见[快速开始](/zh/integrations/quickstart)。如需让客户端直接使用 PoYo 工具，请参阅 [MCP 快速开始](/zh/integrations/mcp)。
+
+## 集成一览
+
+| 集成方式 | 适用场景 | 安装方式或 URL | 可用性 |
+|---|---|---|---|
+| Agent Skill | 为编程 Agent 提供模型选择、成本控制和任务流程 | `npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models` | 从仓库安装 |
+| CLI | Shell 脚本、CI，以及无 MCP 时的 Skill 执行 | `npx -y @poyoapi/cli`（可选：`npm install -g @poyoapi/cli`） | 可用 |
+| Remote MCP | 托管式 AI 客户端 | `https://api.poyo.ai/mcp` | 可用 |
+| stdio MCP | 仅支持本地的 MCP 客户端 | `npx -y @poyoapi/mcp` | 可用 |
+
+<Info>
+  CLI 和 stdio MCP 是本地客户端，不是单独部署的服务。托管的 MCP 接口与 PoYo API 一同运行。
+</Info>

@@ -1,0 +1,26 @@
+---
+title: "xAI"
+description: "通过 OpenAI 兼容的 Chat Completions 接口调用 xAI Grok 4.7 和 Grok 4.6。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/xai.json POST /v1/chat/completions"
+---
+
+xAI Grok 模型覆盖长时间运行的 Agent、编程、工程和知识工作。本页 Playground 使用 [Chat Completions](/zh/api-manual/chat-series/chat-completions)，所有 Grok 模型都支持该格式。
+
+## 模型
+
+- **grok-4.7** — Grok 4.7。仅支持 Chat Completions。
+- **grok-4.6** — Grok 4.6，适用于长时间运行的 Agent、编程以及交互式或可视化项目。支持 Chat Completions 和 Responses。
+
+## 示例
+
+- **基础聊天补全** — 单条用户消息。
+- **系统提示词** — `system` 消息加 `max_tokens`。
+- **流式输出** — `stream: true`，以 SSE 返回。
+
+如需以 Responses 格式调用 `grok-4.6`，把相同的 model id 发送到 [Responses](/zh/api-manual/chat-series/responses)。
+
+## 注意事项
+
+- `grok-4.7` 只接受 `/v1/chat/completions`。
+- 全部模型及其支持的格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

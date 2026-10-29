@@ -1,0 +1,325 @@
+{
+    "openapi":  "3.0.0",
+    "info":  {
+                 "title":  "PoYo AI - Wan-2.7-Image-Pro API",
+                 "description":  "Wan 2.7 Image Pro API 用于生成或编辑图像，最多使用 4 张参考图，最多输出 4 张。尺寸可选列出的预设，或自定义宽高。",
+                 "version":  "1.0.0"
+             },
+    "servers":  [
+                    {
+                        "url":  "https://api.poyo.ai",
+                        "description":  "生产环境"
+                    }
+                ],
+    "security":  [
+                     {
+                         "BearerAuth":  [
+
+                                        ]
+                     }
+                 ],
+    "paths":  {
+                  "/api/generate/submit":  {
+                                               "post":  {
+                                                            "summary":  "提交 Wan-2.7-Image-Pro 生成任务",
+                                                            "description":  "统一的文生图与图像编辑。提供 `image_urls` 时，请求会自动按编辑模式处理。",
+                                                            "operationId":  "submitWan27ImageProTask",
+                                                            "tags":  [
+                                                                         "Wan-2.7-Image-Pro"
+                                                                     ],
+                                                            "requestBody":  {
+                                                                                "required":  true,
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/SubmitRequest"
+                                                                                                                                    },
+                                                                                                                         "examples":  {
+                                                                                                                                          "wan-2-7-image-pro-text":  {
+                                                                                                                                                                         "summary":  "Wan-2.7-Image-Pro 文生图",
+                                                                                                                                                                         "value":  {
+                                                                                                                                                                                       "model":  "wan-2.7-image-pro",
+                                                                                                                                                                                       "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                                       "input":  {
+                                                                                                                                                                                                     "prompt":  "A cinematic portrait of a traveler in golden sunset light",
+                                                                                                                                                                                                     "size":  "1024x1024",
+                                                                                                                                                                                                     "n":  1,
+                                                                                                                                                                                                     "seed":  12345
+                                                                                                                                                                                                 }
+                                                                                                                                                                                   }
+                                                                                                                                                                     },
+                                                                                                                                          "wan-2-7-image-pro-edit":  {
+                                                                                                                                                                         "summary":  "Wan-2.7-Image-Pro 图像编辑",
+                                                                                                                                                                         "value":  {
+                                                                                                                                                                                       "model":  "wan-2.7-image-pro",
+                                                                                                                                                                                       "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                                       "input":  {
+                                                                                                                                                                                                     "prompt":  "Turn the scene into a snowy night with neon reflections",
+                                                                                                                                                                                                     "image_urls":  [
+                                                                                                                                                                                                                        "https://example.com/reference1.jpg"
+                                                                                                                                                                                                                    ],
+                                                                                                                                                                                                     "size":  "1024x576",
+                                                                                                                                                                                                     "n":  2
+                                                                                                                                                                                                 }
+                                                                                                                                                                                   }
+                                                                                                                                                                     },
+                                                                                                                                          "wan-2-7-image-pro-custom-size":  {
+                                                                                                                                                                                "summary":  "Wan-2.7-Image-Pro 自定义尺寸",
+                                                                                                                                                                                "value":  {
+                                                                                                                                                                                              "model":  "wan-2.7-image-pro",
+                                                                                                                                                                                              "callback_url":  "https://your-domain.com/callback",
+                                                                                                                                                                                              "input":  {
+                                                                                                                                                                                                            "prompt":  "A dramatic fashion editorial scene",
+                                                                                                                                                                                                            "size":  {
+                                                                                                                                                                                                                         "width":  1280,
+                                                                                                                                                                                                                         "height":  720
+                                                                                                                                                                                                                     },
+                                                                                                                                                                                                            "n":  1
+                                                                                                                                                                                                        }
+                                                                                                                                                                                          }
+                                                                                                                                                                            }
+                                                                                                                                      }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                            "responses":  {
+                                                                              "200":  {
+                                                                                          "description":  "任务提交成功",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/SubmitResponse"
+                                                                                                                                              }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      },
+                                                                              "400":  {
+                                                                                          "description":  "请求参数无效",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                              },
+                                                                                                                                   "example":  {
+                                                                                                                                                   "code":  400,
+                                                                                                                                                   "error":  {
+                                                                                                                                                                 "message":  "Invalid request parameters",
+                                                                                                                                                                 "type":  "invalid_request_error"
+                                                                                                                                                             }
+                                                                                                                                               }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      },
+                                                                              "401":  {
+                                                                                          "description":  "未授权：API Key 无效",
+                                                                                          "content":  {
+                                                                                                          "application/json":  {
+                                                                                                                                   "schema":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                              },
+                                                                                                                                   "example":  {
+                                                                                                                                                   "code":  401,
+                                                                                                                                                   "error":  {
+                                                                                                                                                                 "message":  "Unauthorized - Invalid API key",
+                                                                                                                                                                 "type":  "authentication_error"
+                                                                                                                                                             }
+                                                                                                                                               }
+                                                                                                                               }
+                                                                                                      }
+                                                                                      }
+                                                                          }
+                                                        }
+                                           }
+              },
+    "components":  {
+                       "securitySchemes":  {
+                                               "BearerAuth":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer",
+                                                                  "bearerFormat":  "API Key",
+                                                                  "description":  "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+                                                              }
+                                           },
+                       "schemas":  {
+                                       "SubmitRequest":  {
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "model",
+                                                                              "input"
+                                                                          ],
+                                                             "properties":  {
+                                                                                "model":  {
+                                                                                              "type":  "string",
+                                                                                              "description":  "Wan-2.7-Image-Pro 模型标识符",
+                                                                                              "enum":  [
+                                                                                                           "wan-2.7-image-pro"
+                                                                                                       ]
+                                                                                          },
+                                                                                "callback_url":  {
+                                                                                                     "type":  "string",
+                                                                                                     "format":  "uri",
+                                                                                                     "description":  "接收结果通知的 Webhook 回调 URL",
+                                                                                                     "example":  "https://your-domain.com/callback"
+                                                                                                 },
+                                                                                "input":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "prompt"
+                                                                                                           ],
+                                                                                              "description":  "生成的输入参数。存在 `image_urls` 时，请求会自动路由到编辑模式。",
+                                                                                              "properties":  {
+                                                                                                                 "prompt":  {
+                                                                                                                                "type":  "string",
+                                                                                                                                "description":  "描述期望输出的提示词，最大长度为 5,000 个字符。",
+                                                                                                                                "maxLength":  5000,
+                                                                                                                                "example":  "A beautiful sunset over the ocean"
+                                                                                                                            },
+                                                                                                                 "image_urls":  {
+                                                                                                                                    "type":  "array",
+                                                                                                                                    "items":  {
+                                                                                                                                                  "type":  "string",
+                                                                                                                                                  "format":  "uri"
+                                                                                                                                              },
+                                                                                                                                    "minItems":  1,
+                                                                                                                                    "maxItems":  4,
+                                                                                                                                    "description":  "用于编辑的参考图（必须 1-4 张）。顺序有意义：在提示词中按 image 1、image 2、image 3、image 4 引用。",
+                                                                                                                                    "example":  [
+                                                                                                                                                    "https://example.com/reference1.jpg"
+                                                                                                                                                ]
+                                                                                                                                },
+                                                                                                                 "size":  {
+                                                                                                                              "description":  "输出尺寸。支持的预设值：`512x512`、`1024x1024`、`768x1024`、`1024x768`、`576x1024`、`1024x576`。如需自定义图像尺寸，可以对象形式传入 `width` 和 `height`：`{ \"width\": 1280, \"height\": 720 }`。",
+                                                                                                                              "oneOf":  [
+                                                                                                                                            {
+                                                                                                                                                "type":  "string",
+                                                                                                                                                "enum":  [
+                                                                                                                                                             "512x512",
+                                                                                                                                                             "1024x1024",
+                                                                                                                                                             "768x1024",
+                                                                                                                                                             "1024x768",
+                                                                                                                                                             "576x1024",
+                                                                                                                                                             "1024x576"
+                                                                                                                                                         ],
+                                                                                                                                                "example":  "1024x1024"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "type":  "object",
+                                                                                                                                                "required":  [
+                                                                                                                                                                 "width",
+                                                                                                                                                                 "height"
+                                                                                                                                                             ],
+                                                                                                                                                "properties":  {
+                                                                                                                                                                   "width":  {
+                                                                                                                                                                                 "type":  "integer",
+                                                                                                                                                                                 "example":  1280
+                                                                                                                                                                             },
+                                                                                                                                                                   "height":  {
+                                                                                                                                                                                  "type":  "integer",
+                                                                                                                                                                                  "example":  720
+                                                                                                                                                                              }
+                                                                                                                                                               },
+                                                                                                                                                "example":  {
+                                                                                                                                                                "width":  1280,
+                                                                                                                                                                "height":  720
+                                                                                                                                                            }
+                                                                                                                                            }
+                                                                                                                                        ],
+                                                                                                                              "default":  "1024x1024",
+                                                                                                                              "example":  "1024x1024"
+                                                                                                                          },
+                                                                                                                 "n":  {
+                                                                                                                           "type":  "integer",
+                                                                                                                           "description":  "生成图像数量（1-4）。按图像数量扣除积分。",
+                                                                                                                           "minimum":  1,
+                                                                                                                           "maximum":  4,
+                                                                                                                           "default":  1,
+                                                                                                                           "example":  1
+                                                                                                                       },
+                                                                                                                 "seed":  {
+                                                                                                                              "type":  "integer",
+                                                                                                                              "description":  "可选随机种子，用于复现输出",
+                                                                                                                              "example":  12345
+                                                                                                                          }
+                                                                                                             }
+                                                                                          }
+                                                                            }
+                                                         },
+                                       "SubmitResponse":  {
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "code",
+                                                                               "data"
+                                                                           ],
+                                                              "properties":  {
+                                                                                 "code":  {
+                                                                                              "type":  "integer",
+                                                                                              "example":  200,
+                                                                                            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+                                                                                            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+                                                                                          },
+                                                                                 "data":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "task_id",
+                                                                                                               "status",
+                                                                                                               "created_time"
+                                                                                                           ],
+                                                                                              "properties":  {
+                                                                                                                 "task_id":  {
+                                                                                                                                 "type":  "string",
+                                                                                                                                 "example":  "task-unified-1757165031-uyujaw3d",
+                                                                                                                                 "description":  "任务唯一标识，用于查询任务状态"
+                                                                                                                             },
+                                                                                                                 "status":  {
+                                                                                                                                "type":  "string",
+                                                                                                                                "enum":  ["not_started", "running", "finished", "failed"],
+                                                                                                                                "example":  "not_started",
+                                                                                                                                "description":  "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+                                                                                                                            },
+                                                                                                                 "created_time":  {
+                                                                                                                                      "type":  "string",
+                                                                                                                                      "format":  "date-time",
+                                                                                                                                      "example":  "2025-11-12T10:30:00",
+                                                                                                                                      "description":  "任务创建时间，ISO 8601 格式"
+                                                                                                                                  }
+                                                                                                             }
+                                                                                          }
+                                                                             }
+                                                          },
+                                       "ErrorResponse":  {
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "code",
+                                                                              "error"
+                                                                          ],
+                                                             "properties":  {
+                                                                                "code":  {
+                                                                                             "type":  "integer",
+                                                                                             "example":  400,
+                                                                                            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+                                                                                            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+                                                                                         },
+                                                                                "error":  {
+                                                                                              "type":  "object",
+                                                                                              "required":  [
+                                                                                                               "message",
+                                                                                                               "type"
+                                                                                                           ],
+                                                                                              "properties":  {
+                                                                                                                 "message":  {
+                                                                                                                                 "type":  "string",
+                                                                                                                                 "example":  "Invalid request parameters",
+                                                                                                                                 "description":  "描述错误原因的错误信息"
+                                                                                                                             },
+                                                                                                                 "type":  {
+                                                                                                                              "type":  "string",
+                                                                                                                              "example":  "invalid_request_error",
+                                                                                                                              "description":  "错误类型标识"
+                                                                                                                          }
+                                                                                                             }
+                                                                                          }
+                                                                            }
+                                                         }
+                                   }
+                   }
+}

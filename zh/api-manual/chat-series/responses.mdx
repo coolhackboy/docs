@@ -1,0 +1,137 @@
+---
+title: "Responses"
+description: "Responses API 是 OpenAI 兼容接口，支持纯文本或结构化图像输入。所选模型支持时，可使用工具调用和服务器发送事件（SSE）流式输出。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/responses.json POST /v1/responses"
+---
+
+- OpenAI 兼容的 Responses API 格式
+- 支持纯文本输入和结构化多模态输入
+- 所选模型可用时，支持网页搜索、函数调用等工具
+- 支持完整 JSON 响应和 SSE 流式输出
+
+## 使用示例
+
+### 基础文本
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "input": "Write a product tagline in one sentence.",
+  "max_output_tokens": 120
+}
+```
+
+### 多模态输入
+
+```json  theme={null}
+{
+  "model": "gpt-5",
+  "input": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Describe this image in one paragraph."
+        },
+        {
+          "type": "input_image",
+          "image_url": "https://example.com/image.jpg"
+        }
+      ]
+    }
+  ],
+  "max_output_tokens": 300
+}
+```
+
+### 网页搜索
+
+```json  theme={null}
+{
+  "model": "gpt-5",
+  "input": "Use web search to find the latest product update on poyo.ai. Reply with the title and URL only.",
+  "tools": [
+    {
+      "type": "web_search_preview"
+    }
+  ],
+  "tool_choice": "auto",
+  "max_output_tokens": 2000
+}
+```
+
+### 流式输出
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "input": "Write a 100-word product introduction.",
+  "max_output_tokens": 200,
+  "stream": true,
+  "store": false
+}
+```
+
+### cURL
+
+```bash  theme={null}
+curl "https://api.poyo.ai/v1/responses" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer PoYo_API_KEY" \
+  -d '{
+    "model": "gpt-5.2",
+    "input": "Write a product tagline in one sentence.",
+    "max_output_tokens": 120
+  }'
+```
+
+## 流式输出
+
+当 `stream` 为 `true` 时，接口返回 `text/event-stream`。事件以 SSE `data:` 行发送，并以 `data: [DONE]` 结束。
+
+常见事件类型包括：
+
+* `response.created`
+* `response.output_item.added`
+* `response.output_text.delta`
+* `response.output_text.done`
+* `response.completed`
+* `response.failed`
+
+## 注意事项
+
+* 工具是否可用取决于所选模型。如果模型不支持请求的工具，请求可能返回错误。
+* 图像输入使用公开 URL 时，模型服务必须能访问该 URL。
+* Base64 图像必须带完整的 Data URI 前缀，例如 `data:image/png;base64,`。
+* 内容块的顺序会影响模型理解。尽可能把文本指令放在图像之前。
+
+## 响应
+
+非流式请求直接返回 Responses 对象，不带 `code` / `data` 包装。生成的文本位于 `output[].content[]` 中 `type: "output_text"` 的条目里。
+
+## 流式输出
+
+设置 `"stream": true` 时，响应为 `text/event-stream`。每个事件是一行 `data:`，其 JSON 中的 `type` 表示事件名称，流以 `data: [DONE]` 结束：
+
+```text
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_...","status":"in_progress",...}}
+data: {"type":"response.output_item.added","sequence_number":2,"output_index":0,"item":{"type":"message",...}}
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_...","delta":"OK"}
+data: {"type":"response.output_text.done","sequence_number":6,"item_id":"msg_...","text":"OK"}
+data: {"type":"response.completed","sequence_number":9,"response":{"id":"resp_...","status":"completed","usage":{...}}}
+data: [DONE]
+```
+
+- 拼接 `response.output_text.delta` 事件即可得到完整文本。
+- `response.completed` 携带最终的 response 对象，包括 `usage`。
+- 事件只以 `data:` 行发送，没有单独的 `event:` 行。请从 `type` 读取事件名称。
+
+## 错误
+
+- `401`：缺少 API Key 或 API Key 无效。
+- `400`：参数无效，或模型不支持 Responses。错误信息会列出支持的 URI。
+- `404`：未知的 model id。
+
+响应体示例见[错误码](/zh/api-manual/error-codes#llm-接口错误)，哪些模型支持此格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

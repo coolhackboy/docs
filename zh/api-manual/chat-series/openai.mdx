@@ -1,0 +1,37 @@
+---
+title: "OpenAI"
+description: "通过 Responses 或 Chat Completions 接口调用 OpenAI GPT-6、GPT-5.6 和 GPT-5 系列模型。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/openai.json POST /v1/responses"
+---
+
+OpenAI GPT 模型覆盖聊天、编程、推理和 Agent 工作流。本页 Playground 使用 [Responses](/zh/api-manual/chat-series/responses)，所有 GPT 模型都支持该格式。
+
+## 模型
+
+- **gpt-6.1-sol** — GPT-6.1 Sol。支持 Responses 和 Chat Completions。
+- **gpt-6.1-terra** — GPT-6.1 Terra，适用于视觉推理、计算机操作和自然写作的快速模型。支持 Responses 和 Chat Completions。
+- **gpt-6-astra** — GPT-6 Astra，适用于高级推理、编程和 Agent 工作流。支持 Responses 和 Chat Completions。
+- **gpt-6-sol** — GPT-6 Sol。支持 Responses 和 Chat Completions。
+- **gpt-6-luna** — GPT-6 Luna，GPT-6 的低成本档位。支持 Responses 和 Chat Completions。
+- **gpt-5-6-sol** — GPT-5.6 Sol，适用于前沿编程和 Agent 工作流。仅支持 Responses。
+- **gpt-5-6-terra** — GPT-5.6 Terra。仅支持 Responses。
+- **gpt-5-6-luna** — GPT-5.6 Luna，适用于高吞吐量自动化。仅支持 Responses。
+- **gpt-5.5** — GPT-5.5。支持 Responses 和 Chat Completions。
+- **gpt-5.4** — GPT-5.4。支持 Responses 和 Chat Completions。
+- **gpt-5.2** — GPT-5.2。支持 Responses 和 Chat Completions。
+
+## 示例
+
+- **基础文本响应** — 纯字符串 `input` 加 `max_output_tokens`。
+- **图像理解** — 包含 `input_text` 和 `input_image` 的结构化 `input`。
+- **网页搜索** — `tools` 中使用 `web_search_preview`。
+- **流式响应** — `stream: true`，以 SSE 返回。
+
+如需以 Chat Completions 格式调用模型，把相同的 model id 发送到 [Chat Completions](/zh/api-manual/chat-series/chat-completions)。
+
+## 注意事项
+
+- `gpt-5-6-sol`、`gpt-5-6-terra` 和 `gpt-5-6-luna` 只接受 `/v1/responses`。
+- 网页搜索等工具是否可用取决于所选模型。
+- 全部模型及其支持的格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

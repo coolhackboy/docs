@@ -1,0 +1,184 @@
+---
+title: "Anthropic Messages"
+description: "Claude Messages API 是与模型无关的接口，兼容 Anthropic Messages 格式。它接受单轮或多轮的文本和图像输入，页面示例展示了流式输出和工具使用。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/claude-messages.json POST /v1/messages"
+---
+
+- 完全兼容 Claude Messages API 格式
+- 支持多轮对话和单次查询
+- 支持文本和图像等多模态内容
+
+<Note>
+参数详情请参阅 Anthropic Messages API 官方文档：
+https://platform.claude.com/docs/en/api/messages/create
+</Note>
+
+## 使用示例
+
+### 基础对话
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "messages": [
+    {"role": "user", "content": "Explain the meaning of 'rate limiting' in three sentences."}
+  ]
+}
+```
+
+### 流式响应
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "thinking": {
+    "type": "enabled",
+    "budget_tokens": 2048,
+    "display": "summarized"
+  },
+  "stream": true,
+  "messages": [
+    {"role": "user", "content": "Write a product update announcement under 80 words, professional yet friendly."}
+  ]
+}
+```
+
+### 工具使用
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Get weather by city",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "city": {"type": "string"}
+        },
+        "required": ["city"]
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "messages": [
+    {"role": "user", "content": "Check the weather in Tokyo and provide a one-sentence travel suggestion."}
+  ]
+}
+```
+
+### 带缓存的结构化输出
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "cache_control": {
+    "type": "ephemeral",
+    "ttl": "1h"
+  },
+  "output_config": {
+    "effort": "high",
+    "format": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "summary": {"type": "string"},
+          "tone": {"type": "string"}
+        },
+        "required": ["summary", "tone"]
+      }
+    }
+  },
+  "messages": [
+    {"role": "user", "content": "Summarize this release note and label its tone."}
+  ]
+}
+```
+
+### 视觉理解
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "max_tokens": 256,
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {"type": "text", "text": "Describe the main subject and scene in the image, and provide an alt text for it."},
+        {
+          "type": "image",
+          "source": {
+            "type": "base64",
+            "media_type": "image/png",
+            "data": "BASE64_IMAGE_DATA"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+## 注意事项
+
+* 使用 `max_tokens` 控制输出长度。
+* 思考 token 计入 `max_tokens`。
+* 图像输入可以使用受支持的 base64 媒体数据。
+
+## 认证
+
+在以下任一请求头中传入 API Key：
+
+```http
+x-api-key: YOUR_API_KEY
+Authorization: Bearer YOUR_API_KEY
+```
+
+借助 `x-api-key`，官方 Anthropic SDK 只需把 base URL 改为 `https://api.poyo.ai` 即可使用。
+
+## 响应
+
+非流式请求直接返回 Anthropic Message 对象，不带 `code` / `data` 包装。启用扩展思考时，`content` 中可能在 `text` 块之前包含 `thinking` 块，`usage.output_tokens_details.thinking_tokens` 统计其 token 数。
+
+## 流式输出
+
+设置 `"stream": true` 时，响应遵循 Anthropic 事件格式：每个事件包含一行 `event:` 和一行 `data:`。流以 `message_stop` 结束，没有 `[DONE]` 标记。
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_...","model":"claude-haiku-5-5","role":"assistant","content":[],"usage":{"input_tokens":113,...}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OK"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":4,...}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+- 文本在 `delta.type: "text_delta"` 的 `content_block_delta` 事件中返回。
+- `message_delta` 携带 `stop_reason` 和最终的 `usage`。
+
+## 错误
+
+- `401`：缺少 API Key 或 API Key 无效。
+- `400`：参数无效，或模型不支持 Anthropic Messages。错误信息会列出支持的 URI。
+- `404`：未知的 model id。
+
+响应体示例见[错误码](/zh/api-manual/error-codes#llm-接口错误)，哪些模型支持此格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

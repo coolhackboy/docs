@@ -1,0 +1,98 @@
+---
+title: "Gemini 3.8 Flash Lite TTS"
+description: "Gemini 3.8 Flash Lite TTS API 可使用预设音色和可选的风格指令，将文稿或双人对话转换为 WAV 语音。完整输入限制为 8,192 个 token。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/gemini-3-8-flash-lite-tts.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`gemini-3.8-flash-lite-tts` 将文稿或双人对话转换为原生 WAV 语音。结果以任务 `files` 返回，与图像、视频、3D 和音频任务的标准响应结构一致。
+
+## 模型
+
+- **gemini-3.8-flash-lite-tts** - Gemini 3.8 Flash Lite 文本转语音生成
+
+## 必填参数
+
+单说话人输入与对话输入互斥。
+
+- **text**：单说话人合成时必填。非空文稿。使用 `speakers` 和 `turns` 时省略
+- **speakers**：对话时必填，需与 `turns` 一起使用。恰好两个说话人。每一项包括：
+  - `speaker_id`：互不相同的非空说话人别名
+  - `voice`：Gemini 预设音色
+- **turns**：对话时必填，需与 `speakers` 一起使用。至少一轮。每一项包括：
+  - `speaker_id`：必须与已配置的说话人匹配
+  - `text`：非空的本轮文本
+  - `style_instructions`：可选，该轮的演绎指令
+
+对话请求必须省略顶层 `text` 和顶层 `voice`。完整输入限制为 8,192 个 token。
+
+## 可选参数
+
+- **voice**：单说话人合成的预设音色。默认：`Kore`。对话时省略
+- **style_instructions**：全局演绎风格，与文稿分开。两种模式均可使用
+- **enable_safety_checker**：启用输入安全检查。默认：`true`。关闭可能需要账户授权
+- **callback_url**：可选的 Webhook URL，用于任务完成通知
+
+## 预设音色
+
+支持的值：`Achernar`、`Achird`、`Algenib`、`Algieba`、`Alnilam`、`Aoede`、`Autonoe`、`Callirrhoe`、`Charon`、`Despina`、`Enceladus`、`Erinome`、`Fenrir`、`Gacrux`、`Iapetus`、`Kore`、`Laomedeia`、`Leda`、`Orus`、`Pulcherrima`、`Puck`、`Rasalgethi`、`Sadachbia`、`Sadaltager`、`Schedar`、`Sulafat`、`Umbriel`、`Vindemiatrix`、`Zephyr`、`Zubenelgenubi`。
+
+## 示例
+
+### 单说话人
+
+```json
+{
+  "model": "gemini-3.8-flash-lite-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Hello! Welcome to PoYo.",
+    "voice": "Kore",
+    "style_instructions": "Warm, confident product narrator with clear pacing."
+  }
+}
+```
+
+### 双人对话
+
+```json
+{
+  "model": "gemini-3.8-flash-lite-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "style_instructions": "Conversational podcast tone with distinct speaker energy.",
+    "speakers": [
+      {
+        "speaker_id": "host",
+        "voice": "Kore"
+      },
+      {
+        "speaker_id": "guest",
+        "voice": "Puck"
+      }
+    ],
+    "turns": [
+      {
+        "speaker_id": "host",
+        "text": "Welcome!"
+      },
+      {
+        "speaker_id": "guest",
+        "text": "Thank you.",
+        "style_instructions": "Warm and friendly."
+      }
+    ]
+  }
+}
+```
+
+## 注意事项
+
+- 输出为原生 WAV。此模型没有 `output_format`、`temperature`、`language_code` 或 `seed` 参数。
+- 通过标准任务状态 API 查询状态。
+- 成功响应返回 `files`。生成的语音使用 `file_type: audio`。可选的时间 JSON 使用 `file_type: other`。

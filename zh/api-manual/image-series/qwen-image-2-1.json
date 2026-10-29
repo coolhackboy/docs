@@ -1,0 +1,349 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Qwen Image 2.1 API",
+    "description": "Qwen Image 2.1 API 根据文本生成一张图像、组合最多 10 张参考图像，或进行蒙版编辑。输出为 1K 或 2K，背景可以是不透明或透明。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Qwen Image 2.1 任务",
+        "operationId": "submitQwenImage21Task",
+        "tags": [
+          "Qwen Image 2.1"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "文生图",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "input": {
+                      "prompt": "A bilingual technology poster with the headline Future Vision, precise typography, blue and silver palette",
+                      "size": "3:4",
+                      "resolution": "1K"
+                    }
+                  }
+                },
+                "multi-reference": {
+                  "summary": "组合参考图像",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "input": {
+                      "prompt": "Combine the product in the first image with the colors and lighting of the second image",
+                      "image_urls": [
+                        "https://example.com/product.png",
+                        "https://example.com/style.jpg"
+                      ],
+                      "size": "auto",
+                      "resolution": "2K",
+                      "prompt_extend": false
+                    }
+                  }
+                },
+                "transparent": {
+                  "summary": "透明 WebP 素材",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "input": {
+                      "prompt": "A playful corgi sticker, isolated subject",
+                      "background": "transparent",
+                      "output_format": "webp",
+                      "seed": 20260921
+                    }
+                  }
+                },
+                "mask-edit": {
+                  "summary": "编辑蒙版区域",
+                  "value": {
+                    "model": "qwen-image-2.1",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Replace the marked cushion with a blue velvet cushion",
+                      "image_urls": [
+                        "https://example.com/room.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "resolution": "2K",
+                      "output_format": "png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效"
+          },
+          "401": {
+            "description": "未授权"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "qwen-image-2.1"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 5000,
+                "description": "描述期望的图像或要做的修改。提示词不能只包含空白字符。"
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "文生图时省略或传入空数组。否则按提示词中的顺序提供 1-10 个可公开访问的 HTTP(S) 参考图 URL。支持 JPEG、PNG 和 WebP；每张图最大 30MB、25MP。媒体限制在生成时检查。"
+              },
+              "size": {
+                "type": "string",
+                "enum": [
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "3:2",
+                  "2:3",
+                  "16:9",
+                  "9:16",
+                  "21:9",
+                  "9:21",
+                  "auto"
+                ],
+                "description": "输出宽高比。文生图默认 1:1，参考图模式默认 auto。auto 至少需要一张参考图像。提供 mask_url 时忽略此参数。"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K"
+                ],
+                "default": "1K"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "webp",
+                  "jpeg"
+                ],
+                "default": "png"
+              },
+              "prompt_extend": {
+                "type": "boolean",
+                "default": true,
+                "description": "生成前增强提示词。提供 mask_url 时忽略此参数。"
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "opaque",
+                  "transparent"
+                ],
+                "default": "opaque",
+                "description": "透明输出要求格式为 png 或 webp，且不能与 mask_url 同时使用。"
+              },
+              "mask_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "局部编辑蒙版的 HTTP(S) URL，需配合恰好一张参考图像和不透明背景使用。白色区域会被修改，黑色区域保持不变。蒙版应与参考图宽高比一致，并会缩放到参考图尺寸。输出沿用参考图比例；size 和 prompt_extend 会被忽略。"
+              },
+              "seed": {
+                "type": "integer",
+                "description": "可选的随机种子。省略时使用随机种子。"
+              }
+            },
+            "allOf": [
+              {
+                "not": {
+                  "required": [
+                    "size"
+                  ],
+                  "properties": {
+                    "size": {
+                      "enum": [
+                        "auto"
+                      ]
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "image_urls"
+                    ],
+                    "properties": {
+                      "image_urls": {
+                        "minItems": 1
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "mask_url"
+                  ],
+                  "not": {
+                    "required": [
+                      "image_urls"
+                    ],
+                    "properties": {
+                      "image_urls": {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      "background": {
+                        "enum": [
+                          "opaque"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "background",
+                    "output_format"
+                  ],
+                  "properties": {
+                    "background": {
+                      "enum": [
+                        "transparent"
+                      ]
+                    },
+                    "output_format": {
+                      "enum": [
+                        "jpeg"
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1790245800-qwen21"
+              },
+              "status": {
+                "type": "string",
+                "example": "not_started",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-09-24T10:30:00Z",
+                "description": "任务创建时间，ISO 8601 格式。"
+              }
+            }
+          }
+        },
+        "example": {
+          "code": 200,
+          "data": {
+            "task_id": "task-unified-1790245800-qwen21",
+            "status": "not_started",
+            "created_time": "2026-09-24T10:30:00Z"
+          }
+        }
+      }
+    }
+  }
+}

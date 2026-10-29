@@ -1,0 +1,354 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedance 2 API",
+    "description": "Seedance 2 API 根据文本、最多两张帧图，或图片、视频、音频参考生成 4–15 秒的视频。更快的变体仅支持 480p 和 720p。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Seedance 2 视频生成任务",
+        "description": "使用 Seedance 2 或 Seedance 2 Fast 生成视频，支持文生视频、首尾帧和多模态参考工作流。",
+        "operationId": "submitSeedance2Task",
+        "tags": [
+          "Seedance 2"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "seedance-2-text-to-video": {
+                  "summary": "Seedance 2 文生视频",
+                  "value": {
+                    "model": "seedance-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic drone shot flying over a neon city after rain, reflections shimmering on the streets",
+                      "aspect_ratio": "16:9",
+                      "resolution": "4k",
+                      "duration": 5,
+                      "generate_audio": true
+                    }
+                  }
+                },
+                "seedance-2-fast-text-to-video": {
+                  "summary": "Seedance 2 Fast 文生视频",
+                  "value": {
+                    "model": "seedance-2-fast",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A fast-paced tracking shot through a cyberpunk alley with glowing signs and drifting mist",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 5,
+                      "generate_audio": true
+                    }
+                  }
+                },
+                "seedance-2-first-last-frame": {
+                  "summary": "Seedance 2 首尾帧",
+                  "value": {
+                    "model": "seedance-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A smooth transition from sunrise to golden afternoon over a mountain lake",
+                      "image_urls": [
+                        "https://example.com/first-frame.jpg",
+                        "https://example.com/last-frame.jpg"
+                      ],
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 10,
+                      "generate_audio": false
+                    }
+                  }
+                },
+                "seedance-2-fast-multimodal-reference": {
+                  "summary": "Seedance 2 Fast 多模态参考生视频",
+                  "value": {
+                    "model": "seedance-2-fast",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A stylish fashion short with energetic pacing, matching the movement rhythm of the reference clip",
+                      "reference_image_urls": [
+                        "https://example.com/reference-image.jpg"
+                      ],
+                      "reference_video_urls": [
+                        "https://example.com/reference-video.mp4"
+                      ],
+                      "reference_audio_urls": [
+                        "https://example.com/reference-audio.mp3"
+                      ],
+                      "aspect_ratio": "9:16",
+                      "resolution": "720p",
+                      "duration": 5,
+                      "generate_audio": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Seedance 2 模型标识。标准版使用 `seedance-2`，更快、成本更低的生成使用 `seedance-2-fast`。",
+            "enum": [
+              "seedance-2",
+              "seedance-2-fast"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt",
+              "resolution",
+              "duration"
+            ],
+            "description": "生成参数",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "描述目标视频的文本提示词，长度须在 3 到 20,000 个字符之间。",
+                "minLength": 3,
+                "maxLength": 20000,
+                "example": "A cinematic drone shot flying over a neon city after rain"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 2,
+                "description": "图生视频模式可选的首尾帧图片。提供 1 或 2 个公开可访问的图片 URL。索引 0 对应起始帧，索引 1 对应可选的结束帧。支持的图片格式为 JPG、JPEG、PNG、WebP、GIF 和 AVIF；每张图片不超过 30 MB。不能与任何 reference_*_urls 字段同时使用。",
+                "example": [
+                  "https://example.com/first-frame.jpg",
+                  "https://example.com/last-frame.jpg"
+                ]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 9,
+                "description": "多模态参考生视频模式可选的参考图片 URL。最多支持 9 张公开可访问的图片。支持的图片格式为 JPG、JPEG、PNG 和 WebP；每张图片不超过 30 MB。可在提示词中按顺序引用图片，如 @Image1 或 @Image2。不能与 image_urls 同时使用。",
+                "example": [
+                  "https://example.com/reference-image.jpg"
+                ]
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 3,
+                "description": "多模态参考生视频模式可选的参考视频 URL。最多支持 3 个公开可访问的 MP4 或 MOV 文件。参考视频总时长应为 2 到 15 秒，总大小应小于 50 MB，每个视频分辨率应在 480p 到 720p 之间。可在提示词中按顺序引用视频，如 @Video1 或 @Video2。不能与 image_urls 同时使用。",
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ]
+              },
+              "reference_audio_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 3,
+                "description": "多模态参考生视频模式可选的参考音频 URL。最多支持 3 个公开可访问的 MP3 或 WAV 文件。参考音频总时长不应超过 15 秒，每个文件不超过 15 MB。使用音频参考时至少需要一张参考图片或一个参考视频。可在提示词中按顺序引用音频，如 @Audio1 或 @Audio2。不能与 image_urls 同时使用。",
+                "example": [
+                  "https://example.com/reference-audio.mp3"
+                ]
+              },
+              "generate_audio": {
+                "type": "boolean",
+                "description": "是否生成音轨。",
+                "example": true
+              },
+              "resolution": {
+                "type": "string",
+                "description": "输出分辨率。`seedance-2` 支持 `480p`、`720p`、`1080p` 和 `4k`。`seedance-2-fast` 仅支持 `480p` 和 `720p`。",
+                "enum": [
+                  "480p",
+                  "720p",
+                  "1080p",
+                  "4k"
+                ],
+                "example": "4k"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "可选的输出视频宽高比。",
+                "enum": [
+                  "auto",
+                  "1:1",
+                  "21:9",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16"
+                ],
+                "example": "auto"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "视频时长（秒）。支持 4 到 15 的整数。",
+                "example": 5
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-04T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

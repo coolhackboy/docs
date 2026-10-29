@@ -1,0 +1,58 @@
+---
+title: "图像模型"
+description: "PoYo 上可用的全部图像生成与编辑模型及其 model ID。"
+icon: "image"
+---
+
+所有图像模型都通过 `POST /api/generate/submit` 调用。在 `model` 中传入 model ID，在 `input` 中传入该模型的参数，并可选传入 `callback_url`。请求会立即返回 `task_id`，任务异步执行。
+
+## 工作流程
+
+1. 使用下表中的 model ID 向 `POST /api/generate/submit` 提交任务。
+2. 使用返回的 `task_id` 轮询[查询任务状态](/zh/api-manual/task-management/image-status)，或在 `callback_url` 接收结果（参见 [Webhook 回调](/zh/api-manual/task-management/image-webhooks)）。
+3. 状态为 `finished` 时，下载 `files` 中的文件。
+
+以 `-edit` 结尾的 model ID 是图像编辑版本，需要传入输入图像。哪些 ID 同时接受参考图，请查看各模型页面。
+
+## 模型
+
+| 模型 | 厂商 | Model ID |
+| --- | --- | --- |
+| [GPT-4o Image](/zh/api-manual/image-series/gpt-4o-image) | OpenAI | `gpt-4o-image`<br />`gpt-4o-image-edit` |
+| [GPT Image 1.5](/zh/api-manual/image-series/gpt-image-1.5) | OpenAI | `gpt-image-1.5`<br />`gpt-image-1.5-edit` |
+| [GPT Image 2](/zh/api-manual/image-series/gpt-image-2) | OpenAI | `gpt-image-2`<br />`gpt-image-2-edit` |
+| [GPT Image 2.5 Flare](/zh/api-manual/image-series/gpt-image-2-5-flare) | OpenAI | `gpt-image-2.5-flare` |
+| [GPT Image 2.5 Sunburst](/zh/api-manual/image-series/gpt-image-2-5-sunburst) | OpenAI | `gpt-image-2.5-sunburst` |
+| [GPT Image 2.5 Fixed](/zh/api-manual/image-series/gpt-image-2-5-fixed) | OpenAI | `gpt-image-2.5-fixed` |
+| [Nano Banana](/zh/api-manual/image-series/nano-banana) | Google | `nano-banana`<br />`nano-banana-edit` |
+| [Nano Banana Pro](/zh/api-manual/image-series/nano-banana-2) | Google | `nano-banana-2`<br />`nano-banana-2-edit`<br />`nano-banana-pro`<br />`nano-banana-pro-edit` |
+| [Nano Banana 2](/zh/api-manual/image-series/nano-banana-2-new) | Google | `nano-banana-2-new`<br />`nano-banana-2-new-edit`<br />`nano-banana-2-official`<br />`nano-banana-2-official-edit` |
+| [Nano Banana 2 Lite](/zh/api-manual/image-series/nano-banana-2-lite) | Google | `nano-banana-2-lite`<br />`nano-banana-2-lite-edit` |
+| [Nano Banana 2.1](/zh/api-manual/image-series/nano-banana-2-1) | Google | `nano-banana-2.1` |
+| [Flux.2](/zh/api-manual/image-series/flux-2) | Flux | `flux-2-pro`<br />`flux-2-pro-edit`<br />`flux-2-flex`<br />`flux-2-flex-edit` |
+| [Flux Dev](/zh/api-manual/image-series/flux-dev) | Flux | `flux-dev` |
+| [Flux Schnell](/zh/api-manual/image-series/flux-schnell) | Flux | `flux-schnell` |
+| [Flux Kontext](/zh/api-manual/image-series/flux-kontext) | Flux | `flux-kontext-pro`<br />`flux-kontext-pro-edit`<br />`flux-kontext-max`<br />`flux-kontext-max-edit` |
+| [Flux 3 Klein](/zh/api-manual/image-series/flux-3-klein) | Flux | `flux-3-klein`<br />`flux-3-klein-edit` |
+| [Seedream-4](/zh/api-manual/image-series/seedream-4) | Seedream | `seedream-4`<br />`seedream-4-edit` |
+| [Seedream-4.5](/zh/api-manual/image-series/seedream-4-5) | Seedream | `seedream-4.5`<br />`seedream-4.5-edit` |
+| [Seedream-5.0-Lite](/zh/api-manual/image-series/seedream-5-0-lite) | Seedream | `seedream-5.0-lite`<br />`seedream-5.0-lite-edit` |
+| [Seedream-5.0-Pro](/zh/api-manual/image-series/seedream-5-0-pro) | Seedream | `seedream-5.0-pro`<br />`seedream-5.0-pro-edit` |
+| [Seedream-5.0-Flash](/zh/api-manual/image-series/seedream-5-0-flash) | Seedream | `seedream-5.0-flash`<br />`seedream-5.0-flash-edit` |
+| [Grok Imagine Image](/zh/api-manual/image-series/grok-imagine-image) | Grok (xAI) | `grok-imagine-image` |
+| [Grok Imagine Image Quality](/zh/api-manual/image-series/grok-imagine-image-quality) | Grok (xAI) | `grok-imagine-image-quality` |
+| [Grok Imagine Image 2.0](/zh/api-manual/image-series/grok-imagine-image-2-0) | Grok (xAI) | `grok-imagine-image-2.0` |
+| [Kling-o1](/zh/api-manual/image-series/kling-o1) | Kling | `kling-o1-image-edit` |
+| [Kling-o3](/zh/api-manual/image-series/kling-o3) | Kling | `kling-o3-image`<br />`kling-o3-image-edit` |
+| [Qwen Image 3](/zh/api-manual/image-series/qwen-image-3) | Alibaba | `qwen-image-3`<br />`qwen-image-3-pro` |
+| [Qwen Image 2.1](/zh/api-manual/image-series/qwen-image-2-1) | Alibaba | `qwen-image-2.1` |
+| [Wan-2.7-Image-Pro](/zh/api-manual/image-series/wan-2-7-image-pro) | Alibaba | `wan-2.7-image-pro` |
+| [Wan-2.7-Image](/zh/api-manual/image-series/wan-2-7-image) | Alibaba | `wan-2.7-image` |
+| [Z-Image](/zh/api-manual/image-series/z-image) | Alibaba | `z-image` |
+| [Ideogram V4.5](/zh/api-manual/image-series/ideogram-v4-5) | Ideogram | `ideogram-v4.5`<br />`ideogram-v4.5-edit` |
+
+## 注意事项
+
+- 每个模型页面列出了其 model ID 的参数、限制和模式。各模型之间的参数不通用。
+- 生成的图像文件在创建后 3 天内可访问，请及时下载并保存。
+- URL 输入必须是可公开访问的 HTTP(S) URL。如需使用本地文件，请先通过[文件管理](/zh/api-manual/file-series/upload-url)上传。

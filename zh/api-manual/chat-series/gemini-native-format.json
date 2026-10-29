@@ -1,0 +1,520 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Gemini 原生格式",
+    "description": "面向 Google Gemini 模型的原生 Gemini generateContent 格式。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1beta/models/{model}:{method}": {
+      "post": {
+        "summary": "Gemini 原生格式",
+        "description": "使用原生 Gemini 请求/响应格式。",
+        "operationId": "generateGeminiContent",
+        "tags": [
+          "Text Series"
+        ],
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "gemini-3-flash-preview"
+            },
+            "description": "Gemini 模型名称。示例：`gemini-3-flash-preview`。"
+          },
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "generateContent",
+                "streamGenerateContent"
+              ],
+              "example": "generateContent"
+            },
+            "description": "请求方法。`generateContent` 返回完整 JSON 响应，`streamGenerateContent` 用于流式生成。"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeminiGenerateContentRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "基础请求",
+                  "value": {
+                    "contents": [
+                      {
+                        "role": "user",
+                        "parts": [
+                          {
+                            "text": "Summarize the 'new night mode' requirements in 3 points and provide next steps."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "内容已生成",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeminiGenerateContentResult"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "成功响应",
+                    "value": {
+                      "candidates": [
+                        {
+                          "content": {
+                            "role": "model",
+                            "parts": [
+                              {
+                                "text": "Hello! I'm pleased to introduce myself."
+                              }
+                            ]
+                          },
+                          "finishReason": "STOP",
+                          "index": 0
+                        }
+                      ],
+                      "promptFeedback": {
+                        "safetyRatings": [
+                          {
+                            "category": "HARM_CATEGORY_HATE_SPEECH",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_HARASSMENT",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            "probability": "NEGLIGIBLE"
+                          }
+                        ]
+                      },
+                      "usageMetadata": {
+                        "promptTokenCount": 15,
+                        "candidatesTokenCount": 29,
+                        "totalTokenCount": 44,
+                        "thoughtsTokenCount": 0,
+                        "promptTokensDetails": [
+                          {
+                            "modality": "TEXT",
+                            "tokenCount": 15
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求无效，或模型不支持 Gemini Native",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeminiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "API Key 缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "未知的 model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "GeminiGenerateContentRequest": {
+        "type": "object",
+        "required": [
+          "contents"
+        ],
+        "properties": {
+          "contents": {
+            "type": "array",
+            "description": "包含角色和 parts 的对话内容。每个 content 对象可包含 `role`（`user` 或 `model`）以及由文本或内联数据组成的 `parts` 数组。",
+            "items": {
+              "$ref": "#/components/schemas/GeminiContent"
+            }
+          },
+          "generationConfig": {
+            "description": "生成配置，包括 temperature、topP、topK、maxOutputTokens 和 stopSequences。",
+            "$ref": "#/components/schemas/GeminiGenerationConfig"
+          },
+          "safetySettings": {
+            "type": "array",
+            "description": "安全设置。",
+            "items": {
+              "$ref": "#/components/schemas/GeminiSafetySetting"
+            }
+          }
+        }
+      },
+      "GeminiContent": {
+        "type": "object",
+        "required": [
+          "role",
+          "parts"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "model"
+            ],
+            "description": "角色类型。`user` 用于用户输入，`model` 用于模型输出。",
+            "example": "user"
+          },
+          "parts": {
+            "type": "array",
+            "description": "parts 列表。每个 part 可包含文本或内联数据。",
+            "items": {
+              "$ref": "#/components/schemas/GeminiPart"
+            }
+          }
+        }
+      },
+      "GeminiPart": {
+        "type": "object",
+        "description": "part 可包含文本或内联数据。",
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "example": "Hello!"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "inlineData"
+            ],
+            "properties": {
+              "inlineData": {
+                "$ref": "#/components/schemas/GeminiInlineData"
+              }
+            }
+          }
+        ]
+      },
+      "GeminiInlineData": {
+        "type": "object",
+        "required": [
+          "mimeType",
+          "data"
+        ],
+        "properties": {
+          "mimeType": {
+            "type": "string",
+            "example": "image/png"
+          },
+          "data": {
+            "type": "string",
+            "description": "Base64 编码的数据。",
+            "example": "BASE64_ENCODED_IMAGE"
+          }
+        }
+      },
+      "GeminiGenerationConfig": {
+        "type": "object",
+        "description": "生成配置。",
+        "properties": {
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "description": "控制输出的随机性。",
+            "example": 0.7
+          },
+          "topP": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "核采样参数。",
+            "example": 0.9
+          },
+          "topK": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Top-k 采样参数。",
+            "example": 40
+          },
+          "maxOutputTokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "最大输出 token 数。",
+            "example": 512
+          },
+          "stopSequences": {
+            "type": "array",
+            "description": "停止序列。",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GeminiSafetySetting": {
+        "type": "object",
+        "description": "安全设置项。",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "安全类别。",
+            "example": "HARM_CATEGORY_DANGEROUS_CONTENT"
+          },
+          "threshold": {
+            "type": "string",
+            "description": "拦截阈值。",
+            "example": "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        }
+      },
+      "GeminiGenerateContentResult": {
+        "type": "object",
+        "properties": {
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiCandidate"
+            }
+          },
+          "promptFeedback": {
+            "$ref": "#/components/schemas/GeminiPromptFeedback"
+          }
+        }
+      },
+      "GeminiCandidate": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/GeminiContent"
+          },
+          "finishReason": {
+            "type": "string",
+            "example": "STOP"
+          },
+          "index": {
+            "type": "integer",
+            "example": 0
+          },
+          "safetyRatings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiSafetyRating"
+            }
+          }
+        }
+      },
+      "GeminiPromptFeedback": {
+        "type": "object",
+        "properties": {
+          "safetyRatings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiSafetyRating"
+            }
+          }
+        }
+      },
+      "GeminiSafetyRating": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "HARM_CATEGORY_DANGEROUS_CONTENT"
+          },
+          "probability": {
+            "type": "string",
+            "example": "NEGLIGIBLE"
+          }
+        }
+      },
+      "GeminiUsageMetadata": {
+        "type": "object",
+        "properties": {
+          "promptTokenCount": {
+            "type": "integer",
+            "example": 15
+          },
+          "candidatesTokenCount": {
+            "type": "integer",
+            "example": 29
+          },
+          "totalTokenCount": {
+            "type": "integer",
+            "example": 44
+          },
+          "thoughtsTokenCount": {
+            "type": "integer",
+            "example": 0
+          },
+          "promptTokensDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiTokenDetail"
+            }
+          }
+        }
+      },
+      "GeminiTokenDetail": {
+        "type": "object",
+        "properties": {
+          "modality": {
+            "type": "string",
+            "example": "TEXT"
+          },
+          "tokenCount": {
+            "type": "integer",
+            "example": 15
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "模型或请求在此 API 格式下被拒绝时返回的错误。",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
+          }
+        }
+      },
+      "GeminiError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer",
+                "example": 400
+              },
+              "message": {
+                "type": "string",
+                "example": "URI '/v1beta/models/deepseek-v4-flash:generateContent' is not supported by this model. Supported URIs: ['/v1/chat/completions']"
+              },
+              "status": {
+                "type": "string",
+                "example": "INVALID_ARGUMENT"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

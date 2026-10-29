@@ -1,0 +1,101 @@
+---
+title: "GPT Image 2.5 Sunburst"
+description: "GPT Image 2.5 Sunburst API 根据提示词生成一张图像，或编辑最多 16 张参考图。适合对编辑精度要求高的场景，支持蒙版、透明背景以及 1K 到 4K 输出。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/gpt-image-2-5-sunburst.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `gpt-image-2.5-sunburst` 根据提示词生成一张图像，或编辑最多 16 张参考图。传入非空的 `image_urls` 数组会自动进入编辑模式；省略该字段或传入空数组则为文生图。
+
+## 模型
+
+- **gpt-image-2.5-sunburst** — GPT Image 2.5 Sunburst
+
+## 必填参数
+
+- `prompt` 必填，最多支持 32,000 个字符。
+
+## 可选参数
+
+- `quality`：`low`、`medium`、`high`（默认）、`xhigh` 或 `max`。
+- `background`：`auto`（默认）、`transparent` 或 `opaque`。
+- `output_format`：`png`（默认）、`jpeg` 或 `webp`。透明背景需要 PNG 或 WebP。
+- `mask_url`：可选的 HTTP(S) 蒙版图像 URL，用于标识要编辑的区域；需要非空的 `image_urls`。
+- 参考图必须使用 HTTP(S) URL。每次请求输出一张图像。
+
+## 尺寸
+
+- `size` 默认为 `1:1`。支持的比例：`1:1`、`2:3`、`3:2`、`4:3`、`3:4`、`4:5`、`5:4`、`16:9`、`9:16`、`21:9`。
+- `resolution` 支持 `1K`（默认）、`2K` 和 `4K`。省略 size 时，使用所选档位的正方形。
+- 显式指定 `size=auto` 仅可与 `1K` 搭配，由模型决定图像尺寸。`2K` 或 `4K` 请选择比例或自定义尺寸。
+- 使用宽高比时，实际像素尺寸可能因模型和每次生成而不同。请以返回图像为准确认精确尺寸；需要精确像素时请使用自定义尺寸。
+- 自定义 `WIDTHxHEIGHT` 尺寸需要 `2K` 或 `4K`。两个维度都必须能被 16 整除，最长边不得超过 3840，宽高比不得超过 3:1，总像素数必须在 655,360 到 8,294,400 之间。边长为 3840 像素时需要 `4K`。
+
+## 示例
+
+### 文生图
+
+```json
+{
+  "model": "gpt-image-2.5-sunburst",
+  "input": {
+    "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+    "size": "16:9",
+    "resolution": "2K",
+    "quality": "medium"
+  }
+}
+```
+
+### 图像编辑
+
+```json
+{
+  "model": "gpt-image-2.5-sunburst",
+  "input": {
+    "prompt": "Keep the product and replace the background with a warm modern studio",
+    "image_urls": [
+      "https://example.com/product.png"
+    ],
+    "size": "1:1",
+    "quality": "high"
+  }
+}
+```
+
+### 蒙版编辑
+
+```json
+{
+  "model": "gpt-image-2.5-sunburst",
+  "input": {
+    "prompt": "Replace only the masked area with a small vase of flowers",
+    "image_urls": [
+      "https://example.com/room.png"
+    ],
+    "mask_url": "https://example.com/mask.png",
+    "size": "auto"
+  }
+}
+```
+
+### 透明背景
+
+```json
+{
+  "model": "gpt-image-2.5-sunburst",
+  "input": {
+    "prompt": "A clean cutout of a small silver robot",
+    "background": "transparent",
+    "output_format": "webp",
+    "size": "1:1",
+    "resolution": "4K",
+    "quality": "xhigh"
+  }
+}
+```

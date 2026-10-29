@@ -1,0 +1,73 @@
+---
+title: "上传并翻唱音频"
+description: "在保留原旋律的同时将音轨转换为新风格"
+icon: "music"
+openapi: "/zh/api-manual/music-series/upload-and-cover-audio.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询音乐详情](/zh/api-manual/music-series/query-music-detail)接口获取结果。
+</Tip>
+
+上传翻唱仅在自定义模式下、使用 V5、V5_5、V6、V6_MINI 或 V6_WILD 时，支持 `persona_model`（`style_persona` 或 `voice_persona`）配合 `persona_id`。仅当 `custom_mode: true` 且 `mv` 设为 `V5_5`、`V6`、`V6_MINI` 或 `V6_WILD` 时，还支持 10–360 的整数 `duration`。
+
+## 使用指南
+
+- 此接口在保留原旋律的同时，将上传的音轨转换为新风格
+- 提供 `upload_url`，或同时提供 `task_id` 和 `audio_id`。不要同时传入两种来源
+- 在应用新的音乐特征时，保留原有的旋律和结构
+
+## 参数详情
+
+- **音频上传要求**：
+
+  - 上传的音频时长不得超过 **8 分钟**
+
+  - **注意**：使用 V4_5ALL 模型时，上传的音频时长不得超过 **1 分钟**
+
+  - 通过 `upload_url` 提供指向音频文件的有效 URL
+
+- 自定义模式（`custom_mode: true`）下：
+
+  - `style` 和 `title` 为**必填**
+
+  - 如果 `instrumental` 为 `false`，`prompt` 为**必填**
+
+  - 字符限制因模型而异：
+    - **V4**：`prompt` 3000 个字符，`style` 200 个字符，`title` 80 个字符
+    - **V4_5 和 V4_5PLUS**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V4_5ALL**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 80 个字符
+    - **V5**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V5_5**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V6、V6_MINI 和 V6_WILD**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+
+- 非自定义模式（`custom_mode: false`）下：
+
+  - `prompt` 为**必填**，用于描述期望的转换效果（最多 500 个字符）
+
+  - `style` 和 `title` 应留空
+
+## 开发者说明
+
+- 确保音频 URL 可公开访问，且文件时长不超过 8 分钟（V4_5ALL 为 1 分钟）
+
+- 为获得最佳效果，请使用旋律线清晰的高质量源音频
+
+- `audio_weight` 参数有助于在保留原曲与应用新风格之间取得平衡
+
+## 可选参数
+
+- `negative_tags` (string)：翻唱时要排除的音乐风格或特征。
+
+- `vocal_gender` (string)：人声性别偏好。`m` 表示男声，`f` 表示女声。注意：此参数会提高概率，但不能保证一定遵循。
+
+- `style_weight` (number)：对新风格的遵循强度。范围 0-1，最多 2 位小数。
+
+- `weirdness_constraint` (number)：控制创意偏离程度。范围 0-1，最多 2 位小数。
+
+- `audio_weight` (number)：保留原音频特征的平衡权重。范围 0-1，最多 2 位小数。
+
+- `persona_id` (string)：应用于翻唱音轨的 Persona ID。仅在 `custom_mode: true` 且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD 时可用。如何生成 persona_id，请参阅 [generate-persona](/zh/api-manual/music-series/generate-persona)。
+
+- `persona_model` (string)：`style_persona` 或 `voice_persona`。需要 `persona_id`、`custom_mode: true`，且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD。

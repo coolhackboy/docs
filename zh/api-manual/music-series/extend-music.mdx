@@ -1,0 +1,63 @@
+---
+title: "延长音乐"
+description: "基于源音轨创建续写，延长或修改现有音乐"
+icon: "music"
+openapi: "/zh/api-manual/music-series/extend-music.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询音乐详情](/zh/api-manual/music-series/query-music-detail)接口获取结果。
+</Tip>
+
+`instrumental` 显式控制是否输出人声。仅当 `default_param_flag: true` 且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD 时，`persona_model` 才接受 `style_persona` 或 `voice_persona`，并需配合 `persona_id`。
+
+## 使用指南
+
+- 此接口从指定位置延长现有音轨
+- 你可以使用新的风格、提示词和标题自定义延长内容，也可以继承原音轨的设置
+- `mv` 为必填。使用 `default_param_flag` 控制是否必须提供自定义的 `style`、`title` 和 `continue_at`
+
+## 参数详情
+
+- 自定义模式（`default_param_flag: true`）下：
+
+  - `style`、`title` 和 `continue_at` 为**必填**
+
+  - 延长人声时 `prompt` 为必填。当 `instrumental: true` 时不发送 `prompt`。
+
+  - `continue_at` 指定开始延长的时间点（秒）
+
+  - 字符限制因模型而异：
+    - **V4**：`prompt` 3000 个字符，`style` 200 个字符，`title` 80 个字符
+    - **V4_5 和 V4_5PLUS**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V4_5ALL**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 80 个字符
+    - **V5**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V5_5**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V6、V6_MINI 和 V6_WILD**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+
+- 简单模式（`default_param_flag: false`）下：
+
+  - `audio_id` 和 `mv` 为必填；沿用源音轨的设置
+
+## 开发者说明
+
+- 使用此接口前，请确保你有一个来自先前生成音轨的有效 `audio_id`
+
+- 延长内容会从指定的 `continue_at` 时间点无缝衔接
+
+## 可选参数
+
+- `negative_tags` (string)：延长时要排除的音乐风格或特征。
+
+- `vocal_gender` (string)：人声性别偏好。`m` 表示男声，`f` 表示女声。注意：此参数会提高概率，但不能保证一定遵循。
+
+- `style_weight` (number)：对风格的遵循强度。范围 0-1，最多 2 位小数。
+
+- `weirdness_constraint` (number)：控制创意偏离程度。范围 0-1，最多 2 位小数。
+
+- `audio_weight` (number)：音频特征的平衡权重。范围 0-1，最多 2 位小数。
+
+- `persona_id` (string)：应用于延长音乐的 Persona ID。仅在 `default_param_flag: true` 且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD 时可用。如何生成 persona_id，请参阅 [generate-persona](/zh/api-manual/music-series/generate-persona)。
+
+- `persona_model` (string)：`style_persona` 或 `voice_persona`。需要 `persona_id`、`default_param_flag: true`，且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD。

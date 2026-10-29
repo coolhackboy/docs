@@ -1,0 +1,295 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Nano Banana Pro API",
+    "description": "经典版 Nano Banana 2 与 Nano Banana Pro 图像生成与编辑",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Nano Banana Pro 图像生成任务",
+        "description": "适用于 Nano Banana 2 和 Nano Banana Pro 两个模型系列的图像生成与编辑",
+        "operationId": "submitNanoBanana2Task",
+        "tags": ["Nano Banana"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "nano-banana-2": {
+                  "summary": "Nano Banana 2 图像生成",
+                  "value": {
+                    "model": "nano-banana-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cyberpunk street scene with neon signs and rain",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "nano-banana-2-edit": {
+                  "summary": "Nano Banana 2 图像编辑",
+                  "value": {
+                    "model": "nano-banana-2-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Add colorful flowers in the foreground",
+                      "image_urls": ["https://example.com/landscape.jpg"],
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "nano-banana-pro": {
+                  "summary": "Nano Banana Pro 图像生成",
+                  "value": {
+                    "model": "nano-banana-pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "An action shot of a black lab swimming in an inground suburban swimming pool. The camera is placed meticulously on the water line, dividing the image in half, revealing both the dogs head above water holding a tennis ball in it's mouth, and it's paws paddling underwater.",
+                      "resolution": "1K",
+                      "size": "auto",
+                      "n": 1,
+                      "output_format": "png",
+                      "enable_web_search": false
+                    }
+                  }
+                },
+                "nano-banana-pro-edit": {
+                  "summary": "Nano Banana Pro 图像编辑",
+                  "value": {
+                    "model": "nano-banana-pro-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Add cinematic ripples and sharpen the dog's motion trail while keeping the tennis ball intact",
+                      "image_urls": ["https://example.com/dog-in-pool.png"],
+                      "resolution": "1K",
+                      "size": "auto",
+                      "n": 1,
+                      "output_format": "png",
+                      "enable_web_search": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Nano Banana 模型标识",
+            "enum": [
+              "nano-banana-2",
+              "nano-banana-2-edit",
+              "nano-banana-pro",
+              "nano-banana-pro-edit"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "生成参数",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "描述期望输出的生成提示词",
+                "maxLength": 10000,
+                "example": "A beautiful sunset over the ocean"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "参考图像 URL（编辑模型必填，Nano Banana Pro 编辑最多支持 14 张图像）",
+                "example": []
+              },
+              "size": {
+                "type": "string",
+                "description": "图像尺寸比例。Nano Banana Pro 还支持 `auto`，且默认值为 `auto`。",
+                "enum": ["auto", "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
+                "example": "auto"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "输出图像分辨率",
+                "enum": ["1K", "2K", "4K"],
+                "default": "1K",
+                "example": "1K"
+              },
+              "n": {
+                "type": "integer",
+                "description": "输出图像数量。当前支持的值为 `1`。",
+                "enum": [1],
+                "default": 1,
+                "example": 1
+              },
+              "output_format": {
+                "type": "string",
+                "description": "仅限 Nano Banana Pro。输出图像格式。",
+                "enum": ["png", "jpg"],
+                "default": "png",
+                "example": "png"
+              },
+              "enable_web_search": {
+                "type": "boolean",
+                "description": "仅限 Nano Banana Pro。生成前启用网络搜索。",
+                "default": false,
+                "example": false
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "描述错误原因的错误信息"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "错误类型标识"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

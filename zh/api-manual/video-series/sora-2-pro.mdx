@@ -1,0 +1,40 @@
+---
+title: "Sora 2 Pro（已弃用）"
+description: "高端高清质量视频生成"
+icon: "video"
+openapi: "/zh/api-manual/video-series/sora-2-pro.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 OpenAI 的 Sora 2 Pro 模型生成高端高清质量视频。支持文生视频和图生视频，并提供更长的时长选项。
+
+## 模型
+
+- **sora-2-pro** - 高端高清质量视频生成
+- **sora-2-pro-private** - 高端质量的私有部署
+
+## 时长选项
+
+- **15 秒** - 高清质量
+- **25 秒** - 加长高清时长
+
+## 高级参数
+
+### 风格
+
+使用预设风格控制生成视频的视觉风格：
+
+- `thanksgiving` - 感恩节风格
+- `comic` - 漫画风格
+- `news` - 新闻风格
+- `selfie` - 自拍风格
+- `nostalgic` - 怀旧/复古风格
+- `anime` - 动漫风格
+
+### 故事板
+
+启用故事板模式，可更精细地控制视频生成细节。设为 `true` 启用，设为 `false` 关闭。

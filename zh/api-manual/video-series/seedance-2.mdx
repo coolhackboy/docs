@@ -1,0 +1,44 @@
+---
+title: "Seedance 2"
+description: "Seedance 2 API 可根据文本、最多两帧图片，或图片、视频和音频参考生成 4–15 秒的视频。更快的变体仅支持 480p 和 720p。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/seedance-2.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **seedance-2** - 标准 Seedance 2 视频生成模型
+- **seedance-2-fast** - 更快、成本更低的 Seedance 2 变体
+
+## 功能
+
+- **文生视频**：直接根据提示词文本生成视频
+- **首尾帧控制**：最多使用 2 张图片作为首帧和尾帧
+- **多模态参考**：使用参考图片、视频和音频引导生成
+- **可选音频**：请求在生成视频的同时生成音频
+
+## 注意事项
+
+- `seedance-2` 是默认的标准质量变体
+- `seedance-2` 支持 `480p`、`720p`、`1080p` 和 `4k`
+- `seedance-2-fast` 使用相同的输入结构，但针对更低延迟进行了优化，仅支持 `480p` 和 `720p`
+
+- `prompt` 长度必须在 3 到 20,000 个字符之间。
+- `image_urls` 用于图生视频模式，最多仅支持 2 张图片：
+  索引 `0` 对应起始帧，索引 `1` 对应可选的结束帧。
+- `image_urls` 支持 JPG、JPEG、PNG、WebP、GIF 和 AVIF 图片。每张图片应可公开访问，且不超过 30 MB。
+- `image_urls` 与任何 `reference_*_urls` 字段互斥，不能在同一请求中同时使用。
+- `reference_image_urls` 用于参考生视频模式，最多支持 9 张图片。支持的格式为 JPG、JPEG、PNG 和 WebP，每张图片不超过 30 MB。
+- `reference_video_urls` 最多支持 3 个 MP4 或 MOV 文件。参考视频总时长应为 2 到 15 秒，视频总大小应小于 50 MB，每个视频应为 480p 到 720p。
+- `reference_audio_urls` 最多支持 3 个 MP3 或 WAV 文件。参考音频总时长不应超过 15 秒，每个音频文件不超过 15 MB。音频参考需要至少一张参考图片或一个参考视频。
+- 参考生视频模式下，`reference_image_urls`、`reference_video_urls` 和 `reference_audio_urls` 中的文件总数不得超过 12 个。
+- 可在提示词中按顺序引用参考素材，例如 `@Image1`、`@Video1` 和 `@Audio1`。
+- `aspect_ratio` 为可选。提供时，支持的值为 `auto`、`21:9`、`16:9`、`4:3`、`1:1`、`3:4`、`9:16`。
+- `duration` 支持 `4` 到 `15` 的整数值。
+- `resolution` 中的 `1080p` 和 `4k` 仅 `seedance-2` 支持。`seedance-2-fast` 仍仅限 `480p` 和 `720p`。
+- 所有远程 URL 都应可公开访问并可直接下载。

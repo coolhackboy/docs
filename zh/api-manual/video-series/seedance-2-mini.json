@@ -1,0 +1,327 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedance 2 Mini API",
+    "description": "使用 Seedance 2 Mini 快速生成视频",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Seedance 2 Mini 视频生成任务",
+        "description": "使用 Seedance 2 Mini 生成视频，支持文生视频、首尾帧和参考生视频工作流。",
+        "operationId": "submitSeedance2MiniTask",
+        "tags": [
+          "Seedance 2 Mini"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "文生视频",
+                  "value": {
+                    "model": "seedance-2-mini",
+                    "input": {
+                      "prompt": "Camera follows a man in black sprinting through a crowded street, a group chasing close behind. The shot cuts to a side tracking angle as he panics and crashes into a roadside fruit stall, scrambles to his feet, and keeps running. Sounds of a frantic crowd.",
+                      "aspect_ratio": "auto",
+                      "resolution": "720p",
+                      "duration": 8,
+                      "generate_audio": true
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "图生视频",
+                  "value": {
+                    "model": "seedance-2-mini",
+                    "input": {
+                      "prompt": "Begin with a clean studio product shot of pastel ice cream cones on a white surface, then transition into a warm coral studio setup where a person adjusts the umbrella beside a table. Keep the soft commercial lighting, playful pastel color palette, and smooth camera movement.",
+                      "image_urls": [
+                        "https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-first-frame.jpg",
+                        "https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-last-frame.jpg"
+                      ],
+                      "aspect_ratio": "auto",
+                      "resolution": "720p",
+                      "duration": 8,
+                      "generate_audio": true
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "参考生视频",
+                  "value": {
+                    "model": "seedance-2-mini",
+                    "input": {
+                      "prompt": "Create a new cinematic chase scene that follows the frantic street-running rhythm, fast camera cuts, and physical action pacing of the reference video. Keep the motion grounded and energetic, with crowd reactions and quick directional changes.",
+                      "reference_video_urls": [
+                        "https://storage.poyo.ai/models/seedance-2-mini/examples/text-to-video-chase-output.mp4"
+                      ],
+                      "aspect_ratio": "auto",
+                      "resolution": "720p",
+                      "duration": 8,
+                      "generate_audio": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Seedance 2 Mini 模型标识",
+            "enum": [
+              "seedance-2-mini"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "用于接收结果通知的 Webhook 回调 URL。请使用你控制的、可公开访问的接口。"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt",
+              "duration"
+            ],
+            "description": "生成参数",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "描述目标视频的文本提示词。",
+                "minLength": 3,
+                "maxLength": 20000,
+                "example": "Camera follows a man in black sprinting through a crowded street, a group chasing close behind. The shot cuts to a side tracking angle as he panics and crashes into a roadside fruit stall, scrambles to his feet, and keeps running. Sounds of a frantic crowd."
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 2,
+                "description": "图生视频模式可选的首尾帧图片。索引 0 为起始帧，索引 1 为可选的结束帧。不能与 reference_*_urls 字段同时使用。",
+                "example": [
+                  "https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-first-frame.jpg",
+                  "https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-last-frame.jpg"
+                ]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 9,
+                "description": "参考生视频模式可选的参考图片 URL。不能与 image_urls 同时使用。",
+                "example": [
+                  "https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-first-frame.jpg"
+                ]
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 3,
+                "description": "用于引导视频生成的参考视频。在提示词中以 @Video1、@Video2 等引用。支持格式：MP4、MOV。最多 3 个视频，总时长须在 2 到 15 秒之间，总大小小于 50 MB。每个视频的分辨率须在约 480p（640x640）到约 720p（834x1112）之间。",
+                "example": [
+                  "https://storage.poyo.ai/models/seedance-2-mini/examples/text-to-video-chase-output.mp4"
+                ]
+              },
+              "reference_audio_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "maxItems": 3,
+                "description": "用于引导视频生成的参考音频。在提示词中以 @Audio1、@Audio2 等引用。支持格式：MP3、WAV。最多 3 个文件，总时长不得超过 15 秒。每个文件最大 15 MB。提供音频时，至少需要一张参考图片或一个参考视频。"
+              },
+              "generate_audio": {
+                "type": "boolean",
+                "description": "是否生成音轨。",
+                "example": true
+              },
+              "resolution": {
+                "type": "string",
+                "description": "输出分辨率",
+                "enum": [
+                  "480p",
+                  "720p"
+                ],
+                "default": "720p",
+                "example": "720p"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "可选的输出视频宽高比。",
+                "enum": [
+                  "auto",
+                  "1:1",
+                  "21:9",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16"
+                ],
+                "example": "auto"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "视频时长（秒）。支持 4 到 15 的整数。按生成视频的时长计费。",
+                "minimum": 4,
+                "maximum": 15,
+                "example": 5
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-25T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

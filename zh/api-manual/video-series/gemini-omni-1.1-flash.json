@@ -1,0 +1,446 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Gemini Omni 1.1 Flash API",
+    "description": "Gemini Omni 1.1 Flash API 可根据文本、一到两张关键帧、最多七张参考图像或一个 3–10 秒的参考视频，生成 4–10 秒、360p 到 4K 的视频。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Gemini Omni 1.1 Flash 任务",
+        "description": "根据文本、关键帧、参考图像或参考视频生成视频",
+        "operationId": "submitGeminiOmni11FlashTask",
+        "tags": [
+          "Gemini Omni 1.1 Flash"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "文生视频",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic night city with neon reflections and a slow camera push-in",
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "first-last-frame": {
+                  "summary": "首尾帧视频",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "input": {
+                      "prompt": "Create a smooth cinematic transition between the two frames",
+                      "image_urls": [
+                        "https://example.com/first-frame.webp",
+                        "https://example.com/last-frame.webp"
+                      ],
+                      "resolution": "1080p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "reference-images": {
+                  "summary": "参考图像视频",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "input": {
+                      "prompt": "Use the references to create a polished product campaign video",
+                      "reference_image_urls": [
+                        "https://example.com/product.webp",
+                        "https://example.com/environment.webp"
+                      ],
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "9:16"
+                    }
+                  }
+                },
+                "reference-video": {
+                  "summary": "参考视频生成",
+                  "value": {
+                    "model": "gemini-omni-1.1-flash",
+                    "input": {
+                      "prompt": "Follow the reference motion while applying the supplied visual style",
+                      "reference_image_urls": [
+                        "https://example.com/style.webp"
+                      ],
+                      "reference_video_urls": [
+                        "https://example.com/reference.mp4"
+                      ],
+                      "resolution": "720p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "查询任务状态",
+        "operationId": "getGeminiOmni11FlashTaskStatus",
+        "tags": [
+          "Gemini Omni 1.1 Flash"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "任务状态响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Gemini Omni 1.1 Flash 模型标识",
+            "enum": [
+              "gemini-omni-1.1-flash"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "视频生成的文本提示词。最大长度为 20,000 个字符。",
+                "minLength": 1,
+                "maxLength": 20000,
+                "example": "A cinematic night city with neon reflections and a slow camera push-in"
+              },
+              "image_urls": {
+                "type": "array",
+                "description": "可选的首帧和尾帧图像。最多支持两张图像。",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/first-frame.webp",
+                  "https://example.com/last-frame.webp"
+                ]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "description": "可选的参考图像。最多支持七张图像；提供参考视频时最多五张。",
+                "minItems": 1,
+                "maxItems": 7,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/reference-image.webp"
+                ]
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "description": "可选的参考视频。最多支持一个视频，时长为 3 到 10 秒（含）。",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ],
+                "x-video-duration-seconds": {
+                  "minimum": 3,
+                  "maximum": 10
+                }
+              },
+              "resolution": {
+                "type": "string",
+                "description": "生成视频的分辨率。可选值为 360p、720p、1080p 和 4k。",
+                "enum": [
+                  "360p",
+                  "720p",
+                  "1080p",
+                  "4k"
+                ],
+                "default": "720p",
+                "example": "720p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "输出时长（秒）。默认为 8。此字段不影响参考视频生成。",
+                "enum": [
+                  4,
+                  6,
+                  8,
+                  10
+                ],
+                "default": 8,
+                "example": 8
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "生成视频的宽高比。16:9 为横屏，9:16 为竖屏。",
+                "enum": [
+                  "16:9",
+                  "9:16"
+                ],
+                "default": "16:9",
+                "example": "16:9"
+              }
+            },
+            "allOf": [
+              {
+                "not": {
+                  "required": [
+                    "image_urls",
+                    "reference_image_urls"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "image_urls",
+                    "reference_video_urls"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "description": "任务状态。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "credits_amount": {
+                "type": "number"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "file_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "file_type": {
+                      "type": "string",
+                      "example": "video"
+                    }
+                  }
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "integer"
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

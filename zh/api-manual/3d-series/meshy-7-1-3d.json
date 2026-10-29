@@ -1,0 +1,986 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Meshy 7.1 3D API",
+    "description": "根据文本、单张图片或 1–4 张图片生成 3D 几何体或带纹理的模型，可选骨骼绑定和动画。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Meshy 7.1 3D 任务",
+        "description": "根据文本、单张图片或 1–4 张图片生成 3D 几何体或带纹理的模型，可选骨骼绑定和动画。",
+        "operationId": "submit_meshy_7_1_3d",
+        "tags": [
+          "Meshy 7.1 3D"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-3d": {
+                  "summary": "文本生成 3D",
+                  "value": {
+                    "model": "meshy-7.1-text-to-3d",
+                    "input": {
+                      "prompt": "A ceramic robot with a clean silhouette.",
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                },
+                "text-to-3d-preview": {
+                  "summary": "文本生成 3D — 智能拓扑预览",
+                  "value": {
+                    "model": "meshy-7.1-text-to-3d",
+                    "input": {
+                      "prompt": "A ceramic robot.",
+                      "mode": "preview",
+                      "model_type": "smart-topology"
+                    }
+                  }
+                },
+                "image-to-3d": {
+                  "summary": "图片生成 3D",
+                  "value": {
+                    "model": "meshy-7.1-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/front.png"
+                      ],
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                },
+                "multi-image-to-3d": {
+                  "summary": "多图生成 3D",
+                  "value": {
+                    "model": "meshy-7.1-multi-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/front.png",
+                        "https://example.com/back.png"
+                      ],
+                      "enable_rigging": true,
+                      "enable_animation": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务已受理；请查询任务获取最终文件。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "meshy-7.1-text-to-3d",
+              "meshy-7.1-image-to-3d",
+              "meshy-7.1-multi-image-to-3d"
+            ],
+            "description": "文本输入选择 meshy-7.1-text-to-3d，恰好一张图片选择 meshy-7.1-image-to-3d，1–4 张图片选择 meshy-7.1-multi-image-to-3d。"
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的完成或失败回调 URL。"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "meshy-7.1-text-to-3d"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/TextTo3DInput"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "meshy-7.1-image-to-3d"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/ImageTo3DInput"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model"
+              ],
+              "properties": {
+                "model": {
+                  "const": "meshy-7.1-multi-image-to-3d"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input": {
+                  "$ref": "#/components/schemas/MultiImageTo3DInput"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ModelInput": {
+        "type": "object",
+        "description": "统一参数列表。必填字段、支持的取值和默认值因模型而异，见各参数说明。",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "minLength": 1,
+            "description": "仅 meshy-7.1-text-to-3d 必填；图片模型请省略。长度 1–600 个字符，须包含非空白文本。"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "公开图片 URL 或图片 data URI。",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "图片模型必填；meshy-7.1-text-to-3d 请省略。meshy-7.1-image-to-3d 要求恰好 1 张图片；meshy-7.1-multi-image-to-3d 接受同一物体不同角度的 1–4 张图片。每项接受公开 HTTP(S) 图片 URL 或图片 data URI。"
+          },
+          "mode": {
+            "enum": [
+              "preview",
+              "full"
+            ],
+            "type": "string",
+            "description": "仅限 meshy-7.1-text-to-3d。preview 只返回几何体；full 包含纹理。默认：full。"
+          },
+          "model_type": {
+            "enum": [
+              "standard",
+              "smart-topology"
+            ],
+            "type": "string",
+            "description": "仅限 meshy-7.1-text-to-3d 和 meshy-7.1-image-to-3d；meshy-7.1-multi-image-to-3d 请省略。接受 standard（默认）或 smart-topology。不支持 Lowpoly。"
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k",
+              "4k"
+            ],
+            "type": "string",
+            "description": "仅当 model_type 为 standard（默认）时，meshy-7.1-text-to-3d 和 meshy-7.1-image-to-3d 接受 standard、2k 或 4k；smart-topology 时请省略。meshy-7.1-multi-image-to-3d 只接受 standard 或 2k，不支持 4k。"
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "所有模型的输出网格拓扑：triangle（默认）或 quad。"
+          },
+          "target_polycount": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "所有模型的目标面数：100–300000；默认 30000。meshy-7.1-text-to-3d 和 meshy-7.1-image-to-3d 在 model_type=smart-topology 时：100–15000，省略时默认 4000。"
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "为所有模型启用重新网格化。默认：true。"
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "所有模型的网格对称行为：off、auto（默认）或 on。"
+          },
+          "should_texture": {
+            "type": "boolean",
+            "description": "仅限 meshy-7.1-image-to-3d 和 meshy-7.1-multi-image-to-3d；meshy-7.1-text-to-3d 请省略。生成纹理；默认 true。多图生成时，若 enable_pbr=true 或提供了纹理引导，必须保持为 true。"
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "为所有模型生成 PBR 纹理贴图。默认：false。meshy-7.1-multi-image-to-3d 要求 should_texture=true。"
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "所有模型的角色姿势：a-pose、t-pose，或空字符串（默认）表示不指定姿势。"
+          },
+          "seed": {
+            "type": "integer",
+            "description": "仅限 meshy-7.1-text-to-3d。整数随机种子；省略则自动选择。"
+          },
+          "enable_prompt_expansion": {
+            "type": "boolean",
+            "default": false,
+            "description": "仅限 meshy-7.1-text-to-3d。生成前扩写提示词。默认：false。"
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "所有模型可选的纹理引导文本，最多 600 个字符。meshy-7.1-multi-image-to-3d 要求 should_texture=true。"
+          },
+          "texture_image_url": {
+            "type": "string",
+            "description": "所有模型可选的纹理引导图；接受公开 HTTP(S) 图片 URL 或图片 data URI。meshy-7.1-multi-image-to-3d 要求 should_texture=true。",
+            "format": "uri"
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "为所有模型生成的人形角色绑定骨骼。默认：false。enable_animation=true 时必须为 true。"
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "所有模型启用骨骼绑定时的角色身高（米），必须大于 0。默认：1.7。"
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "为所有模型应用动画；要求 enable_rigging=true。默认：false。"
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "所有模型的动画预设 ID：0 到 696 的整数。默认：92。"
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "为所有模型启用输入安全检查。默认：true。如适用，关闭此项需要账户授权。"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TextTo3DInput": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用重新网格化。"
+          },
+          "model_type": {
+            "enum": [
+              "standard",
+              "smart-topology"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "网格生成方式。此模型版本不支持 Lowpoly。"
+          },
+          "texture_image_url": {
+            "type": "string",
+            "description": "公开图片 URL 或图片 data URI。必须是可公开访问的 HTTP 或 HTTPS URL。",
+            "format": "uri"
+          },
+          "seed": {
+            "type": "integer",
+            "description": "随机种子；省略则自动选择。"
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "应用动画；要求 enable_rigging=true。"
+          },
+          "prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "minLength": 1,
+            "description": "提示词。须包含非空白文本。"
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "100-300000 个面。智能拓扑：最多 15000，省略时默认 4000。"
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "动画预设 ID，0-696。"
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k",
+              "4k"
+            ],
+            "type": "string",
+            "description": "几何分辨率。仅当 model_type 为 standard（默认）时可用；smart-topology 时请省略。"
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "角色身高（米），必须大于 0。"
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "角色姿势；空字符串表示不指定姿势。"
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "网格对称行为。"
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用输入安全检查。如适用，关闭此项需要账户授权。"
+          },
+          "mode": {
+            "enum": [
+              "preview",
+              "full"
+            ],
+            "type": "string",
+            "default": "full",
+            "description": "preview 只返回几何体；full 包含纹理。"
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "生成 PBR 纹理贴图。"
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "为生成的人形角色绑定骨骼。"
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "输出网格拓扑。"
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "纹理引导文本，最多 600 个字符。"
+          },
+          "enable_prompt_expansion": {
+            "type": "boolean",
+            "default": false,
+            "description": "生成前扩写提示词。"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model_type"
+              ],
+              "properties": {
+                "model_type": {
+                  "const": "smart-topology"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "target_polycount": {
+                  "maximum": 15000
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "geometry_resolution"
+              ]
+            },
+            "then": {
+              "properties": {
+                "model_type": {
+                  "const": "standard"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ImageTo3DInput": {
+        "type": "object",
+        "required": [
+          "image_urls"
+        ],
+        "properties": {
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "生成纹理。"
+          },
+          "model_type": {
+            "enum": [
+              "standard",
+              "smart-topology"
+            ],
+            "type": "string",
+            "default": "standard",
+            "description": "网格生成方式。此模型版本不支持 Lowpoly。"
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用重新网格化。"
+          },
+          "texture_image_url": {
+            "type": "string",
+            "description": "公开图片 URL 或图片 data URI。必须是可公开访问的 HTTP 或 HTTPS URL。",
+            "format": "uri"
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "应用动画；要求 enable_rigging=true。"
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "100-300000 个面。智能拓扑：最多 15000，省略时默认 4000。"
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "动画预设 ID，0-696。"
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k",
+              "4k"
+            ],
+            "type": "string",
+            "description": "几何分辨率。仅当 model_type 为 standard（默认）时可用；smart-topology 时请省略。"
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "角色身高（米），必须大于 0。"
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "角色姿势；空字符串表示不指定姿势。"
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "网格对称行为。"
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用输入安全检查。如适用，关闭此项需要账户授权。"
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "生成 PBR 纹理贴图。"
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "为生成的人形角色绑定骨骼。"
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "输出网格拓扑。"
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "纹理引导文本，最多 600 个字符。"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "公开图片 URL 或图片 data URI。",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "图片 URL。必须是可公开访问的 HTTP 或 HTTPS URL。"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "model_type"
+              ],
+              "properties": {
+                "model_type": {
+                  "const": "smart-topology"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "target_polycount": {
+                  "maximum": 15000
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "geometry_resolution"
+              ]
+            },
+            "then": {
+              "properties": {
+                "model_type": {
+                  "const": "standard"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MultiImageTo3DInput": {
+        "type": "object",
+        "required": [
+          "image_urls"
+        ],
+        "properties": {
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "生成纹理。"
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用重新网格化。"
+          },
+          "texture_image_url": {
+            "type": "string",
+            "description": "公开图片 URL 或图片 data URI。必须是可公开访问的 HTTP 或 HTTPS URL。",
+            "format": "uri"
+          },
+          "enable_animation": {
+            "type": "boolean",
+            "default": false,
+            "description": "应用动画；要求 enable_rigging=true。"
+          },
+          "target_polycount": {
+            "default": 30000,
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "description": "目标面数：100-300000。"
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 92,
+            "minimum": 0,
+            "maximum": 696,
+            "description": "动画预设 ID，0-696。"
+          },
+          "geometry_resolution": {
+            "enum": [
+              "standard",
+              "2k"
+            ],
+            "type": "string",
+            "description": "几何分辨率；多图生成不支持 4k。"
+          },
+          "rigging_height_meters": {
+            "exclusiveMinimum": 0,
+            "type": "number",
+            "default": 1.7,
+            "description": "角色身高（米），必须大于 0。"
+          },
+          "pose_mode": {
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "type": "string",
+            "default": "",
+            "description": "角色姿势；空字符串表示不指定姿势。"
+          },
+          "symmetry_mode": {
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "type": "string",
+            "default": "auto",
+            "description": "网格对称行为。"
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用输入安全检查。如适用，关闭此项需要账户授权。"
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "default": false,
+            "description": "生成 PBR 纹理贴图。"
+          },
+          "topology": {
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "type": "string",
+            "default": "triangle",
+            "description": "输出网格拓扑。"
+          },
+          "enable_rigging": {
+            "type": "boolean",
+            "default": false,
+            "description": "为生成的人形角色绑定骨骼。"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "公开图片 URL 或图片 data URI。",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "图片 URL。必须是可公开访问的 HTTP 或 HTTPS URL。"
+          },
+          "texture_prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "纹理引导文本，最多 600 个字符。"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "enable_animation"
+              ],
+              "properties": {
+                "enable_animation": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "enable_rigging"
+              ],
+              "properties": {
+                "enable_rigging": {
+                  "const": true
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "anyOf": [
+                {
+                  "required": [
+                    "enable_pbr"
+                  ],
+                  "properties": {
+                    "enable_pbr": {
+                      "const": true
+                    }
+                  }
+                },
+                {
+                  "required": [
+                    "texture_prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "texture_image_url"
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "properties": {
+                "should_texture": {
+                  "const": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

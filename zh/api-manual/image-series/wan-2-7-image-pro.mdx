@@ -1,0 +1,115 @@
+---
+title: "Wan-2.7-Image-Pro"
+description: "Wan 2.7 Image Pro API 生成或编辑图像，最多使用四张参考图，最多输出四张图像。尺寸可为列出的预设值或自定义宽高。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/wan-2-7-image-pro.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`wan-2.7-image-pro` 是一款用于生成和编辑的高质量图像模型。
+
+它使用统一的请求结构：
+
+- 省略 `input.image_urls` 时，请求按文生图处理
+- 提供 `input.image_urls` 时，请求自动按编辑模式处理
+
+## 模型
+
+- **wan-2.7-image-pro** - 统一的文生图与图像编辑模型
+
+## 必填参数
+
+- `prompt` - 必填提示词
+
+## 可选参数
+
+- `size` - 输出图像尺寸预设，或自定义 `{ width, height }` 对象
+- `n` - 图像数量，`1-4`
+- `seed` - 可选随机种子
+- `image_urls` - 用于编辑的参考图，需要 `1-4` 张。顺序有意义：在提示词中按 image 1、image 2、image 3、image 4 引用它们
+
+## 尺寸
+
+`input.size` 支持以下预设值：
+
+- `512x512`
+- `1024x1024`
+- `768x1024`
+- `1024x768`
+- `576x1024`
+- `1024x576`
+
+默认值：`1024x1024`
+
+### 自定义尺寸
+
+如需自定义图像尺寸，可以以对象形式传入 `width` 和 `height`：
+
+```json
+"size": {
+  "width": 1280,
+  "height": 720
+}
+```
+
+## 示例
+
+使用统一提交接口：`POST /api/generate/submit`
+
+文生图示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2.7-image-pro",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A cinematic portrait of a traveler in golden sunset light",
+      "size": "1024x1024",
+      "n": 1,
+      "seed": 12345
+    }
+  }'
+```
+
+编辑示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "wan-2.7-image-pro",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Turn the scene into a snowy night with neon reflections",
+      "image_urls": ["https://example.com/reference1.jpg"],
+      "size": "1024x576",
+      "n": 2
+    }
+  }'
+```
+
+自定义尺寸示例：
+
+```json
+{
+  "model": "wan-2.7-image-pro",
+  "input": {
+    "prompt": "A dramatic fashion editorial scene",
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "n": 1
+  }
+}
+```

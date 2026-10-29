@@ -1,0 +1,19 @@
+---
+title: "Flux Dev"
+description: "FLUX.1 Dev API 根据提示词生成图像，或编辑恰好一张参考图。文生图支持预设比例、高清正方形或自定义 WIDTHxHEIGHT 尺寸。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/flux-dev.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `flux-dev` 根据提示词生成图像，或提供一个 `input.image_urls` 元素来编辑已有图像。
+
+用 `input.size` 设置文生图的输出尺寸，用 `input.n` 设置输出图像数量，用 `input.output_format` 设置返回的图像格式。支持的尺寸值为 `1:1`、`1:1 HD`、`4:3`、`3:4`、`16:9` 和 `9:16`；其中 `1:1 HD` 为高清正方形选项。也支持 `1024x1536` 这类自定义 `WIDTHxHEIGHT` 值。图生图任务中，输出由源图像引导，`input.size` 会被忽略。
+
+## 模型
+
+- **flux-dev** - 文生图和单图编辑

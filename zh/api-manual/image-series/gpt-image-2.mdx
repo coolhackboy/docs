@@ -1,0 +1,83 @@
+---
+title: "GPT Image 2"
+description: "GPT Image 2 API 根据文本生成一张图像，或编辑一张或多张参考图。分辨率范围为 1K 到 4K，自定义尺寸的边长最高 3840 像素。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/gpt-image-2.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 GPT Image 2 模型，根据文本提示词生成图像，或通过自然语言指令编辑一张或多张参考图。
+
+## 模型
+
+- **gpt-image-2** - 文生图，可选以参考图引导生成
+- **gpt-image-2-edit** - 基于一张或多张参考图和文本指令进行图像编辑
+
+## 分辨率
+
+`resolution` 参数控制输出图像的分辨率。
+
+| 分辨率 | 说明 |
+|---|---|
+| `1K`（默认） | 标准分辨率 |
+| `2K` | 高分辨率 |
+| `4K` | 超高分辨率（仅限真正的 4K 尺寸） |
+
+### 分辨率规则
+
+- `size` 设为 `auto` 或未传 `size` 参数时，无论 `resolution` 取何值，始终使用 **1K** 分辨率。
+- 自定义尺寸（`WIDTHxHEIGHT`）要求 `resolution` 为 `2K` 或 `4K`。
+- `4K` 适用于 `16:9`、`9:16`、`21:9`，或边长为 3840 像素的自定义尺寸。其他 4K 选择会自动降为 2K。
+
+### 自定义尺寸限制
+
+自定义尺寸使用 `WIDTHxHEIGHT` 格式（例如 `2304x1536`），且必须满足以下要求：
+- 两个维度都必须能被 16 整除
+- 最大边长：3840 像素
+- 宽高比：最高 3:1
+- 总像素数：655,360 到 8,294,400 之间
+
+## 示例
+
+### 生成图像
+
+```json
+{
+  "model": "gpt-image-2",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A premium product photo of a silver espresso machine on a clean white studio background",
+    "quality": "low",
+    "size": "1:1",
+    "resolution": "1K"
+  }
+}
+```
+
+### 编辑图像
+
+```json
+{
+  "model": "gpt-image-2-edit",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the background with a clean white studio backdrop and add a soft natural shadow",
+    "image_urls": ["https://example.com/product.jpg"],
+    "quality": "high",
+    "size": "1:1"
+  }
+}
+```
+
+## 注意事项
+
+- `gpt-image-2-edit` 必须提供 `image_urls`。
+- `image_urls` 支持上传多张参考图。
+- `prompt` 最多支持 20,000 个字符。
+- 每次请求返回一张图像。
+- `quality` 控制输出图像质量。可选值：`low`、`medium`、`high`。默认：`low`。
+- 支持的 `size` 值：`auto`、`1:1`、`2:3`、`3:2`、`4:3`、`3:4`、`4:5`、`5:4`、`16:9`、`9:16`、`21:9`，或自定义 `WIDTHxHEIGHT`。

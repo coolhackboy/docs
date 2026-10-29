@@ -1,0 +1,228 @@
+---
+title: "API 概览"
+description: "完整的 API 参考与架构说明"
+icon: "book"
+---
+
+# PoYo AI API 文档
+
+PoYo AI 通过一个 API Key 提供图像、视频、LLM、3D 和音乐 API。
+
+## 模型类别
+
+生成模型（图像、视频、3D、音乐）以异步任务方式运行。LLM 直接在 HTTP 响应中返回结果，或以流式方式返回。
+
+| 类别 | 请求 | 结果 | 概览 |
+|----------|---------|--------|----------|
+| 图像 | `POST /api/generate/submit` | [图像任务状态](/zh/api-manual/task-management/image-status)或 Webhook | [图像模型](/zh/api-manual/image-series/overview) |
+| 视频 | `POST /api/generate/submit` | [视频任务状态](/zh/api-manual/task-management/video-status)或 Webhook | [视频模型](/zh/api-manual/video-series/overview) |
+| 3D | `POST /api/generate/submit` | [3D 任务状态](/zh/api-manual/task-management/3d-status)或 Webhook | [3D 模型](/zh/api-manual/3d-series/overview) |
+| 音乐（Suno） | `POST /api/generate/submit` | [查询音乐详情](/zh/api-manual/music-series/query-music-detail)或 Webhook | [音乐与音频模型](/zh/api-manual/music-series/overview) |
+| 音乐与 TTS（其他供应商） | `POST /api/generate/submit` | [任务状态](/zh/api-manual/task-management/status)或 Webhook | [音乐与音频模型](/zh/api-manual/music-series/overview) |
+| AI 工具 | `POST /api/generate/submit` | [任务状态](/zh/api-manual/task-management/status)或 Webhook | [AI 工具](/zh/api-manual/tools-series/overview) |
+| LLM | `/v1/chat/completions`、`/v1/responses`、`/v1/messages` 或 Gemini Native | 在响应中返回或流式返回 | [LLM 模型](/zh/api-manual/chat-series/overview) |
+
+本页其余部分介绍生成模型使用的异步任务流程。
+
+## Base URL
+
+所有 API 请求都应发送到：
+
+```
+https://api.poyo.ai
+```
+
+## 认证
+
+PoYo AI 使用 API Key 认证。在 `Authorization` 请求头中携带你的 API Key：
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+<Card title="获取 API Key" icon="key" href="https://poyo.ai/dashboard/api-key">
+  访问 API 控制台生成你的 API Key
+</Card>
+
+## API 架构
+
+### 统一接口
+
+图像、视频、3D 和大多数音频模型使用两个接口：
+
+#### 提交任务
+```http
+POST https://api.poyo.ai/api/generate/submit
+```
+
+提交生成请求。立即返回 `task_id`。
+
+#### 查询状态
+```http
+GET https://api.poyo.ai/api/generate/status/{task_id}
+```
+
+查看任务进度并获取结果。
+
+### 异步处理
+
+所有生成任务都遵循以下流程：
+
+<Steps>
+  <Step title="提交任务">
+    向 `/api/generate/submit` 发送 POST 请求，携带模型和参数
+  </Step>
+  <Step title="获取任务 ID">
+    API 立即返回 `task_id`，状态为 `not_started`
+  </Step>
+  <Step title="轮询或等待">
+    轮询 `/api/generate/status/{task_id}`，或接收 Webhook 回调
+  </Step>
+  <Step title="获取结果">
+    状态为 `finished` 时，从响应中获取生成的文件
+  </Step>
+</Steps>
+
+## 响应格式
+
+所有接口都返回结构一致的 JSON：
+
+### 提交响应
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "not_started",
+    "created_time": "2025-11-12T10:30:00"
+  }
+}
+```
+
+### 状态响应
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "finished",
+    "progress": 100,
+    "files": [
+      {
+        "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+        "file_type": "image"
+      }
+    ],
+    "created_time": "2025-11-12T10:30:00",
+    "error_message": null
+  }
+}
+```
+
+### 任务状态值
+
+| 状态 | 说明 |
+|--------|-------------|
+| `not_started` | 任务已排队，等待开始 |
+| `running` | 任务正在处理 |
+| `finished` | 任务已完成，结果在 `files` 数组中 |
+| `failed` | 任务失败，错误详情在 `error_message` 中 |
+
+### 错误响应
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "Invalid parameter: size",
+    "type": "invalid_request_error"
+  }
+}
+```
+
+## HTTP 状态码
+
+| 状态码 | 说明 |
+|------|-------------|
+| 200 | Success：请求成功完成 |
+| 400 | Bad Request：参数无效 |
+| 401 | Unauthorized：API Key 无效或缺失 |
+| 402 | Payment Required：账户余额不足 |
+| 500 | Internal Server Error：服务器发生错误 |
+
+## 任务管理方式
+
+### 方式 1：轮询（简单）
+
+定期轮询状态接口：
+
+```python
+import time
+while True:
+    response = requests.get(f"{BASE_URL}/api/generate/status/{task_id}", headers=headers)
+    task = response.json()["data"]
+    if task["status"] in ["finished", "failed"]:
+        break
+    time.sleep(2)
+```
+
+### 方式 2：Webhook（推荐）
+
+提供 `callback_url` 以自动接收通知：
+
+```python
+payload = {
+    "model": "gpt-4o-image",
+    "callback_url": "https://your-domain.com/webhook",  # Receive results here
+    "input": {"prompt": "..."}
+}
+```
+
+<Card title="Webhook 文档" icon="webhook" href="/zh/api-manual/task-management/webhooks">
+  了解如何实现 Webhook 回调
+</Card>
+
+## 重要说明
+
+<Warning>
+  **文件有效期**：生成的图像和视频在创建后 **3 天**内可访问。请及时下载并保存。
+</Warning>
+
+<Info>
+  **速率限制**：API 速率限制因账户类型而异。在[控制台](https://poyo.ai)查看当前限制。
+</Info>
+
+<Tip>
+  **回调与轮询**：Webhook 比轮询更高效，推荐在生产环境中使用。
+</Tip>
+
+## 快速示例
+
+```python
+import requests
+
+API_KEY = "your-api-key-here"
+BASE_URL = "https://api.poyo.ai"
+headers = {"Authorization": f"Bearer {API_KEY}"}
+
+# Submit task
+response = requests.post(
+    f"{BASE_URL}/api/generate/submit",
+    json={
+        "model": "gpt-4o-image",
+        "callback_url": "https://your-domain.com/callback",
+        "input": {"prompt": "A futuristic city", "size": "1:1"}
+    },
+    headers=headers
+)
+task_id = response.json()["data"]["task_id"]
+
+# Check status
+status_response = requests.get(
+    f"{BASE_URL}/api/generate/status/{task_id}",
+    headers=headers
+)
+print(status_response.json())
+```

@@ -1,0 +1,12 @@
+---
+title: "生成音效"
+description: "生成音效 API 使用 Suno V5 或 V5.5，根据文本提示词生成音效、环境声或音乐采样。速度、调式和可循环结果均为可选项。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/generate-sounds.json POST /api/generate/submit"
+---
+
+`mv` 使用 `V5`、`V5_5`、`V6`、`V6_MINI` 或 `V6_WILD`。`sound_tempo` 为 1–300 BPM 的整数；`sound_key` 接受大调/小调，例如 `C`、`F#`、`Am` 或 `C#m`。设置 `sound_loop` 可获得可循环的结果；提示词包含人声素材时设置 `grab_lyrics`。
+
+```json
+{"model":"generate-sounds","input":{"prompt":"Rain on a metal roof with distant thunder","mv":"V5_5","sound_loop":true,"sound_tempo":90,"sound_key":"Cm","grab_lyrics":false}}
+```

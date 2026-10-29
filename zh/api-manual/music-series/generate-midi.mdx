@@ -1,0 +1,35 @@
+---
+title: "生成 MIDI"
+description: "从已完成的 Suno 人声分离任务中提取结构化 MIDI 音符数据。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/generate-midi.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询音乐详情](/zh/api-manual/music-series/query-music-detail)接口获取结果。
+</Tip>
+
+生成 MIDI 从已经通过[分离人声](/zh/api-manual/music-series/vocal-remover/separate-vocals)或[分轨拆分](/zh/api-manual/music-series/vocal-remover/stem-split)处理过的歌曲中，按乐器提取音符数据。
+
+## 模型
+
+- **generate-midi** — 从分离后的音轨中提取 MIDI 音符数据
+
+## 必填参数
+
+- `task_id` (string)：你账户下已完成的分离人声或分轨拆分任务的 `task_id`。
+
+## 输出
+
+结果通过[查询音乐详情](/zh/api-manual/music-series/query-music-detail)和音乐回调以 `midi_data` 返回。`midi_data` 是供应商返回的 JSON 对象，包含 `state` 和 `instruments` 数组。不会生成可下载的 `.mid` 文件。
+
+## 示例
+
+- **从分离任务生成 MIDI** — 设置 `task_id`。
+
+## 注意事项
+
+- 请先运行分离人声或分轨拆分。其他类型的任务会被拒绝，并返回 "It is necessary to first call the separation of vocals and instruments."
+- `task_id` 不存在或属于其他账户时，返回 "Parent task not found"。
+- 即使 HTTP 状态码为 200，校验错误也会在响应体中以 `code: 400` 返回。请始终检查 `code`。

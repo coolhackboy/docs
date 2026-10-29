@@ -1,0 +1,84 @@
+---
+title: "Kling-o3"
+description: "Kling O3 API 根据提示词生成图像，或编辑 1 到 10 张参考图。分辨率为 1K、2K 或 4K，可选的元素可锁定角色或物体。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/kling-o3.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **kling-o3-image** - 仅凭提示词生成图像
+- **kling-o3-image-edit** - 基于参考图的图像编辑
+
+## 必填参数
+
+- `prompt` - 必填的生成或编辑提示词
+
+## 可选参数
+
+- `image_urls` - 可选的参考图 URL，`1-10` 张，用于图像编辑模式
+- `elements` - 可选的元素描述数组，用于控制角色/物体。在提示词中以 `@Element1`、`@Element2` 等方式引用。推荐结构：`frontal_image_url` 填主要的人脸/物体图像，可选的 `reference_image_urls` 填其他参考视角
+- `resolution` - `1K`、`2K`、`4K`
+- `size` - `kling-o3-image`：`16:9`、`9:16`、`1:1`、`4:3`、`3:4`、`3:2`、`2:3`、`21:9`；`kling-o3-image-edit`：`auto`、`16:9`、`9:16`、`1:1`、`4:3`、`3:4`、`3:2`、`2:3`、`21:9`
+- `output_format` - `jpeg`、`png`、`webp`
+- `n` - 输出图像数量，`1-9`
+
+## 示例
+
+使用统一提交接口：`POST /api/generate/submit`
+
+仅提示词示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "kling-o3-image",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A cinematic futuristic alley with rain and neon reflections",
+      "resolution": "4K",
+      "size": "16:9",
+      "output_format": "png",
+      "n": 2
+    }
+  }'
+```
+
+图像编辑示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "kling-o3-image-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Turn the reference scene into a luxury night interior with dramatic window light",
+      "image_urls": ["https://example.com/reference1.png"],
+      "resolution": "4K",
+      "size": "auto",
+      "output_format": "png",
+      "n": 1
+    }
+  }'
+```
+
+## 注意事项
+
+### Elements 说明
+
+- `elements` 用于上游的人脸/物体控制
+- 推荐的元素字段：
+  - `frontal_image_url`：主要角色/物体视角的公开图像 URL
+  - `reference_image_urls`：可选的其他公开图像 URL 数组
+- `elements` 为可选项，仅在需要更强的主体一致性时使用

@@ -1,0 +1,309 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Hunyuan 3D v3.1 API",
+    "description": "Hunyuan 3D v3.1 API 使用 Pro 或 Rapid 根据文本或一张图片生成 3D 模型。Pro 可接受额外视角、目标面数、PBR 材质，或仅输出几何体 GLB；Rapid 可返回带纹理的模型或无纹理的白模。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Hunyuan 3D v3.1 任务",
+        "description": "使用 Hunyuan 3D v3.1 Pro 或 Rapid 根据文本或一张图片生成 3D 模型。",
+        "operationId": "submitHunyuan3D31Task",
+        "tags": [
+          "Hunyuan 3D v3.1"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "pro-image-to-3d": {
+                  "summary": "Pro 图生 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/pro/image-to-3d",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/object-front.png"
+                      ],
+                      "generate_type": "Normal",
+                      "enable_pbr": true,
+                      "face_count": 500000
+                    }
+                  }
+                },
+                "pro-text-to-3d": {
+                  "summary": "Pro 文生 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/pro/text-to-3d",
+                    "input": {
+                      "prompt": "A detailed sci-fi cargo drone with compact landing legs and panel seams",
+                      "generate_type": "Normal",
+                      "enable_pbr": true,
+                      "face_count": 500000
+                    }
+                  }
+                },
+                "rapid-text-to-3d": {
+                  "summary": "Rapid 文生 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/rapid/text-to-3d",
+                    "input": {
+                      "prompt": "A rustic wooden treasure chest with metal bands",
+                      "enable_pbr": false
+                    }
+                  }
+                },
+                "rapid-image-to-3d": {
+                  "summary": "Rapid 图生 3D",
+                  "value": {
+                    "model": "hunyuan-3d/v3.1/rapid/image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/object-front.png"
+                      ],
+                      "enable_geometry": false,
+                      "enable_pbr": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "hunyuan-3d/v3.1/pro/image-to-3d",
+              "hunyuan-3d/v3.1/pro/text-to-3d",
+              "hunyuan-3d/v3.1/rapid/text-to-3d",
+              "hunyuan-3d/v3.1/rapid/image-to-3d"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "$ref": "#/components/schemas/Hunyuan3D31Input"
+          }
+        }
+      },
+      "Hunyuan3D31Input": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "文生 3D 模型必填。Pro 最多支持 1024 个字符；Rapid 最多支持 200 个字符。"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 1,
+            "description": "图生 3D 模型必填。必须恰好传一个图片 URL。"
+          },
+          "generate_type": {
+            "type": "string",
+            "enum": [
+              "Normal",
+              "Geometry"
+            ],
+            "description": "仅用于 Pro 模型。"
+          },
+          "enable_pbr": {
+            "type": "boolean",
+            "description": "仅几何体生成时忽略此参数。"
+          },
+          "face_count": {
+            "type": "integer",
+            "minimum": 40000,
+            "maximum": 1500000,
+            "default": 500000,
+            "description": "仅用于 Pro 模型。"
+          },
+          "enable_geometry": {
+            "type": "boolean",
+            "description": "仅用于 Rapid 模型。"
+          },
+          "back_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          },
+          "left_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          },
+          "right_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          },
+          "top_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          },
+          "bottom_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          },
+          "left_front_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          },
+          "right_front_image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "仅用于 Pro 图生 3D。"
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

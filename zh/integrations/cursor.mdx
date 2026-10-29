@@ -1,0 +1,50 @@
+---
+title: "Cursor"
+description: "将 Cursor 连接到 PoYo MCP"
+icon: "arrow-pointer"
+---
+
+# 连接 Cursor
+
+将 PoYo 添加到 Cursor 的 MCP 配置，然后重启 MCP 服务器，让 Cursor 刷新工具列表。
+
+```json
+{
+  "mcpServers": {
+    "poyo": {
+      "url": "https://api.poyo.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:POYO_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+如果你的 Cursor 版本不支持需认证的远程服务器，请使用 stdio 桥接：
+
+```json
+{
+  "mcpServers": {
+    "poyo": {
+      "command": "npx",
+      "args": ["-y", "@poyoapi/mcp"],
+      "env": { "POYO_API_KEY": "YOUR_API_KEY" }
+    }
+  }
+}
+```
+
+<Warning>
+  尽量把 API Key 放在环境变量中。不要提交包含 Key 的配置。
+</Warning>
+
+`${env:POYO_API_KEY}` 读取的是 Cursor 启动时的环境。在终端里用 `export` 或 `$env:` 设置的变量只对该会话生效，因此从桌面启动的 Cursor 读取不到它。
+
+如果想在不使用 MCP 的情况下使用 Cursor，请按照[快速开始](/zh/integrations/quickstart)操作，并使用 `--agent cursor`。
+
+## 验证
+
+向 Cursor 提问：`Use PoYo to find image models, inspect one model's schema, and show its price. Do not run it.`
+
+类型化模型工具和使用示例见 [PoYo MCP](/zh/integrations/mcp)。

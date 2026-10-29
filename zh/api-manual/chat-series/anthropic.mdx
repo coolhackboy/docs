@@ -1,0 +1,36 @@
+---
+title: "Anthropic"
+description: "通过 Anthropic Messages 或 Chat Completions 接口调用 Anthropic Claude 5.5、5 和 4 系列模型。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/anthropic.json POST /v1/messages"
+---
+
+Anthropic Claude 模型覆盖编程、长周期 Agent、研究、视觉和知识工作。本页 Playground 使用 [Anthropic Messages](/zh/api-manual/chat-series/claude-messages)，所有 Claude 模型都支持该格式。
+
+## 模型
+
+- **claude-opus-5-5** — Claude Opus 5.5。
+- **claude-sonnet-5-5** — Claude Sonnet 5.5。
+- **claude-haiku-5-5** — Claude Haiku 5.5，适用于分类、信息抽取、摘要和子 Agent 的轻量模型，上下文 1M token。
+- **claude-fable-5-1** — Claude Fable 5.1，适用于长周期编程、研究和视觉，上下文 1M，输出最多 128K。
+- **claude-opus-5** — Claude Opus 5，适用于高级编程、计算机操作和深度研究。
+- **claude-sonnet-5** — Claude Sonnet 5，适用于 Agent 编程以及浏览器或计算机操作，上下文 1M，输出最多 128K。
+- **claude-opus-4-8** — Claude Opus 4.8，上下文 1M，输出最多 128K。
+- **claude-opus-4-7** — Claude Opus 4.7，适用于编程、深度推理和高分辨率视觉。
+- **claude-opus-4-6** — Claude Opus 4.6。
+- **claude-sonnet-4-6** — Claude Sonnet 4.6。
+- **claude-opus-4-5-20251101** — Claude Opus 4.5。
+- **claude-sonnet-4-5-20250929** — Claude Sonnet 4.5。
+- **claude-haiku-4-5-20251001** — Claude Haiku 4.5。
+
+所有 Claude 模型都支持 Anthropic Messages 和 Chat Completions。
+
+## 示例
+
+- **基础 Claude 消息** — 单条用户消息加 `max_tokens`。
+
+流式输出、扩展思考和工具使用的示例见 [Anthropic Messages](/zh/api-manual/chat-series/claude-messages)。如需以 Chat Completions 格式调用模型，把相同的 model id 发送到 [Chat Completions](/zh/api-manual/chat-series/chat-completions)。
+
+## 注意事项
+
+- 全部模型及其支持的格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

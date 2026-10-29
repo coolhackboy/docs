@@ -1,0 +1,194 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PoYo 生成音效 API",
+        "version": "1.0.0",
+        "description": "根据文本提示词生成音效和环境声。"
+    },
+    "servers": [
+        {
+            "url": "https://api.poyo.ai"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/api/generate/submit": {
+            "post": {
+                "operationId": "submitGenerateSounds",
+                "summary": "生成音效",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request"
+                            },
+                            "example": {
+                                "model": "generate-sounds",
+                                "input": {
+                                    "prompt": "Rain and distant thunder",
+                                    "mv": "V5_5",
+                                    "sound_loop": true,
+                                    "sound_tempo": 90,
+                                    "sound_key": "Cm",
+                                    "grab_lyrics": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "已提交",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+            }
+        },
+        "schemas": {
+            "Request": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "input"
+                ],
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "generate-sounds"
+                        ]
+                    },
+                    "callback_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "input": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "prompt",
+                            "mv"
+                        ],
+                        "properties": {
+                            "prompt": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 500
+                            },
+                            "mv": {
+                                "type": "string",
+                                "enum": [
+                                    "V5",
+                                    "V5_5",
+                                    "V6",
+                                    "V6_MINI",
+                                    "V6_WILD"
+                                ]
+                            },
+                            "sound_loop": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "sound_tempo": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 300
+                            },
+                            "sound_key": {
+                                "type": "string",
+                                "enum": [
+                                    "Cm",
+                                    "C#m",
+                                    "Dm",
+                                    "D#m",
+                                    "Em",
+                                    "Fm",
+                                    "F#m",
+                                    "Gm",
+                                    "G#m",
+                                    "Am",
+                                    "A#m",
+                                    "Bm",
+                                    "C",
+                                    "C#",
+                                    "D",
+                                    "D#",
+                                    "E",
+                                    "F",
+                                    "F#",
+                                    "G",
+                                    "G#",
+                                    "A",
+                                    "A#",
+                                    "B"
+                                ]
+                            },
+                            "grab_lyrics": {
+                                "type": "boolean",
+                                "default": false
+                            }
+                        }
+                    }
+                }
+            },
+            "Response": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "example": 200,
+                        "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+                        "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "task_id",
+                            "status",
+                            "created_time"
+                        ],
+                        "properties": {
+                            "task_id": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "not_started",
+                                    "running",
+                                    "finished",
+                                    "failed"
+                                ],
+                                "description": "任务状态。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+                            },
+                            "created_time": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

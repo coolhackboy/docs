@@ -1,0 +1,24 @@
+---
+title: "Wan 2.5 Image-to-Video"
+description: "Wan 2.5 Image-to-Video API 可将一张图片转为 5 或 10 秒、480p、720p 或 1080p 的视频，可选传入音频 URL。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/wan2.5-image-to-video.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`wan2.5-image-to-video` 是更高质量的单图动画模型，分辨率支持范围比 Wan 2.2 fast 系列更广。
+
+## 模型
+
+- **wan2.5-image-to-video** - 将单张图片转为视频片段
+
+## 可选参数
+
+- **图片 URL**：必填，恰好 1 张
+- **分辨率**：`480p`、`720p` 或 `1080p`
+- **时长**：`5` 或 `10` 秒
+- **可选控制项**：`audio`、`negative_prompt`、`seed`

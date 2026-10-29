@@ -1,0 +1,8 @@
+---
+title: "检查 Suno 声音"
+description: "检查已生成的 Voice ID 是否仍然可用"
+icon: "circle-check"
+openapi: "/zh/api-manual/music-series/voice/check.json POST /api/generate/submit"
+---
+
+使用生成声音返回的 `task_id`。完成后的结果包含 `files[].is_available`；`voice_id` 仍保留在生成声音的结果中。

@@ -1,0 +1,129 @@
+---
+title: "Meshy 7.1 3D"
+description: "Meshy 7.1 3D API 从文本、单张图像或 1–4 张图像生成 3D 网格，可选纹理、PBR 贴图、人形骨骼绑定和预设动画。文本和单图任务可使用 standard、2K 或 4K 几何精度；多图任务接受 standard 或 2K。"
+icon: "cube"
+openapi: "/zh/api-manual/3d-series/meshy-7-1-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Meshy 7.1 通过三个公开 model ID 支持文生 3D、单图生 3D 和多图生 3D。同一个任务中可以同时请求纹理、骨骼绑定和动画。
+
+## 模型
+
+- **meshy-7.1-text-to-3d** - 从提示词生成 3D 模型
+- **meshy-7.1-image-to-3d** - 从一张图像生成 3D 模型
+- **meshy-7.1-multi-image-to-3d** - 从同一物体的 1-4 张图像生成 3D 模型
+
+## 必填参数
+
+- **model**：`meshy-7.1-text-to-3d`、`meshy-7.1-image-to-3d` 或 `meshy-7.1-multi-image-to-3d`
+- **input.prompt**：`meshy-7.1-text-to-3d` 必填。长度 `1-600` 个字符，且须包含非空白文本。图像模型不传
+- **input.image_urls**：图像模型必填。`meshy-7.1-image-to-3d` 只能传 1 张图像，`meshy-7.1-multi-image-to-3d` 传 1-4 张图像。文生 3D 不传
+
+图像输入和 `texture_image_url` 接受公开的 HTTP(S) 图像 URL 或图像 data URI。
+
+## 可选参数
+
+- **mode**：仅文生 3D。`preview` 只返回几何体；`full` 包含纹理。默认 `full`
+- **model_type**：仅文生 3D 和单图生 3D。`standard` 或 `smart-topology`。默认 `standard`。多图生成时不传。不支持 Lowpoly
+- **geometry_resolution**：文生 3D 和单图生 3D 在 `model_type` 为 `standard` 时可用 `standard`、`2k` 或 `4k`。`model_type` 为 `smart-topology` 时不传。多图生成只接受 `standard` 或 `2k`
+- **topology**：`triangle` 或 `quad`。默认 `triangle`
+- **target_polycount**：目标多边形数量，范围 `100` 到 `300000`。默认 `30000`。文生 3D 和单图生 3D 在 `model_type=smart-topology` 时，范围为 `100-15000`，不传时默认 `4000`
+- **should_remesh**：是否启用重新网格化。默认 `true`
+- **symmetry_mode**：`off`、`auto` 或 `on`。默认 `auto`
+- **should_texture**：仅图像模型。是否生成纹理。默认 `true`。多图生成时，如果 `enable_pbr` 为 `true` 或提供了纹理引导，此项必须保持 `true`
+- **enable_pbr**：生成金属度、粗糙度、法线等 PBR 贴图。默认 `false`。多图生成需要 `should_texture=true`
+- **pose_mode**：`a-pose`、`t-pose`，或空字符串表示不指定姿势
+- **seed**：仅文生 3D。整数种子。不传则自动选择种子
+- **enable_prompt_expansion**：仅文生 3D。生成前是否扩写提示词。默认 `false`
+- **texture_prompt**：可选的纹理引导，最多 `600` 个字符。多图生成需要 `should_texture=true`
+- **texture_image_url**：可选的纹理引导图像。多图生成需要 `should_texture=true`
+- **enable_rigging**：是否为人形角色绑定骨骼。默认 `false`。`enable_animation` 为 `true` 时必须为 `true`
+- **rigging_height_meters**：启用骨骼绑定时的角色身高（米）。必须大于零。默认 `1.7`
+- **enable_animation**：是否应用动画预设。需要 `enable_rigging=true`。默认 `false`
+- **animation_action_id**：动画预设 ID，范围 `0` 到 `696`。默认 `92`
+- **enable_safety_checker**：是否启用输入安全检查。默认 `true`。关闭可能需要账户授权
+- **callback_url**：可选，任务完成通知的 Webhook URL
+
+## 输出
+
+任务结果以文件列表返回。可用条目可能包括：
+
+- `file_type: 3d` 的 3D 资产
+- 以图像形式返回的缩略图和纹理
+- 启用相应选项且文件可用时，包括绑定骨骼的网格和动画资产
+
+每个文件条目包括 `file_url` 和 `file_type`。
+
+## 示例
+
+### 文生 3D，带骨骼绑定和动画
+
+```json
+{
+  "model": "meshy-7.1-text-to-3d",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A ceramic robot with a clean silhouette.",
+    "enable_rigging": true,
+    "enable_animation": true
+  }
+}
+```
+
+### 文生 3D，Smart Topology 预览
+
+```json
+{
+  "model": "meshy-7.1-text-to-3d",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A ceramic robot.",
+    "mode": "preview",
+    "model_type": "smart-topology"
+  }
+}
+```
+
+### 单图生 3D
+
+```json
+{
+  "model": "meshy-7.1-image-to-3d",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "image_urls": [
+      "https://example.com/front.png"
+    ],
+    "enable_rigging": true,
+    "enable_animation": true
+  }
+}
+```
+
+### 多图生 3D
+
+```json
+{
+  "model": "meshy-7.1-multi-image-to-3d",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "image_urls": [
+      "https://example.com/front.png",
+      "https://example.com/back.png"
+    ],
+    "enable_rigging": true,
+    "enable_animation": true
+  }
+}
+```
+
+## 注意事项
+
+- `meshy-7.1-image-to-3d` 在 `image_urls` 中只接受一张图像。
+- `meshy-7.1-multi-image-to-3d` 接受 1-4 张图像。这些图像应从不同角度展示同一物体。
+- API 返回异步任务状态。请轮询统一的任务状态接口，或使用 `callback_url`。

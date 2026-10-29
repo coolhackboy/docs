@@ -1,0 +1,322 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - 生成音乐 API",
+    "description": "生成音乐 API 使用 V4 到 V6 模型版本，根据提示词生成歌曲，或在自定义模式下根据风格、标题和歌词生成。V5.5、V6、V6 Mini 和 V6 Wild 在自定义模式下支持 10 到 360 秒的自定义时长。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交音乐生成任务",
+        "description": "使用 AI 模型生成带人声或不带人声的音乐",
+        "operationId": "submitMusicTask",
+        "tags": [
+          "Music Generation"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "custom-mode": {
+                  "summary": "自定义模式 - 完全控制",
+                  "value": {
+                    "model": "generate-music",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A calm and relaxing piano track with soft melodies",
+                      "style": "Classical",
+                      "title": "Peaceful Piano Meditation",
+                      "custom_mode": true,
+                      "instrumental": true,
+                      "mv": "V5_5",
+                      "negative_tags": "Heavy Metal, Upbeat Drums",
+                      "style_weight": 0.65
+                    }
+                  }
+                },
+                "simple-mode": {
+                  "summary": "简单模式 - 仅歌词",
+                  "value": {
+                    "model": "generate-music",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Write a song about summer love and beach sunsets",
+                      "custom_mode": false,
+                      "instrumental": false,
+                      "mv": "V4"
+                    }
+                  }
+                },
+                "instrumental": {
+                  "summary": "纯音乐",
+                  "value": {
+                    "model": "generate-music",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Epic orchestral soundtrack for a fantasy adventure",
+                      "style": "Cinematic, Orchestral",
+                      "title": "Dragon's Journey",
+                      "custom_mode": true,
+                      "instrumental": true,
+                      "mv": "V4_5PLUS"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API 模型标识。\n\n此接口必须为 `generate-music`。",
+            "enum": [
+              "generate-music"
+            ],
+            "example": "generate-music"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "mv"
+            ],
+            "description": "音乐生成的输入参数",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "期望音频内容的描述。\n\n- 自定义模式（ `custom_mode: true` ）：提供 `lyrics` 时可选。否则当 `instrumental` 为 `false` 时，提示词会被用作歌词。\n  各模型的字符限制：\n  - **V4**：最多 3000 个字符\n  - **V4_5 & V4_5PLUS**：最多 5000 个字符\n  - **V4_5ALL**：最多 5000 个字符\n  - **V5**：最多 5000 个字符\n  - **V5_5、V6、V6_MINI 和 V6_WILD**：最多 5000 个字符\n\n- 非自定义模式（ `custom_mode: false` ）：提示词作为核心创意，最多 3000 个字符。请求也可以改为提供风格、歌词或参考媒体。\n  示例：\"A short relaxing piano tune\"",
+                "example": "A calm and relaxing piano track with soft melodies"
+              },
+              "custom_mode": {
+                "type": "boolean",
+                "default": true,
+                "description": "启用高级参数自定义模式。\n\n- 为 `true` 时：可完全控制风格、标题和其他参数。`style` 和 `title` 变为必填字段。\n\n- 为 `false` 时：简化模式，只需 `prompt`。歌词会根据提示词自动生成。",
+                "example": true
+              },
+              "instrumental": {
+                "type": "boolean",
+                "default": true,
+                "description": "指定是否生成不带人声的纯音乐。\n\n- 为 `true` 时：生成不含任何人声的纯音乐，只需 `style` 和 `title`。\n\n- 为 `false` 时：`style`、`prompt` 和 `title` 必填。",
+                "example": true
+              },
+              "style": {
+                "type": "string",
+                "description": "音乐风格设定，定义曲风、情绪或艺术方向。\n\n自定义模式下，需提供 `style`、`lyrics` 或 `negative_tags` 之一。提供了另外两项之一时，`style` 本身可选。\n\n各模型的字符限制：\n- **V4**：最多 200 个字符\n- **V4_5 & V4_5PLUS**：最多 1000 个字符\n- **V4_5ALL**：最多 1000 个字符\n- **V5**：最多 1000 个字符\n- **V5_5**：最多 1000 个字符\n- **V6、V6_MINI 和 V6_WILD**：最多 1000 个字符",
+                "example": "Classical"
+              },
+              "title": {
+                "type": "string",
+                "description": "在播放器中显示并用于文件命名的曲目标题。\n\n`custom_mode` 为 `true` 时必填。\n\n最多 80 个字符。",
+                "example": "Peaceful Piano Meditation"
+              },
+              "mv": {
+                "type": "string",
+                "description": "音乐生成使用的 AI 模型版本。\n\n- **V5**：音乐表现力更强，生成更快。\n- **V5_5**：按你的独特品味调优的个性化模型。\n- **V4_5PLUS**：V4_5PLUS 音色更丰富，提供新的创作方式，最长 8 分钟。\n- **V4_5**：V4_5 提示词理解更智能，生成更快，最长 8 分钟。\n- **V4_5ALL**：V4_5ALL 提示词理解更智能，生成更快，最长 8 分钟。\n- **V4**：V4 提升了人声质量，最长 4 分钟。\n- **V6**：音乐表现力更强，人声更自然。\n- **V6_MINI**：轻量、快速。\n- **V6_WILD**：音乐表现更大胆、更有辨识度。",
+                "enum": [
+                  "V4",
+                  "V4_5",
+                  "V4_5ALL",
+                  "V4_5PLUS",
+                  "V5",
+                  "V5_5",
+                  "V6",
+                  "V6_MINI",
+                  "V6_WILD"
+                ],
+                "example": "V5_5"
+              },
+              "negative_tags": {
+                "type": "string",
+                "description": "生成时要排除的音乐风格或特征。\n\n指定输出中要避免的曲风、情绪或乐器。",
+                "example": "Heavy Metal, Upbeat Drums"
+              },
+              "vocal_gender": {
+                "type": "string",
+                "description": "生成音乐的首选人声性别。\n\n- `m`：男声\n- `f`：女声\n\n仅在 `custom_mode` 为 `true` 且 `instrumental` 为 `false` 时生效。\n\n**注意**：此参数只能提高指定性别的概率，不能保证。",
+                "enum": [
+                  "m",
+                  "f"
+                ],
+                "example": "m"
+              },
+              "style_weight": {
+                "type": "number",
+                "multipleOf": 0.01,
+                "description": "控制指定风格对生成结果的影响强度。\n\n取值范围：0-1，最多 2 位小数。\n\n值越高，越贴合指定风格。",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "weirdness_constraint": {
+                "type": "number",
+                "multipleOf": 0.01,
+                "description": "控制实验性创意和非常规元素的程度。\n\n取值范围：0-1，最多 2 位小数。\n\n- 值较低：音乐更常规\n- 值较高：输出更具实验性和独特性",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "audio_weight": {
+                "type": "number",
+                "multipleOf": 0.01,
+                "description": "在音频特性与其他生成因素之间取得平衡。\n\n取值范围：0-1，最多 2 位小数。\n\n调整最终输出中对音质和声音特征的侧重。",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "persona_id": {
+                "type": "string",
+                "description": "应用于生成音乐的 Persona ID。\n\n用于在音乐生成中应用特定的 persona 风格。Persona ID 通过 persona 创建接口获取。\n\n仅在自定义模式下且 mv 设为 V5、V5_5、V6、V6_MINI 或 V6_WILD 时可用。\n\n如何生成 persona_id，请参阅 [generate-persona](/zh/api-manual/music-series/generate-persona)。",
+                "example": "persona_123"
+              },
+              "lyrics": {"type": "string", "maxLength": 5000, "description": "生成曲目的歌词。自定义模式下，歌词优先于提示词。非自定义模式下，歌词可与提示词一起发送。最多 5000 个字符。"},
+              "variety": {"type": "integer", "minimum": 0, "maximum": 4, "description": "结果多样性，取值 0 到 4。仅在 custom_mode 为 true 时生效。默认为 1。"},
+              "image_urls": {"type": "array", "maxItems": 5, "items": {"type": "string", "format": "uri"}, "description": "图片参考。仅在 custom_mode 为 false 时可用。最多 5 个 HTTP(S) URL。"},
+              "video_urls": {"type": "array", "maxItems": 1, "items": {"type": "string", "format": "uri"}, "description": "视频参考。仅在 custom_mode 为 false 时可用。最多 1 个 HTTP(S) URL。"},
+              "audio_urls": {"type": "array", "items": {"type": "string", "format": "uri"}, "description": "音频参考。仅在 custom_mode 为 false 时可用。HTTP(S) URL。"},
+              "persona_model": {"type": "string", "enum": ["style_persona", "voice_persona"], "description": "Persona 类型；需要 persona_id、custom_mode=true，且模型为 V5、V5_5、V6、V6_MINI 或 V6_WILD。"},
+              "duration": {"type": "integer", "minimum": 10, "maximum": 360, "description": "仅在 custom_mode=true 且 mv 设为 V5_5、V6、V6_MINI 或 V6_WILD 时可用。"}
+            },
+            "allOf": [
+              {"if": {"properties": {"custom_mode": {"const": true}}}, "then": {"required": ["title"], "anyOf": [{"required": ["style"]}, {"required": ["lyrics"]}, {"required": ["negative_tags"]}]}},
+              {"if": {"properties": {"custom_mode": {"const": false}}}, "then": {"anyOf": [{"required": ["prompt"]}, {"required": ["style"]}, {"required": ["lyrics"]}, {"required": ["image_urls"]}, {"required": ["video_urls"]}, {"required": ["audio_urls"]}], "properties": {"prompt": {"maxLength": 3000}}}},
+              {"if": {"required": ["duration"]}, "then": {"properties": {"mv": {"enum": ["V5_5", "V6", "V6_MINI", "V6_WILD"]}, "custom_mode": {"const": true}}}},
+              {"if": {"required": ["persona_model"]}, "then": {"required": ["persona_id"], "properties": {"custom_mode": {"const": true}}}},
+              {"if": {"required": ["persona_id"]}, "then": {"properties": {"mv": {"enum": ["V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}, "custom_mode": {"const": true}}}},
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"const": "V4"}}}, "then": {"properties": {"prompt": {"maxLength": 3000}, "style": {"maxLength": 200}, "title": {"maxLength": 80}}}},
+              {"if": {"properties": {"custom_mode": {"const": true}, "mv": {"enum": ["V4_5", "V4_5ALL", "V4_5PLUS", "V5", "V5_5", "V6", "V6_MINI", "V6_WILD"]}}}, "then": {"properties": {"prompt": {"maxLength": 5000}, "style": {"maxLength": 1000}, "title": {"maxLength": 80}}}}
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "描述错误原因的错误信息"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "错误类型标识"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

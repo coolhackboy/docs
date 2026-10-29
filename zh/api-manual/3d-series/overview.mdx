@@ -1,0 +1,31 @@
+---
+title: "3D 模型"
+description: "PoYo 上可用的全部 3D 生成模型及其 model ID。"
+icon: "cube"
+---
+
+所有 3D 模型都通过 `POST /api/generate/submit` 调用。在 `model` 中传入 model ID，在 `input` 中传入该模型的参数，并可选传入 `callback_url`。请求会立即返回 `task_id`，任务异步执行。
+
+## 工作流程
+
+1. 使用下表中的 model ID 向 `POST /api/generate/submit` 提交任务。
+2. 用返回的 `task_id` 轮询[查询任务状态](/zh/api-manual/task-management/3d-status)，或在 `callback_url` 接收结果（见 [Webhook 回调](/zh/api-manual/task-management/3d-webhooks)）。
+3. 状态变为 `finished` 后，下载 `files` 中的文件。
+
+每个 3D 模型按输入模式各提供一个 model ID，例如文生 3D、图生 3D 或多图生 3D。
+
+## 模型
+
+| 模型 | 厂商 | Model IDs |
+| --- | --- | --- |
+| [Meshy 6 3D](/zh/api-manual/3d-series/meshy-6-3d) | Meshy | `meshy-6-text-to-3d`<br />`meshy-6-image-to-3d`<br />`meshy-6-multi-image-to-3d` |
+| [Meshy 7.1 3D](/zh/api-manual/3d-series/meshy-7-1-3d) | Meshy | `meshy-7.1-text-to-3d`<br />`meshy-7.1-image-to-3d`<br />`meshy-7.1-multi-image-to-3d` |
+| [Hunyuan 3D v3.1](/zh/api-manual/3d-series/hunyuan-3d-3-1) | Hunyuan3D | `hunyuan-3d/v3.1/pro/image-to-3d`<br />`hunyuan-3d/v3.1/pro/text-to-3d`<br />`hunyuan-3d/v3.1/rapid/text-to-3d`<br />`hunyuan-3d/v3.1/rapid/image-to-3d` |
+| [Tripo3D H3.1](/zh/api-manual/3d-series/tripo-h31-3d) | Tripo3D | `tripo3d-h3.1-text-to-3d`<br />`tripo3d-h3.1-image-to-3d`<br />`tripo3d-h3.1-multiview-to-3d` |
+| [Tripo3D P1](/zh/api-manual/3d-series/tripo-p1-3d) | Tripo3D | `tripo3d-p1-text-to-3d`<br />`tripo3d-p1-image-to-3d` |
+
+## 注意事项
+
+- 每个模型页列出其 model ID 的参数、限制和模式。参数不在模型之间通用。
+- 生成的 3D 文件在创建后 3 天内可访问。请及时下载并保存。
+- URL 输入必须是可公开访问的 HTTP(S) URL。如需使用本地文件，请先通过[文件管理](/zh/api-manual/file-series/upload-url)上传。

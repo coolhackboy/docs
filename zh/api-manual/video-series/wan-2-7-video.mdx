@@ -1,0 +1,28 @@
+---
+title: "Wan 2.7"
+description: "Wan 2.7 API 可根据文本、一到两帧图片、参考媒体或源视频生成或编辑 720p 或 1080p 的视频。文本和图片请求可附带音频 URL。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/wan-2-7-video.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Wan 2.7 包含四个模型，分别用于文本生成、首尾帧生成、参考引导生成和视频编辑。
+
+## 模型
+
+- `wan2.7-text-to-video` — 根据必填的文本提示词生成视频
+- `wan2.7-image-to-video` — 根据一到两张首尾帧图片生成视频
+- `wan2.7-reference-to-video` — 根据参考图片或视频生成视频
+- `wan2.7-edit-video` — 编辑输入视频，可选传入参考图片
+
+## 功能
+
+- **时长**：文本生成为 5、10 或 15 秒；图片生成为 2–15 秒；参考生成和视频编辑为 2–10 秒
+- **分辨率**：720p 或 1080p
+- **首尾帧**：图片模型可使用一到两个 `image_urls`
+- **音频输入**：文本和图片模型可选传入 `audio_url`
+- **视频编辑**：不传 `duration` 或设为 `0`，即可自动检测源视频时长

@@ -1,0 +1,65 @@
+---
+title: "LLM 模型"
+description: "PoYo 上可用的全部大语言模型，以及每个模型支持的 API 格式。"
+icon: "list"
+---
+
+PoYo 通过四种 API 格式提供多家厂商的 LLM。每个请求在 `model` 中传入 model id（Gemini Native 则放在 URL 路径中）。一个模型只接受下表中标记的格式。
+
+## API 格式
+
+- [Chat Completions](/zh/api-manual/chat-series/chat-completions) — `POST /v1/chat/completions`，OpenAI Chat Completions 请求结构
+- [Responses](/zh/api-manual/chat-series/responses) — `POST /v1/responses`，OpenAI Responses 请求结构
+- [Anthropic Messages](/zh/api-manual/chat-series/claude-messages) — `POST /v1/messages`，Anthropic Messages 请求结构
+- [Gemini Native](/zh/api-manual/chat-series/gemini-native-format) — `POST /v1beta/models/{model}:{method}`，Google `generateContent` 请求结构
+
+## 模型
+
+| Model ID | 厂商 | Chat Completions | Responses | Anthropic Messages | Gemini Native |
+| --- | --- | :---: | :---: | :---: | :---: |
+| `gpt-6.1-sol` | OpenAI | ✓ | ✓ | | |
+| `gpt-6.1-terra` | OpenAI | ✓ | ✓ | | |
+| `gpt-6-astra` | OpenAI | ✓ | ✓ | | |
+| `gpt-6-sol` | OpenAI | ✓ | ✓ | | |
+| `gpt-6-luna` | OpenAI | ✓ | ✓ | | |
+| `gpt-5-6-sol` | OpenAI | | ✓ | | |
+| `gpt-5-6-terra` | OpenAI | | ✓ | | |
+| `gpt-5-6-luna` | OpenAI | | ✓ | | |
+| `gpt-5.5` | OpenAI | ✓ | ✓ | | |
+| `gpt-5.4` | OpenAI | ✓ | ✓ | | |
+| `gpt-5.2` | OpenAI | ✓ | ✓ | | |
+| `claude-opus-5-5` | Anthropic | ✓ | | ✓ | |
+| `claude-sonnet-5-5` | Anthropic | ✓ | | ✓ | |
+| `claude-haiku-5-5` | Anthropic | ✓ | | ✓ | |
+| `claude-fable-5-1` | Anthropic | ✓ | | ✓ | |
+| `claude-opus-5` | Anthropic | ✓ | | ✓ | |
+| `claude-sonnet-5` | Anthropic | ✓ | | ✓ | |
+| `claude-opus-4-8` | Anthropic | ✓ | | ✓ | |
+| `claude-opus-4-7` | Anthropic | ✓ | | ✓ | |
+| `claude-opus-4-6` | Anthropic | ✓ | | ✓ | |
+| `claude-sonnet-4-6` | Anthropic | ✓ | | ✓ | |
+| `claude-opus-4-5-20251101` | Anthropic | ✓ | | ✓ | |
+| `claude-sonnet-4-5-20250929` | Anthropic | ✓ | | ✓ | |
+| `claude-haiku-4-5-20251001` | Anthropic | ✓ | | ✓ | |
+| `gemini-4-argon` | Google | ✓ | | | ✓ |
+| `gemini-3.8-flash` | Google | ✓ | | | ✓ |
+| `gemini-3.7-flash` | Google | ✓ | | | ✓ |
+| `gemini-3.5-flash` | Google | ✓ | | | ✓ |
+| `gemini-3.1-pro-preview` | Google | ✓ | | | ✓ |
+| `gemini-3-pro-preview` | Google | ✓ | | | ✓ |
+| `gemini-3-flash-preview` | Google | ✓ | | | ✓ |
+| `deepseek-flash` | DeepSeek | ✓ | ✓ | | |
+| `deepseek-v4-pro` | DeepSeek | ✓ | | | |
+| `deepseek-v4-flash` | DeepSeek | ✓ | | | |
+| `grok-4.7` | xAI | ✓ | | | |
+| `grok-4.6` | xAI | ✓ | ✓ | | |
+| `kimi-k3` | Moonshot AI | ✓ | | | |
+
+所有模型都支持流式输出：使用各格式的 `stream` 选项，Gemini Native 则使用 `streamGenerateContent`。
+
+## 注意事项
+
+- 只把模型发送到为其标记的格式。例如 `gpt-5-6-sol` 只能用于 Responses。其他格式会返回 HTTP 400，并列出支持的 URI。
+- 使用 `Authorization: Bearer YOUR_API_KEY` 认证。Anthropic Messages 也接受 `x-api-key`。
+- LLM 响应直接以各格式的原生结构返回，不使用生成类任务的 `code` / `data` 包装。流式事件格式见各格式页。
+- LLM 接口目前没有速率限制。

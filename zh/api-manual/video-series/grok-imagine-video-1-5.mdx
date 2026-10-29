@@ -1,0 +1,38 @@
+---
+title: "Grok Imagine Video 1.5"
+description: "Grok Imagine Video 1.5 API 可根据文本或一张首帧图片生成最高 1080p 的 1–15 秒视频，或根据最多七张参考图片生成最高 720p 的视频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/grok-imagine-video-1-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `grok-imagine-video-1.5` 可通过三种生成模式输出 1–15 秒的视频：
+
+- **文生视频**：不传两个图片字段。支持 480p、720p 和 1080p。
+- **图生视频**：在 `image_urls` 中提供恰好一项作为首帧。支持 480p、720p 和 1080p。
+- **参考生视频**：在 `reference_image_urls` 中提供 1–7 项。在提示词中以 `<IMAGE_0>`、`<IMAGE_1>` 等方式引用它们。支持 480p 和 720p。
+
+`image_urls` 和 `reference_image_urls` 不能同时使用。
+
+## 模型
+
+- **grok-imagine-video-1.5** — Grok Imagine Video 1.5
+
+## 必填参数
+
+- **prompt**（必填）：最多 4,096 个字符。
+
+## 可选参数
+
+- **image_urls**：图生视频所用的首帧图片，恰好一张。
+- **reference_image_urls**：1–7 张参考图片，用于保持角色、主体或风格一致。
+- **resolution**：`480p`、`720p` 或 `1080p`。参考生视频不支持 `1080p`。默认：`720p`。
+- **duration**：`1` 到 `15` 的整数。默认：文本/图片模式为 `6`，参考模式为 `8`。
+- **aspect_ratio**：`16:9`、`4:3`、`3:2`、`1:1`、`2:3`、`3:4` 或 `9:16`。仅适用于文本模式和参考模式；默认：`16:9`。
+- **callback_url**：可选的完成通知 Webhook URL。
+
+请使用公开的 HTTPS 图片 URL，或在提交前通过 Playground 上传图片。

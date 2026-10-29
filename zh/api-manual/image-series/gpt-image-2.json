@@ -1,0 +1,294 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - GPT Image 2 API",
+    "description": "GPT Image 2 图像生成与多图编辑",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 GPT Image 2 任务",
+        "description": "使用 GPT Image 2 模型根据文本生成图像，或编辑一张或多张参考图像",
+        "operationId": "submitGPTImage2Task",
+        "tags": ["GPT Image 2"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "gpt-image-2": {
+                  "summary": "GPT Image 2 生成（1K）",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
+                      "quality": "low",
+                      "size": "1:1"
+                    }
+                  }
+                },
+                "gpt-image-2-2k": {
+                  "summary": "GPT Image 2 生成（2K）",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine on a clean white studio background, realistic lighting, high detail",
+                      "quality": "medium",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "gpt-image-2-4k": {
+                  "summary": "GPT Image 2 生成（4K）",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic landscape with dramatic lighting, ultra-high detail",
+                      "quality": "high",
+                      "size": "16:9",
+                      "resolution": "4K"
+                    }
+                  }
+                },
+                "gpt-image-2-custom-size": {
+                  "summary": "GPT Image 2 自定义尺寸",
+                  "value": {
+                    "model": "gpt-image-2",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine on a clean white studio background",
+                      "quality": "medium",
+                      "size": "2304x1536",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "gpt-image-2-edit": {
+                  "summary": "GPT Image 2 编辑",
+                  "value": {
+                    "model": "gpt-image-2-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Use these reference images together to create a polished product photo: keep the flower subject, use the vase shape from the second image, replace the background with a clean white studio backdrop, and add a soft natural shadow",
+                      "quality": "high",
+                      "image_urls": [
+                        "https://example.com/flower.jpg",
+                        "https://example.com/vase.jpg"
+                      ],
+                      "size": "1:1"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "GPT Image 2 模型标识",
+            "enum": [
+              "gpt-image-2",
+              "gpt-image-2-edit"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "description": "生成或编辑的输入参数",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "描述目标图像或所需编辑的提示词",
+                "maxLength": 20000,
+                "example": "A beautiful sunset over the ocean"
+              },
+              "quality": {
+                "type": "string",
+                "description": "输出图像质量。可选枚举值：`low`、`medium`、`high`。",
+                "enum": ["low", "medium", "high"],
+                "default": "low",
+                "example": "low"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "参考图像 URL。`gpt-image-2-edit` 必填。支持多张输入图像。",
+                "example": [
+                  "https://example.com/flower.jpg",
+                  "https://example.com/vase.jpg"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "description": "输出图像宽高比或自定义像素尺寸。预设值：`auto`、`1:1`、`2:3`、`3:2`、`4:3`、`3:4`、`4:5`、`5:4`、`16:9`、`9:16`、`21:9`。自定义尺寸使用 `WIDTHxHEIGHT` 格式（例如 `2304x1536`），且要求 `resolution` 为 `2K` 或 `4K`。使用 `auto` 或未传 `size` 参数时，图像始终使用 1K 分辨率。",
+                "default": "auto",
+                "example": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "输出图像分辨率。`1K`（默认）：标准分辨率。`2K`：高分辨率。`4K`：超高分辨率，适用于 `16:9`、`9:16`、`21:9`，或某条边为 3840 像素的自定义尺寸；其他 4K 选择会降级为 2K。",
+                "enum": ["1K", "2K", "4K"],
+                "default": "1K",
+                "example": "1K"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-19T21:19:42",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "描述错误原因的错误信息"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "错误类型标识"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

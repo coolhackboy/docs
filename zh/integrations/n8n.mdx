@@ -1,0 +1,53 @@
+---
+title: "n8n"
+description: "安装 PoYo 社区节点，在 n8n 工作流中运行 PoYo 模型。"
+icon: "diagram-project"
+---
+
+# n8n
+
+PoYo 的 n8n 社区节点让工作流可以提交 PoYo 任务、等待结果，并通过 PoYo 的签名回调恢复执行。它与 REST API 使用相同的 API Key、模型目录、任务状态和结果。
+
+源码和示例工作流：[PoyoAPI/poyo-n8n](https://github.com/PoyoAPI/poyo-n8n)。
+
+## 前提条件
+
+- 允许使用 Community Nodes 的 n8n 实例
+- 从 [API Key 页面](https://poyo.ai/dashboard/api-key)获取的 PoYo API Key
+
+## 安装
+
+<Steps>
+  <Step title="安装社区节点">
+    在 n8n 中打开 **Settings → Community Nodes → Install**，输入 `n8n-nodes-poyo`。之后在节点面板中搜索 "PoYo"，应能看到 PoYo 节点。
+  </Step>
+  <Step title="创建凭据">
+    打开 **Credentials → New credential → PoYo API**，粘贴你的 API Key，保留默认的 Base URL `https://api.poyo.ai`，然后点击 **Test**。
+  </Step>
+  <Step title="运行示例工作流">
+    下载一个示例工作流，在 n8n 工作流菜单中选择 **Import from File**，选择你的 PoYo 凭据，然后运行。
+  </Step>
+</Steps>
+
+## 示例工作流
+
+| 工作流 | 作用 |
+|---|---|
+| [poyo-run-and-wait.json](https://github.com/PoyoAPI/poyo-n8n/blob/main/workflows/poyo-run-and-wait.json) | 提交 PoYo 任务，等待完成后把结果传给下一个节点 |
+| [poyo-webhook-result.json](https://github.com/PoyoAPI/poyo-n8n/blob/main/workflows/poyo-webhook-result.json) | 通过 PoYo 签名回调恢复工作流，并获取最终结果 |
+
+Webhook 示例依赖 PoYo 的签名回调。签名请求头见 [Webhook 回调](/zh/api-manual/task-management/webhooks)。
+
+## 注意事项
+
+- API Key 保存在 n8n 凭据中，不会出现在导出的工作流文件里。
+- 请求直接调用 PoYo REST 接口，并附带 `X-PoYo-Source` 请求头以标识该集成。
+- 任务使用标准状态 `not_started`、`running`、`finished` 和 `failed`。
+
+## 故障排查
+
+| 问题 | 解决方法 |
+|---|---|
+| 找不到 PoYo 节点 | 确认已启用 Community Nodes，并且 n8n 显示 `n8n-nodes-poyo` 已安装。 |
+| 凭据测试返回 401 | 创建新的 Key，粘贴时不要带前后空格，并保留 Base URL `https://api.poyo.ai`。 |
+| 运行等待时间过长 | 再次提交前先检查任务状态。第二次提交会创建另一个付费任务。 |

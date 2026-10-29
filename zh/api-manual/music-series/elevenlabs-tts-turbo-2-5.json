@@ -1,0 +1,332 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - ElevenLabs TTS Turbo v2.5 API",
+    "description": "ElevenLabs TTS Turbo v2.5 API 将最多 40,000 个字符的文本转换为语音，可选择音色，语速范围 0.7 到 1.2，并可指定可选的 ISO 639-1 语言代码。可传入前文和后文，使跨请求的旁白保持连贯。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 ElevenLabs TTS Turbo v2.5 任务",
+        "description": "将文本转换为低延迟语音音频。",
+        "operationId": "submitElevenLabsTtsTurbo25Task",
+        "tags": [
+          "ElevenLabs TTS Turbo v2.5"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "product-voiceover": {
+                  "summary": "低延迟产品旁白",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "voice": "Rachel",
+                      "speed": 1.08,
+                      "stability": 0.55,
+                      "similarity_boost": 0.78,
+                      "style": 0.12,
+                      "timestamps": false,
+                      "apply_text_normalization": "auto",
+                      "text": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."
+                    }
+                  }
+                },
+                "localized-notification": {
+                  "summary": "本地化取件通知",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "voice": "Aria",
+                      "language_code": "fr",
+                      "stability": 0.6,
+                      "similarity_boost": 0.75,
+                      "speed": 1,
+                      "timestamps": true,
+                      "apply_text_normalization": "auto",
+                      "text": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil."
+                    }
+                  }
+                },
+                "long-form-continuity": {
+                  "summary": "长文本连贯性",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "previous_text": "The city lights faded behind the train.",
+                      "next_text": "The carriage fell silent as the tunnel opened ahead.",
+                      "voice": "Sarah",
+                      "stability": 0.42,
+                      "similarity_boost": 0.82,
+                      "style": 0.35,
+                      "speed": 0.94,
+                      "apply_text_normalization": "auto",
+                      "text": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it."
+                    }
+                  }
+                },
+                "expressive-host-intro": {
+                  "summary": "富有表现力的主持人开场",
+                  "value": {
+                    "model": "elevenlabs-tts-turbo-2-5",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "voice": "Laura",
+                      "stability": 0.48,
+                      "similarity_boost": 0.8,
+                      "style": 0.4,
+                      "speed": 0.98,
+                      "apply_text_normalization": "auto",
+                      "text": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型标识符。",
+            "enum": [
+              "elevenlabs-tts-turbo-2-5"
+            ],
+            "example": "elevenlabs-tts-turbo-2-5"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "$ref": "#/components/schemas/ElevenLabsTtsTurbo25Input"
+          }
+        }
+      },
+      "ElevenLabsTtsTurbo25Input": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "voice": {
+            "type": "string",
+            "description": "用于语音生成的音色名称或兼容的音色 ID。",
+            "default": "Rachel",
+            "example": "Rachel"
+          },
+          "stability": {
+            "type": "number",
+            "description": "音色稳定性，取值 0 到 1。",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.5,
+            "example": 0.55
+          },
+          "similarity_boost": {
+            "type": "number",
+            "description": "音色相似度增强，取值 0 到 1。",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.75,
+            "example": 0.78
+          },
+          "style": {
+            "type": "number",
+            "description": "风格夸张程度，取值 0 到 1。",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0,
+            "example": 0.12
+          },
+          "speed": {
+            "type": "number",
+            "description": "语速，取值 0.7 到 1.2。小于 1 时语速变慢，大于 1 时语速变快。",
+            "minimum": 0.7,
+            "maximum": 1.2,
+            "default": 1,
+            "example": 1.08
+          },
+          "timestamps": {
+            "type": "boolean",
+            "description": "是否在可用时请求词级时间戳。",
+            "default": false,
+            "example": false
+          },
+          "previous_text": {
+            "type": "string",
+            "nullable": true,
+            "description": "当前文本之前的文本。将长篇语音拆分为多个请求时，可用于提升连贯性。",
+            "example": "The city lights faded behind the train."
+          },
+          "next_text": {
+            "type": "string",
+            "nullable": true,
+            "description": "当前文本之后的文本。将长篇语音拆分为多个请求时，可用于提升连贯性。",
+            "example": "The carriage fell silent as the tunnel opened ahead."
+          },
+          "language_code": {
+            "type": "string",
+            "nullable": true,
+            "description": "可选的 ISO 639-1 语言代码，用于强制模型使用指定语言。",
+            "example": "fr"
+          },
+          "apply_text_normalization": {
+            "type": "string",
+            "description": "控制数字、日期、货币等内容的文本规范化。",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "default": "auto",
+            "example": "auto"
+          },
+          "text": {
+            "type": "string",
+            "description": "要转换为语音的文本。",
+            "minLength": 1,
+            "maxLength": 40000,
+            "example": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes."
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-25T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

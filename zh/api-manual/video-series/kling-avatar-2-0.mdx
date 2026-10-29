@@ -1,0 +1,33 @@
+---
+title: "Kling Avatar 2.0"
+description: "Kling Avatar 2.0 API 可根据一张角色图片和一段 2–60 秒的驱动音频生成数字人视频，可选提示词。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/kling-avatar-2-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`kling-avatar-2.0/standard` 和 `kling-avatar-2.0/pro` 根据一张参考图片和一个驱动音频文件创建音频驱动的数字人视频。
+
+## 模型
+
+- **kling-avatar-2.0/standard** - 标准数字人视频生成
+- **kling-avatar-2.0/pro** - 更高质量的 Pro 数字人视频生成
+
+## 必填参数
+
+- **image_urls**：参考图片数组。仅支持恰好 `1` 张图片，`image_urls[0]` 用作数字人图片
+- **audio_url**：驱动音频 URL。音频时长必须在 `2` 到 `60` 秒之间
+
+## 可选参数
+
+- **prompt**：数字人视频的可选文本提示词
+
+## 注意事项
+
+- 与其他视频生成 API 保持一致，使用 `image_urls`。服务会将 `image_urls[0]` 映射到上游的 `image_url` 字段。
+- `audio_url` 必须是 HTTP 或 HTTPS URL。如果在提交前能检测到文件大小，必须不超过 `5MB`。
+- 本页只描述统一的提交请求。请通过标准任务状态 API 查询状态。

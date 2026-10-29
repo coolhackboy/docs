@@ -1,0 +1,601 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Claude Messages API",
+    "description": "面向 Claude 模型、兼容 Anthropic Messages 的接口。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/messages": {
+      "post": {
+        "summary": "Claude Messages API",
+        "description": "以 Claude Messages 格式发送请求。最新的请求参数定义请参阅 Anthropic 官方文档：https://platform.claude.com/docs/en/api/messages/create",
+        "operationId": "createClaudeMessage",
+        "tags": [
+          "Text Series"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaudeMessageRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "基础 Claude 消息",
+                  "value": {
+                    "model": "claude-sonnet-4-5-20250929",
+                    "max_tokens": 1024,
+                    "messages": [
+                      {
+                        "role": "user",
+                        "content": "Rewrite the following product announcement to be more gentle and user-friendly: We will have maintenance for 2 hours this weekend, services will be unavailable during this time."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "消息已创建",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaudeMessageResult"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "成功响应",
+                    "value": {
+                      "id": "msg_013zva2CMHNLnXJNN3QKQ2EF",
+                      "type": "message",
+                      "role": "assistant",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Hello! I'm Claude. Nice to meet you."
+                        }
+                      ],
+                      "model": "claude-sonnet-4-5-20250929",
+                      "stop_reason": "end_turn",
+                      "stop_sequence": null,
+                      "usage": {
+                        "input_tokens": 10,
+                        "output_tokens": 13
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效，或模型不支持此 API 格式",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "API Key 缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "未知的 model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API Key 认证。该接口也接受 `Authorization: Bearer YOUR_API_KEY`。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nx-api-key: YOUR_API_KEY\n```"
+      },
+      "AnthropicVersion": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "anthropic-version",
+        "description": "API 版本，例如 `2023-06-01`。"
+      }
+    },
+    "schemas": {
+      "ClaudeMessageRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型名称。示例：`claude-sonnet-4-5-20250929`。",
+            "example": "claude-sonnet-4-5-20250929"
+          },
+          "messages": {
+            "type": "array",
+            "description": "按顺序排列的对话消息列表。每条消息包含 `role` 和 `content`。`user` 用于用户输入，`assistant` 用于多轮对话中模型之前的输出。示例：[{\"role\": \"user\", \"content\": \"Summarize the purpose of feature canary releases in two sentences.\"}]。",
+            "items": {
+              "$ref": "#/components/schemas/ClaudeMessage"
+            }
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "生成的最大 token 数。",
+            "example": 1024
+          },
+          "system": {
+            "description": "助手的系统提示词。支持字符串或结构化文本块。",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "You are a product announcement editor, keep it objective and concise."
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ClaudeContentBlock"
+                }
+              }
+            ]
+          },
+          "cache_control": {
+            "$ref": "#/components/schemas/ClaudeCacheControl"
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "是否使用流式输出。",
+            "example": false
+          },
+          "stop_sequences": {
+            "type": "array",
+            "description": "停止序列。模型遇到其中任一字符串时停止。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "附加元数据，例如 `user_id`。",
+            "additionalProperties": true
+          },
+          "output_config": {
+            "$ref": "#/components/schemas/ClaudeOutputConfig"
+          },
+          "thinking": {
+            "description": "Claude 扩展思考配置。支持扩展思考的 Claude 模型可用。思考 token 计入 `max_tokens`。",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ClaudeThinkingEnabled"
+              },
+              {
+                "$ref": "#/components/schemas/ClaudeThinkingAdaptive"
+              },
+              {
+                "$ref": "#/components/schemas/ClaudeThinkingDisabled"
+              }
+            ]
+          },
+          "tools": {
+            "type": "array",
+            "description": "模型可用的工具定义。",
+            "items": {
+              "$ref": "#/components/schemas/ClaudeTool"
+            }
+          },
+          "tool_choice": {
+            "description": "控制工具使用行为。示例：`auto`，或 {\"type\": \"tool\", \"name\": \"get_weather\"} 这样的对象。",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "auto"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          }
+        }
+      },
+      "ClaudeMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "description": "角色类型。`user` 用于用户消息，`assistant` 用于多轮对话中的模型回复。",
+            "example": "user"
+          },
+          "content": {
+            "description": "消息内容。支持纯文本或结构化块，例如文本和图片内容。",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "Summarize the purpose of feature canary releases in two sentences."
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ClaudeContentBlock"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "ClaudeTool": {
+        "type": "object",
+        "description": "模型可用的工具定义。",
+        "required": [
+          "name",
+          "input_schema"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "工具名称。",
+            "example": "get_weather"
+          },
+          "description": {
+            "type": "string",
+            "description": "展示给模型的工具描述。",
+            "example": "Fetch the weather by city name."
+          },
+          "input_schema": {
+            "type": "object",
+            "description": "工具输入的 JSON Schema。",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ClaudeCacheControl": {
+        "type": "object",
+        "description": "顶层缓存控制会自动为请求中最后一个可缓存块添加 cache_control 标记。",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ephemeral"
+            ],
+            "description": "缓存控制类型。",
+            "example": "ephemeral"
+          },
+          "ttl": {
+            "type": "string",
+            "enum": [
+              "5m",
+              "1h"
+            ],
+            "description": "可选的缓存 TTL。默认为 `5m`。",
+            "example": "1h"
+          }
+        }
+      },
+      "ClaudeOutputConfig": {
+        "type": "object",
+        "description": "模型输出的配置选项，例如输出格式和投入程度（effort）。",
+        "properties": {
+          "effort": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
+            ],
+            "description": "输出投入程度（effort）。",
+            "example": "high"
+          },
+          "format": {
+            "description": "结构化输出格式配置。",
+            "$ref": "#/components/schemas/ClaudeOutputFormat"
+          }
+        }
+      },
+      "ClaudeOutputFormat": {
+        "type": "object",
+        "description": "基于 Schema 的结构化输出配置。",
+        "required": [
+          "type",
+          "schema"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "json_schema"
+            ],
+            "example": "json_schema"
+          },
+          "schema": {
+            "type": "object",
+            "description": "定义输出格式的 JSON Schema。",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ClaudeThinkingEnabled": {
+        "type": "object",
+        "description": "启用扩展思考。要求 `budget_tokens` >= 1024 且小于 `max_tokens`。",
+        "required": [
+          "budget_tokens"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "enabled"
+            ],
+            "example": "enabled"
+          },
+          "budget_tokens": {
+            "type": "integer",
+            "minimum": 1024,
+            "description": "Claude 内部推理过程的 token 预算。",
+            "example": 2048
+          },
+          "display": {
+            "type": "string",
+            "enum": [
+              "summarized",
+              "omitted"
+            ],
+            "description": "控制思考内容在响应中的呈现方式。默认为 `summarized`。",
+            "example": "summarized"
+          }
+        }
+      },
+      "ClaudeThinkingAdaptive": {
+        "type": "object",
+        "description": "自适应扩展思考配置。",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "adaptive"
+            ],
+            "example": "adaptive"
+          },
+          "display": {
+            "type": "string",
+            "enum": [
+              "summarized",
+              "omitted"
+            ],
+            "description": "控制思考内容在响应中的呈现方式。默认为 `summarized`。",
+            "example": "omitted"
+          }
+        }
+      },
+      "ClaudeThinkingDisabled": {
+        "type": "object",
+        "description": "禁用扩展思考。",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "disabled"
+            ],
+            "example": "disabled"
+          }
+        }
+      },
+      "ClaudeMessageResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "msg_013zva2CMHNLnXJNN3QKQ2EF"
+          },
+          "type": {
+            "type": "string",
+            "example": "message"
+          },
+          "role": {
+            "type": "string",
+            "example": "assistant"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClaudeContentBlock"
+            }
+          },
+          "model": {
+            "type": "string",
+            "example": "claude-sonnet-4-5-20250929"
+          },
+          "stop_reason": {
+            "type": "string",
+            "example": "end_turn"
+          },
+          "stop_sequence": {
+            "nullable": true,
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/ClaudeUsage"
+          }
+        }
+      },
+      "ClaudeContentBlock": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "text"
+          },
+          "text": {
+            "type": "string",
+            "description": "文本块的文本内容。",
+            "example": "Hello! I'm Claude. Nice to meet you."
+          },
+          "source": {
+            "type": "object",
+            "description": "图片块的来源。",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "base64"
+              },
+              "media_type": {
+                "type": "string",
+                "example": "image/png"
+              },
+              "data": {
+                "type": "string",
+                "description": "Base64 编码的图片数据。"
+              },
+              "url": {
+                "type": "string",
+                "description": "图片 URL（使用 URL 来源时）。"
+              }
+            }
+          }
+        }
+      },
+      "ClaudeUsage": {
+        "type": "object",
+        "properties": {
+          "input_tokens": {
+            "type": "integer",
+            "example": 10
+          },
+          "output_tokens": {
+            "type": "integer",
+            "example": 13
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "PoyoValidationError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters: messages: Field required"
+              },
+              "type": {
+                "type": "string",
+                "example": "validation_error"
+              },
+              "details": {
+                "type": "object",
+                "description": "字段级校验错误（如有）。"
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "模型或请求在此 API 格式下被拒绝时返回的错误。",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+---
+title: "Tripo3D P1"
+description: "Tripo3D P1 API 从文本提示词或单张物体图像生成低多边形 3D 网格，可选纹理。文档中的面数预算保持在数万以内，任务成功时可返回 GLB。"
+icon: "cube"
+openapi: "/zh/api-manual/3d-series/tripo-p1-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Tripo3D P1 支持文生 3D 和单图生 3D，用于生成干净、轻量的 3D 资产。
+
+## 模型
+
+- **tripo3d-p1-text-to-3d** - 从提示词生成低多边形 3D 模型
+- **tripo3d-p1-image-to-3d** - 从一张物体图像生成低多边形 3D 模型
+
+## 必填参数
+
+- **model**：`tripo3d-p1-text-to-3d` 或 `tripo3d-p1-image-to-3d`
+- **input.prompt**：`tripo3d-p1-text-to-3d` 必填
+- **input.image_urls**：`tripo3d-p1-image-to-3d` 必填；只能传一项
+
+## 可选参数
+
+- **face_limit**：目标面数，范围 `48` 到 `20000`
+- **texture**：是否生成纹理。默认 `true`
+- **model_seed**：可选的整数种子，用于复现几何体
+- **callback_url**：可选，任务完成通知的 Webhook URL
+
+## 输出
+
+任务结果以文件列表返回。可用条目可能包括：
+
+- `model_glb`
+- `thumbnail`
+- 可用时包括 `model_urls` 中的条目，例如 `glb`、`base_model` 和 `pbr_model`
+
+每个文件条目在可用时包括 `label`、`file_url`、`file_type`、`format`、`content_type`、`file_name` 和 `file_size`。
+
+## 注意事项
+
+- P1 最适合需要较低多边形预算的轻量、干净网格资产。
+- API 返回异步任务状态。请轮询统一的任务状态接口，或使用 `callback_url`。

@@ -182,7 +182,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "API Key",
-        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key:\n\nVisit the [API Key Management Page](https://poyo.ai/dashboard/api-key) to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
       }
     },
     "schemas": {

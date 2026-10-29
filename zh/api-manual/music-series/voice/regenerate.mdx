@@ -1,0 +1,8 @@
+---
+title: "重新生成验证短语"
+description: "为声音验证任务请求新的验证短语"
+icon: "rotate"
+openapi: "/zh/api-manual/music-series/voice/regenerate.json POST /api/generate/submit"
+---
+
+当之前的短语已过期或无法录制时，使用验证声音返回的 `task_id`。完成后的结果在 `validate_info` 中包含替换后的短语；请使用本请求返回的新 `task_id` 继续生成声音。

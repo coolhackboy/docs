@@ -1,0 +1,75 @@
+---
+title: "生成音乐"
+description: "生成音乐 API 使用 V4 到 V6 的模型版本，根据提示词、歌词或参考素材生成歌曲。在自定义模式下，V5.5、V6、V6 Mini 和 V6 Wild 支持 10 到 360 秒的自定义时长。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/generate-music.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询音乐详情](/zh/api-manual/music-series/query-music-detail)接口获取结果。
+</Tip>
+
+## 使用指南
+
+- 此接口根据你的文本提示词创作音乐
+- 每次请求会生成多个变体
+- 可以通过自定义模式和纯伴奏设置控制细节程度
+
+## 参数详情
+
+- 自定义模式（`custom_mode: true`）下：
+
+  - `title` 为必填
+
+  - `style`、`lyrics` 或 `negative_tags` 至少提供一个
+
+  - `prompt` 为可选。同时提供 `lyrics` 时，以 `lyrics` 作为演唱文本
+
+  - 字符限制因模型而异：
+
+    - **V4**：`prompt` 3000 个字符，`style` 200 个字符
+
+    - **V4_5 和 V4_5PLUS**：`prompt` 5000 个字符，`style` 1000 个字符
+
+    - **V4_5ALL**：`prompt` 5000 个字符，`style` 1000 个字符
+
+    - **V5**：`prompt` 5000 个字符，`style` 1000 个字符
+
+    - **V5_5**：`prompt` 5000 个字符，`style` 1000 个字符
+
+    - **V6、V6_MINI 和 V6_WILD**：`lyrics` 5000 个字符，`style` 1000 个字符
+
+- 非自定义模式（`custom_mode: false`）下：
+
+  - `prompt` 长度限制：3000 个字符
+
+  - 提供 `prompt`，或至少提供 `style`、`lyrics`、`image_urls`、`video_urls`、`audio_urls` 中的一项
+
+  - `image_urls`、`video_urls` 和 `audio_urls` 仅在此模式下可用。连同 `style` 和 `lyrics` 在内，附件数量不得超过 10
+
+## 开发者说明
+
+- 新用户建议：先从 `custom_mode: false` 开始，用法更简单
+
+## 可选参数
+
+- `vocal_gender` (string)：人声性别偏好。`m` 表示男声，`f` 表示女声。注意：此参数仅在 `custom_mode` 为 `true` 时生效。根据实践，此参数只能提高概率，不能保证遵循男声/女声指令。
+
+- `style_weight` (number)：对风格的遵循强度。范围 0-1，最多 2 位小数。示例：`0.65`。
+
+- `weirdness_constraint` (number)：控制创意偏离程度。范围 0-1，最多 2 位小数。示例：`0.65`。
+
+- `audio_weight` (number)：音频特征的平衡权重。范围 0-1，最多 2 位小数。示例：`0.65`。
+
+- `persona_id` (string)：应用于生成音乐的 Persona ID。用于将特定的 Persona 风格应用到音乐生成中。仅在启用自定义模式时可用。如何生成 persona_id，请参阅 [generate-persona](/zh/api-manual/music-series/generate-persona)。
+
+- `lyrics` (string)：歌词内容，最多 5000 个字符。在自定义模式下优先于 `prompt`。
+
+- `variety` (integer)：多样性，0 到 4。仅在 `custom_mode` 为 `true` 时生效。
+
+- `image_urls`、`video_urls`、`audio_urls`：非自定义模式下的参考文件。图片最多 5 个 URL，视频最多 1 个 URL。
+
+- `persona_model` (string)：`style_persona` 或 `voice_persona`。需要 `persona_id`，且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD。
+
+- `duration` (integer)：自定义时长，10–360 秒。仅在 `custom_mode: true` 且 `mv` 为 `V5_5`、`V6`、`V6_MINI` 或 `V6_WILD` 时支持。

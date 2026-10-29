@@ -1,0 +1,300 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling 3.0 Turbo API",
+    "description": "Kling 3.0 Turbo API 可根据文本或首帧生成 3–15 秒的 720p 或 1080p 视频，并支持可选的多镜头提示词。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Kling 3.0 Turbo 视频生成任务",
+        "description": "使用 Kling 3.0 Turbo 生成视频。如果提供了 input.image_urls，请求将路由到图生视频；否则路由到文生视频。",
+        "operationId": "submitKling30TurboTask",
+        "tags": [
+          "Kling 3.0 Turbo"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "standardText": {
+                  "summary": "Kling 3.0 Turbo Standard - 文生视频",
+                  "value": {
+                    "model": "kling-3.0-turbo/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A chef carefully plating a gourmet dish in a modern kitchen, steam rising from the food under warm lighting",
+                      "duration": 5,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "proImage": {
+                  "summary": "Kling 3.0 Turbo Pro - 图生视频",
+                  "value": {
+                    "model": "kling-3.0-turbo/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "The portrait subject softly smiles as the camera pushes in, cinematic light moving across the face",
+                      "image_urls": [
+                        "https://example.com/first-frame.png"
+                      ],
+                      "duration": 5
+                    }
+                  }
+                },
+                "multiPrompt": {
+                  "summary": "Kling 3.0 Turbo - 多镜头",
+                  "value": {
+                    "model": "kling-3.0-turbo/standard",
+                    "input": {
+                      "multi_prompt": [
+                        {
+                          "prompt": "A surfer paddling out into the ocean as waves build on the horizon",
+                          "duration": 4
+                        },
+                        {
+                          "prompt": "The surfer catches a massive wave and rides toward shore at sunset",
+                          "duration": 4
+                        }
+                      ],
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling 3.0 Turbo 模型标识",
+            "enum": [
+              "kling-3.0-turbo/standard",
+              "kling-3.0-turbo/pro"
+            ],
+            "example": "kling-3.0-turbo/standard"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "description": "生成的输入参数。如果 image_urls 有值，将使用 image_urls[0] 作为首帧图像，请求路由到图生视频。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "视频生成提示词。与 multi_prompt 互斥。",
+                "maxLength": 2500,
+                "example": "A street musician playing violin on a rainy evening, reflections shimmering on wet cobblestones"
+              },
+              "multi_prompt": {
+                "type": "array",
+                "description": "多镜头分镜。与 prompt 互斥。总时长不得超过 15 秒。",
+                "minItems": 1,
+                "maxItems": 6,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "prompt"
+                  ],
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "description": "该镜头的提示词文本",
+                      "maxLength": 2500
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "description": "该镜头的时长（秒）。省略时默认为 5。",
+                      "minimum": 1,
+                      "maximum": 15,
+                      "example": 4
+                    }
+                  }
+                }
+              },
+              "image_urls": {
+                "type": "array",
+                "description": "可选的首帧图像 URL 数组。仅支持一张图像，image_urls[0] 会作为 image_url 发送。",
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/first-frame.png"
+                ]
+              },
+              "duration": {
+                "type": "integer",
+                "description": "视频时长（秒）。省略时默认为 5。使用 multi_prompt 时，如提供此字段，必须等于 multi_prompt 的总时长。",
+                "minimum": 3,
+                "maximum": 15,
+                "default": 5,
+                "example": 5
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "文生视频模式下的视频宽高比。提供 image_urls 时不支持。",
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "1:1"
+                ],
+                "default": "16:9",
+                "example": "16:9"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,294 @@
+---
+title: "快速开始"
+description: "发起你的第一个 PoYo 模型请求，并了解生产环境中的请求生命周期。"
+icon: "rocket"
+---
+
+# 使用 PoYo 构建
+
+通过**一个 API Key** 调用图像、视频、音频、音乐、3D 和对话模型。先完成一次模型调用，再为你的应用选择 REST、CLI、MCP 或 Agent Skill。
+
+<Note>
+  欢迎使用 PoYo.ai。👋 本指南介绍模型、认证、请求流程、限制和支持渠道。我们力求透明、务实、对开发者友好。上线生产环境前请先阅读。
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="获取 API Key" icon="key" href="https://poyo.ai/dashboard/api-key">
+    创建 API Key，并配置用量限制或 IP 白名单。
+  </Card>
+  <Card title="发起第一个请求" icon="play" href="#5-发起第一个生成请求">
+    使用 cURL、Python 或 JavaScript 提交任务。
+  </Card>
+  <Card title="在 AI Agent 中使用" icon="robot" href="/zh/integrations/quickstart">
+    三步即可在 Claude Code、Codex 或 Cursor 中生成内容。
+  </Card>
+  <Card title="浏览模型与价格" icon="grid-2" href="https://poyo.ai/models">
+    对比模型能力，在 Playground 中测试，并查看价格。
+  </Card>
+</CardGroup>
+
+## 1. 可用模型与 Playground
+
+每个模型类别都有一个概览页，列出全部模型、对应的 model ID 以及获取结果的方式：
+
+<CardGroup cols={3}>
+  <Card title="图像" icon="image" href="/zh/api-manual/image-series/overview">
+    文生图与图像编辑。
+  </Card>
+  <Card title="视频" icon="video" href="/zh/api-manual/video-series/overview">
+    文本、图像和参考素材生成视频。
+  </Card>
+  <Card title="LLM" icon="comments" href="/zh/api-manual/chat-series/overview">
+    GPT、Claude、Gemini、DeepSeek、Grok 和 Kimi。
+  </Card>
+  <Card title="3D" icon="cube" href="/zh/api-manual/3d-series/overview">
+    文本和图像生成 3D 网格。
+  </Card>
+  <Card title="音乐与音频" icon="music" href="/zh/api-manual/music-series/overview">
+    Suno 音乐、TTS 和音频工具。
+  </Card>
+  <Card title="AI 工具" icon="wrench" href="/zh/api-manual/tools-series/overview">
+    翻译、超分辨率放大、背景移除和内容审核。
+  </Card>
+</CardGroup>
+
+在我们的[模型页面](https://poyo.ai/models)查看**最新支持的模型**、价格和 Playground。
+
+- 新模型一旦稳定，我们就会持续更新并上线。
+- 每个模型页面都链接到对应的 Playground，你可以在调用 API 之前直接在我们的界面中测试和试验。
+- Playground 是了解模型行为、参数和输出格式的最佳位置。
+
+## 2. 选择集成方式
+
+<CardGroup cols={2}>
+  <Card title="REST API" icon="code" href="/zh/api-manual/overview">
+    适用于任意语言的产品集成。
+  </Card>
+  <Card title="PoYo CLI" icon="terminal" href="/zh/integrations/cli">
+    本地测试、脚本、CI 和流式对话。
+  </Card>
+  <Card title="MCP" icon="plug" href="/zh/integrations/mcp">
+    让 Claude、Cursor、Codex 或 VS Code 发现并运行模型。
+  </Card>
+  <Card title="Agent Skill" icon="wand-magic-sparkles" href="/zh/integrations/skill">
+    教会 Agent 推荐的发现与执行流程。
+  </Card>
+</CardGroup>
+
+## 3. 创建并保护你的 API Key
+
+在 [API Key 页面](https://poyo.ai/dashboard/api-key)创建和管理你的 API Key。
+
+<Warning>
+  **切勿在前端代码中暴露 API Key**（浏览器、移动应用、公开代码仓库）。请将 API Key 视为机密信息。
+</Warning>
+
+为帮助保护你的用量，我们提供：
+
+- 按 API Key 设置的速率限制（每小时、每天和总用量上限）
+- IP 白名单，只允许经批准的服务器 IP 访问 API
+
+这些功能有助于防止意外超额使用和未经授权的请求。
+
+## 4. 必需的请求头
+
+每个 API 请求都**必须包含**正确的请求头：
+
+```http
+Authorization: Bearer <YOUR_API_KEY>
+Content-Type: application/json
+```
+
+[Anthropic Messages](/zh/api-manual/chat-series/claude-messages)（`/v1/messages`）也接受 `x-api-key: <YOUR_API_KEY>`，因此官方 Anthropic SDK 无需修改即可使用。
+
+<Accordion title="缺少或无效的 API Key 会返回什么">
+  ```json
+  {"code":401,"error":{"message":"Invalid API key","type":"authentication_error"}}
+  ```
+
+  排查认证问题时，请务必仔细检查请求头。
+</Accordion>
+
+## 5. 发起第一个生成请求
+
+生成是异步的。提交任务，保存其 `task_id`，然后轮询任务状态或接收 Webhook。
+
+<Tabs>
+  <Tab title="cURL">
+    ```bash
+    curl https://api.poyo.ai/api/generate/submit \
+      -H "Authorization: Bearer $POYO_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "model": "gpt-4o-image",
+        "input": {
+          "prompt": "A paper-cut illustration of a city at sunrise",
+          "size": "1:1"
+        }
+      }'
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import os
+    import requests
+
+    response = requests.post(
+        "https://api.poyo.ai/api/generate/submit",
+        headers={"Authorization": f"Bearer {os.environ['POYO_API_KEY']}"},
+        json={
+            "model": "gpt-4o-image",
+            "input": {
+                "prompt": "A paper-cut illustration of a city at sunrise",
+                "size": "1:1",
+            },
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    task_id = response.json()["data"]["task_id"]
+    print(task_id)
+    ```
+  </Tab>
+  <Tab title="JavaScript">
+    ```javascript
+    const response = await fetch("https://api.poyo.ai/api/generate/submit", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.POYO_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-image",
+        input: {
+          prompt: "A paper-cut illustration of a city at sunrise",
+          size: "1:1",
+        },
+      }),
+    });
+
+    if (!response.ok) throw new Error(await response.text());
+    const { data } = await response.json();
+    console.log(data.task_id);
+    ```
+  </Tab>
+</Tabs>
+
+<Info>
+  提交成功只表示任务已被接受，不表示生成已经完成。
+</Info>
+
+## 6. 获取结果
+
+```bash
+curl "https://api.poyo.ai/api/generate/status/TASK_ID" \
+  -H "Authorization: Bearer $POYO_API_KEY"
+```
+
+<Tip>
+  任务处于排队或运行中时继续等待。任务完成后，将返回的文件下载到你自己控制的存储中。生产环境建议使用[签名 Webhook](/zh/api-manual/task-management/webhooks)，而不是频繁轮询。
+</Tip>
+
+## 7. 日志与任务详情
+
+在[任务历史页面](https://poyo.ai/dashboard/history)查看你的所有历史任务。每个任务都可以查看：
+
+- 创建时间
+- 使用的模型
+- 输入参数
+- 任务状态
+- 最终结果或错误详情
+
+## 8. 数据保留策略
+
+| 数据 | 保留期限 |
+|---|---|
+| 生成的媒体文件 | 保存 **3 天**，之后自动删除 |
+| 账单明细和生成历史 | 保存 **3 个月**，之后自动删除 |
+
+<Warning>
+  如需长期访问，请及时将结果下载并保存在你自己的存储中。
+</Warning>
+
+## 9. 异步任务模型
+
+PoYo.ai 上的所有生成任务都是**异步**的。请求成功时返回 HTTP 200 和 `task_id`。200 响应只表示任务已创建，不表示已完成。
+
+<Steps>
+  <Step title="提交">
+    发送生成请求，并保存返回的 `task_id`。
+  </Step>
+  <Step title="等待结果">
+    在请求中提供回调（Webhook）URL，或使用 `task_id` 主动轮询“查询任务状态”接口。
+  </Step>
+  <Step title="保存输出">
+    在保留期结束前下载已完成的文件。
+  </Step>
+</Steps>
+
+## 10. 速率限制与并发
+
+| 默认限制 | 值 |
+|---|---|
+| 新生成请求 | **每 10 秒最多 20 个** |
+| 通常的并发运行任务数 | 100+ |
+| 范围 | 按账户 |
+
+此限制适用于提交到 `/api/generate/submit` 的生成任务。LLM 接口目前不限速。
+
+超出限制时，请求会被拒绝并返回 **HTTP 429**，不会进入队列。对大多数用户来说，这个额度已经足够。如果你持续遇到 429 错误，可以联系支持申请提高限制；我们会审慎处理审批。
+
+## 11. 上线生产前
+
+<Check>将 API Key 保存在服务器端，切勿在浏览器或移动端代码中暴露。</Check>
+<Check>按所选模型当前的 schema 校验输入。</Check>
+<Check>显式处理 `401`、`402`、`429` 和临时性服务器故障。</Check>
+<Check>每次重试提交都可能产生新的计费任务；重新提交前，先确认原请求是否已创建任务。</Check>
+<Check>查看[任务状态](/zh/api-manual/task-management/status)和[错误响应](/zh/api-manual/error-codes)。</Check>
+<Check>生成的媒体是临时的。请及时下载结果，并遵守账户和 API 文档中说明的保留策略。</Check>
+
+## 12. 借助 AI 助手构建
+
+可以在 Claude Code、Codex 和 Cursor 等编程 Agent 中使用 PoYo。最快的方式无需配置 MCP，参见[快速入门](/zh/integrations/quickstart)。当助手需要实时的模型 schema、账户信息和执行工具时，连接 PoYo MCP：
+
+```text
+https://api.poyo.ai/mcp
+```
+
+<CardGroup cols={4}>
+  <Card title="Claude" icon="robot" href="/zh/integrations/claude-desktop" />
+  <Card title="Cursor" icon="arrow-pointer" href="/zh/integrations/cursor" />
+  <Card title="Codex" icon="code" href="/zh/integrations/codex" />
+  <Card title="VS Code" icon="window-maximize" href="/zh/integrations/vscode" />
+</CardGroup>
+
+全部选项见 [AI Agent](/zh/integrations/overview)。
+
+## 13. 支持
+
+使用 [PoYo 控制台](https://poyo.ai/dashboard)中的支持入口，可以最快获得结合你账户情况的帮助。推荐的支持渠道可直接在控制台左下角菜单中找到。
+
+### 开发者支持
+
+<CardGroup cols={2}>
+  <Card title="Discord（最快）" icon="discord" href="https://discord.gg/F8JNuUPB3j">
+    私密的一对一频道。你的数据和对话保持机密。响应更快、更专业。
+  </Card>
+  <Card title="邮件（较慢）" icon="envelope" href="mailto:support@poyo.ai">
+    `support@poyo.ai`
+  </Card>
+</CardGroup>
+
+支持时间：UTC 01:00 - UTC 10:00（北京时间 09:00 - 18:00，UTC+8）。
+
+## 14. 稳定性预期
+
+我们提供顶级、极具竞争力的 API。不过我们并不完美，**整体稳定性可能略低于**官方供应商。这是有意做出的取舍。
+
+实际使用中，PoYo.ai 的稳定性足以支撑生产负载和长期业务增长，但我们认为应当在一开始就设定合理的预期。
+
+## 15. 关于团队
+
+PoYo.ai 由一个**小型创业团队**打造。我们行动迅速，非常重视开发者体验，并在持续改进。
+
+同时我们也承认并非一切都完美，无法立即满足所有使用场景。你的反馈帮助我们改进，我们由衷感谢。

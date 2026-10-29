@@ -1,0 +1,31 @@
+---
+title: "Flux 3"
+description: "Flux 3 API 可根据文本、一张起始图片、首尾帧或最多十个关键帧生成视频，也可续写已有的 MP4。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/flux-3.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+根据要提供的源媒体选择模型：
+
+| 模型 | 必需的媒体输入 |
+| --- | --- |
+| `flux-3/text-to-video` | 无 |
+| `flux-3/image-to-video` | `image_urls` 中一张图片 |
+| `flux-3/first-last-frame-to-video` | `image_urls` 中两张按顺序排列的图片 |
+| `flux-3/extend-video` | `video_url` 中一个 MP4 |
+| `flux-3/keyframes-to-video` | `keyframes` 中 1-10 项 |
+
+各模型的具体要求和限制见下方参数说明。
+
+## 模型
+
+- **flux-3/text-to-video** — 文生视频
+- **flux-3/image-to-video** — 图生视频
+- **flux-3/first-last-frame-to-video** — 首尾帧生视频
+- **flux-3/extend-video** — 视频续写
+- **flux-3/keyframes-to-video** — 关键帧生视频

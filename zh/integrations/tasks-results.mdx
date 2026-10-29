@@ -1,0 +1,65 @@
+---
+title: "任务生命周期"
+description: "提交生成任务并获取其标准化状态。"
+icon: "clock"
+openapi: "/zh/integrations/capability-catalog.json GET /api/generate/status/{task_id}"
+---
+
+# 任务生命周期
+
+长时间运行的模型执行流程如下：
+
+```text
+submit -> task_id -> queued/running -> succeeded/failed
+```
+
+提交成功的响应表示请求已被接受，并不表示生成已经完成。
+
+使用 MCP 的 `poyo_submit_job` 和 `poyo_check_job`，或使用 CLI：
+
+```bash
+poyo submit MODEL_ID --input-file request.json
+poyo task wait TASK_ID --timeout 300
+```
+
+## 标准化状态
+
+| 状态 | 含义 |
+|---|---|
+| `queued` | 已接受，等待执行 |
+| `running` | Worker 或供应商正在处理 |
+| `succeeded` | 输出已就绪 |
+| `failed` | 终态失败；查看 `error_message` |
+
+REST 生成 API 仍然返回其现有的原始状态值。MCP 和 CLI 会对这些状态做标准化，但不会修改已存储的任务。
+
+## 安全恢复
+
+把 `task_id` 保存在持久化的应用状态或工作记录中。如果进程或 Agent 会话中断，请查询已有的任务，而不是重新提交并为替代任务付费。
+
+## 轮询
+
+如果响应包含 `poll_after_seconds`，下一次状态检查前至少等待该时长。否则，使用带随机抖动、有上限的指数退避。收到 `429` 响应后遵循 `Retry-After`。
+
+只在 `succeeded`、`failed` 或你自己设定的超时时停止；本地超时不会取消远端任务。
+
+```text
+2s -> 4s -> 8s -> 15s -> 30s
+```
+
+对于生产应用，如果原生生成 API 支持，优先使用签名 Webhook。Webhook 能减少状态查询流量，但接收方在信任输出之前仍应获取或校验任务。
+
+## 结果处理
+
+成功时：
+
+1. 记录模型 ID、任务 ID 和最终状态。
+2. 校验预期的输出字段。
+3. 在临时 URL 过期前，把生成的文件下载到你自己控制的存储中。
+4. 将重复的 Webhook 投递和重复的状态读取视为正常情况。
+
+失败时，保留任务 ID 和标准化错误。仅在错误是暂时性错误时重试。提交重试不会去重，因此重新提交前请确认原始请求是否已创建任务。
+
+<Info>
+  `poyo_run_model` 最多等待 30 秒。如果任务仍在运行，它会返回任务 ID 和 `poll_after_seconds`，而不是让生成失败。
+</Info>

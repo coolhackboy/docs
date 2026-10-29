@@ -1,0 +1,344 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Meshy 6 3D API",
+    "description": "Meshy 6 3D API 根据文本、一张图片或同一物体的 1–4 张图片生成 3D 网格。可请求纹理、PBR 贴图、人形骨骼绑定和预设动画，文档列出的输出格式包括 GLB、FBX、OBJ、USDZ 和 STL。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Meshy 6 3D 任务",
+        "description": "根据文本、一张图片或多张图片生成 3D 模型。",
+        "operationId": "submitMeshy6ThreeDTask",
+        "tags": [
+          "Meshy 6 3D"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-3d": {
+                  "summary": "文本生成 3D",
+                  "value": {
+                    "model": "meshy-6-text-to-3d",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A worn leather explorer backpack with brass buckles, canvas straps, realistic stitching, game-ready asset",
+                      "mode": "full",
+                      "topology": "triangle",
+                      "target_polycount": 30000,
+                      "should_remesh": true,
+                      "symmetry_mode": "auto",
+                      "enable_pbr": true,
+                      "pose_mode": "",
+                      "enable_prompt_expansion": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                },
+                "image-to-3d": {
+                  "summary": "图片生成 3D",
+                  "value": {
+                    "model": "meshy-6-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/object-front.png"
+                      ],
+                      "topology": "triangle",
+                      "target_polycount": 30000,
+                      "symmetry_mode": "auto",
+                      "should_remesh": true,
+                      "should_texture": true,
+                      "enable_pbr": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                },
+                "multi-image-to-3d": {
+                  "summary": "多图生 3D",
+                  "value": {
+                    "model": "meshy-6-multi-image-to-3d",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/object-front.png",
+                        "https://example.com/object-side.png",
+                        "https://example.com/object-back.png"
+                      ],
+                      "topology": "triangle",
+                      "target_polycount": 30000,
+                      "symmetry_mode": "auto",
+                      "should_remesh": true,
+                      "should_texture": true,
+                      "enable_pbr": true,
+                      "enable_safety_checker": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "meshy-6-text-to-3d",
+              "meshy-6-image-to-3d",
+              "meshy-6-multi-image-to-3d"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "$ref": "#/components/schemas/Meshy6Input"
+          }
+        }
+      },
+      "Meshy6Input": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "meshy-6-text-to-3d 必填。"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "minItems": 1,
+            "maxItems": 4,
+            "description": "图像模型必填。meshy-6-image-to-3d 恰好传 1 项，meshy-6-multi-image-to-3d 传 1-4 项。"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "preview",
+              "full"
+            ],
+            "default": "full",
+            "description": "仅用于文生 3D。"
+          },
+          "seed": {
+            "type": "integer",
+            "description": "仅用于文生 3D。"
+          },
+          "topology": {
+            "type": "string",
+            "enum": [
+              "quad",
+              "triangle"
+            ],
+            "default": "triangle"
+          },
+          "target_polycount": {
+            "type": "integer",
+            "default": 30000
+          },
+          "should_remesh": {
+            "type": "boolean",
+            "default": true
+          },
+          "symmetry_mode": {
+            "type": "string",
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
+            "default": "auto"
+          },
+          "should_texture": {
+            "type": "boolean",
+            "default": true,
+            "description": "仅用于图像模型。"
+          },
+          "enable_pbr": {
+            "type": "boolean"
+          },
+          "pose_mode": {
+            "type": "string",
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
+            "default": ""
+          },
+          "enable_prompt_expansion": {
+            "type": "boolean",
+            "description": "仅用于文生 3D。"
+          },
+          "texture_prompt": {
+            "type": "string"
+          },
+          "texture_image_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "enable_rigging": {
+            "type": "boolean"
+          },
+          "rigging_height_meters": {
+            "type": "number",
+            "default": 1.7
+          },
+          "enable_animation": {
+            "type": "boolean"
+          },
+          "animation_action_id": {
+            "type": "integer",
+            "default": 1001
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

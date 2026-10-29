@@ -1,0 +1,533 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - 查询音乐详情 API",
+    "description": "查询音乐生成任务的详细结果",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/detail/music": {
+      "get": {
+        "summary": "查询音乐生成详情",
+        "description": "获取音乐生成任务的详细结果和状态",
+        "operationId": "queryMusicDetail",
+        "tags": ["Music Generation"],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "音乐生成提交接口返回的唯一任务标识符。",
+            "example": "8FDN1I7M7Q68DDG8"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "任务详情获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailResponse"
+                },
+                "examples": {
+                  "generate-music": {
+                    "summary": "音乐生成（generate-music、extend-music 等）",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 10,
+                        "files": [
+                          {
+                            "audio_id": "62e4542a-73be-44e1-b397-7716ee7505c6",
+                            "audio_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113627_QIivN2_tmphb8rgpeb_audio_62e4542a-73be-44e1-b397-7716ee7505c6.mp3",
+                            "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113628_4DfWp6_tmpz72j05o5_cover_62e4542a-73be-44e1-b397-7716ee7505c6.jpeg",
+                            "title": "Peaceful Piano Meditation",
+                            "tags": "Classical",
+                            "duration": 240.0,
+                            "prompt": ""
+                          },
+                          {
+                            "audio_id": "8e755734-a840-4c13-beac-b9f1044979ca",
+                            "audio_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113630_x7VTpV_tmpvsijwxa6_audio_8e755734-a840-4c13-beac-b9f1044979ca.mp3",
+                            "image_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113631_3MTe5V_tmp98wzcx2m_cover_8e755734-a840-4c13-beac-b9f1044979ca.jpeg",
+                            "title": "Peaceful Piano Meditation",
+                            "tags": "Classical",
+                            "duration": 130.0,
+                            "prompt": ""
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "minimax-music-2.6": {
+                    "summary": "MiniMax Music 2.6",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "finished",
+                        "credits_amount": 8,
+                        "files": [
+                          {
+                            "audio_id": "task-unified-1757165031-uyujaw3d_audio",
+                            "audio_url": "https://storage.poyo.ai/audios/task-unified-1757165031-uyujaw3d/output.mp3",
+                            "title": "City pop, 80s retro, groovy synth bass",
+                            "duration": 0,
+                            "prompt": "City pop, 80s retro, groovy synth bass"
+                          }
+                        ],
+                        "created_time": "2026-04-15T10:30:00",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "get-timestamped-lyrics": {
+                    "summary": "带时间戳的歌词",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 1,
+                        "files": [
+                          {
+                            "timestampe_lyrics": "[00:00.00] First line of lyrics\n[00:05.23] Second line of lyrics"
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "generate-lyrics": {
+                    "summary": "生成的歌词",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 1,
+                        "files": [
+                          {
+                            "title": "Peaceful Piano Meditation",
+                            "text": "Peaceful Piano Meditation lyrics content..."
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "boost-music-style": {
+                    "summary": "音乐风格增强",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 1,
+                        "files": [
+                          {
+                            "style": "Enhanced music style result"
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "generate-music-cover": {
+                    "summary": "音乐封面图",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 2,
+                        "files": [
+                          {
+                            "generate_cover": [{"file_url": "https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/cover_1.png", "file_type": "image"}, {"file_url": "https://storage.poyo.ai/audio/0JQHD119NP7B5KLE/cover_2.png", "file_type": "image"}]
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "generate-persona": {
+                    "summary": "生成的 Persona",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 1,
+                        "files": [
+                          {
+                            "persona_id": "persona_abc123"
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "convert-to-wav": {
+                    "summary": "WAV 转换",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 1,
+                        "files": [
+                          {
+                            "wav_url": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/output.wav"
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "separate-vocals": {
+                    "summary": "人声分离",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 2,
+                        "files": [
+                          {
+                            "separate_vocals": {"vocal_url": "xx", "instrumental_url": "yy"}
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "upload-and-separate-vocals": {
+                    "summary": "上传并分离人声",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 2,
+                        "files": [
+                          {
+                            "vocal_removal": {"bass": "https://storage.poyo.ai/audio/bass.mp3", "drums": "https://storage.poyo.ai/audio/drums.mp3", "piano": "https://storage.poyo.ai/audio/piano.mp3", "guitar": "https://storage.poyo.ai/audio/guitar.mp3", "vocals": "https://storage.poyo.ai/audio/vocals.mp3", "other": "https://storage.poyo.ai/audio/other.mp3"}
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "stem-split": {
+                    "summary": "分轨拆分（完整分离）",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 2,
+                        "files": [
+                          {
+                            "stem_split": {"backing_vocals_url": "", "bass_url": "", "brass_url": "", "drums_url": "", "fx_url": "", "guitar_url": "", "keyboard_url": "", "percussion_url": "", "strings_url": "", "synth_url": "", "vocal_url": "", "woodwinds_url": ""}
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "suno-voice-generate": {
+                    "summary": "Suno Voice 生成结果",
+                    "value": {"code": 200, "data": {"task_id": "POYO_VOICE_GENERATE_TASK", "status": "finished", "credits_amount": 0, "progress": 100, "files": [{"voice_status": "success", "voice_id": "voice_abc123"}], "created_time": "2026-08-26T10:00:00", "error_message": null}}
+                  },
+                  "suno-voice-check": {
+                    "summary": "Suno Voice 检查结果",
+                    "value": {"code": 200, "data": {"task_id": "POYO_VOICE_CHECK_TASK", "status": "finished", "credits_amount": 0, "progress": 100, "files": [{"is_available": true}], "created_time": "2026-08-26T10:01:00", "error_message": null}}
+                  },
+                  "create-music-video": {
+                    "summary": "音乐视频生成",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "8FDN1I7M7Q68DDG8",
+                        "status": "finished",
+                        "credits_amount": 5,
+                        "files": [
+                          {
+                            "video_url": "https://storage.poyo.ai/video/8FDN1I7M7Q68DDG8/music_video.mp4"
+                          }
+                        ],
+                        "created_time": "2025-11-25T08:50:13",
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "failed": {
+                    "summary": "失败的任务",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "failed",
+                        "credits_amount": 0,
+                        "files": [],
+                        "created_time": "2025-11-12T10:30:00",
+                        "error_message": "The prompt violates our content policy"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "DetailResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "credits_amount", "files", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "8FDN1I7M7Q68DDG8",
+                "description": "任务唯一标识"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "finished",
+                "description": "任务的当前状态。\n\n- `not_started`：任务已排队，尚未开始处理\n- `running`：任务正在处理中\n- `finished`：任务已成功完成\n- `failed`：任务因错误而失败"
+              },
+              "credits_amount": {
+                "type": "number",
+                "example": 10,
+                "description": "该任务扣除的积分。此字段在任务层级返回，不会在 `files` 中重复。"
+              },
+              "progress": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "example": 100,
+                "description": "当前任务进度。声音任务在运行期间也可能在 `files` 中返回中间字段。"
+              },
+              "files": {
+                "type": "array",
+                "description": "生成的文件或结构化任务结果数组。声音任务在运行期间可能返回中间的 `voice_status` 或 `validate_info`。",
+                "items": {
+                  "$ref": "#/components/schemas/AudioFile"
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-25T08:50:13",
+                "description": "任务创建时间，ISO 8601 格式"
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true,
+                "example": null,
+                "description": "任务失败时的错误信息。\n\n任务成功或仍在处理中时为 `null`。"
+              }
+            }
+          }
+        }
+      },
+      "AudioFile": {
+        "type": "object",
+        "description": "所有可能的音乐结果字段的合集。每个模型只返回该模型文档中列出的字段。",
+        "properties": {
+          "audio_id": {
+            "type": "string",
+            "example": "62e4542a-73be-44e1-b397-7716ee7505c6",
+            "description": "该音频文件的唯一标识符"
+          },
+          "audio_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113627_QIivN2_tmphb8rgpeb_audio_62e4542a-73be-44e1-b397-7716ee7505c6.mp3",
+            "description": "生成音频文件的直接下载 URL"
+          },
+          "stream_audio_url": {"type": "string", "format": "uri", "description": "流式音频 URL（如有）。"},
+          "model_name": {"type": "string", "description": "音乐模型名称。"},
+          "source_audio_url": {"type": "string", "format": "uri", "description": "衍生任务的源音频 URL。"},
+          "source_image_url": {"type": "string", "format": "uri", "description": "源图片 URL（如有）。"},
+          "source_stream_audio_url": {"type": "string", "format": "uri", "description": "源流式音频 URL（如有）。"},
+          "image_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/20251125113628_4DfWp6_tmpz72j05o5_cover_62e4542a-73be-44e1-b397-7716ee7505c6.jpeg",
+            "description": "该音频文件封面图的直接 URL。仅在返回封面图的模型中出现。"
+          },
+          "title": {
+            "type": "string",
+            "example": "Peaceful Piano Meditation",
+            "description": "生成曲目的标题"
+          },
+          "tags": {
+            "type": "string",
+            "example": "Classical",
+            "description": "生成曲目的风格标签"
+          },
+          "duration": {
+            "type": "number",
+            "example": 240.0,
+            "description": "音频文件时长（秒）。时长元数据不可用时，部分模型可能返回 `0`。"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "City pop, 80s retro, groovy synth bass",
+            "description": "生成时使用的原始提示词（如有）。"
+          },
+          "text": {
+            "type": "string",
+            "example": "Peaceful Piano Meditation lyrics content...",
+            "description": "文本类音乐接口返回的歌词或文本内容。"
+          },
+          "timestampe_lyrics": {
+            "type": "string",
+            "example": "[00:00.00] First line of lyrics\n[00:05.23] Second line of lyrics",
+            "description": "带时间戳的歌词。"
+          },
+          "style": {
+            "type": "string",
+            "example": "Enhanced music style result",
+            "description": "音乐风格增强接口返回的风格文本。"
+          },
+          "wav_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/audio/8FDN1I7M7Q68DDG8/output.wav",
+            "description": "转换后的 WAV 文件 URL。"
+          },
+          "separate_vocals": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "example": {"vocal_url": "xx", "instrumental_url": "yy"},
+            "description": "分离后的人声和伴奏 URL。"
+          },
+          "vocal_removal": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "example": {"bass": "https://storage.poyo.ai/audio/bass.mp3", "drums": "https://storage.poyo.ai/audio/drums.mp3"},
+            "description": "分离后的分轨 URL。"
+          },
+          "stem_split": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "example": {"backing_vocals_url": "", "bass_url": ""},
+            "description": "完整分轨分离的 URL。"
+          },
+          "generate_cover": {
+            "type": "array",
+            "items": {"type": "object"},
+            "example": [{"file_url": "https://storage.poyo.ai/audio/cover_1.png", "file_type": "image"}],
+            "description": "生成的封面图对象。"
+          },
+          "persona_id": {
+            "type": "string",
+            "example": "persona_abc123",
+            "description": "生成的 Persona 标识符。"
+          },
+          "video_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/video/8FDN1I7M7Q68DDG8/music_video.mp4",
+            "description": "生成的视频 URL。"
+          },
+          "validate_info": {"type": "string", "description": "声音验证短语。"},
+          "voice_id": {"type": "string", "description": "可复用的 Suno Voice ID。"},
+          "is_available": {"type": "boolean", "description": "生成的 Suno Voice 是否可用。"},
+          "voice_status": {"type": "string", "description": "Suno Voice 处理状态。"},
+          "error_message": {"type": "string", "nullable": true, "description": "存在结构化任务结果时的模型级错误信息。"},
+          "error_code": {"nullable": true, "description": "模型错误码（如有）。", "oneOf": [{"type": "string"}, {"type": "integer"}]},
+          "origin_data": {"type": "array", "description": "高级分轨结果。", "items": {"type": "object", "properties": {"extract": {"$ref": "#/components/schemas/AdvancedStemBranch"}, "remove": {"$ref": "#/components/schemas/AdvancedStemBranch"}}}}
+          }
+        },
+      "AdvancedStemBranch": {
+        "type": "object",
+        "properties": {
+          "duration": {"type": "number"},
+          "audio_url": {"type": "string", "format": "uri"},
+          "stem_type_group_name": {"type": "string"},
+          "id": {"type": "string"}
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "error"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "描述错误原因的错误信息"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "错误类型标识"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  }

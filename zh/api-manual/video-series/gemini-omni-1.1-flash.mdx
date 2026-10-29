@@ -1,0 +1,112 @@
+---
+title: "Gemini Omni 1.1 Flash"
+description: "Gemini Omni 1.1 Flash API 可根据文本、一到两个关键帧、最多七张参考图片或一段 3–10 秒的参考视频，生成 360p 至 4K、时长 4–10 秒的视频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/gemini-omni-1.1-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`gemini-omni-1.1-flash` 可根据文本提示词、可选的首帧和尾帧、普通参考图片或一段参考视频生成视频。
+
+## 模型
+
+- **gemini-omni-1.1-flash** - 文生视频、首尾帧生成、参考图片生成和参考视频生成
+
+## 输入模式
+
+- **文生视频**：发送 `prompt` 和可选的生成设置
+- **首尾帧视频**：在 `image_urls` 中发送一到两张图片
+- **参考图片视频**：在 `reference_image_urls` 中发送最多七张图片
+- **参考视频**：在 `reference_video_urls` 中发送一段三到十秒的视频，可同时附带最多五张参考图片
+
+## 必填参数
+
+- **prompt**：描述场景、运动、风格、镜头行为及其他生成指令的文本提示词
+
+## 可选参数
+
+- **image_urls**：首帧和可选尾帧的图片 URL 数组。最多允许 `2` 张图片
+- **reference_image_urls**：普通参考图片 URL 数组。最多允许 `7` 张图片；同时提供参考视频时最多 `5` 张
+- **reference_video_urls**：参考视频 URL 数组。最多允许 `1` 段视频，时长必须在 `3` 到 `10` 秒之间（含）
+- **resolution**：`360p`、`720p`、`1080p` 或 `4k`。默认为 `720p`
+- **duration**：`4`、`6`、`8` 或 `10` 秒。默认为 `8`。提供参考视频时，该字段不影响输出时长
+- **aspect_ratio**：`16:9` 或 `9:16`。默认为 `16:9`
+- **callback_url**：可选的 Webhook URL，用于接收完成通知
+
+## 示例
+
+### 文生视频
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic night city with neon reflections, a slow camera push-in, and a character walking into frame",
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 首尾帧
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "input": {
+    "prompt": "Create a smooth cinematic transition between the opening and closing frames",
+    "image_urls": [
+      "https://example.com/first-frame.webp",
+      "https://example.com/last-frame.webp"
+    ],
+    "resolution": "1080p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 参考图片
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "input": {
+    "prompt": "Use the product and environment references to create a polished studio campaign video",
+    "reference_image_urls": [
+      "https://example.com/product.webp",
+      "https://example.com/environment.webp"
+    ],
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### 参考视频
+
+```json
+{
+  "model": "gemini-omni-1.1-flash",
+  "input": {
+    "prompt": "Follow the motion of the reference video while applying the visual style of the image",
+    "reference_image_urls": ["https://example.com/style.webp"],
+    "reference_video_urls": ["https://example.com/reference.mp4"],
+    "resolution": "720p",
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+## 注意事项
+
+- `image_urls` 不能与 `reference_image_urls` 或 `reference_video_urls` 同时使用
+- 请使用公开的 HTTPS 媒体 URL，或在提交前通过 Playground 上传文件
+- 响应会返回 `task_id`；查询任务状态即可获取生成的视频文件

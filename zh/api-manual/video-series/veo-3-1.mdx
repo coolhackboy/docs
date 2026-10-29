@@ -1,0 +1,54 @@
+---
+title: "VEO 3.1"
+description: "VEO 3.1 API 可根据文本生成 8 秒视频。fast 和 quality 模型也可以从图片开始生成，quality 输出最高可达 4K。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/veo-3-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 Google 的 VEO 3.1 模型生成轻量、快速或高质量视频。所有模型都支持文生视频。`veo3.1-fast` 和 `veo3.1-quality` 还支持图生视频。
+
+## 模型
+
+- **veo3.1-fast** - 快速 8 秒生成
+- **veo3.1-lite** - 轻量 8 秒生成
+- **veo3.1-quality** - 高质量 8 秒生成
+
+## 功能
+
+- 异步处理，返回 `task_id` 用于追踪状态
+- 所有模型都支持文生视频
+- `veo3.1-fast` 和 `veo3.1-quality` 支持图生视频
+- 最高支持 4k 输出分辨率
+- 生成的视频 URL 有效期为 3 天
+
+## 可选参数
+
+### 时长
+
+- **本页所有 VEO 3.1 模型** - 8 秒
+
+### 生成类型
+
+- `frame` - 帧生视频（两张图片）
+- `reference` - 参考图生视频（三张图片）
+- 如果省略，则根据 `image_urls` 数量推断：2 张图片为 `frame`，3 张图片为 `reference`
+- `veo3.1-quality` 不支持 `reference` 模式
+- `veo3.1-lite` 不支持此参数；不要传 `generation_type`
+
+### 图片 URL
+
+- 在支持的模型上用于图生视频的参考图片 URL
+- 最多支持 3 张图片
+- 帧模式：第一张图片为起始帧，第二张图片为结束帧
+- 最大文件大小：10MB
+- 支持的格式：.jpeg、.jpg、.png、.webp
+- `veo3.1-lite` 不支持此参数；不要传 `image_urls`
+
+### 分辨率
+
+- `720p`（默认）、`1080p` 或 `4k`

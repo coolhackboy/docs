@@ -1,0 +1,37 @@
+---
+title: "视频翻译"
+description: "翻译视频或音频文件中的语音，并返回带目标语言字幕的配音视频。"
+icon: "language"
+openapi: "/zh/api-manual/tools-series/video-translator.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+视频翻译会转写一个视频或音频文件中的语音并进行翻译，然后返回配音视频。可用时还会返回目标语言的字幕文件。适用于本地化口播视频、教程和短视频内容。
+
+## 模型
+
+- **poyo-ai/video-translator** — 翻译并配音一个视频或音频文件
+
+## 必填参数
+
+- `video_urls` (array of strings)：只能传一个视频或音频 URL。支持 MP4、MOV、AVI、MP3 或 WAV，最大 400 MB、最长 6 分钟。
+- `source_language` (string)：源文件中的口语语言，例如 `en`。不接受 `auto`。
+- `target_language` (string)：目标语言，例如 `ja`。
+
+## 输出
+
+任务完成后，`files` 中返回译后视频，`file_type: video`。如果生成了字幕轨，还会返回目标语言的 SRT 文件，`file_type: other`。较长的文件可能分段处理，每一段都会各自增加视频和字幕条目。
+
+## 示例
+
+- **将英语视频翻译成日语** — 设置 `video_urls`、`source_language`、`target_language`。
+
+## 注意事项
+
+- 每个任务只接受一个文件。
+- `source_language` 必须是明确的语言。视频翻译不支持语言自动检测。
+- 超过 6 分钟或大于 400 MB 的文件在提交时会被拒绝。

@@ -1,0 +1,8 @@
+---
+title: "验证 Suno 声音"
+description: "从人声样本中提取验证短语"
+icon: "microphone"
+openapi: "/zh/api-manual/music-series/voice/validate.json POST /api/generate/submit"
+---
+
+提交一段可公开访问的录音，并通过 `vocal_start_s` 和 `vocal_end_s` 选取一段干净的人声片段。完成后的结果包含 `validate_info`；使用返回的 `task_id` 调用[生成声音](/zh/api-manual/music-series/voice/generate)或[重新生成短语](/zh/api-manual/music-series/voice/regenerate)。

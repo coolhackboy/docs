@@ -1,0 +1,38 @@
+---
+title: "Kling 2.6 Motion Control"
+description: "Kling 2.6 Motion Control API 可将 3–30 秒参考视频中的动作迁移到一张角色图片上，输出 720p 或 1080p。图片朝向模式下结果最长 10 秒；视频朝向模式下最长 30 秒。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/kling-2.6-motion-control.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+通过精确的动作控制，将参考视频中的动作迁移到角色图片上。将静态图片与动作参考视频结合，创建动态角色动画，同时通过文本提示词控制场景细节。
+
+## 模型
+
+- **kling-2.6-motion-control** - 从视频到角色图片的动作迁移
+
+## 功能
+
+- **动作迁移**：将参考视频中真人的动作、手势和表情迁移到角色图片上
+- **角色动画**：让静态角色按动态动作模式动起来
+- **角色朝向控制**：可选择匹配图片朝向（输出最长 10 秒）或视频朝向（输出最长 30 秒）
+- **场景控制**：通过可选的文本提示词控制场景细节和环境
+- **灵活分辨率**：可选择 720p（标准）或 1080p（高质量）输出
+
+## 必填参数
+
+- **image_urls**：单张角色图片，需展示主体的头部、肩部和躯干
+- **video_urls**：单个用于动作迁移的参考视频（3-30 秒）
+- **character_orientation**：
+  - `"image"` - 匹配照片中人物的朝向（输出最长 10 秒）
+  - `"video"` - 与参考视频中的角色朝向保持一致（输出最长 30 秒）
+- **resolution**：输出分辨率（`"720p"` 或 `"1080p"`）
+
+## 可选参数
+
+- **prompt**：所需输出场景的文本描述（最多 2,500 个字符）

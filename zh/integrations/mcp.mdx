@@ -1,0 +1,195 @@
+---
+title: "通过 MCP 连接"
+description: "将 AI 助手连接到 PoYo 托管的 MCP 服务器"
+icon: "plug"
+---
+
+# PoYo MCP
+
+将 AI 助手连接到 PoYo，即可在编辑器内搜索实时模型目录、查看 schema 和价格、运行模型，以及恢复长时间运行的生成任务。
+
+托管服务器在 `https://api.poyo.ai/mcp` 上使用无状态的 Streamable HTTP。初始化、工具发现和公开模型发现无需认证。账户访问和模型执行需要 PoYo API Key；每个需认证的请求都会校验该 Key，MCP 服务器不会存储它。
+
+<Info>
+  需要由 Agent 驱动的发现和执行时使用 MCP。应用流量或逐 token 的流式对话请使用 [REST API](/zh/api-manual/overview)。
+</Info>
+
+## 连接客户端
+
+在启动客户端的环境中设置 `POYO_API_KEY`，然后使用对应的配置。公开发现不需要 Key，但现在就配置可以启用账户和执行类工具。
+
+<Note>
+  `export POYO_API_KEY=...` 或 `$env:POYO_API_KEY=...` 只对当前终端会话生效。从桌面启动的应用（如 Cursor、VS Code 或 Codex 应用）读取不到它。如果不使用 MCP、只用 Skill 和 CLI，`npx -y @poyoapi/cli auth login` 可以避免这个问题；见[快速开始](/zh/integrations/quickstart)。
+</Note>
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http poyo \
+      https://api.poyo.ai/mcp \
+      --header "Authorization: Bearer $POYO_API_KEY"
+    ```
+
+    运行该命令时 shell 会展开 `$POYO_API_KEY`，因此实际的 Key 会保存到你的 Claude Code MCP 配置中。
+
+    Claude Desktop 和原生 Windows 的配置见 [Claude 指南](/zh/integrations/claude-desktop)。
+  </Tab>
+  <Tab title="Cursor">
+    将以下内容添加到 Cursor 的 MCP 配置：
+
+    ```json
+    {
+      "mcpServers": {
+        "poyo": {
+          "url": "https://api.poyo.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer ${env:POYO_API_KEY}"
+          }
+        }
+      }
+    }
+    ```
+
+    如果无法使用需认证的远程服务器，请使用 [Cursor stdio 配置](/zh/integrations/cursor)。
+  </Tab>
+  <Tab title="Codex">
+    将以下内容添加到 `~/.codex/config.toml`：
+
+    ```toml
+    [mcp_servers.poyo]
+    url = "https://api.poyo.ai/mcp"
+    bearer_token_env_var = "POYO_API_KEY"
+    tool_timeout_sec = 45
+    ```
+
+    保存后开启新的 Codex 会话。类型化工具和 Agent Skill 的配置见 [Codex 指南](/zh/integrations/codex)。
+  </Tab>
+  <Tab title="VS Code">
+    运行 **MCP: Open User Configuration** 并添加：
+
+    ```json
+    {
+      "servers": {
+        "poyo": {
+          "type": "stdio",
+          "command": "npx",
+          "args": ["-y", "@poyoapi/mcp"],
+          "env": {
+            "POYO_API_KEY": "${input:poyo-api-key}"
+          }
+        }
+      },
+      "inputs": [
+        {
+          "type": "promptString",
+          "id": "poyo-api-key",
+          "description": "PoYo API key",
+          "password": true
+        }
+      ]
+    }
+    ```
+
+    验证步骤见 [VS Code 指南](/zh/integrations/vscode)。
+  </Tab>
+  <Tab title="其他客户端">
+    使用 Streamable HTTP，并配置以下接口和请求头：
+
+    ```text
+    URL: https://api.poyo.ai/mcp
+    Authorization: Bearer YOUR_API_KEY
+    ```
+
+    如果客户端只支持 stdio，请配置本地桥接：
+
+    ```json
+    {
+      "mcpServers": {
+        "poyo": {
+          "command": "npx",
+          "args": ["-y", "@poyoapi/mcp"],
+          "env": { "POYO_API_KEY": "YOUR_API_KEY" }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+  不要把 API Key 放进提示词、URL、客户端应用或提交的配置中。优先使用环境变量或客户端的安全输入。
+</Warning>
+
+## 验证连接
+
+向助手提问：
+
+```text
+Use PoYo to check my account, find an image model for a cinematic product
+photo, show its input schema, and explain which execution tool
+you would use. Do not run a paid request yet.
+```
+
+连接正常时，助手可以调用 `poyo_account`、`poyo_search_models` 和 `poyo_get_model_schema`。
+
+## 可用工具
+
+### 发现
+
+| 工具 | 作用 |
+|---|---|
+| `poyo_search_models` | 按查询词、服务类型、分类或标签搜索模型 |
+| `poyo_get_model_schema` | 读取当前的输入 / 输出 schema、示例、协议和能力 |
+
+### 执行
+
+| 工具 | 作用 |
+|---|---|
+| `poyo_chat` | 运行对话，并返回一个完整的 MCP Tool Result |
+| `poyo_run_model` | 运行生成任务，最多等待 30 秒 |
+| `poyo_submit_job` | 提交长时间运行的生成任务，并返回 `task_id` |
+| `poyo_check_job` | 检查任务状态并获取输出 |
+
+### 工具类
+
+| 工具 | 作用 |
+|---|---|
+| `poyo_account` | 读取已认证账户和积分信息 |
+
+## 试试这些请求
+
+### 生成图片
+
+> “找一个适合拍电影感产品照的图像模型，然后生成这张图片。”
+
+助手会搜索目录、检查模型 schema，然后调用 `poyo_run_model`。
+
+### 把图片转成视频
+
+> “找一个能接受这张图片的模型，生成一段五秒的视频，并等待结果。”
+
+助手会检查兼容的模型，调用 `poyo_submit_job`，再用 `poyo_check_job` 轮询返回的 `task_id`。
+
+## 加载类型化模型工具
+
+默认接口只暴露一组精简的发现和执行工具。需要模型专属的 JSON Schema 时，添加明确的模型 ID：
+
+```text
+https://api.poyo.ai/mcp?models=flux-schnell,tripo3d-h3.1-text-to-3d
+```
+
+分类筛选、选择建议和数量限制见[选择 MCP 工具](/zh/integrations/mcp-filtering)。
+
+## 处理长时间运行的任务
+
+短任务使用 `poyo_run_model`，长时间运行的媒体任务使用 `poyo_submit_job`。轮询、标准化状态、重试和结果处理见[任务生命周期](/zh/integrations/tasks-results)。
+
+## 工作原理
+
+1. MCP 客户端向 PoYo 发送工具请求；当工具需要认证时附带 Bearer token。
+2. 公开发现直接读取实时能力目录，不访问账户。
+3. 需认证的工具遵循与公开 API 相同的访问、余额和路由规则。
+
+## 故障排查
+
+认证、工具缺失、流式行为、任务恢复、错误码和重试建议见[集成故障排查](/zh/integrations/troubleshooting)。

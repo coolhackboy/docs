@@ -1,0 +1,121 @@
+---
+title: "终端用户识别（X-End-User-ID）"
+description: "在统一生成接口和原生 Chat 接口中发送 X-End-User-ID，以便在同一个 API Key 下封禁单个调用者。"
+icon: "id-card"
+---
+
+# 指南
+
+在 `X-End-User-ID` 请求头中填入使用你应用的那个人的稳定 ID。PoYo 会将该 ID 与发送它的 API Key 关联存储。之后你可以封禁这个人，而无需轮换或停用 API Key。
+
+## 适用范围
+
+在以下请求中发送该请求头：
+
+- 统一生成：`POST https://api.poyo.ai/api/generate/submit`
+- 原生 Chat：
+  - `POST /v1/chat/completions`
+  - `POST /v1/responses`
+  - `POST /v1/messages`（Claude Messages，使用 `x-api-key` 认证）
+  - `POST /v1beta/models/{model}:generateContent` 和 `:streamGenerateContent`
+
+## API Key 开关
+
+在 [API Key 页面](https://poyo.ai/dashboard/api-key)，打开该 API Key 的 **End users** 对话框。开关名为 **Require an end user ID**。
+
+在该 API Key 的 End users 对话框中开启 **Require an end user ID** 后，生成和对话请求都必须包含 `X-End-User-ID`。缺少该请求头时，`POST /api/generate/submit` 和原生 Chat 返回 HTTP 400，`message` 为 `The X-End-User-ID header is missing. This API key requires it on generation and chat requests.`
+
+**Require an end user ID** 关闭时，不带该请求头的请求照常工作，PoYo 不会查询封禁状态。带了该请求头的请求仍会检查该 ID 是否被封禁。某个 ID 第一次出现时，PoYo 会记录它。
+
+## 请求头与 ID 规则
+
+| | |
+|---|---|
+| 请求头名称 | `X-End-User-ID` |
+| 值 | 1–128 个字符，区分大小写，需匹配 `^[A-Za-z0-9._:-]{1,128}$` |
+
+`User-1` 和 `user-1` 是不同的 ID。包含该字符集以外的字符，或长度超过 128 个字符时，返回 HTTP 400，`message` 为 `End user ID is invalid. Use 1-128 characters: letters, numbers, and . _ : -.`。空值或只含空白的值视为缺少该请求头。
+
+```
+X-End-User-ID: YOUR_END_USER_ID
+```
+
+## 封禁终端用户
+
+封禁作用于**该 API Key + 该终端用户 ID**。同一 API Key 下的其他 ID 仍可正常使用，API Key 本身也保持有效。
+
+在 [API Key 页面](https://poyo.ai/dashboard/api-key)打开 **End users** 对话框。你可以在这里开启或关闭 **Require an end user ID**、搜索已记录的 ID、封禁某个 ID 以及解除封禁。
+
+被封禁的 ID 返回 HTTP 403，`message` 为 `end_user_blocked`。只要请求带有该请求头就会执行检查。开启 **Require an end user ID** 后，每个提交请求和原生 Chat 请求都必须带该请求头，因此每次都会执行检查。
+
+## 错误
+
+通过读取 `error.message` 区分以下情况。
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "The X-End-User-ID header is missing. This API key requires it on generation and chat requests.",
+    "type": "http_error"
+  }
+}
+```
+
+| HTTP | `code` | `error.type` | `error.message` | 触发条件 |
+|---|---|---|---|---|
+| 400 | 400 | `http_error` | `End user ID is invalid. Use 1-128 characters: letters, numbers, and . _ : -.` | 请求头的值不符合 ID 规则 |
+| 400 | 400 | `http_error` | `The X-End-User-ID header is missing. This API key requires it on generation and chat requests.` | 已开启 **Require an end user ID**，且请求头缺失或为空 |
+| 403 | 403 | `permission_error` | `end_user_blocked` | 该 ID 在此 API Key 下已被封禁 |
+
+ID 无效时的响应与上面示例的 JSON 结构相同，只有 `error.message` 不同。被封禁的 ID 使用 `code` 403 和 `error.type` `permission_error`。
+
+## 提交示例
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --header 'X-End-User-ID: user_123' \
+  --data '{
+    "model": "gpt-image-2",
+    "input": {
+      "prompt": "A red bicycle on a quiet street"
+    }
+  }'
+```
+
+## 对话示例
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/v1/chat/completions \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --header 'X-End-User-ID: user_123' \
+  --data '{
+    "model": "gpt-5.2",
+    "messages": [
+      {"role": "user", "content": "Say hello in one sentence."}
+    ]
+  }'
+```
+
+Claude Messages 在 `x-api-key` 之外使用同样的 `X-End-User-ID` 请求头：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/v1/messages \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'anthropic-version: 2023-06-01' \
+  --header 'Content-Type: application/json' \
+  --header 'X-End-User-ID: user_123' \
+  --data '{
+    "model": "claude-sonnet-4-5-20250929",
+    "max_tokens": 256,
+    "messages": [
+      {"role": "user", "content": "Say hello in one sentence."}
+    ]
+  }'
+```

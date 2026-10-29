@@ -1,0 +1,120 @@
+---
+title: "ElevenLabs TTS Turbo v2.5"
+description: "ElevenLabs TTS Turbo v2.5 API 可将最多 40,000 个字符的文本转换为语音，支持选择音色、0.7 到 1.2 的语速，以及可选的 ISO 639-1 语言代码。可传入前文和后文，使多个请求之间的旁白保持连贯。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/elevenlabs-tts-turbo-2-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`elevenlabs-tts-turbo-2-5` 将文本输入转换为低延迟的多语言语音音频。结果以任务 `files` 返回，与图像、视频、3D 和音频任务的标准响应结构一致。
+
+## 模型
+
+- **elevenlabs-tts-turbo-2-5** - ElevenLabs TTS Turbo v2.5 文本转语音生成
+
+## 必填参数
+
+- **text**：要转换为语音的文本
+  - 长度：`1-40000` 个字符
+  - 将长篇旁白拆分为多个请求时，使用 `previous_text` 和 `next_text`
+
+## 可选参数
+
+- **voice**：用于语音生成的音色名称或兼容的音色 ID。默认：`Rachel`
+- **stability**：音色稳定性，`0` 到 `1`。默认：`0.5`
+- **similarity_boost**：音色相似度增强，`0` 到 `1`。默认：`0.75`
+- **style**：风格夸张程度，`0` 到 `1`。默认：`0`
+- **speed**：语速，`0.7` 到 `1.2`。默认：`1`
+- **timestamps**：布尔值。为 `true` 时，生成的音频可能附带时间戳数据
+- **previous_text**：可选，位于 `text` 之前的上下文，有助于保持长篇内容连贯
+- **next_text**：可选，位于 `text` 之后的上下文，有助于保持长篇内容连贯
+- **language_code**：可选的 ISO 639-1 代码，用于强制指定目标语言，例如 `en`、`fr`、`de`、`ja`、`vi`、`hu` 或 `no`
+- **apply_text_normalization**：`auto`、`on` 或 `off`。默认：`auto`
+
+## 示例
+
+### 低延迟产品配音
+
+```json
+{
+  "model": "elevenlabs-tts-turbo-2-5",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Welcome to NovaDesk. Your workspace is ready, your calendar is synced, and your first customer briefing starts in ten minutes.",
+    "voice": "Rachel",
+    "speed": 1.08,
+    "stability": 0.55,
+    "similarity_boost": 0.78,
+    "style": 0.12,
+    "timestamps": false,
+    "apply_text_normalization": "auto"
+  }
+}
+```
+
+### 本地化取货通知
+
+```json
+{
+  "model": "elevenlabs-tts-turbo-2-5",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Bonjour, votre commande est prete. Merci de presenter votre code de retrait a l'accueil.",
+    "voice": "Aria",
+    "language_code": "fr",
+    "stability": 0.6,
+    "similarity_boost": 0.75,
+    "speed": 1,
+    "timestamps": true,
+    "apply_text_normalization": "auto"
+  }
+}
+```
+
+### 长篇内容连贯
+
+```json
+{
+  "model": "elevenlabs-tts-turbo-2-5",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "previous_text": "The city lights faded behind the train.",
+    "text": "Mira lowered her voice and said, keep the map close. By sunrise, everyone will be looking for it.",
+    "next_text": "The carriage fell silent as the tunnel opened ahead.",
+    "voice": "Sarah",
+    "stability": 0.42,
+    "similarity_boost": 0.82,
+    "style": 0.35,
+    "speed": 0.94,
+    "apply_text_normalization": "auto"
+  }
+}
+```
+
+### 富有表现力的主持人开场
+
+```json
+{
+  "model": "elevenlabs-tts-turbo-2-5",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Tonight, the gallery opens with a quiet piano note, then the host welcomes every guest with calm confidence.",
+    "voice": "Laura",
+    "stability": 0.48,
+    "similarity_boost": 0.8,
+    "style": 0.4,
+    "speed": 0.98,
+    "apply_text_normalization": "auto"
+  }
+}
+```
+
+## 注意事项
+
+- PoYo 对外公开的参数名是 `text`。
+- 通过标准任务状态 API 查询状态。
+- 成功响应返回 `files`，其中生成的语音使用 `file_type: audio`。

@@ -1,0 +1,31 @@
+---
+title: "Google"
+description: "通过 Gemini Native 或 Chat Completions 接口调用 Google Gemini 4 和 Gemini 3 系列模型。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/google.json POST /v1beta/models/{model}:{method}"
+---
+
+Google Gemini 模型覆盖推理、编程、多模态输入和 Agent 工作流。本页 Playground 使用 [Gemini Native](/zh/api-manual/chat-series/gemini-native-format)，所有 Gemini 模型都支持该格式。在 `model` 路径参数中选择模型。
+
+## 模型
+
+- **gemini-4-argon** — Gemini 4 Argon，前沿推理模型，上下文 1M，适用于长周期编程和知识工作。
+- **gemini-3.8-flash** — Gemini 3.8 Flash，适用于软件工程、自主 Agent 和企业工作流。
+- **gemini-3.7-flash** — Gemini 3.7 Flash，适用于 Agent 编程、多模态推理和工具使用。
+- **gemini-3.5-flash** — Gemini 3.5 Flash。
+- **gemini-3.1-pro-preview** — Gemini 3.1 Pro Preview。
+- **gemini-3-pro-preview** — Gemini 3 Pro Preview。
+- **gemini-3-flash-preview** — Gemini 3 Flash Preview。
+
+所有 Gemini 模型都支持 Gemini Native 和 Chat Completions。
+
+## 示例
+
+- **基础请求** — 使用 `contents` 和 `generationConfig` 调用 `generateContent`。
+
+流式输出时把 `method` 设为 `streamGenerateContent`。如需以 Chat Completions 格式调用模型，在请求体的 `model` 字段中传入相同的 model id，发送到 [Chat Completions](/zh/api-manual/chat-series/chat-completions)。
+
+## 注意事项
+
+- 在 Gemini Native 中，model id 放在 URL 路径里，而不是请求体中。
+- 全部模型及其支持的格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

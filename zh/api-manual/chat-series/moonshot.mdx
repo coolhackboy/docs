@@ -1,0 +1,23 @@
+---
+title: "Moonshot AI"
+description: "通过 OpenAI 兼容的 Chat Completions 接口调用 Moonshot AI Kimi K3。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/moonshot.json POST /v1/chat/completions"
+---
+
+Kimi K3 是 Moonshot AI 的多模态旗舰模型，上下文窗口为 1M token，适用于长周期编程、深度推理、知识工作和使用工具的 Agent。本页 Playground 使用 [Chat Completions](/zh/api-manual/chat-series/chat-completions)。
+
+## 模型
+
+- **kimi-k3** — Kimi K3。2.8T 参数，上下文 1M token。仅支持 Chat Completions。
+
+## 示例
+
+- **基础聊天补全** — 单条用户消息。
+- **系统提示词** — `system` 消息加 `max_tokens`。
+- **流式输出** — `stream: true`，以 SSE 返回。
+
+## 注意事项
+
+- `kimi-k3` 只接受 `/v1/chat/completions`。
+- 全部模型及其支持的格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

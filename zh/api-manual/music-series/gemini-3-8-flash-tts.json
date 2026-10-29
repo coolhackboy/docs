@@ -1,0 +1,358 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Gemini 3.8 Flash TTS API",
+    "description": "Gemini 3.8 Flash TTS API 使用预设音色和独立的风格指令，将文本稿或双人对话转换为 WAV 语音。完整输入限制为 8,192 个 token。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Gemini 3.8 Flash TTS 任务",
+        "description": "根据文本稿或双人对话生成原生 WAV 语音，支持风格指导。",
+        "operationId": "submit_gemini_3_8_flash_tts",
+        "tags": [
+          "Gemini 3.8 Flash TTS"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "model": "gemini-3.8-flash-tts",
+                    "input": {
+                      "text": "Hello! Welcome to PoYo."
+                    }
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "model": "gemini-3.8-flash-tts",
+                    "input": {
+                      "speakers": [
+                        {
+                          "speaker_id": "host",
+                          "voice": "Kore"
+                        },
+                        {
+                          "speaker_id": "guest",
+                          "voice": "Puck"
+                        }
+                      ],
+                      "turns": [
+                        {
+                          "speaker_id": "host",
+                          "text": "Welcome!"
+                        },
+                        {
+                          "speaker_id": "guest",
+                          "text": "Thank you.",
+                          "style_instructions": "Warm and friendly."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务已受理；请查询任务获取最终文件。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "gemini-3.8-flash-tts"
+            ]
+          },
+          "input": {
+            "$ref": "#/components/schemas/ModelInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的完成或失败回调 URL。"
+          }
+        }
+      },
+      "ModelInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "voice": {
+            "enum": [
+              "Achernar",
+              "Achird",
+              "Algenib",
+              "Algieba",
+              "Alnilam",
+              "Aoede",
+              "Autonoe",
+              "Callirrhoe",
+              "Charon",
+              "Despina",
+              "Enceladus",
+              "Erinome",
+              "Fenrir",
+              "Gacrux",
+              "Iapetus",
+              "Kore",
+              "Laomedeia",
+              "Leda",
+              "Orus",
+              "Pulcherrima",
+              "Puck",
+              "Rasalgethi",
+              "Sadachbia",
+              "Sadaltager",
+              "Schedar",
+              "Sulafat",
+              "Umbriel",
+              "Vindemiatrix",
+              "Zephyr",
+              "Zubenelgenubi"
+            ],
+            "type": "string",
+            "default": "Kore",
+            "description": "单人模式的音色，默认 Kore。使用 speakers 和 turns 时省略。"
+          },
+          "speakers": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "required": [
+                "speaker_id",
+                "voice"
+              ],
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "voice": {
+                  "enum": [
+                    "Achernar",
+                    "Achird",
+                    "Algenib",
+                    "Algieba",
+                    "Alnilam",
+                    "Aoede",
+                    "Autonoe",
+                    "Callirrhoe",
+                    "Charon",
+                    "Despina",
+                    "Enceladus",
+                    "Erinome",
+                    "Fenrir",
+                    "Gacrux",
+                    "Iapetus",
+                    "Kore",
+                    "Laomedeia",
+                    "Leda",
+                    "Orus",
+                    "Pulcherrima",
+                    "Puck",
+                    "Rasalgethi",
+                    "Sadachbia",
+                    "Sadaltager",
+                    "Schedar",
+                    "Sulafat",
+                    "Umbriel",
+                    "Vindemiatrix",
+                    "Zephyr",
+                    "Zubenelgenubi"
+                  ],
+                  "type": "string"
+                },
+                "speaker_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "须包含非空白文本。"
+                }
+              }
+            },
+            "description": "对话模式下须与 turns 同时提供。必须恰好两位说话人，且 speaker_id 互不相同且非空。此时省略 text 和顶层 voice。"
+          },
+          "turns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "required": [
+                "speaker_id",
+                "text"
+              ],
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "speaker_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "须包含非空白文本。"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "须包含非空白文本。"
+                },
+                "style_instructions": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "对话模式下须与 speakers 同时提供。至少一个 turn；speaker_id 必须引用已配置的说话人。每个 turn 支持可选的 style_instructions。"
+          },
+          "enable_safety_checker": {
+            "type": "boolean",
+            "default": true,
+            "description": "启用输入安全检查。如适用，关闭此项需要账户授权。"
+          },
+          "style_instructions": {
+            "type": "string",
+            "description": "全局演绎风格，与文本稿分开。"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "单人模式的文本稿。单人模式必填。使用 speakers 和 turns 时省略。完整输入限制为 8192 个 token。须包含非空白文本。"
+          }
+        },
+        "description": "使用 text（单人）或 speakers 加 turns（对话）其中一种。两种模式互斥；对话模式不能包含顶层 text 或 voice。"
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+---
+title: "Gemini Native"
+description: "Gemini 原生格式 API 调用 generateContent 和 streamGenerateContent。请求使用 contents 和 parts，可包含文本和内联图像数据。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/gemini-native-format.json POST /v1beta/models/{model}:{method}"
+---
+
+- 使用 Google 原生 API 格式调用 Gemini 模型
+- 支持同步和流式两种生成方法
+- 参数精简，便于快速上手
+
+## 使用示例
+
+### 生成内容
+
+接口：
+
+```text  theme={null}
+POST /v1beta/models/gemini-3-flash-preview:generateContent
+```
+
+请求体：
+
+```json  theme={null}
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Summarize the goals of the new night mode in one sentence."
+        }
+      ]
+    }
+  ],
+  "generationConfig": {
+    "maxOutputTokens": 256,
+    "temperature": 0.7
+  }
+}
+```
+
+### 流式生成内容
+
+接口：
+
+```text  theme={null}
+POST /v1beta/models/gemini-3-flash-preview:streamGenerateContent
+```
+
+请求体：
+
+```json  theme={null}
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Generate 5 short feature names for an AI writing assistant."
+        }
+      ]
+    }
+  ],
+  "generationConfig": {
+    "maxOutputTokens": 256
+  }
+}
+```
+
+### 多模态输入
+
+```json  theme={null}
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Describe the image and write concise alt text."
+        },
+        {
+          "inlineData": {
+            "mimeType": "image/png",
+            "data": "BASE64_IMAGE_DATA"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+## 注意事项
+
+* 使用 `generateContent` 获取完整 JSON 响应。
+* 使用 `streamGenerateContent` 进行流式生成。
+* 尽可能把文本指令放在多模态 part 之前。
+
+## 响应
+
+`generateContent` 直接返回 Gemini `GenerateContentResponse` 对象，不带 `code` / `data` 包装。文本位于 `candidates[].content.parts[].text`，token 计数位于 `usageMetadata`。思考模型可能会添加带 `thought: true` 或 `thoughtSignature` 的 part；跳过没有 `text` 的 part 即可。
+
+## 流式输出
+
+`streamGenerateContent` 返回 `text/event-stream`。每个事件是一行包含部分 `GenerateContentResponse` 的 `data:`，流以 `data: [DONE]` 结束。接受 `alt=sse` 查询参数，但不是必需的。
+
+```text
+data: {"candidates":[{"content":{"parts":[{"thought":true}],"role":"model"}}],"usageMetadata":{"promptTokenCount":260,...}}
+data: {"candidates":[{"content":{"parts":[{"text":"OK."}],"role":"model"}}],"usageMetadata":{"candidatesTokenCount":2,...}}
+data: {"candidates":[{"content":{"parts":[{"thoughtSignature":"..."}],"role":"model"},"finishReason":"STOP"}],"usageMetadata":{...}}
+data: [DONE]
+```
+
+- 按顺序拼接各个 `text` part。最后一个事件携带 `finishReason`。
+
+## 错误
+
+- `401`：缺少 API Key 或 API Key 无效。
+- `400`：请求无效，或模型不是 Gemini 模型。响应体使用 Google 错误结构：`{"error": {"code": 400, "message": "...", "status": "INVALID_ARGUMENT"}}`。
+- `404`：未知的 model id。
+
+响应体示例见[错误码](/zh/api-manual/error-codes#llm-接口错误)，哪些模型支持此格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

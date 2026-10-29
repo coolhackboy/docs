@@ -1,0 +1,81 @@
+---
+title: "PoYo Agent Skill"
+description: "在编程 Agent 中安装并使用 poyo-ai-models 工作流"
+icon: "wand-magic-sparkles"
+---
+
+# PoYo Agent Skill
+
+`poyo-ai-models` Skill 让兼容的编程 Agent 学会发现模型、校验 schema、安全执行，以及恢复异步任务。
+
+该 Skill 从 `poyo-devtools` 仓库的以下目录分发：
+
+```text
+skills/poyo-ai-models
+```
+
+无论是否连接 MCP 都可以使用。如果已连接 PoYo MCP，Agent 可以使用 MCP 工具；否则会通过 [PoYo CLI](/zh/integrations/cli) 以 `npx @poyoapi/cli` 运行模型。
+
+## 安装
+
+在项目目录中运行以下命令，按需把 `claude-code` 换成 `codex` 或 `cursor`。添加 `--global` 可为所有项目安装，省略 `--agent` 可交互选择其他客户端：
+
+```bash
+npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
+```
+
+支持的客户端包括 Codex、Claude Code、Cursor、GitHub Copilot，以及任何支持 Agent Skills 的客户端。安装器需要 Node.js 18 或更高版本；它使用的 CLI 需要 Node.js 20 或更高版本。
+
+在让 Agent 运行模型之前，先确认 Key 可用：
+
+```bash
+npx -y @poyoapi/cli auth login
+npx -y @poyoapi/cli account
+```
+
+完整配置（包括示例提示词）见[快速开始](/zh/integrations/quickstart)。源码：[PoyoAPI/poyo-devtools](https://github.com/PoyoAPI/poyo-devtools)。
+
+## 执行方式
+
+- **已连接 MCP**：Agent 调用 PoYo MCP 工具，例如 `poyo_search_models`、`poyo_run_model` 和 `poyo_check_job`。见[通过 MCP 连接](/zh/integrations/mcp)。
+- **未连接 MCP**：Agent 运行 `npx @poyoapi/cli`，例如先 `submit MODEL_ID ...`，再 `task wait TASK_ID`。CLI 使用 `auth login` 保存的 Key。
+- **流式对话**：Agent 使用 CLI，因为 MCP 的 `poyo_chat` 只返回一个完整结果。
+
+## 工作流程
+
+Skill 会指示 Agent：
+
+1. 复述模态、输入、约束、输出要求和预算。
+2. 搜索生产环境的能力目录。
+3. 检查所选模型的 schema。
+4. 在非流式 MCP 对话、CLI 流式对话、短时生成和异步提交之间做出选择。
+5. 轮询排队中 / 运行中的任务，直到成功或失败。
+6. 报告模型 ID、状态、输出以及部分失败情况。
+
+## 防护规则
+
+- 不要编造模型 ID 或参数。
+- 不要把 API Key 写进提示词或提交的文件。
+- 超时或传输失败后不要自动重新提交请求；先确认是否已创建任务。
+- 任务仍在排队或运行时，不要声称已完成。
+- 保留任务 ID，以便中断的工作流无需重新提交即可恢复。
+
+## 故障排查
+
+### `auth login` 后认证失败
+
+凭据优先级依次为 `--api-key`、`POYO_API_KEY`、系统密钥环、本地配置。旧的或无效的 `POYO_API_KEY` 环境变量会覆盖 `auth login` 保存的 Key。检查当前使用的来源：
+
+```bash
+npx -y @poyoapi/cli auth status
+```
+
+输出会显示来源，例如 `(environment)` 或 `(keyring)`。取消设置过期的变量或更新它。
+
+### `npx skills add` 报错 "Failed to clone"
+
+安装器从 GitHub 克隆。请确认你的网络能访问 `github.com`，必要时为 git 配置代理。
+
+### 在 Windows 上 JSON 输入出错
+
+在 Windows 上，内联的 `--input '{...}'` JSON 经常被 shell 引号处理破坏。优先使用 schema 参数，例如 `--prompt "..." --resolution 1K`，或把请求写入文件并通过 `--input-file` 传入。

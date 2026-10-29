@@ -1,0 +1,491 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - MiniMax Music 2.6 API",
+    "description": "MiniMax Music 2.6 API 根据风格提示词生成完整曲目，可使用提供的歌词、根据提示词生成的歌词，或纯音乐模式。音频可按文档列出的采样率和比特率以 MP3、WAV 或 PCM 格式返回。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 MiniMax Music 2.6 任务",
+        "description": "根据风格提示词、可选歌词、歌词优化或纯音乐模式生成完整音乐曲目。",
+        "operationId": "submitMiniMaxMusic26Task",
+        "tags": [
+          "MiniMax Music 2.6"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "vocal-track": {
+                  "summary": "带歌词的人声音乐生成",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "City pop, 80s retro, groovy synth bass, warm female vocal, nostalgic night drive",
+                      "lyrics": "[Verse]\nStreetlights flicker in the rearview glow\n[Chorus]\nWe keep driving where the midnight winds blow",
+                      "is_instrumental": false,
+                      "audio_setting": {
+                        "sample_rate": 44100,
+                        "bitrate": 256000,
+                        "format": "mp3"
+                      }
+                    }
+                  }
+                },
+                "lyrics-optimize": {
+                  "summary": "使用歌词优化的人声音乐生成",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Modern cinematic pop ballad, emotional male vocal, piano intro, wide chorus, 92 BPM",
+                      "lyrics_optimizer": true,
+                      "is_instrumental": false,
+                      "audio_setting": {
+                        "sample_rate": 44100,
+                        "bitrate": 256000,
+                        "format": "mp3"
+                      }
+                    }
+                  }
+                },
+                "instrumental-track": {
+                  "summary": "纯音乐生成",
+                  "value": {
+                    "model": "minimax-music-2.6",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Minimal piano and soft strings for a quiet sunrise over the ocean",
+                      "is_instrumental": true,
+                      "audio_setting": {
+                        "sample_rate": 32000,
+                        "bitrate": 128000,
+                        "format": "wav"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                },
+                "examples": {
+                  "submitted": {
+                    "summary": "已提交的任务",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "not_started",
+                        "created_time": "2026-04-15T10:30:00"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "获取 MiniMax Music 2.6 任务状态",
+        "description": "获取任务状态和生成的音乐文件。",
+        "operationId": "getMiniMaxMusic26TaskStatus",
+        "tags": [
+          "MiniMax Music 2.6"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "description": "提交接口返回的任务 ID。",
+            "schema": {
+              "type": "string"
+            },
+            "example": "task-unified-1757165031-uyujaw3d"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取任务状态",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "examples": {
+                  "finished": {
+                    "summary": "已完成的任务",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "finished",
+                        "credits_amount": 8,
+                        "files": [
+                          {
+                            "file_url": "https://cdn.doculator.org/audios/task-unified-1757165031-uyujaw3d/task-unified-1757165031-uyujaw3d.mp3",
+                            "file_type": "audio"
+                          }
+                        ],
+                        "created_time": "2026-04-15T10:30:00",
+                        "progress": 100,
+                        "error_message": null
+                      }
+                    }
+                  },
+                  "running": {
+                    "summary": "运行中的任务",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "running",
+                        "credits_amount": 8,
+                        "files": [],
+                        "created_time": "2026-04-15T10:30:00",
+                        "progress": 45,
+                        "error_message": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型标识符。\n\n此接口必须为 `minimax-music-2.6`。",
+            "enum": [
+              "minimax-music-2.6"
+            ],
+            "example": "minimax-music-2.6"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "description": "音乐生成的输入参数。如果 `lyrics` 为空，需将 `is_instrumental` 或 `lyrics_optimizer` 之一设为 `true`。",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "必填的音乐提示词，描述风格、情绪、流派、配器、节奏、人声方向或场景。",
+                "minLength": 10,
+                "maxLength": 2000,
+                "example": "City pop, 80s retro, groovy synth bass, warm female vocal, nostalgic night drive"
+              },
+              "lyrics": {
+                "type": "string",
+                "description": "用于人声生成的可选歌词。除非 `is_instrumental` 或 `lyrics_optimizer` 为 `true`，否则必填。",
+                "maxLength": 3500,
+                "example": "[Verse]\nStreetlights flicker in the rearview glow\n[Chorus]\nWe keep driving where the midnight winds blow"
+              },
+              "lyrics_optimizer": {
+                "type": "boolean",
+                "description": "为 `true` 且 `lyrics` 为空时，模型根据提示词自动生成歌词。",
+                "default": false,
+                "example": true
+              },
+              "is_instrumental": {
+                "type": "boolean",
+                "description": "为 `true` 时，生成不含人声的纯音乐。",
+                "default": false,
+                "example": false
+              },
+              "audio_setting": {
+                "type": "object",
+                "description": "可选的音频输出设置。仅支持 `sample_rate`、`bitrate` 和 `format`。",
+                "additionalProperties": false,
+                "properties": {
+                  "sample_rate": {
+                    "type": "integer",
+                    "description": "输出采样率。",
+                    "enum": [
+                      16000,
+                      24000,
+                      32000,
+                      44100
+                    ],
+                    "default": 44100,
+                    "example": 44100
+                  },
+                  "bitrate": {
+                    "type": "integer",
+                    "description": "输出比特率。",
+                    "enum": [
+                      32000,
+                      64000,
+                      128000,
+                      256000
+                    ],
+                    "default": 256000,
+                    "example": 256000
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "输出音频格式。",
+                    "enum": [
+                      "mp3",
+                      "wav",
+                      "pcm"
+                    ],
+                    "default": "mp3",
+                    "example": "mp3"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-15T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "credits_amount",
+              "files",
+              "created_time",
+              "progress"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "finished",
+                "description": "任务状态。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "credits_amount": {
+                "type": "number",
+                "example": 8,
+                "description": "任务消耗的积分"
+              },
+              "files": {
+                "type": "array",
+                "description": "生成的任务文件。已完成的音乐任务至少返回一个音频文件。",
+                "items": {
+                  "$ref": "#/components/schemas/FileItem"
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-15T10:30:00"
+              },
+              "progress": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "example": 100
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true,
+                "example": null
+              }
+            }
+          }
+        }
+      },
+      "FileItem": {
+        "type": "object",
+        "required": [
+          "file_url",
+          "file_type"
+        ],
+        "properties": {
+          "file_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "生成文件的 URL",
+            "example": "https://cdn.doculator.org/audios/task-unified-1757165031-uyujaw3d/task-unified-1757165031-uyujaw3d.mp3"
+          },
+          "file_type": {
+            "type": "string",
+            "description": "生成文件的类型",
+            "enum": [
+              "audio",
+              "other"
+            ],
+            "example": "audio"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

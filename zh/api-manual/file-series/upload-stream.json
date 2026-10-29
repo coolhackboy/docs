@@ -1,0 +1,382 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - 文件流上传",
+    "description": "使用 multipart/form-data 格式直接上传文件到 PoYo AI",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/common/upload/stream": {
+      "post": {
+        "summary": "文件流上传",
+        "description": "使用 multipart/form-data 格式上传文件。支持图片和视频上传。视频默认存储在 temp/videos 前缀下，大小上限 100MB，24 小时后过期。",
+        "operationId": "uploadFileStream",
+        "tags": [
+          "File Upload"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadStreamRequest"
+              },
+              "examples": {
+                "basic-upload": {
+                  "summary": "基础文件上传",
+                  "value": {
+                    "file": "(binary file data)"
+                  }
+                },
+                "custom-naming-snake-case": {
+                  "summary": "使用自定义路径和文件名上传（snake_case）",
+                  "value": {
+                    "file": "(binary file data)",
+                    "upload_path": "photos",
+                    "file_name": "vacation-photo.jpg"
+                  }
+                },
+                "custom-naming-camel-case": {
+                  "summary": "使用自定义路径和文件名上传（camelCase）",
+                  "value": {
+                    "file": "(binary file data)",
+                    "uploadPath": "documents",
+                    "fileName": "profile-image.png"
+                  }
+                },
+                "video-upload": {
+                  "summary": "视频上传",
+                  "value": {
+                    "file": "(binary video data)",
+                    "file_name": "input-video.mp4"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "文件上传成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求错误 - 文件类型不支持或文件为空",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "unsupported-type": {
+                    "summary": "文件类型不支持",
+                    "value": {
+                      "detail": "Unsupported file type: application/pdf"
+                    }
+                  },
+                  "empty-file": {
+                    "summary": "文件为空",
+                    "value": {
+                      "detail": "File is empty"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权 - 缺少认证信息或认证无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "not-authenticated": {
+                    "summary": "未认证",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "无法处理的请求 - 缺少必填的 file 字段",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                },
+                "examples": {
+                  "missing-file": {
+                    "summary": "缺少 file 字段",
+                    "value": {
+                      "detail": [
+                        {
+                          "loc": [
+                            "body",
+                            "file"
+                          ],
+                          "msg": "field required",
+                          "type": "value_error.missing"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超出速率限制 - 每个已认证用户在每个上传接口上，每 60 秒固定窗口内最多 10 次请求",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "rate-limit": {
+                    "summary": "超出速率限制",
+                    "value": {
+                      "detail": "Rate limit exceeded"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器错误 - 存储连接或上传失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "server-error": {
+                    "summary": "服务器错误",
+                    "value": {
+                      "detail": "Upload failed: Failed to write file to storage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "请求体过大 - 视频超过 100MB 上限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "video-too-large": {
+                    "summary": "视频过大",
+                    "value": {
+                      "detail": "Video file too large. Maximum size is 100MB"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "UploadStreamRequest": {
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "要上传的文件二进制数据。\n\n**支持的图片格式**：JPEG、PNG、GIF、WebP\n\n**支持的视频格式**：MP4、WebM、QuickTime/MOV、AVI、MKV\n\n**上限**：每次请求 1 个文件。视频最大 100MB。\n\n**保留时长**：图片 72 小时后过期。存储在 temp/videos 生命周期前缀下的视频 24 小时后过期。\n\n**注意**：系统会自动识别文件类型并分类。"
+          },
+          "upload_path": {
+            "type": "string",
+            "description": "自定义存储目录路径。\n\n支持两种命名方式：\n- **snake_case**：`upload_path`\n- **camelCase**：`uploadPath`\n\n未指定时，系统使用 `temp`。使用默认 `temp` 路径的视频会存储为 `temp/videos`。\n\n**注意**：API 路由会把自定义路径统一归到 `temp/` 前缀下。",
+            "example": "photos"
+          },
+          "file_name": {
+            "type": "string",
+            "description": "上传文件的自定义文件名。\n\n支持两种命名方式：\n- **snake_case**：`file_name`\n- **camelCase**：`fileName`\n\n未指定时，系统会按以下格式生成唯一文件名：`{timestamp}_{random}_{extension}`\n\n**自动生成的文件名示例**：`20251229130857_a8B9cD2e.png`",
+            "example": "photo.png"
+          }
+        }
+      },
+      "UploadResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "code",
+          "msg",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true,
+            "description": "上传是否成功"
+          },
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "msg": {
+            "type": "string",
+            "example": "File uploaded successfully",
+            "description": "响应消息"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "file_id",
+              "file_name",
+              "file_size",
+              "mime_type",
+              "file_url",
+              "download_url",
+              "expires_at"
+            ],
+            "properties": {
+              "file_id": {
+                "type": "string",
+                "example": "872defd8180ee9c6d32265ef4e8d255b",
+                "description": "文件唯一标识（MD5 哈希）"
+              },
+              "file_name": {
+                "type": "string",
+                "example": "test-stream.png",
+                "description": "存储后的文件名"
+              },
+              "original_name": {
+                "type": "string",
+                "example": "uploaded-file.png",
+                "description": "上传文件的原始文件名"
+              },
+              "file_size": {
+                "type": "integer",
+                "example": 3242,
+                "description": "文件大小（字节）"
+              },
+              "mime_type": {
+                "type": "string",
+                "example": "image/png",
+                "description": "上传文件的 MIME 类型，例如 image/png 或 video/mp4"
+              },
+              "upload_path": {
+                "type": "string",
+                "example": "temp/videos",
+                "description": "存储路径。默认情况下视频上传使用 temp/videos，图片上传使用 temp。"
+              },
+              "file_url": {
+                "type": "string",
+                "format": "uri",
+                "example": "https://storage.poyo.ai/temp/videos/input-video.mp4",
+                "description": "上传文件的直接访问 URL"
+              },
+              "download_url": {
+                "type": "string",
+                "format": "uri",
+                "example": "https://storage.poyo.ai/temp/videos/input-video.mp4",
+                "description": "下载 URL（与 file_url 相同）"
+              },
+              "upload_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-12-29T13:09:04.731057",
+                "description": "上传时间戳，ISO 8601 格式"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-01-01T13:09:04.731057",
+                "description": "过期时间戳，ISO 8601 格式。图片 72 小时后过期；视频 24 小时后过期。"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "描述错误原因的错误信息",
+            "example": "Not authenticated"
+          }
+        }
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "properties": {
+          "detail": {
+            "type": "array",
+            "description": "校验错误列表",
+            "items": {
+              "type": "object",
+              "properties": {
+                "loc": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "校验错误的位置"
+                },
+                "msg": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "错误类型"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

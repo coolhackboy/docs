@@ -1,0 +1,66 @@
+---
+title: "Meshy 6 3D"
+description: "Meshy 6 3D API 从文本、单张图像或同一物体的 1–4 张图像生成 3D 网格。可请求纹理、PBR 贴图、人形骨骼绑定和预设动画，文档列出的输出格式包括 GLB、FBX、OBJ、USDZ 和 STL。"
+icon: "cube"
+openapi: "/zh/api-manual/3d-series/meshy-6-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Meshy 6 3D 通过三个公开 model ID 支持文生 3D、单图生 3D 和多图生 3D。
+
+## 模型
+
+- **meshy-6-text-to-3d** - 从提示词生成 3D 模型
+- **meshy-6-image-to-3d** - 从一张图像生成 3D 模型
+- **meshy-6-multi-image-to-3d** - 从 1-4 张图像生成 3D 模型
+
+## 必填参数
+
+- **model**：`meshy-6-text-to-3d`、`meshy-6-image-to-3d` 或 `meshy-6-multi-image-to-3d`
+- **input.prompt**：`meshy-6-text-to-3d` 必填
+- **input.image_urls**：图像模型必填。`meshy-6-image-to-3d` 只能传 1 张图像，`meshy-6-multi-image-to-3d` 传 1-4 张图像
+
+## 可选参数
+
+- **mode**：仅文生 3D。`preview` 或 `full`。默认 `full`
+- **seed**：仅文生 3D。用于复现结果的整数种子
+- **topology**：`quad` 或 `triangle`。默认 `triangle`
+- **target_polycount**：目标多边形数量。默认 `30000`
+- **should_remesh**：是否启用重新网格化阶段。默认 `true`
+- **symmetry_mode**：`off`、`auto` 或 `on`。默认 `auto`
+- **should_texture**：仅图像模型。是否生成纹理。默认 `true`
+- **enable_pbr**：生成金属度、粗糙度、法线等 PBR 贴图
+- **pose_mode**：`a-pose`、`t-pose`，或空字符串表示不指定姿势
+- **enable_prompt_expansion**：仅文生 3D。是否自动扩写提示词
+- **texture_prompt**：用于引导纹理的文本提示词
+- **texture_image_url**：用于引导纹理的图像 URL
+- **enable_rigging**：是否为人形角色绑定骨骼
+- **rigging_height_meters**：启用骨骼绑定时使用的角色身高。默认 `1.7`
+- **enable_animation**：是否应用动画预设。需要启用骨骼绑定
+- **animation_action_id**：Meshy 动画预设 ID。默认 `1001`
+- **enable_safety_checker**：是否启用输入安全检查。默认 `true`
+- **callback_url**：可选，任务完成通知的 Webhook URL
+
+## 输出
+
+任务结果可能包括：
+
+- `model_glb`
+- `thumbnail`
+- `model_urls`：可用时包括 `glb`、`fbx`、`obj`、`usdz`、`blend` 和 `stl`
+- `texture_urls`：基础色及可选的 PBR 纹理文件
+- 启用动画时包括 `animation_glb` 和 `animation_fbx`
+- 启用骨骼绑定时包括 `rigged_character_glb` 和 `rigged_character_fbx`
+- 启用骨骼绑定时包括 `basic_animations`
+
+每个文件条目在可用时包括 `label`、`file_url`、`file_type`、`format`、`content_type`、`file_name` 和 `file_size`。
+
+## 注意事项
+
+- `meshy-6-image-to-3d` 在 `image_urls` 中只接受一张图像。
+- `meshy-6-multi-image-to-3d` 接受 1-4 张图像。这些图像应从不同角度展示同一物体。
+- API 返回异步任务状态。请轮询统一的任务状态接口，或使用 `callback_url`。

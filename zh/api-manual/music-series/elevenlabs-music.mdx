@@ -1,0 +1,58 @@
+---
+title: "ElevenLabs Music"
+description: "ElevenLabs Music API 可根据文本描述或结构化编曲方案生成音乐。文本请求可设置 3 到 600 秒的时长，或要求输出纯伴奏；编曲方案中每个段落为 3 到 120 秒。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/elevenlabs-music.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`elevenlabs-music` 根据文本或结构化编曲方案生成音乐音频。结果以任务 `files` 返回，与图像、视频、3D 和音频任务的标准响应结构一致。
+
+## 模型
+
+- **elevenlabs-music** - ElevenLabs Music 生成，支持文本和编曲方案控制
+
+## 输入模式
+
+只能提供一种创作控制方式：
+
+- 使用 **text** 提供单段文本描述。
+- 使用 **composition_plan** 进行段落级编排控制。
+- 不要在同一请求中同时传入 `text` 和 `composition_plan`。
+
+## 可选参数
+
+所有支持的 `input` 字段。根据输入模式，`text` 或 `composition_plan` 二者之一为必填：
+
+- **text**：描述要生成的音乐的文本。未提供 `composition_plan` 时必填。长度：`1-4100` 个字符。
+- **composition_plan**：结构化编曲方案。未提供 `text` 时必填。
+  - **positive_global_styles**：要包含的全局风格，字符串数组。
+  - **negative_global_styles**：要避免的全局风格，字符串数组。
+  - **sections**：非空的音乐段落数组。
+    - **section_name**：段落名称，`1-100` 个字符。
+    - **positive_local_styles**：该段落要包含的风格，字符串数组。
+    - **negative_local_styles**：该段落要避免的风格，字符串数组。
+    - **duration**：段落时长（秒），`3-120`。PoYo 对外公开的这个字段以秒为单位。
+    - **lines**：歌词行。每行不超过 `200` 个字符。
+- **duration**：可选的歌曲时长（秒）。提供时必须为 `3-600`。仅可与 `text` 一起使用。
+- **is_instrumental**：为 `true` 时请求仅输出伴奏。仅可与 `text` 一起使用。
+- **respect_sections_durations**：控制对段落时长的遵循严格程度。仅可与 `composition_plan` 一起使用。
+- **output_format**：输出格式。默认为 `mp3_44100_128`。
+
+## 输出格式
+
+支持的 `output_format` 值：
+
+`mp3_22050_32`、`mp3_44100_32`、`mp3_44100_64`、`mp3_44100_96`、`mp3_44100_128`、`mp3_44100_192`、`pcm_8000`、`pcm_16000`、`pcm_22050`、`pcm_24000`、`pcm_44100`、`pcm_48000`、`ulaw_8000`、`alaw_8000`、`opus_48000_32`、`opus_48000_64`、`opus_48000_96`、`opus_48000_128`、`opus_48000_192`。
+
+## 注意事项
+
+- `text` 和 `composition_plan` 只能提供其中一个。
+- `duration` 和 `is_instrumental` 只能与 `text` 一起使用。
+- `respect_sections_durations` 只能与 `composition_plan` 一起使用。
+- 通过标准任务状态 API 查询状态，而不是音乐详情接口。
+- 成功响应返回 `files`，其中生成的音乐使用 `file_type: audio`。

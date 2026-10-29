@@ -1,0 +1,77 @@
+---
+title: "ElevenLabs V4 Turbo TTS"
+description: "ElevenLabs V4 Turbo TTS API 可将最多 5,000 个字符的文本转换为更低延迟的语音，支持音色、稳定性和相似度控制。可从 19 种音频格式中选择一种，并可选择将时间戳作为单独文件返回。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/elevenlabs-v4-turbo-tts.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`elevenlabs-v4-turbo-tts` 将文本转换为低延迟的语音音频。结果以任务 `files` 返回，与图像、视频、3D 和音频任务的标准响应结构一致。
+
+## 模型
+
+- **elevenlabs-v4-turbo-tts** - ElevenLabs V4 Turbo 文本转语音生成
+
+## 必填参数
+
+- **text**：要转换为语音的文本
+  - 长度：`1-5000` 个字符，需包含非空白文本
+
+## 可选参数
+
+- **voice**：音色名称或音色 ID。默认：`Rachel`
+- **stability**：音色稳定性，`0` 到 `1`。默认：`0.5`
+- **similarity_boost**：音色相似度，`0` 到 `1`。默认：`0.75`
+- **language_code**：可选的 ISO 639-1 语言代码
+- **apply_text_normalization**：`auto`、`on` 或 `off`。默认：`auto`
+- **timestamps**：布尔值。为 `true` 时，时间数据可能作为单独的 JSON 文件返回。默认：`false`
+- **output_format**：音频编码、采样率和码率。默认：`mp3_44100_128`
+- **callback_url**：可选的 Webhook URL，用于任务完成通知
+
+## 输出格式
+
+支持的值：`mp3_22050_32`、`mp3_44100_32`、`mp3_44100_64`、`mp3_44100_96`、`mp3_44100_128`、`mp3_44100_192`、`pcm_8000`、`pcm_16000`、`pcm_22050`、`pcm_24000`、`pcm_44100`、`pcm_48000`、`ulaw_8000`、`alaw_8000`、`opus_48000_32`、`opus_48000_64`、`opus_48000_96`、`opus_48000_128`、`opus_48000_192`。
+
+MP3 和 Opus 是编码音频。PCM 是不带 WAV 头的原始音频。µ-law 和 A-law 是电话通信格式。输出保留原始编码和文件扩展名。解码原始音频时请使用所选的采样率。
+
+## 示例
+
+### 默认语音
+
+```json
+{
+  "model": "elevenlabs-v4-turbo-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Hello! Welcome to PoYo.",
+    "voice": "Rachel",
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "apply_text_normalization": "auto"
+  }
+}
+```
+
+### 带时间戳的原始 PCM
+
+```json
+{
+  "model": "elevenlabs-v4-turbo-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Welcome to PoYo.",
+    "timestamps": true,
+    "output_format": "pcm_24000"
+  }
+}
+```
+
+## 注意事项
+
+- 通过标准任务状态 API 查询状态。
+- 成功响应返回 `files`。生成的语音使用 `file_type: audio`。
+- 启用 `timestamps` 且返回了时间数据时，时间 JSON 是一个单独的文件项，`file_type: other`。

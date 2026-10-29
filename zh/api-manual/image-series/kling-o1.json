@@ -1,0 +1,330 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling-O1-Image-Edit API",
+    "description": "Kling O1 API 使用 1 到 10 张参考图编辑图像，可选使用角色或物体元素。输出为 1K 或 2K，支持预设宽高比或 auto。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Kling-O1-Image-Edit 生成任务",
+        "description": "高一致性图像生成模型，针对精确参考对齐和精细细节控制优化，适合以角色和产品为主的场景",
+        "operationId": "submitKlingO1ImageEditTask",
+        "tags": [
+          "Kling-O1-Image-Edit"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "kling-o1-image-edit": {
+                  "summary": "Kling-O1-Image-Edit 图像编辑",
+                  "value": {
+                    "model": "kling-o1-image-edit",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Transform the product shot into a premium studio campaign image",
+                      "image_urls": [
+                        "https://example.com/reference1.png"
+                      ],
+                      "elements": [
+                        {
+                          "frontal_image_url": "https://example.com/subject-front.png",
+                          "reference_image_urls": [
+                            "https://example.com/subject-side.png"
+                          ]
+                        }
+                      ],
+                      "resolution": "2K",
+                      "size": "16:9",
+                      "output_format": "png",
+                      "n": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 400,
+                  "error": {
+                    "message": "Invalid request parameters",
+                    "type": "invalid_request_error"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": 401,
+                  "error": {
+                    "message": "Unauthorized - Invalid API key",
+                    "type": "authentication_error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling-O1-Image-Edit 模型标识符",
+            "enum": [
+              "kling-o1-image-edit"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt",
+              "image_urls"
+            ],
+            "description": "图像编辑的输入参数",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "描述期望输出的编辑提示词",
+                "maxLength": 2000,
+                "example": "Transform the product shot into a premium studio campaign image"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 10,
+                "description": "用于编辑的参考图 URL。kling-o1-image-edit 必填。",
+                "example": [
+                  "https://example.com/reference1.png"
+                ]
+              },
+              "elements": {
+                "type": "array",
+                "description": "可选的元素描述数组，用于控制角色/物体。在提示词中以 @Element1、@Element2 等方式引用。推荐字段为 `frontal_image_url` 和可选的 `reference_image_urls`。",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "frontal_image_url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "主要面部/物体参考的公开图像 URL。"
+                    },
+                    "reference_image_urls": {
+                      "type": "array",
+                      "description": "同一元素的其他可选公开图像 URL。",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "example": [
+                  {
+                    "frontal_image_url": "https://example.com/subject-front.png",
+                    "reference_image_urls": [
+                      "https://example.com/subject-side.png"
+                    ]
+                  }
+                ]
+              },
+              "resolution": {
+                "type": "string",
+                "description": "输出分辨率预设",
+                "enum": [
+                  "1K",
+                  "2K"
+                ],
+                "default": "1K",
+                "example": "2K"
+              },
+              "size": {
+                "type": "string",
+                "description": "输出宽高比预设",
+                "enum": [
+                  "auto",
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "3:2",
+                  "2:3",
+                  "21:9"
+                ],
+                "default": "auto",
+                "example": "16:9"
+              },
+              "output_format": {
+                "type": "string",
+                "description": "输出图像格式。",
+                "enum": [
+                  "jpeg",
+                  "png",
+                  "webp"
+                ],
+                "default": "png",
+                "example": "png"
+              },
+              "n": {
+                "type": "integer",
+                "description": "生成图像数量（1-9）。",
+                "minimum": 1,
+                "maximum": 9,
+                "default": 1,
+                "example": 2
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "描述错误原因的错误信息"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "错误类型标识"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

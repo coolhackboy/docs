@@ -123,3 +123,46 @@ openapi: "/api-manual/image-series/nano-banana.json POST /api/generate/submit"
 - playground 用一个该厂商全部模型都支持的格式，`openapi` 指向厂商 JSON。JSON 复制对应格式页的 schema，只把 `model` 改成该厂商的 `enum` 并给 `default`，不写 `example`。Gemini Native 的 `model` 在路径参数里。
 - 二级标题顺序：`## Models`（每条注明支持的格式或「only」限制）、`## Examples`（对应 JSON examples）、`## Notes`。
 - 不写价格。不要复制格式页的大段参数说明，链接过去即可。
+
+## 中文文档（zh）
+
+英文是源语言，文件在仓库根目录，URL 不带前缀。中文文件放在 `zh/` 下，路径与英文一一对应，例如 `api-manual/image-series/nano-banana.mdx` 对应 `zh/api-manual/image-series/nano-banana.mdx`。翻译人工完成，不用脚本调用 LLM。
+
+新增或修改英文页时，同步改对应中文页（MDX 和 OpenAPI JSON），并在 `docs.json` 的 `en` 和 `zh` 两份导航里都登记。zh 导航里的页面路径带 `zh/` 前缀。
+
+OpenAPI JSON 也有中文版，放在 `zh/` 下的同名路径（如 `zh/api-manual/image-series/nano-banana.json`），并在 `api.openapi` 里登记。中文页 frontmatter 的 `openapi` 指向中文 JSON，例如 `"/zh/api-manual/image-series/nano-banana.json POST /api/generate/submit"`，方法和 path 不变。中文 JSON 与英文 JSON 结构完全一致，只翻译 `description`、`summary`、`title` 这几个字段的字符串；`enum`、`example`、`examples[].value`、`default`、`operationId`、`tags`、属性名都不改。改英文 JSON 时同步改中文 JSON。
+
+### OpenAPI 公共字段
+
+所有接口共用以下写法，新增 JSON 时照抄：
+
+- `securitySchemes` 的 `description` 写清创建 API Key 的入口：**Dashboard → API Key**，链接 `https://poyo.ai/dashboard/api-key`（中文版写 **仪表盘 → API 密钥**，链接 `https://poyo.ai/zh/dashboard/api-key`）。
+- 响应外层的 `code`（integer）写完整 `enum`：`[200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]`，`description` 列出每个值的含义并链接错误码页。
+- 任务 `status` 写完整 `enum`：`["not_started", "running", "finished", "failed"]`，`description` 列出每个值的含义。提交接口的 `example` 仍为 `not_started`，并说明提交时总是这个值。
+
+### 翻译规则
+
+- Frontmatter：只翻译 `title`、`description`、`sidebarTitle`。`openapi`、`icon` 等其他字段原样保留。标题是模型名、厂商名或产品名时不翻译（如 `Nano Banana`、`OpenAI`）。
+- 代码块（含行内代码）整块原样保留，包括代码注释和 JSON 示例里的 prompt。
+- 不翻译：model id、参数名、字段名、枚举值、HTTP 方法与状态码、URL、产品与厂商名、`task_id` / `callback_url` 等 API 术语。
+- 站内链接加 `/zh` 前缀：`/api-manual/...`、`/integrations/...`、`/platform-security/...`、`/index` 分别改成 `/zh/api-manual/...` 等。外部链接不改。
+- 锚点链接：标题翻译后，同步把 `#anchor` 改成中文标题生成的 slug（小写，去掉标点，空格变 `-`，中文字符保留）。
+- MDX 组件标签和属性名不变，只翻译属性里给人看的文字（如 `<Card title="...">` 的 `title`）。`href`、`icon` 不变。
+- 表格、列表、标题层级和段落顺序与英文一致，不增删内容。
+- 用简体中文，中英文之间不强制加空格，标点用全角。
+- OpenAPI 字符串里的 Markdown（行内代码、列表、代码块、链接）保持结构，站内链接同样加 `/zh` 前缀。`Range: 0-1` 这类取值说明照译，数字和单位不变。
+
+### 固定译法
+
+开头任务提示的两种英文写法都统一译为：
+
+```mdx
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+```
+
+二级标题：Models → 模型；Features → 功能；Input modes → 输入模式；Required parameters → 必填参数；Optional parameters → 可选参数；Size → 尺寸；Resolution → 分辨率；Output → 输出；Output Formats → 输出格式；Voice Presets → 预设音色；Examples → 示例；Notes → 注意事项。
+
+术语：task → 任务；callback / webhook → 回调 / Webhook；text-to-image → 文生图；image-to-image → 图生图；text-to-video → 文生视频；image-to-video → 图生视频；prompt → 提示词；aspect ratio → 宽高比；API Key 保持 `API Key`；endpoint → 接口；playground 保持 Playground；credits → 积分；agent 保持 `Agent`，AI agent 写 `AI Agent`，不译成「智能体」或「代理」（「代理」只用于网络代理 proxy）。

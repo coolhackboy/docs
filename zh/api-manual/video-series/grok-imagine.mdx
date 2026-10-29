@@ -1,0 +1,24 @@
+---
+title: "Grok Imagine"
+description: "Grok Imagine API 可根据文本或图片生成 6 秒或 10 秒的视频，支持 1:1、2:3、3:2、16:9 或 9:16。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/grok-imagine.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 Grok Imagine 生成高质量视频。借助文生视频和图生视频能力创作引人入胜的内容。
+
+## 模型
+
+- **grok-imagine** - 视频生成（文生视频和图生视频）
+
+## 功能
+
+- **灵活模式**：文生视频和图生视频
+- **生成风格**：可选 "fun"、"normal" 或 "spicy" 模式
+- **宽高比**：1:1（方形）、2:3（竖版）、3:2（横版）、16:9（宽屏）和 9:16（竖屏）
+- **视频时长**：6 秒或 10 秒（通过 `duration` 参数配置）

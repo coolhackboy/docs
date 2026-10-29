@@ -1,0 +1,432 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Gemini 3.1 Flash TTS API",
+    "description": "Gemini 3.1 Flash TTS API 使用预设音色、行内表达标签和可选的风格指令，将文本转换为单人或双人语音。可设置可选的语言，并返回 MP3、WAV 或 Opus 音频。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Gemini 3.1 Flash TTS 任务",
+        "description": "将文本输入转换为富有表现力的语音音频。",
+        "operationId": "submitGemini31FlashTtsTask",
+        "tags": [
+          "Gemini 3.1 Flash TTS"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "single-audio-tags-mp3": {
+                  "summary": "带音频标签的单人语音",
+                  "value": {
+                    "model": "gemini-3-1-flash-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "text": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
+                      "style_instructions": "Warm, confident product narrator with clear pacing.",
+                      "voice": "Kore",
+                      "temperature": 1,
+                      "output_format": "mp3"
+                    }
+                  }
+                },
+                "multilingual-store-wav": {
+                  "summary": "多语言单音色输出",
+                  "value": {
+                    "model": "gemini-3-1-flash-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "text": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
+                      "style_instructions": "Friendly store assistant voice, natural and concise.",
+                      "voice": "Zephyr",
+                      "language_code": "English (US)",
+                      "temperature": 1,
+                      "output_format": "wav"
+                    }
+                  }
+                },
+                "two-speaker-podcast-ogg": {
+                  "summary": "双人播客对话",
+                  "value": {
+                    "model": "gemini-3-1-flash-tts",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "text": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
+                      "style_instructions": "Conversational podcast tone with distinct speaker energy.",
+                      "speakers": [
+                        {
+                          "speaker_id": "Host",
+                          "voice": "Charon"
+                        },
+                        {
+                          "speaker_id": "Guest",
+                          "voice": "Kore"
+                        }
+                      ],
+                      "temperature": 1,
+                      "output_format": "ogg_opus"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型标识符。",
+            "enum": [
+              "gemini-3-1-flash-tts"
+            ],
+            "example": "gemini-3-1-flash-tts"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "$ref": "#/components/schemas/Gemini31FlashTtsInput"
+          }
+        }
+      },
+      "Gemini31FlashTtsInput": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "要转换为语音的文本。支持在行内用自然语言指定风格、语速、口音和情绪，并支持 [sigh]、[laughing]、[whispering]、[short pause] 等表现力音频标签。多人合成时，在每行前加上与 speakers[].speaker_id 匹配的说话人别名作为前缀。",
+            "minLength": 1,
+            "maxLength": 50000,
+            "example": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes."
+          },
+          "style_instructions": {
+            "type": "string",
+            "description": "可选的风格、表达方式、语速、口音、语气或情绪指令，作用于整个请求。",
+            "example": "Warm, confident product narrator with clear pacing."
+          },
+          "voice": {
+            "$ref": "#/components/schemas/VoiceEnum"
+          },
+          "language_code": {
+            "$ref": "#/components/schemas/LanguageCodeEnum"
+          },
+          "speakers": {
+            "type": "array",
+            "description": "用于对话的说话人对象，必须恰好两个。设置后将忽略顶层的 voice。每个 speaker_id 只能包含字母、数字和下划线，不能有空白字符，在请求内唯一，并须在 text 中用作前缀。",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/SpeakerConfig"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "description": "控制语音变化程度，取值 0 到 2。值越高，表达越多变。",
+            "minimum": 0,
+            "maximum": 2,
+            "default": 1,
+            "example": 1
+          },
+          "output_format": {
+            "type": "string",
+            "description": "音频输出格式。mp3 体积小，推荐用于播放；wav 未压缩，适合后期制作；ogg_opus 兼顾质量与体积。",
+            "enum": [
+              "mp3",
+              "wav",
+              "ogg_opus"
+            ],
+            "default": "mp3",
+            "example": "mp3"
+          }
+        }
+      },
+      "SpeakerConfig": {
+        "type": "object",
+        "required": [
+          "voice",
+          "speaker_id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "voice": {
+            "$ref": "#/components/schemas/VoiceEnum"
+          },
+          "speaker_id": {
+            "type": "string",
+            "description": "别名，只能包含字母、数字和下划线，不能有空白字符，在请求内唯一，在 text 字段中作为前缀用于标识该说话人。",
+            "example": "Host"
+          }
+        }
+      },
+      "VoiceEnum": {
+        "type": "string",
+        "description": "Gemini TTS 预设音色。",
+        "enum": [
+          "Achernar",
+          "Achird",
+          "Algenib",
+          "Algieba",
+          "Alnilam",
+          "Aoede",
+          "Autonoe",
+          "Callirrhoe",
+          "Charon",
+          "Despina",
+          "Enceladus",
+          "Erinome",
+          "Fenrir",
+          "Gacrux",
+          "Iapetus",
+          "Kore",
+          "Laomedeia",
+          "Leda",
+          "Orus",
+          "Pulcherrima",
+          "Puck",
+          "Rasalgethi",
+          "Sadachbia",
+          "Sadaltager",
+          "Schedar",
+          "Sulafat",
+          "Umbriel",
+          "Vindemiatrix",
+          "Zephyr",
+          "Zubenelgenubi"
+        ],
+        "default": "Kore",
+        "example": "Kore"
+      },
+      "LanguageCodeEnum": {
+        "type": "string",
+        "description": "多语言合成的语言。省略时，模型根据文本自动检测。",
+        "enum": [
+          "Arabic (Egypt)",
+          "Bangla (Bangladesh)",
+          "Dutch (Netherlands)",
+          "English (India)",
+          "English (US)",
+          "French (France)",
+          "German (Germany)",
+          "Hindi (India)",
+          "Indonesian (Indonesia)",
+          "Italian (Italy)",
+          "Japanese (Japan)",
+          "Korean (South Korea)",
+          "Marathi (India)",
+          "Polish (Poland)",
+          "Portuguese (Brazil)",
+          "Romanian (Romania)",
+          "Russian (Russia)",
+          "Spanish (Spain)",
+          "Tamil (India)",
+          "Telugu (India)",
+          "Thai (Thailand)",
+          "Turkish (Turkey)",
+          "Ukrainian (Ukraine)",
+          "Vietnamese (Vietnam)",
+          "Afrikaans (South Africa)",
+          "Albanian (Albania)",
+          "Amharic (Ethiopia)",
+          "Arabic (World)",
+          "Armenian (Armenia)",
+          "Azerbaijani (Azerbaijan)",
+          "Basque (Spain)",
+          "Belarusian (Belarus)",
+          "Bulgarian (Bulgaria)",
+          "Burmese (Myanmar)",
+          "Catalan (Spain)",
+          "Cebuano (Philippines)",
+          "Chinese Mandarin (China)",
+          "Chinese Mandarin (Taiwan)",
+          "Croatian (Croatia)",
+          "Czech (Czech Republic)",
+          "Danish (Denmark)",
+          "English (Australia)",
+          "English (UK)",
+          "Estonian (Estonia)",
+          "Filipino (Philippines)",
+          "Finnish (Finland)",
+          "French (Canada)",
+          "Galician (Spain)",
+          "Georgian (Georgia)",
+          "Greek (Greece)",
+          "Gujarati (India)",
+          "Haitian Creole (Haiti)",
+          "Hebrew (Israel)",
+          "Hungarian (Hungary)",
+          "Icelandic (Iceland)",
+          "Javanese (Java)",
+          "Kannada (India)",
+          "Konkani (India)",
+          "Lao (Laos)",
+          "Latin (Vatican City)",
+          "Latvian (Latvia)",
+          "Lithuanian (Lithuania)",
+          "Luxembourgish (Luxembourg)",
+          "Macedonian (North Macedonia)",
+          "Maithili (India)",
+          "Malagasy (Madagascar)",
+          "Malay (Malaysia)",
+          "Malayalam (India)",
+          "Mongolian (Mongolia)",
+          "Nepali (Nepal)",
+          "Norwegian Bokmal (Norway)",
+          "Norwegian Nynorsk (Norway)",
+          "Odia (India)",
+          "Pashto (Afghanistan)",
+          "Persian (Iran)",
+          "Portuguese (Portugal)",
+          "Punjabi (India)",
+          "Serbian (Serbia)",
+          "Sindhi (India)",
+          "Sinhala (Sri Lanka)",
+          "Slovak (Slovakia)",
+          "Slovenian (Slovenia)",
+          "Spanish (Latin America)",
+          "Spanish (Mexico)",
+          "Swahili (Kenya)",
+          "Swedish (Sweden)",
+          "Urdu (Pakistan)"
+        ],
+        "example": "English (US)"
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-06-25T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

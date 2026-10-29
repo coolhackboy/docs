@@ -1,0 +1,282 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - 添加人声 API",
+    "description": "在现有伴奏上叠加 AI 生成的人声",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交添加人声任务",
+        "description": "在现有伴奏音轨上叠加 AI 生成的人声",
+        "operationId": "submitAddVocalsTask",
+        "tags": [
+          "Music Generation"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "基础人声生成",
+                  "value": {
+                    "model": "add-vocals",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/instrumental.mp3",
+                      "prompt": "A heartfelt ballad about love and memories",
+                      "title": "Memories of You",
+                      "style": "Pop Ballad",
+                      "negative_tags": "rap, heavy metal"
+                    }
+                  }
+                },
+                "advanced": {
+                  "summary": "高级风格控制",
+                  "value": {
+                    "model": "add-vocals",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "upload_url": "https://storage.example.com/instrumental.mp3",
+                      "mv": "V5_5",
+                      "prompt": "Upbeat lyrics about summer adventures and freedom",
+                      "title": "Summer Freedom",
+                      "style": "Pop, Upbeat, Energetic",
+                      "negative_tags": "sad, slow, melancholic",
+                      "vocal_gender": "f",
+                      "style_weight": 0.7,
+                      "weirdness_constraint": 0.2,
+                      "audio_weight": 0.6
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "API 模型标识符。\n\n此接口必须为 `add-vocals`。",
+            "enum": [
+              "add-vocals"
+            ],
+            "example": "add-vocals"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "upload_url",
+              "prompt",
+              "title",
+              "style",
+              "negative_tags"
+            ],
+            "description": "人声生成的输入参数",
+            "properties": {
+              "upload_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "要添加人声的伴奏音频文件 URL。",
+                "example": "https://storage.example.com/instrumental.mp3"
+              },
+              "prompt": {
+                "type": "string",
+                "description": "生成人声的歌词或描述。\n\n将作为 AI 生成人声的内容。",
+                "example": "A heartfelt ballad about love and memories"
+              },
+              "title": {
+                "type": "string",
+                "description": "生成音乐的名称。\n\n最多 100 个字符。",
+                "maxLength": 100,
+                "example": "Memories of You"
+              },
+              "style": {
+                "type": "string",
+                "description": "音乐风格说明，用于定义流派、情绪或艺术方向。\n\n用于引导人声风格和演唱方式。",
+                "example": "Pop Ballad"
+              },
+              "negative_tags": {
+                "type": "string",
+                "description": "生成时要排除的音乐风格或特征。\n\n指定输出中要避免的流派、情绪或人声风格。",
+                "example": "rap, heavy metal"
+              },
+              "mv": {
+                "type": "string",
+                "description": "用于人声生成的 AI 模型版本。\n\n- **V6**：音乐表现力更强，人声更自然。\n- **V6_MINI**：轻量、快速。\n- **V6_WILD**：音乐表现更大胆、更有辨识度。\n- **V5_5**：按你的独特品味调校的个性化模型。\n- **V5**：音乐表现力更出色，生成速度更快\n- **V4_5PLUS**：音色更丰富，提供新的创作方式\n\n默认值：V4_5PLUS",
+                "enum": [
+                  "V4_5PLUS",
+                  "V5",
+                  "V5_5",
+                "V6",
+                "V6_MINI",
+                "V6_WILD"
+                ],
+                "example": "V5_5"
+              },
+              "vocal_gender": {
+                "type": "string",
+                "description": "生成人声的首选性别。\n\n- `m`：男声\n- `f`：女声\n\n**注意**：此参数只能提高指定性别出现的概率，无法保证。",
+                "enum": [
+                  "m",
+                  "f"
+                ],
+                "example": "f"
+              },
+              "style_weight": {
+                "type": "number",
+                "description": "控制指定风格对生成结果的影响强度。\n\n取值范围：0-1，最多 2 位小数。\n\n值越高，越贴合指定风格。",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "weirdness_constraint": {
+                "type": "number",
+                "description": "控制实验性创意和非常规元素的程度。\n\n取值范围：0-1，最多 2 位小数。\n\n- 值越低：人声越常规\n- 值越高：人声输出越具实验性和独特性",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              },
+              "audio_weight": {
+                "type": "number",
+                "description": "在音频特性与其他生成因素之间取得平衡。\n\n取值范围：0-1，最多 2 位小数。\n\n调整最终输出中对音质和声音特征的侧重。",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.65
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters",
+                "description": "描述错误原因的错误信息"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error",
+                "description": "错误类型标识"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

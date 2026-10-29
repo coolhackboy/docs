@@ -1,0 +1,37 @@
+---
+title: "视频超分"
+description: "按 1 到 8 的放大倍数提升已有视频的分辨率。"
+icon: "up-right-and-down-left-from-center"
+openapi: "/zh/api-manual/tools-series/video-upscaler.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+视频超分用于提升已有视频的分辨率。输出尺寸等于输入尺寸乘以 `scale`。
+
+## 模型
+
+- **poyo-ai/video-upscaler** — 对一个视频进行超分
+
+## 必填参数
+
+- `video_url` (string)：源视频 URL。
+
+## 可选参数
+
+- `scale` (number)：放大倍数，范围 `1` 到 `8`。默认 `2`。允许小数。
+
+## 输出
+
+任务完成后，`files` 中返回一个超分后的视频，`file_type: video`。
+
+## 示例
+
+- **将视频放大 2 倍** — 设置 `video_url`、`scale`。
+
+## 注意事项
+
+- PoYo 在提交前会读取源视频的宽度、高度、时长和帧率。如果文件中没有可读取的视频流，提交会失败。

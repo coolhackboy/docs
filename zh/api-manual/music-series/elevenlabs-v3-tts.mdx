@@ -1,0 +1,36 @@
+---
+title: "ElevenLabs V3 TTS"
+description: "ElevenLabs V3 TTS API 可使用列出的预设音色之一，将最多 5,000 个字符的文本转换为语音。可选的 ISO 639-1 语言代码可强制指定语言，时间戳可作为单独文件返回。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/elevenlabs-v3-tts.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`elevenlabs-v3-tts` 将文本转换为语音音频。结果以任务 `files` 返回，与图像、视频和 3D 任务的标准响应结构一致。
+
+## 模型
+
+- **elevenlabs-v3-tts** - ElevenLabs V3 文本转语音生成
+
+## 必填参数
+
+- **text**：要转换为语音的文本
+  - 长度：`1-5000` 个字符
+
+## 可选参数
+
+- **voice**：用于语音生成的音色名称。支持的值：`Aria`、`Roger`、`Sarah`、`Laura`、`Charlie`、`George`、`Callum`、`River`、`Liam`、`Charlotte`、`Alice`、`Matilda`、`Will`、`Jessica`、`Eric`、`Chris`、`Brian`、`Daniel`、`Lily`、`Bill`、`Rachel`
+- **stability**：音色稳定性，`0` 到 `1`
+- **timestamps**：布尔值。为 `true` 时，时间戳可能作为额外的 JSON 文件返回
+- **language_code**：可选的 ISO 639-1 语言代码，用于强制模型使用指定语言
+- **apply_text_normalization**：`auto`、`on` 或 `off`
+
+## 注意事项
+
+- 通过标准任务状态 API 查询状态，而不是音乐详情接口。
+- 成功响应返回 `files`，其中生成的语音使用 `file_type: audio`。
+- 启用 `timestamps` 且返回了时间戳时，时间戳会上传为 `timestamps.json`，并作为单独的文件项返回，`file_type: other`。

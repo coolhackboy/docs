@@ -1,0 +1,40 @@
+---
+title: "VS Code"
+description: "通过安全输入将 VS Code 连接到 PoYo MCP"
+icon: "window-maximize"
+---
+
+# 连接 VS Code
+
+运行 **MCP: Open User Configuration**，并将 PoYo 添加到 `mcp.json`：
+
+```json
+{
+  "servers": {
+    "poyo": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@poyoapi/mcp"],
+      "env": {
+        "POYO_API_KEY": "${input:poyo-api-key}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "poyo-api-key",
+      "description": "PoYo API key",
+      "password": true
+    }
+  ]
+}
+```
+
+服务器启动时 VS Code 会提示输入 Key，因此无需把它保存在文件中。stdio 桥接需要 Node.js 20 或更高版本。
+
+## 验证
+
+在 **MCP: List Servers** 中启动或重启 `poyo`，然后提问：`Use PoYo to check my account and list image-generation models.`
+
+类型化模型工具和使用示例见 [PoYo MCP](/zh/integrations/mcp)。

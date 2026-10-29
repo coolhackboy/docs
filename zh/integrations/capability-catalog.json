@@ -1,0 +1,150 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo 能力目录与任务 API",
+    "version": "1.0.0",
+    "description": "PoYo MCP、CLI 和 Agent Skills 使用的能力目录及常用异步生成操作。"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "paths": {
+    "/v1/catalog/models": {
+      "get": {
+        "operationId": "listModelCapabilities",
+        "summary": "搜索已启用的模型能力",
+        "parameters": [
+          {
+            "name": "service_type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["chat", "generate"]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "重复此参数可要求同时匹配多个标签。",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "能力分页"
+          }
+        }
+      }
+    },
+    "/v1/catalog/models/{model_id}": {
+      "get": {
+        "operationId": "getModelCapability",
+        "summary": "获取单个模型能力",
+        "parameters": [
+          {
+            "name": "model_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "模型能力"
+          },
+          "404": {
+            "description": "模型能力不存在"
+          }
+        }
+      }
+    },
+    "/v1/catalog/categories": {
+      "get": {
+        "operationId": "listModelCategories",
+        "summary": "列出模型类别",
+        "responses": {
+          "200": {
+            "description": "类别摘要"
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "operationId": "getGenerationTask",
+        "summary": "获取生成任务状态",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "任务状态和输出"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    }
+  }
+}

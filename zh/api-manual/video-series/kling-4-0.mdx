@@ -1,0 +1,73 @@
+---
+title: "Kling 4.0"
+description: "根据文本、首尾帧或视觉参考生成视频，也可编辑已有视频，输出 720p 或 1080p。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/kling-4-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Kling 4.0 可根据文本创建视频、让首尾帧动起来、组合视觉参考，或编辑已有视频。模式由提供的媒体自动选择。
+
+## 模型
+
+- **kling-4.0** — 文生视频、图生视频、参考生视频和视频编辑
+
+## 功能
+
+- **灵活时长**：生成 3–30 秒、`720p` 或 `1080p` 的视频。
+- **首尾帧**：让一张起始图片动起来，可选再提供一张结束图片。
+- **视觉参考**：通过参考图片、参考视频以及由图片或视频定义的主体来引导外观和动作。
+- **多镜头提示词**：分别描述各个镜头及其时长。
+- **视频编辑**：提供源视频并描述要做的修改。不传 `duration` 即保留源视频时长。
+- **宽高比**：使用 `auto`、`16:9`、`9:16`、`1:1` 或 `21:9`。
+
+## 输入模式
+
+| 模式 | 选择条件 |
+| --- | --- |
+| 视频编辑 | 提供了 `video_url` |
+| 参考生视频 | 参考图片、参考视频或 `kling_elements` 非空 |
+| 图生视频 | `image_urls` 非空且没有参考素材 |
+| 文生视频 | 未提供任何媒体 |
+
+在参考模式下，`image_urls` 可包含一个可选的起始帧。在图片模式下，它可包含起始帧，后跟结束帧；不要传 `aspect_ratio`。编辑模式接受参考图片和基于图片的主体；不接受 `image_urls`、参考视频、基于视频的主体、`multi_prompt` 或 `aspect_ratio`。
+
+## 必填参数
+
+- `prompt` (string)：视频指令，1–26,000 个字符，至少包含一个非空白字符。`prompt` 和 `multi_prompt` 二选一，不能同时提供。编辑模式需要 `prompt`。
+- `multi_prompt` (array of objects)：生成模式下 `prompt` 的替代项。每个镜头包含一个最多 512 个字符的非空 `prompt`，以及一个可选的整数 `duration`（1–30 秒，默认为 5）。各镜头时长之和必须为 3–30 秒。如果同时提供顶层 `duration`，它必须与该总和一致。
+
+## 可选参数
+
+- `duration` (integer)：输出时长，3 到 30 秒。普通生成默认为 `5`；多镜头生成跟随镜头总时长。在编辑模式下，不传该字段即保留源视频时长；计费输出时长向上取整到整秒。
+- `resolution` (string)：`720p` 或 `1080p`。默认：`720p`。
+- `aspect_ratio` (string)：`auto`、`16:9`、`9:16`、`1:1` 或 `21:9`，用于文本模式和参考模式。未传时比例会适配所提供的素材；没有素材时默认为 `16:9`。图片模式和编辑模式下不要传该字段。
+- `image_urls` (array of strings)：一张起始图片，以及仅在图片模式下可选的一张结束图片，按此顺序排列。参考模式只允许起始图片。
+- `video_url` (string)：用于编辑的源视频。时长必须为 3–30 秒。
+- `reference_image_urls` (array of strings)：最多 10 个可公开访问的 HTTP 或 HTTPS 图片 URL。
+- `reference_video_urls` (array of strings)：最多 5 个可公开访问的 HTTP 或 HTTPS 视频 URL。每个视频时长必须为 3–30 秒。
+- `kling_elements` (array of objects)：最多 7 个主体。每个主体只能提供以下其中一项：
+  - `element_input_urls` (array of strings)：2–4 张图片，正面视图在前，其他参考视图在后。
+  - `element_input_video_urls` (array of strings)：恰好一个 3–30 秒的视频。最多 3 个主体可以使用视频；基于视频的主体不能用于编辑。
+
+主体按其在数组中的位置识别，无需命名。以 `@Element1`、`@Element2` 等引用它们。参考图片和参考视频使用 `@Image1` 和 `@Video1`；现有的 `@image_1` 和 `@video_1` 引用仍然支持。
+
+## 示例
+
+- **文生视频**：发送不带参考素材的 `prompt`。仅在需要时设置 `duration`、`resolution` 或 `aspect_ratio`。
+- **首尾帧**：将起始图片放在 `image_urls` 的第一位，后跟可选的结束图片。
+- **视觉参考**：组合使用 `reference_image_urls`、`reference_video_urls` 或 `kling_elements`，并按位置引用它们。
+- **多镜头生成**：提供 `multi_prompt`，不传 `prompt`。通过镜头时长控制序列。
+- **视频编辑**：提供 `video_url` 和 `prompt`。不传 `duration` 即保留原始时长，或明确指定新的时长。
+
+API Playground 中的请求示例演示了这些输入。
+
+## 注意事项
+
+- 在参考模式下，可选的起始帧与参考图片合计不能超过 10 张。起始帧、参考图片、参考视频和主体的总数不能超过 15。主体内的图片计为一个主体，而不是单独的素材。
+- 参考视频与基于视频的主体的原始时长合计最多 30 秒。每个参考视频或主体视频时长必须为 3–30 秒。
+- 参考索引从 1 开始，按对应输入数组的顺序排列。请使用可公开访问的媒体 URL，并省略未使用的可选字段。

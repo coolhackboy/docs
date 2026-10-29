@@ -1,0 +1,304 @@
+---
+title: "错误码"
+description: "API 错误码与响应格式"
+icon: "triangle-exclamation"
+---
+
+# 错误码
+
+本页列出所有可能的 API 响应码和错误类型。
+
+## 响应格式
+
+### 成功响应
+
+请求成功时，API 返回 `code: 200` 的响应：
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "not_started",
+    "created_time": "2025-11-12T10:30:00"
+  }
+}
+```
+
+### 错误响应
+
+发生错误时，API 返回带有相应错误码的响应：
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "task_id is required",
+    "type": "validation_error"
+  }
+}
+```
+
+<Warning>
+请始终读取响应体中的 `code` 字段。`POST /api/generate/submit` 的部分校验错误会以 HTTP 状态 200 返回，响应体中为 `"code": 400`。只要 `code` 不是 200，就应视为请求失败。
+</Warning>
+
+### 任务失败响应
+
+任务在处理过程中失败时，响应包含 `status: "failed"` 和错误信息：
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "8FDN1I7M7Q68DDG8",
+    "status": "failed",
+    "files": [],
+    "created_time": "2025-11-25T08:50:13",
+    "error_message": "The prompt violates our content policy"
+  }
+}
+```
+
+## 业务状态码
+
+### 200 - Success
+
+请求成功完成。检查响应中的 `status` 字段以确定任务状态。
+
+### 400 - Bad Request
+
+请求包含无效的参数或数据。
+
+| 类型 | 说明 |
+|------|-------------|
+| `validation_error` | 参数校验错误 |
+| `content_moderation_error` | 内容审核错误 |
+| `content_too_long_error` | 内容超过最大长度 |
+| `file_format_error` | 文件格式无效 |
+
+**示例：**
+
+```json
+{
+  "code": 400,
+  "error": {
+    "message": "task_id is required",
+    "type": "validation_error"
+  }
+}
+```
+
+### 401 - Unauthorized
+
+API Key 缺失、格式错误或无效。
+
+| 类型 | 说明 |
+|------|-------------|
+| `authentication_error` | API Key 缺失或无效 |
+
+**示例：**
+
+```json
+{
+  "code": 401,
+  "error": {
+    "message": "Invalid API key",
+    "type": "authentication_error"
+  }
+}
+```
+
+请检查请求是否发送了 `Authorization: Bearer YOUR_API_KEY`（`/v1/messages` 可使用 `x-api-key`），没有多余空格，并且该 API Key 未被删除。
+
+### 402 - Payment Required
+
+账户余额或积分不足。
+
+| 类型 | 说明 |
+|------|-------------|
+| `insufficient_credits_error` | 积分不足 |
+
+**示例：**
+
+```json
+{
+  "code": 402,
+  "error": {
+    "message": "Insufficient credits to complete this request",
+    "type": "insufficient_credits_error"
+  }
+}
+```
+
+### 403 - Forbidden
+
+因权限限制而拒绝访问。
+
+| 类型 | 说明 |
+|------|-------------|
+| `permission_denied_error` | 权限被拒绝 |
+
+**示例：**
+
+```json
+{
+  "code": 403,
+  "error": {
+    "message": "You do not have permission to access this resource",
+    "type": "permission_denied_error"
+  }
+}
+```
+
+### 404 - Not Found
+
+请求的资源不存在。
+
+| 类型 | 说明 |
+|------|-------------|
+| `resource_not_found_error` | 资源不存在 |
+
+**示例：**
+
+```json
+{
+  "code": 404,
+  "error": {
+    "message": "Task not found",
+    "type": "resource_not_found_error"
+  }
+}
+```
+
+### 408 - Request Timeout
+
+请求处理时间过长。
+
+| 类型 | 说明 |
+|------|-------------|
+| `timeout_error` | 请求超时 |
+
+**示例：**
+
+```json
+{
+  "code": 408,
+  "error": {
+    "message": "Request timed out",
+    "type": "timeout_error"
+  }
+}
+```
+
+### 429 - Too Many Requests
+
+超出速率限制。
+
+| 类型 | 说明 |
+|------|-------------|
+| `rate_limit_error` | 超出速率限制 |
+
+**示例：**
+
+```json
+{
+  "code": 429,
+  "error": {
+    "message": "Rate limit exceeded. Please try again later.",
+    "type": "rate_limit_error"
+  }
+}
+```
+
+### 500 - Internal Server Error
+
+服务器发生意外错误。
+
+| 类型 | 说明 |
+|------|-------------|
+| `internal_error` | 服务器内部错误 |
+
+**示例：**
+
+```json
+{
+  "code": 500,
+  "error": {
+    "message": "An internal error occurred. Please try again later.",
+    "type": "internal_error"
+  }
+}
+```
+
+### 502 - Bad Gateway
+
+上游服务错误。
+
+| 类型 | 说明 |
+|------|-------------|
+| `upstream_error` | 上游服务错误 |
+
+**示例：**
+
+```json
+{
+  "code": 502,
+  "error": {
+    "message": "Upstream service unavailable",
+    "type": "upstream_error"
+  }
+}
+```
+
+### 503 - Service Unavailable
+
+服务暂时不可用。
+
+| 类型 | 说明 |
+|------|-------------|
+| `service_error` | 服务不可用 |
+
+**示例：**
+
+```json
+{
+  "code": 503,
+  "error": {
+    "message": "The server is busy. Please try again later.",
+    "type": "service_error"
+  }
+}
+```
+
+## LLM 接口错误
+
+LLM 接口（`/v1/chat/completions`、`/v1/responses`、`/v1/messages`、`/v1beta/models/{model}:{method}`）返回错误时使用真实的 HTTP 状态码。认证错误的响应体与上文相同。其他错误遵循各 API 格式自身的结构：
+
+| HTTP 状态 | 触发条件 | 响应体示例 |
+|-------------|------|--------------|
+| 400 | 必填字段缺失或无效 | `{"code": 400, "error": {"message": "Invalid request parameters: messages: Field required", "type": "validation_error", "details": {"validation_errors": [...]}}}` |
+| 400 | 模型不支持该 API 格式 | `{"error": {"message": "URI '/v1/chat/completions' is not supported by this model. Supported URIs: ['/v1/responses']", "type": "invalid_request_error", "code": "http_error"}}` |
+| 400 | 使用非 Gemini 模型调用 Gemini Native | `{"error": {"code": 400, "message": "URI '/v1beta/models/...:generateContent' is not supported by this model. Supported URIs: ['/v1/chat/completions']", "status": "INVALID_ARGUMENT"}}` |
+| 401 | API Key 缺失或无效 | `{"code": 401, "error": {"message": "Invalid API key", "type": "authentication_error"}}` |
+| 404 | 未知的 model id | `{"error": {"message": "Model not found: ...", "type": "invalid_request_error", "code": "model_not_found"}}` |
+
+各模型支持哪些 API 格式，见 [LLM 模型](/zh/api-manual/chat-series/overview)。
+
+## 错误处理最佳实践
+
+<Tip>
+**实现重试逻辑**：对于 500、502 和 503 错误，使用指数退避进行重试。
+</Tip>
+
+<Tip>
+**处理速率限制**：收到 429 错误时，等待一段时间后再重试。可以考虑实现请求队列。
+</Tip>
+
+<Tip>
+**校验输入**：发送前检查请求参数，避免 400 错误。
+</Tip>
+
+<Tip>
+**监控积分**：持续关注积分余额，避免在关键操作中遇到 402 错误。
+</Tip>

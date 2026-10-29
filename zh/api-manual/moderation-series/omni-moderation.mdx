@@ -1,0 +1,202 @@
+---
+title: "Omni Moderation"
+description: "使用 OpenAI 异步审核文本和 HTTPS 图像。"
+icon: "shield-check"
+openapi: "/zh/api-manual/moderation-series/omni-moderation.json POST /api/generate/submit"
+---
+
+Omni Moderation 使用 OpenAI `omni-moderation-latest` 审核文本、最多一张 HTTPS 图像，或两者同时审核。通过统一的生成接口提交审核，然后用返回的 `task_id` 轮询[查询任务状态](/zh/api-manual/task-management/status)，或接收可选的回调。
+
+提交后会立即返回 `status: "not_started"`。审核异步执行，状态经过 `running` 后变为 `finished` 或 `failed`。
+
+<Info>
+通过可选的外层 `callback_url` 字段支持回调。不支持流式输出；请勿传入 `stream`。
+</Info>
+
+## 输入
+
+| 字段 | 类型 | 说明 |
+|-------|------|-------------|
+| `model` | string | 必须为 `omni-moderation-latest` |
+| `callback_url` | string (URI) | 可选，任务完成或失败时通知的 Webhook URL |
+| `input.prompt` | string | 可选，待审核的文本；可与一张图像同时提供 |
+| `input.image_urls` | string[] | 可选，最多包含一个 HTTPS 图像 URL 的数组 |
+
+**`prompt` 和 `image_urls` 至少提供一个，也可以同时提供。** 使用非空白文本、一个 HTTPS 图像 URL，或两者都用。`image_urls` 仍为数组，最多接受一张图像。多张图像请分别提交为独立任务。空输入会被拒绝。
+
+## 提交审核
+
+```bash
+curl -X POST https://api.poyo.ai/api/generate/submit \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "omni-moderation-latest",
+    "input": {
+      "prompt": "A peaceful mountain landscape."
+    }
+  }'
+```
+
+同时审核图像和文本：
+
+```json
+{
+  "model": "omni-moderation-latest",
+  "input": {
+    "prompt": "A mountain view at sunset.",
+    "image_urls": [
+      "https://example.com/image.jpg"
+    ]
+  }
+}
+```
+
+只审核图像时，省略 `prompt`。如需通过 Webhook 接收已完成的任务，请在 `input` 之外提供 `callback_url`：
+
+```json
+{
+  "model": "omni-moderation-latest",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A peaceful mountain landscape."
+  }
+}
+```
+
+### 提交响应
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "MODERATION_TASK_ID",
+    "status": "not_started",
+    "created_time": "2026-10-14T10:00:00"
+  }
+}
+```
+
+## 获取结果
+
+```bash
+curl https://api.poyo.ai/api/generate/status/MODERATION_TASK_ID \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+持续轮询，直到 `data.status` 变为 `finished` 或 `failed`。审核完成后，`data.output` 中返回完整的 OpenAI 响应；`data.files` 为空，`data.credits_amount` 为 `0`。
+
+| 字段 | 类型 | 说明 |
+|-------|------|-------------|
+| `data.output.id` | string | OpenAI 审核响应的标识符 |
+| `data.output.model` | string | OpenAI 返回的模型标识符，可能是带日期的模型版本 |
+| `data.output.results` | array | OpenAI 审核结果 |
+| `data.output.results[].flagged` | boolean | OpenAI 是否标记了被审核内容 |
+| `data.output.results[].categories` | object | 按类别给出的分类布尔值 |
+| `data.output.results[].category_scores` | object | 按类别给出的置信度分数 |
+| `data.output.results[].category_applied_input_types` | object | 每个类别所使用的输入模态 |
+
+`status: "finished"` 表示审核已完成。`flagged: true` 的结果是一次检测到相关内容的成功审核，不会使任务变为 `failed`。只有任务本身失败时才需要查看 `data.error_message`。
+
+## 回调请求体
+
+提供 `callback_url` 时，任务变为 `finished` 或 `failed` 后，PoYo 会发送 POST 请求。请求体是状态响应中的 `data` 对象，不含外层的 `code` 和 `data` 包装。其中包括 `task_id`、`status`、`credits_amount: 0`、`files: []`，以及可用时位于 `output` 中的完整 OpenAI 响应。失败的任务会提供 `error_message`。
+
+签名验证见 [Webhook 回调](/zh/api-manual/task-management/webhooks)。
+
+## 已完成状态响应示例
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "MODERATION_TASK_ID",
+    "status": "finished",
+    "credits_amount": 0,
+    "files": [],
+    "output": {
+      "id": "modr_example",
+      "model": "omni-moderation-latest",
+      "results": [
+        {
+          "flagged": false,
+          "categories": {
+            "harassment": false,
+            "harassment/threatening": false,
+            "hate": false,
+            "hate/threatening": false,
+            "illicit": false,
+            "illicit/violent": false,
+            "self-harm": false,
+            "self-harm/intent": false,
+            "self-harm/instructions": false,
+            "sexual": false,
+            "sexual/minors": false,
+            "violence": false,
+            "violence/graphic": false
+          },
+          "category_scores": {
+            "harassment": 0.00001,
+            "harassment/threatening": 0.00001,
+            "hate": 0.00001,
+            "hate/threatening": 0.00001,
+            "illicit": 0.00001,
+            "illicit/violent": 0.00001,
+            "self-harm": 0.00001,
+            "self-harm/intent": 0.00001,
+            "self-harm/instructions": 0.00001,
+            "sexual": 0.00001,
+            "sexual/minors": 0.00001,
+            "violence": 0.00001,
+            "violence/graphic": 0.00001
+          },
+          "category_applied_input_types": {
+            "harassment": [
+              "text"
+            ],
+            "harassment/threatening": [
+              "text"
+            ],
+            "hate": [
+              "text"
+            ],
+            "hate/threatening": [
+              "text"
+            ],
+            "illicit": [
+              "text"
+            ],
+            "illicit/violent": [
+              "text"
+            ],
+            "self-harm": [
+              "text"
+            ],
+            "self-harm/intent": [
+              "text"
+            ],
+            "self-harm/instructions": [
+              "text"
+            ],
+            "sexual": [
+              "text"
+            ],
+            "sexual/minors": [
+              "text"
+            ],
+            "violence": [
+              "text"
+            ],
+            "violence/graphic": [
+              "text"
+            ]
+          }
+        }
+      ]
+    },
+    "created_time": "2026-10-14T10:00:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```

@@ -1,0 +1,57 @@
+---
+title: "认证"
+description: "使用 PoYo API Key 认证 PoYo MCP 和 CLI 请求。"
+icon: "key"
+---
+
+# 认证
+
+MCP 初始化、工具发现和公开模型发现不需要认证。账户访问以及所有付费的 MCP 或 CLI 执行请求都需要 PoYo API Key。
+
+```http
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+
+模型搜索成功并不能证明所配置的 API Key 有效。请使用 `poyo_account` 或 `poyo auth status` 验证认证。
+
+## CLI
+
+将 Key 保存到系统密钥环：
+
+```bash
+poyo auth login
+```
+
+用于临时环境：
+
+```bash
+export POYO_API_KEY="YOUR_API_KEY"
+```
+
+`export POYO_API_KEY=...`（PowerShell 中为 `$env:POYO_API_KEY=...`）只对当前终端会话生效。从桌面启动的应用（如 Cursor、VS Code 或 Codex 应用）读取不到它。在使用 CLI 和 Agent Skill 时，`auth login` 可以避免这个问题。
+
+凭据优先级依次为 `--api-key`、`POYO_API_KEY`、系统密钥环、本地配置文件。旧的或无效的 `POYO_API_KEY` 会覆盖 `auth login` 保存的 Key。运行 `poyo auth status` 可查看当前使用的来源，例如 `(environment)` 或 `(keyring)`。
+
+## 安全
+
+- 不要把 Key 写进 MCP URL 或提示词。
+- 不要把 Key 提交到 MCP 配置中。
+- 配置客户端时优先使用环境变量插值。
+- 在 PoYo 控制台中为 API Key 设置模型和积分限制。
+
+## 认证失败
+
+REST 请求返回 HTTP `401` 响应：
+
+```json
+{
+  "code": 401,
+  "error": {
+    "message": "Invalid API key",
+    "type": "authentication_error"
+  }
+}
+```
+
+MCP 的业务失败和认证失败以 `isError: true` 的 Tool Result 返回，即使 MCP HTTP 传输层本身返回 `200`。客户端应检查工具结果，而不是只依赖 HTTP 状态码。

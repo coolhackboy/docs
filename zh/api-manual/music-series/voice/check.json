@@ -1,0 +1,65 @@
+{
+  "openapi": "3.0.0",
+  "info": {"title": "PoYo Suno Voice 检查 API", "version": "1.0.0", "description": "检查已生成的 Voice ID 是否可用。"},
+  "servers": [{"url": "https://api.poyo.ai"}], "security": [{"BearerAuth": []}],
+  "paths": {"/api/generate/submit": {"post": {
+    "operationId": "submitSunoVoiceCheck", "summary": "检查 Voice ID 可用性",
+    "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Request"}, "example": {"model": "suno-voice-check", "input": {"task_id": "voice_generate_task_id"}}}}},
+    "responses": {"200": {"description": "可用性检查任务已提交", "content": {"application/json": {
+      "schema": {"$ref": "#/components/schemas/Response"},
+      "example": {"code": 200, "data": {"task_id": "voice_check_task_id", "status": "not_started", "created_time": "2026-08-27T10:00:00"}}
+    }}}}
+  }}},
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "Request": {
+    "type": "object", "required": ["model", "input"], "properties": {
+      "model": {"type": "string", "enum": ["suno-voice-check"]},
+      "callback_url": {"type": "string", "format": "uri"},
+      "input": {"type": "object", "additionalProperties": false, "required": ["task_id"], "properties": {"task_id": {"type": "string", "description": "生成声音接口返回的任务 ID。"}}}
+    }
+  }, "Response": {
+    "type": "object", "required": ["code", "data"], "properties": {
+      "code": {
+        "type": "integer",
+        "example": 200,
+        "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+        "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+      },
+      "data": {
+        "type": "object",
+        "required": [
+          "task_id",
+          "status",
+          "created_time"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_started",
+              "running",
+              "finished",
+              "failed"
+            ],
+            "description": "任务状态。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+          },
+          "created_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }}}
+}

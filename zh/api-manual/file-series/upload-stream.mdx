@@ -1,0 +1,148 @@
+---
+title: "文件流上传"
+description: "使用 multipart/form-data 格式将文件直接上传到 PoYo AI"
+openapi: "/zh/api-manual/file-series/upload-stream.json POST /api/common/upload/stream"
+---
+
+## 使用指南
+
+- 该接口使用标准的 `multipart/form-data` 格式直接上传文件
+- 支持直接从本地存储上传文件，并自动识别文件类型
+- 最适合从桌面应用、移动应用或网页表单上传本地文件
+- 文件可通过返回的 URL 立即访问。图片保留 72 小时；视频存储在 `temp/videos` 生命周期前缀下时保留 24 小时
+
+## 参数详情
+
+- **文件上传要求**：
+
+  - `file` 字段必须包含二进制文件数据
+
+  - 支持的图片格式：**JPEG、PNG、GIF、WebP**
+
+  - 支持的视频格式：**MP4、WebM、MOV/QuickTime、AVI、MKV**
+
+  - 上传数量上限：**每次请求 1 个文件**。视频不超过 **100MB**
+
+  - 系统会根据二进制数据自动识别文件类型
+
+- **参数命名约定**：
+
+  - 该接口同时支持 **snake_case** 和 **camelCase** 命名
+
+  - `upload_path` 或 `uploadPath`，两者均可
+
+  - `file_name` 或 `fileName`，两者均可
+
+  - 使用与你应用代码风格一致的命名方式即可
+
+- **存储配置**：
+
+  - 所有文件在存储路径中都会自动加上 `temp/` 前缀
+
+  - 如果指定 `upload_path: "photos"`，实际路径为 `temp/photos`
+
+  - 图片在上传 **72 小时**后过期并自动删除
+
+  - 使用默认路径上传的视频存储在 `temp/videos/` 下，在为该前缀配置了 R2 生命周期规则时，**24 小时**后过期
+
+- **文件命名**：
+
+  - 如果未提供 `file_name`，系统会按以下格式生成唯一文件名：`{timestamp}_{random}_{extension}`
+
+  - 自动生成的文件名示例：`20251229130857_a8B9cD2e.png`
+
+## 开发者说明
+
+- 适合使用文件流上传的情况：
+
+  - 从用户本地存储直接上传文件
+
+  - 网页应用中基于表单的文件上传
+
+  - 移动应用文件上传
+
+  - 服务器之间的文件传输
+
+- 对于已经存储在磁盘上的文件，这是效率最高的上传方式
+
+- multipart/form-data 格式是所有编程语言和 HTTP 客户端通用的标准格式
+
+- 如需持久保存，请在过期前将文件下载到本地：图片 72 小时，视频 24 小时
+
+## 速率限制与配额
+
+- **速率限制**：每个已认证用户、每个上传接口，在 60 秒固定窗口内最多 10 次请求
+
+- 超出速率限制时，会收到 `429 Too Many Requests` 错误
+
+- 固定窗口从窗口内第一次请求开始计算，同一用户的 JWT 请求和 API Key 请求共享该窗口
+
+- 使用指数退避重试逻辑处理速率限制错误
+
+## 常见错误场景
+
+- **缺少文件**：请求体中没有提供文件（422 错误）
+
+- **不支持的文件类型**：上传的文件不是支持的图片格式（JPEG、PNG、GIF、WebP）或视频格式（MP4、WebM、MOV/QuickTime、AVI、MKV）
+
+- **视频过大**：上传的视频超过 100MB 限制（413 错误）
+
+- **空文件**：上传的文件为 0 字节或已损坏
+
+- **认证错误**：Authorization 请求头中的 API Key 缺失或无效
+
+## 使用示例
+
+### cURL 示例
+
+```bash
+curl -X POST "https://api.poyo.ai/api/common/upload/stream" \
+  -H "Authorization: Bearer PoYo_API_KEY" \
+  -F "file=@/path/to/image.png" \
+  -F "file_name=my-image.png"
+```
+
+### Python 示例
+
+```python
+import requests
+
+url = "https://api.poyo.ai/api/common/upload/stream"
+headers = {"Authorization": "Bearer PoYo_API_KEY"}
+
+files = {"file": open("/path/to/image.png", "rb")}  # or /path/to/video.mp4
+data = {"file_name": "my-image.png"}
+
+response = requests.post(url, headers=headers, files=files, data=data)
+print(response.json())
+```
+
+### JavaScript 示例（Node.js）
+
+```javascript
+const FormData = require('form-data');
+const fs = require('fs');
+const axios = require('axios');
+
+const form = new FormData();
+form.append('file', fs.createReadStream('/path/to/image.png')); // or /path/to/video.mp4
+form.append('file_name', 'my-image.png');
+
+axios.post('https://api.poyo.ai/api/common/upload/stream', form, {
+  headers: {
+    'Authorization': 'Bearer PoYo_API_KEY',
+    ...form.getHeaders()
+  }
+})
+.then(response => console.log(response.data))
+.catch(error => console.error(error));
+```
+
+
+### 视频上传示例
+
+```bash
+curl -X POST "https://api.poyo.ai/api/common/upload/stream"   -H "Authorization: Bearer PoYo_API_KEY"   -F "file=@/path/to/video.mp4"   -F "file_name=my-video.mp4"
+```
+
+使用默认路径上传的视频存储在 `temp/videos/` 下。请为该前缀配置 R2 生命周期规则，使对象在 1 天后过期。

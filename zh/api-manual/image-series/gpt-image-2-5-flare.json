@@ -1,0 +1,315 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - GPT Image 2.5 Flare API",
+    "description": "GPT Image 2.5 Flare API 根据提示词生成一张图像，或编辑最多 16 张参考图像。它是 GPT Image 2.5 中速度更快的选项，支持蒙版、透明背景以及 1K 到 4K 输出。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 GPT Image 2.5 Flare 任务",
+        "description": "GPT Image 2.5 Flare 单图生成与参考图编辑，支持背景、格式和蒙版控制。",
+        "operationId": "submitGPTImage25FlareTask",
+        "tags": [
+          "GPT Image 2.5 Flare"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "文生图",
+                  "value": {
+                    "model": "gpt-image-2.5-flare",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+                      "size": "16:9",
+                      "resolution": "2K",
+                      "quality": "medium"
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "图像编辑",
+                  "value": {
+                    "model": "gpt-image-2.5-flare",
+                    "input": {
+                      "prompt": "Keep the product and replace the background with a warm modern studio",
+                      "image_urls": [
+                        "https://example.com/product.png"
+                      ],
+                      "size": "1:1",
+                      "quality": "high"
+                    }
+                  }
+                },
+                "mask-edit": {
+                  "summary": "蒙版编辑",
+                  "value": {
+                    "model": "gpt-image-2.5-flare",
+                    "input": {
+                      "prompt": "Replace only the masked area with a small vase of flowers",
+                      "image_urls": [
+                        "https://example.com/room.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "size": "auto"
+                    }
+                  }
+                },
+                "transparent-background": {
+                  "summary": "透明背景",
+                  "value": {
+                    "model": "gpt-image-2.5-flare",
+                    "input": {
+                      "prompt": "A clean cutout of a small silver robot",
+                      "background": "transparent",
+                      "output_format": "webp",
+                      "size": "1:1",
+                      "resolution": "4K",
+                      "quality": "xhigh"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "gpt-image-2.5-flare"
+            ],
+            "description": "GPT Image 2.5 Flare 模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于任务完成或失败时的通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "生成一张图像；当 image_urls 非空时编辑参考图像。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32000,
+                "description": "描述图像或所需编辑的提示词。必须包含非空白文本。"
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "可选的参考图像 URL。传入非空数组时为编辑模式；省略或传入空数组时为文生图模式。必须是可公开访问的 HTTP 或 HTTPS URL。"
+              },
+              "size": {
+                "type": "string",
+                "default": "1:1",
+                "description": "宽高比或自定义 WIDTHxHEIGHT。支持的值：auto、1:1、2:3、3:2、4:3、3:4、4:5、5:4、16:9、9:16、21:9 或 WIDTHxHEIGHT。默认 1:1。auto 仅在 1K 下可用。自定义尺寸要求 resolution 为 2K 或 4K，宽高均能被 16 整除，最长边不超过 3840，宽高比不超过 3:1，总像素数在 655360–8294400 之间。自定义尺寸某条边为 3840 像素时需使用 4K。",
+                "example": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "1K",
+                "description": "输出分辨率档位。使用宽高比时，实际像素尺寸可能因模型和生成结果而异，请以返回图像的实际尺寸为准。自定义 WIDTHxHEIGHT 则指定精确尺寸。"
+              },
+              "quality": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max"
+                ],
+                "default": "high",
+                "description": "输出质量等级。"
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "transparent",
+                  "opaque"
+                ],
+                "default": "auto",
+                "description": "背景模式。transparent 要求输出格式为 png 或 webp。"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg",
+                  "webp"
+                ],
+                "default": "png",
+                "description": "输出图像格式。"
+              },
+              "mask_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "可选的蒙版图像 URL，用于标识要编辑的区域。要求 image_urls 非空。必须是可公开访问的 HTTP 或 HTTPS URL。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1786751400-abcd1234",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-09-09T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,328 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Wan 2.7 Video API",
+    "description": "Wan 2.7 API 根据文本、一到两张帧图像、参考媒体或源视频生成或编辑 720p 或 1080p 的视频。文本和图像请求可以附带音频 URL。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Wan 2.7 Video 任务",
+        "description": "使用 Wan 2.7 Video 模型生成或编辑视频",
+        "operationId": "submitWan27VideoTask",
+        "tags": [
+          "Wan 2.7 Video"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "文生视频",
+                  "value": {
+                    "model": "wan2.7-text-to-video",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic tracking shot of a glass greenhouse at sunrise, soft light, slow camera movement.",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "图生视频",
+                  "value": {
+                    "model": "wan2.7-image-to-video",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/start-frame.png"
+                      ],
+                      "prompt": "Animate the frame with gentle wind and a slow push-in camera movement.",
+                      "resolution": "1080p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "参考生视频",
+                  "value": {
+                    "model": "wan2.7-reference-to-video",
+                    "input": {
+                      "prompt": "A product reveal video using the reference object, clean studio lighting, smooth motion.",
+                      "reference_image_urls": [
+                        "https://example.com/reference.png"
+                      ],
+                      "aspect_ratio": "1:1",
+                      "resolution": "720p",
+                      "duration": 5,
+                      "multi_shots": false
+                    }
+                  }
+                },
+                "edit-video": {
+                  "summary": "编辑视频",
+                  "value": {
+                    "model": "wan2.7-edit-video",
+                    "input": {
+                      "prompt": "Change the scene into a rainy neon street while preserving the subject motion.",
+                      "video_url": "https://example.com/source-video.mp4",
+                      "reference_image_url": "https://example.com/style-reference.png",
+                      "aspect_ratio": "16:9",
+                      "resolution": "720p",
+                      "duration": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "wan2.7-text-to-video",
+              "wan2.7-image-to-video",
+              "wan2.7-reference-to-video",
+              "wan2.7-edit-video"
+            ],
+            "description": "Wan 2.7 Video 对外模型标识符"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL"
+          },
+          "input": {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "文本提示词。文生视频、参考生视频和编辑视频必填。"
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "图生视频输入。第一项对应 image_url，第二项对应 end_image_url。"
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "wan2.7-reference-to-video 的参考图像。"
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "wan2.7-reference-to-video 的参考视频。"
+              },
+              "reference_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "wan2.7-edit-video 的单张参考图像。"
+              },
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "图生视频可选的视频输入；编辑视频必填的源视频。"
+              },
+              "audio_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "文生视频和图生视频可选的音频 URL。"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "4:3",
+                  "3:4"
+                ],
+                "default": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "文生视频支持 5、10、15。图生视频支持 2-15。参考生视频支持 2-10。编辑视频支持 0 或 2-10；0 表示由 PoYo 探测源视频时长。"
+              },
+              "multi_shots": {
+                "type": "boolean",
+                "description": "图像、参考和编辑模型可选的多镜头控制。"
+              },
+              "audio_setting": {
+                "type": "string",
+                "description": "编辑视频可选的音频设置。"
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "enable_safety_checker": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

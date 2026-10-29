@@ -1,0 +1,119 @@
+---
+title: "获取任务状态"
+description: "查询图像任务执行状态并获取生成的图像文件"
+openapi: "/zh/api-manual/task-management/image-status.json GET /api/generate/status/{task_id}"
+---
+
+# 获取任务状态
+
+查询图像生成和编辑任务的执行状态，并在完成后获取生成的图像。
+
+## 接口
+
+```http
+GET https://api.poyo.ai/api/generate/status/{task_id}
+```
+
+## 认证
+
+所有请求都需要 Bearer token 认证：
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## 参数
+
+### 路径参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|-----------|------|----------|-------------|
+| `task_id` | string | 是 | 提交接口返回的唯一任务标识 |
+
+## 响应
+
+### 成功响应（200）
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "finished",
+    "credits_amount": 2,
+    "files": [
+      {
+        "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+        "file_type": "image"
+      }
+    ],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```
+
+### 响应字段
+
+| 字段 | 类型 | 说明 |
+|-------|------|-------------|
+| `code` | integer | HTTP 状态码（成功为 200） |
+| `data.task_id` | string | 唯一任务标识 |
+| `data.status` | string | 任务状态：`not_started`、`running`、`finished`、`failed` |
+| `data.credits_amount` | number | 该任务扣除的积分 |
+| `data.files` | array | 状态为 `finished` 时生成的图像 |
+| `data.files[].file_url` | string | 生成文件的直链 URL |
+| `data.files[].file_type` | string | 生成文件的类型，通常为 `image` |
+| `data.created_time` | string | 任务创建时间，ISO 8601 格式 |
+| `data.progress` | integer | 完成百分比（0-100） |
+| `data.error_message` | string | 状态为 `failed` 时的错误说明 |
+
+### 状态值
+
+| 状态 | 说明 |
+|--------|-------------|
+| `not_started` | 任务已排队，等待处理 |
+| `running` | 任务正在生成中 |
+| `finished` | 任务成功完成，结果在 `files` 中 |
+| `failed` | 任务失败，错误详情在 `error_message` 中 |
+
+### 失败任务
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165031-uyujaw3d",
+    "status": "failed",
+    "credits_amount": 0,
+    "files": [],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 0,
+    "error_message": "The prompt violates our content policy"
+  }
+}
+```
+
+## 代码示例
+
+```bash
+curl -X GET https://api.poyo.ai/api/generate/status/task-unified-1757165031-uyujaw3d \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## 重要说明
+
+<Tip>
+  **轮询间隔**：每 2-5 秒查询一次状态。图像生成通常需要 15-60 秒。
+</Tip>
+
+<Warning>
+  **内容有效期**：生成的图像在创建后 **3 天**内可访问。请及时下载并保存内容。
+</Warning>
+
+<Tip>
+  **Webhook**：除了轮询，你还可以在提交任务时提供 `callback_url` 来自动接收通知。参见[图像 Webhook 回调](/zh/api-manual/task-management/image-webhooks)。
+</Tip>
+
+更多语言的代码示例、带退避的轮询以及 HTTP 错误码，请参见[统一任务状态](/zh/api-manual/task-management/status)页面。

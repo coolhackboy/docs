@@ -1,0 +1,12 @@
+---
+title: "Suno 声音工作流程"
+description: "验证人声录音并创建可复用的 Suno Voice ID"
+icon: "microphone"
+---
+
+1. 使用一段清晰的独唱人声片段提交[验证声音](/zh/api-manual/music-series/voice/validate)。结果包含 `validate_info`，其中有验证短语。
+2. 干净地录制显示的短语，不要带伴奏或效果，然后使用验证声音返回的 `task_id` 提交[生成声音](/zh/api-manual/music-series/voice/generate)。
+3. 轮询[查询音乐详情](/zh/api-manual/music-series/query-music-detail)或使用 Webhook，直到结果中包含 `voice_id`。
+4. 使用生成声音返回的 `task_id` 调用[检查声音](/zh/api-manual/music-series/voice/check)，其结果包含 `is_available`。如果短语过期或无法录制，请使用验证声音的 `task_id` 调用[重新生成短语](/zh/api-manual/music-series/voice/regenerate)，然后用重新生成短语返回的新 `task_id` 继续生成声音。
+
+Voice ID 可能会过期或变为不可用，因此在生产环境使用前请先检查可用性。如需将该声音用于音乐生成，请在支持 V5、V5_5、V6、V6_MINI 或 V6_WILD 的音乐接口中，将其 ID 作为 `persona_id` 传入，并设置 `persona_model: "voice_persona"`。

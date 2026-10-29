@@ -1,0 +1,70 @@
+---
+title: "能力目录"
+description: "发现当前可用的 PoYo 模型、JSON Schema 和协议"
+icon: "list"
+openapi: "/zh/integrations/capability-catalog.json GET /v1/catalog/models"
+---
+
+# 能力目录
+
+能力目录（Catalog）包含 PoYo 上可用模型面向开发者的接口约定。供应商凭据、内部供应商或模型代码、路由和故障转移配置永远不会返回。
+
+当模型可用性的变化快于应用发版时使用它：
+
+1. 按工作负载、模态或关键词搜索。
+2. 读取所选模型当前的 schema 和示例。
+3. 缓存响应，并用其 ETag 重新验证。
+
+## 接口
+
+| 接口 | 说明 |
+|---|---|
+| `GET /v1/catalog/models` | 搜索并分页列出可用模型 |
+| `GET /v1/catalog/models/{model_id}` | 读取单个模型的完整能力 |
+| `GET /v1/catalog/categories` | 列出分类及各分类的模型数量 |
+| `GET /v1/catalog/openapi.json` | 根据当前目录生成 OpenAPI 3.1 |
+
+## 搜索模型
+
+```bash
+curl "https://api.poyo.ai/v1/catalog/models?service_type=generate&category=image&q=flux&limit=25"
+```
+
+支持的查询参数：
+
+| 参数 | 说明 |
+|---|---|
+| `service_type` | `chat` 或 `generate` |
+| `category` | 模型分类，例如 `image`、`video` 或 `audio` |
+| `tags` | 可重复传入的必需标签 |
+| `q` | 对模型 ID、标题、描述和标签进行自由文本匹配 |
+| `cursor` | 上一页返回的不透明游标 |
+| `limit` | 每页数量，取值 1 到 100 |
+
+<Tip>
+  将 `model_id` 视为不透明的公开标识符。按返回值原样存储，不要从其格式推断供应商或路由信息。
+</Tip>
+
+## 能力字段
+
+每个模型包含：
+
+- `model_id`、`service_type`、`category`、标题、描述和标签
+- `input_schema` 和 `output_schema`
+- 示例和支持的对话协议
+- 流式、回调和执行模式标志
+- 稳定且兼容 MCP 的 `tool_name`
+
+## 缓存
+
+目录响应包含：
+
+- `ETag`
+- `X-PoYo-Schema-Version`
+- `Cache-Control: public, max-age=60, stale-while-revalidate=300`
+
+发送 `If-None-Match`，在内容未变化时会收到 `304 Not Modified`。
+
+<Warning>
+  只使用当前 `input_schema` 允许的参数执行。模型约定可能独立于 CLI 和 MCP 包的发版而变化。
+</Warning>

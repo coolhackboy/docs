@@ -1,0 +1,56 @@
+---
+title: "Kling 1.6"
+description: "Kling 1.6 API 可根据文本或首帧生成 5 或 10 秒的视频。Pro 还可设置尾帧。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/kling-1-6.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **kling-1.6/standard** - 高性价比的 Kling 1.6 视频生成
+- **kling-1.6/pro** - 更高质量的 Kling 1.6 视频生成
+
+## 功能
+
+- **文生视频**：根据提示词、时长和可选的宽高比生成视频。
+- **图生视频**：让首帧图片动起来，可选使用仅 Pro 支持的尾帧控制。
+- **Elements**：使用 1 到 4 张参考图片引导生成的视频。
+- **时长**：5 或 10 秒。
+- **宽高比**：1:1、16:9 和 9:16。Standard 在文生视频和 Elements 中使用 `aspect_ratio`。Standard 图生视频不支持 `aspect_ratio`。Pro 在所有 Kling 1.6 工作流中都支持该参数。
+- **提示词控制**：可选 `negative_prompt`；`cfg_scale` 可用于文生视频和图生视频，但不能用于 Elements。
+
+## 输入模式
+
+PoYo 不要求为 Kling 1.6 传公开的 `mode`、`type` 或 `task_type` 字段。
+所有 Kling 1.6 请求都需要 `prompt` 和 `duration`。
+
+- 不提供任何图片字段即生成文生视频。
+- 提供 `start_image_url` 即生成图生视频。
+- 在 `kling-1.6/pro` 中同时提供 `start_image_url` 和 `end_image_url`，可同时控制首帧和尾帧。
+- 提供包含 1 到 4 张参考图片的 `image_urls` 即生成 Elements。
+
+`image_urls` 不能与 `start_image_url`、`end_image_url` 或 `cfg_scale` 同时使用。
+
+## 注意事项
+
+### 参数兼容性
+
+Elements 是一种参考图片工作流，使用 1 到 4 张图片引导生成的视频。
+
+| 模型和工作流 | PoYo 如何识别 | 支持的参数 |
+| --- | --- | --- |
+| 文生视频（`standard` 或 `pro`） | 无图片字段 | `prompt`、`duration`、`aspect_ratio`、`negative_prompt`、`cfg_scale` |
+| Standard 图生视频 | `kling-1.6/standard` 并带 `start_image_url` | `prompt`、`duration`、`start_image_url`、`negative_prompt`、`cfg_scale` |
+| Pro 图生视频 | `kling-1.6/pro` 并带 `start_image_url` 和可选的 `end_image_url` | `prompt`、`duration`、`aspect_ratio`、`start_image_url`、`end_image_url`、`negative_prompt`、`cfg_scale` |
+| Elements（`standard` 或 `pro`） | `image_urls` | `prompt`、`duration`、`aspect_ratio`、`negative_prompt`、`image_urls` |
+
+说明：
+
+- `end_image_url` 需要 `start_image_url`，且仅 `kling-1.6/pro` 支持。
+- `kling-1.6/standard` 图生视频不支持 `aspect_ratio`。
+- Elements 支持 1 到 4 个 `image_urls`，不支持 `cfg_scale`。

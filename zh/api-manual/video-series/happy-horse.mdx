@@ -1,0 +1,64 @@
+---
+title: "Happy Horse"
+description: "Happy Horse API 可根据文本、一张首帧或最多九张参考图片生成 3–15 秒的 720p 或 1080p 视频，也可编辑源视频并保留或替换其音频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/happy-horse.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`happy-horse` 通过一个公开 model ID 支持文生视频、图生视频、参考生视频和视频编辑。
+
+## 模型
+
+- **happy-horse** - Alibaba Happy Horse 1.0 视频生成与编辑
+
+## 输入模式
+
+### 文生视频
+
+发送 `prompt`，不带图片或视频输入字段。使用 `aspect_ratio`、`resolution` 和 `duration` 控制输出。
+
+### 图生视频
+
+发送只含一项的 `image_urls` 数组。该图片用作首帧。此工作流中 `prompt` 为可选。
+
+### 参考生视频
+
+发送包含 1-9 张图片的 `reference_image_urls`，并且必须提供 `prompt`。在提示词中以 `character1`、`character2` 等引用这些图片，顺序与 `reference_image_urls` 一致。
+
+不要将 `reference_image_urls` 与 `image_urls` 同时使用。
+
+### 视频编辑
+
+发送 `video_url`，并且必须提供编辑用的 `prompt`。可选的 `reference_image_urls` 可用于引导编辑；以 `@Image1`、`@Image2` 等引用它们。`audio_setting` 控制由 Happy Horse 自动决定音频处理方式，还是保留原始音频。
+
+源视频时长必须为 3-60 秒。输出跟随源视频，较长的输入会截取前 15 秒。
+
+## 必填参数
+
+- **model**：`happy-horse`
+- **input.prompt**：文生视频、参考生视频和视频编辑必填。图生视频可选。最大长度为 5,000 个非中文字符或 2,500 个中文字符。
+- **input.video_url**：视频编辑必填。
+- **input.reference_image_urls**：参考生视频必填。
+
+## 可选参数
+
+- **image_urls**：图生视频所用的首帧图片 URL 数组，只含一项
+- **reference_image_urls**：参考生视频使用 1-9 张图片；视频编辑可选最多 5 张图片
+- **aspect_ratio**：仅限文生视频和参考生视频。`16:9`、`9:16`、`1:1`、`4:3` 或 `3:4`。默认为 `16:9`
+- **resolution**：`720p` 或 `1080p`。默认为 `1080p`
+- **duration**：文生视频、图生视频和参考生视频使用 `3` 到 `15` 的整数秒。视频编辑会忽略该字段
+- **audio_setting**：仅限视频编辑。`auto` 或 `origin`。默认为 `auto`
+- **seed**：可选，`0` 到 `2147483647` 的整数
+- **enable_safety_checker**：可选布尔值
+
+## 注意事项
+
+- `image_urls` 必须恰好解析为一张图片，且仅用于图生视频。
+- `reference_image_urls` 会选择参考生视频，除非同时存在 `video_url`，此时它被视为视频编辑的可选参考图片。
+- 文生视频和参考生视频请不要传 `video_url`，并使用 `aspect_ratio`。
+- 视频编辑请不要传 `duration`；后端会探测源视频时长用于校验。

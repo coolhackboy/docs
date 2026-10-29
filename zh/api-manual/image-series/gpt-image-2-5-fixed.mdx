@@ -1,0 +1,43 @@
+---
+title: "GPT Image 2.5 Fixed"
+description: "使用 GPT Image 2.5 Flare 或 Sunburst 生成或编辑图像，按分辨率以固定的单张价格计费。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/gpt-image-2-5-fixed.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+GPT Image 2.5 Fixed 运行 GPT Image 2.5 Flare 或 Sunburst，按 `resolution` 以单张图像计价，而不是按 token 计价。通过 `version` 选择版本。添加参考图可编辑或引导输出。
+
+## 模型
+
+- **gpt-image-2.5-fixed** — 按单张计价的 GPT Image 2.5 Flare 或 Sunburst
+
+## 必填参数
+
+- `prompt` (string)：图像描述，1–32000 个字符。
+
+## 可选参数
+
+- `version` (string)：`flare` 或 `sunburst`。默认为 `flare`。
+- `resolution` (string)：`1K`、`2K` 或 `4K`。默认为 `1K`。
+- `size` (string)：`auto`、`1:1`、`16:9`、`9:16`、`4:3`、`3:4`、`3:2`、`2:3`、`5:4`、`4:5` 或 `21:9`。默认为 `1:1`。
+- `image_urls` (array of strings)：最多 16 个参考图 URL。
+
+## 输出
+
+任务完成后，生成的图像在 `files` 中返回，`file_type: image`。
+
+## 示例
+
+- **使用 Flare 以 2K 进行文生图** — 设置 `prompt`、`version`、`resolution`、`size`。
+- **使用 Sunburst 基于参考图编辑** — 设置 `prompt`、`version`、`image_urls`。
+
+## 注意事项
+
+- 不支持 `n` 和 `num_images`。每个任务返回一张图像。
+- `image_urls` 必须是数组，即使只有一张图像。
+- 如需按 token 计价，请使用 [GPT Image 2.5 Flare](/zh/api-manual/image-series/gpt-image-2-5-flare) 或 [GPT Image 2.5 Sunburst](/zh/api-manual/image-series/gpt-image-2-5-sunburst)。

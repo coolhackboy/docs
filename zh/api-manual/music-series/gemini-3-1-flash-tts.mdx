@@ -1,0 +1,106 @@
+---
+title: "Gemini 3.1 Flash TTS"
+description: "Gemini 3.1 Flash TTS API 可使用预设音色、行内演绎标签和可选的风格指令，将文本转换为单人或双人语音。可选设置语言，并返回 MP3、WAV 或 Opus 音频。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/gemini-3-1-flash-tts.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`gemini-3-1-flash-tts` 使用 Google 的 Gemini 3.1 Flash TTS 模型，将文本输入转换为富有表现力的语音音频。结果以任务 `files` 返回，与图像、视频、3D 和音频任务的标准响应结构一致。
+
+## 模型
+
+- **gemini-3-1-flash-tts** - Gemini 3.1 Flash 文本转语音生成
+
+## 必填参数
+
+- **text**：要转换为语音的文本
+  - 长度：`1-50000` 个字符
+  - 支持在文本中用自然语言指定风格、语速、口音和情绪
+  - 支持富有表现力的音频标签，例如 `[sigh]`、`[laughing]`、`[whispering]` 和 `[short pause]`
+  - 多说话人合成时，在文本行前加上与 `speakers[].speaker_id` 匹配的说话人别名
+
+## 可选参数
+
+- **style_instructions**：可选，应用于本次请求的风格、演绎、语速、口音、语气或情绪指令
+- **voice**：单说话人合成的预设音色。设置了 `speakers` 时忽略。默认：`Kore`
+- **language_code**：可选的语言枚举，用于引导多语言合成。省略时模型根据 `text` 自动检测
+- **speakers**：用于对话的恰好两个说话人对象。设置后忽略顶层 `voice`。每一项包括：
+  - `voice`：Gemini 预设音色
+  - `speaker_id`：只包含字母、数字和下划线、不含空白的别名，在请求内唯一，在 `text` 中用作前缀
+- **temperature**：控制演绎变化程度的数值。默认：`1`。范围：`0-2`
+- **output_format**：`mp3`、`wav` 或 `ogg_opus`。默认：`mp3`。`mp3` 适合紧凑播放，`wav` 适合无压缩后期制作，`ogg_opus` 在质量与体积之间取得平衡
+
+## 预设音色
+
+支持的值：`Achernar`、`Achird`、`Algenib`、`Algieba`、`Alnilam`、`Aoede`、`Autonoe`、`Callirrhoe`、`Charon`、`Despina`、`Enceladus`、`Erinome`、`Fenrir`、`Gacrux`、`Iapetus`、`Kore`、`Laomedeia`、`Leda`、`Orus`、`Pulcherrima`、`Puck`、`Rasalgethi`、`Sadachbia`、`Sadaltager`、`Schedar`、`Sulafat`、`Umbriel`、`Vindemiatrix`、`Zephyr`、`Zubenelgenubi`。
+
+## 示例
+
+### 带音频标签的单说话人
+
+```json
+{
+  "model": "gemini-3-1-flash-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Good morning, team. [short pause] Our release is stable, and the customer demo starts in ten minutes.",
+    "style_instructions": "Warm, confident product narrator with clear pacing.",
+    "voice": "Kore",
+    "temperature": 1,
+    "output_format": "mp3"
+  }
+}
+```
+
+### 多语言店铺助手
+
+```json
+{
+  "model": "gemini-3-1-flash-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "English: Your order is ready for pickup.\nSpanish: Su pedido esta listo para recoger.\nFrench: Votre commande est prete a etre retiree.",
+    "style_instructions": "Friendly store assistant voice, natural and concise.",
+    "voice": "Zephyr",
+    "language_code": "English (US)",
+    "temperature": 1,
+    "output_format": "wav"
+  }
+}
+```
+
+### 双人播客
+
+```json
+{
+  "model": "gemini-3-1-flash-tts",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "text": "Host: Welcome back to Launch Notes. [laughing] Today's build finally passed.\nGuest: Great news. Let's keep the update clear and calm for users.",
+    "style_instructions": "Conversational podcast tone with distinct speaker energy.",
+    "speakers": [
+      {
+        "speaker_id": "Host",
+        "voice": "Charon"
+      },
+      {
+        "speaker_id": "Guest",
+        "voice": "Kore"
+      }
+    ],
+    "temperature": 1,
+    "output_format": "ogg_opus"
+  }
+}
+```
+
+## 注意事项
+
+- PoYo 对外公开的参数名是 `text`。
+- 通过标准任务状态 API 查询状态。
+- 成功响应返回 `files`，其中生成的语音使用 `file_type: audio`。

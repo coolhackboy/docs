@@ -1,0 +1,27 @@
+---
+title: "DeepSeek"
+description: "通过 OpenAI 兼容的 Chat Completions 接口调用 DeepSeek V4 和 V4.1 模型。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/deepseek.json POST /v1/chat/completions"
+---
+
+DeepSeek 模型可处理聊天、编程、推理和 Agent 任务，上下文窗口为 1M token。本页 Playground 使用 [Chat Completions](/zh/api-manual/chat-series/chat-completions)，所有 DeepSeek 模型都支持该格式。
+
+## 模型
+
+- **deepseek-flash** — DeepSeek V4.1 Flash。552B MoE 模型，原生支持视觉，输出最多 384K token。支持 Chat Completions 和 Responses。
+- **deepseek-v4-pro** — DeepSeek V4 Pro。总参数 1.6T / 激活参数 49B，适用于更强的推理、编程和 Agent 工作流。仅支持 Chat Completions。
+- **deepseek-v4-flash** — DeepSeek V4 Flash。总参数 284B / 激活参数 13B，适用于快速、低成本的聊天。仅支持 Chat Completions。
+
+## 示例
+
+- **基础聊天补全** — `deepseek-v4-flash` 加单条用户消息。
+- **系统提示词** — `deepseek-v4-pro` 加 `system` 消息和 `max_tokens`。
+- **流式输出** — `deepseek-flash` 加 `stream: true`，以 SSE 返回。
+
+如需以 Responses 格式调用 `deepseek-flash`，把相同的 model id 发送到 [Responses](/zh/api-manual/chat-series/responses)。
+
+## 注意事项
+
+- `deepseek-v4-pro` 和 `deepseek-v4-flash` 只接受 `/v1/chat/completions`。
+- 全部模型及其支持的格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

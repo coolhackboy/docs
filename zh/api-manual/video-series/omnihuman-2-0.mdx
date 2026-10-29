@@ -1,0 +1,42 @@
+---
+title: "OmniHuman 2.0"
+description: "用一段 4–300 秒的驱动音频和可选的表演指令，让一张角色图片动起来。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/omnihuman-2-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+OmniHuman 2.0 根据一张图片和一个驱动音频文件生成音频驱动的角色视频。可使用可选的提示词引导角色的动作和表演。
+
+## 模型
+
+- **omnihuman-2.0** — 音频驱动的角色动画
+
+## 功能
+
+- 用驱动音频让一张角色图片动起来。
+- 通过可选的文本提示词引导动作和表演。
+
+## 必填参数
+
+- `image_urls` (array of strings)：恰好一个角色图片 URL。
+- `audio_url` (string)：驱动音频 URL。音频时长必须为 4–300 秒，大小不超过 15 MB。
+
+## 可选参数
+
+- `prompt` (string)：可选的动作和表演指令。
+
+## 示例
+
+请求示例只使用必填的 `image_urls` 和 `audio_url` 字段。需要表演指令时，在 `input` 中添加 `prompt`。
+
+## 注意事项
+
+- 所有生成参数都放在 `input` 中。
+- 图片必须使用可公开访问的 HTTP 或 HTTPS URL。
+- `audio_url` 必须是可公开访问的 HTTP 或 HTTPS URL。
+- 不接受单独的 `duration` 参数；请求的表演时长由驱动音频决定。

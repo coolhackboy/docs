@@ -1,0 +1,182 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Sora 2 Beta API",
+    "description": "Sora 2 Beta API 可根据文本生成 4、8 或 12 秒的 16:9 或 9:16 视频，可选传入一张参考图。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Sora 2 Beta 任务",
+        "description": "使用 Sora 2 Beta 生成视频",
+        "operationId": "submitSora2BetaTask",
+        "tags": ["Sora 2 Beta"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "sora-2-beta-text-to-video": {
+                  "summary": "Sora 2 Beta 文生视频",
+                  "value": {
+                    "model": "sora-2-beta",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic shot of a red sports car driving through neon rain at night, reflective streets, dramatic lighting, smooth camera tracking.",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "sora-2-beta-image-to-video": {
+                  "summary": "Sora 2 Beta 图生视频",
+                  "value": {
+                    "model": "sora-2-beta",
+                    "input": {
+                      "prompt": "Animate this image into a smooth cinematic video with natural motion and soft camera movement.",
+                      "duration": 4,
+                      "aspect_ratio": "9:16",
+                      "image_urls": ["https://example.com/reference-image.png"]
+                    }
+                  }
+                },
+                "sora-2-beta-image-to-video-base64": {
+                  "summary": "Sora 2 Beta 图生视频（Base64 图片）",
+                  "value": {
+                    "model": "sora-2-beta",
+                    "input": {
+                      "prompt": "Animate this image into a smooth cinematic video with natural motion and soft camera movement.",
+                      "duration": 4,
+                      "aspect_ratio": "16:9",
+                      "image_urls": ["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证\n\n获取 API Key：\n\n访问 [API Key 管理页面](https://poyo.ai/zh/dashboard/api-key) 获取 API Key\n\n将其添加到请求头：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Sora 2 Beta 模型标识",
+            "enum": ["sora-2-beta"]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "描述期望视频的生成提示词",
+                "example": "A cinematic shot of a red sports car driving through neon rain at night, reflective streets, dramatic lighting, smooth camera tracking."
+              },
+              "duration": {
+                "type": "integer",
+                "description": "输出时长，单位为秒",
+                "enum": [4, 8, 12],
+                "default": 4,
+                "example": 8
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "视频宽高比",
+                "enum": ["16:9", "9:16"],
+                "default": "16:9",
+                "example": "16:9"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 1,
+                "description": "可选的参考图数组，用于图生视频。如果提供，必须恰好包含一张图片，用作首帧/参考图。支持 HTTP(S) 图片 URL 或 base64 图片字符串，包括 data:image/...;base64,... 形式的值。",
+                "example": ["https://example.com/reference-image.png"]
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started"],
+                "example": "not_started"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

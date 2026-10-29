@@ -1,0 +1,81 @@
+---
+title: "快速开始"
+description: "三步在 Claude Code、Codex 或 Cursor 中生成你的第一张图片。"
+icon: "rocket"
+---
+
+# 快速开始
+
+通过 Agent Skill 和 PoYo CLI，在编程 Agent 中使用 PoYo。无需配置 MCP。
+
+前提条件：
+
+- 一个 PoYo API Key。可在 [API Key 页面](https://poyo.ai/dashboard/api-key)创建。
+- CLI 需要 Node.js 20 或更高版本。Skill 安装器需要 Node.js 18 或更高版本。
+- 能访问 `github.com`。`npx skills add` 会从 GitHub 克隆 Skill。
+
+<Steps>
+  <Step title="保存 API Key">
+    ```bash
+    npx -y @poyoapi/cli auth login
+    ```
+
+    粘贴一次 API Key 即可。它会保存在系统密钥环中；如果没有可用的密钥环，则保存在本地配置文件中。然后验证：
+
+    ```bash
+    npx -y @poyoapi/cli account
+    ```
+
+    输出会显示你的邮箱和积分。
+  </Step>
+  <Step title="安装 Skill">
+    在项目目录中运行：
+
+    <Tabs>
+      <Tab title="Claude Code">
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
+        ```
+      </Tab>
+      <Tab title="Codex">
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent codex --yes
+        ```
+      </Tab>
+      <Tab title="Cursor">
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent cursor --yes
+        ```
+      </Tab>
+      <Tab title="其他客户端">
+        省略 `--agent`，以交互方式选择客户端：
+
+        ```bash
+        npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models
+        ```
+      </Tab>
+    </Tabs>
+
+    添加 `--global` 可为所有项目安装 Skill，而不仅是当前项目。
+  </Step>
+  <Step title="向 Agent 提问">
+    重启或重新打开 Agent，让它加载 Skill，然后用自然语言提问：
+
+    ```text
+    Use PoYo to generate one image of an orange cat on a windowsill in morning
+    light. Generate only 1, tell me the model and price first, then give me the
+    image URL and credits used.
+    ```
+
+    如果生成视频，还要让 Agent 等待任务完成并返回视频 URL。
+  </Step>
+</Steps>
+
+Agent 会搜索目录、检查模型 schema 和价格、通过 CLI 提交任务、等待任务完成，然后返回结果。
+
+## 如果出现失败
+
+- **`auth login` 后提示 API Key 无效**：已存在的 `POYO_API_KEY` 环境变量优先于已保存的 Key。运行 `npx -y @poyoapi/cli auth status` 查看来源，然后取消设置或更新该变量。
+- **`npx skills add` 报错 "Failed to clone"**：你的网络无法访问 `github.com`。为 git 配置代理后重试。
+
+Skill 的执行方式和更多故障排查见 [Agent Skill](/zh/integrations/skill)。如需让客户端直接使用 PoYo 工具，请参阅[通过 MCP 连接](/zh/integrations/mcp)。

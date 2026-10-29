@@ -1,0 +1,92 @@
+---
+title: "Chat Completions"
+description: "通用 Chat API 是与模型无关的接口，兼容 OpenAI Chat Completions 请求结构。传入 model id 和 messages，并可选择以服务器发送事件（SSE）流的方式返回。"
+icon: "comments"
+openapi: "/zh/api-manual/chat-series/chat-completions.json POST /v1/chat/completions"
+---
+
+- 适用于大多数 LLM 的统一聊天 API 接口；哪些模型支持见 [LLM 模型](/zh/api-manual/chat-series/overview)
+- 通过 model 参数选择不同的 AI 模型
+- 兼容 OpenAI Chat Completions API 格式
+
+## 使用示例
+
+### 基础对话
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "messages": [
+    {"role": "user", "content": "Explain vector databases in one sentence."}
+  ]
+}
+```
+
+### 系统提示词
+
+```json  theme={null}
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "messages": [
+    {"role": "system", "content": "You are a technical editor. Improve clarity of product copy."},
+    {"role": "user", "content": "Rewrite the button text 'Submission failed' to be friendly and actionable."}
+  ]
+}
+```
+
+### 多轮对话
+
+```json  theme={null}
+{
+  "model": "gemini-3-flash-preview",
+  "messages": [
+    {"role": "user", "content": "Give me 3 customer support bot names."},
+    {"role": "assistant", "content": "1) HelpWave 2) CarePilot 3) SwiftSupport"},
+    {"role": "user", "content": "Add one style tag for each name."}
+  ]
+}
+```
+
+### 流式输出
+
+```json  theme={null}
+{
+  "model": "gpt-5.2",
+  "messages": [
+    {"role": "user", "content": "Generate 5 short titles (max 6 words) about AI video generation."}
+  ],
+  "stream": true
+}
+```
+
+## 注意事项
+
+* 使用 `stream: true` 获取 SSE 流式响应。
+* 不同模型支持的上下文长度、输出上限和可选参数可能不同。
+* 对于需要工具或多模态结构化输入的新 OpenAI 兼容工作流，请使用 Responses API。
+
+## 响应
+
+非流式请求直接返回 Chat Completions 对象，不带 `code` / `data` 包装。DeepSeek 等推理模型还会在 `choices[].message.reasoning_content` 中返回推理文本，并计入 `usage.completion_tokens_details.reasoning_tokens`。
+
+## 流式输出
+
+设置 `"stream": true` 时，响应为 `text/event-stream`。每个事件是一行包含 `chat.completion.chunk` 对象的 `data:`，流以 `data: [DONE]` 结束：
+
+```text
+data: {"id":"...","object":"chat.completion.chunk","model":"deepseek-v4-flash","choices":[{"index":0,"delta":{"role":"assistant"}}]}
+data: {"id":"...","object":"chat.completion.chunk","model":"deepseek-v4-flash","choices":[{"index":0,"delta":{"content":"OK"}}]}
+data: {"id":"...","object":"chat.completion.chunk","model":"deepseek-v4-flash","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":"stop"}],"usage":{"prompt_tokens":36,"completion_tokens":16,"total_tokens":52}}
+data: [DONE]
+```
+
+- 文本在 `choices[0].delta.content` 中返回。推理模型会先流式返回 `choices[0].delta.reasoning_content`。
+- 最后一个 chunk 携带 `finish_reason` 和 `usage`。
+
+## 错误
+
+- `401`：缺少 API Key 或 API Key 无效。
+- `400`：参数无效，或模型不支持 Chat Completions（例如 `gpt-5-6-sol` 只支持 Responses）。错误信息会列出支持的 URI。
+- `404`：未知的 model id。
+
+响应体示例见[错误码](/zh/api-manual/error-codes#llm-接口错误)，哪些模型支持此格式见 [LLM 模型](/zh/api-manual/chat-series/overview)。

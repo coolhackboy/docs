@@ -1,0 +1,110 @@
+---
+title: "Omni Flash"
+description: "Omni Flash API 可根据文本、一张图片、恰好三张参考图片或一个输入视频，生成 4–10 秒、16:9 或 9:16、720p、1080p 或 4K 的视频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/omni-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`omni-flash` 可根据文本提示词、可选的参考图片或可选的参考视频生成短视频。
+
+## 模型
+
+- **omni-flash** - 文生视频、图生视频、参考图片融合和视频输入生成
+
+## 输入模式
+
+- **文生视频**：只传 `prompt`，可选再加 `resolution`、`duration` 和 `aspect_ratio`
+- **图生视频**：传 `prompt`，并在 `image_urls` 中传恰好一张图片
+- **参考图片融合**：传 `prompt`，并在 `image_urls` 中传恰好三张图片
+- **视频输入**：传 `prompt`，并在 `video_urls` 中传一个视频；不要传 `duration`
+
+## 必填参数
+
+- **prompt**：描述场景、运动、风格、镜头行为及其他生成指令的文本提示词
+
+## 可选参数
+
+- **image_urls**：图片 URL 数组。允许的数量为 `0`、`1` 或 `3`
+- **video_urls**：视频 URL 数组。最多允许 `1` 个视频
+- **resolution**：`720p`、`1080p` 或 `4k`。默认为 `720p`
+- **duration**：`4`、`6`、`8` 或 `10` 秒。默认为 `6`。提供 `video_urls` 时不要传此字段
+- **aspect_ratio**：`16:9` 或 `9:16`。`16:9` 为横屏，`9:16` 为竖屏。默认为 `16:9`
+- **callback_url**：可选的 Webhook URL，用于接收完成通知
+
+## 示例
+
+### 文生视频
+
+```json
+{
+  "model": "omni-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic macro shot of a glass marble rolling across a wet reflective table, realistic physics, slow camera push-in",
+    "resolution": "720p",
+    "duration": 6,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 图生视频
+
+```json
+{
+  "model": "omni-flash",
+  "input": {
+    "prompt": "Animate this product photo with a slow turntable motion, soft studio highlights, and subtle background parallax",
+    "image_urls": ["https://example.com/source-image.webp"],
+    "resolution": "720p",
+    "duration": 6,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 三图参考融合
+
+```json
+{
+  "model": "omni-flash",
+  "input": {
+    "prompt": "Combine the character, outfit, and set references into a single fashion campaign clip with gentle camera drift",
+    "image_urls": [
+      "https://example.com/character.webp",
+      "https://example.com/outfit.webp",
+      "https://example.com/set.webp"
+    ],
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### 视频输入
+
+```json
+{
+  "model": "omni-flash",
+  "input": {
+    "prompt": "Use the reference motion as the timing guide and transform the final look into a clean cinematic product reveal",
+    "video_urls": ["https://example.com/reference-video.mp4"],
+    "resolution": "720p",
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+## 注意事项
+
+- 使用公开的 HTTPS 图片和视频 URL，或在提交前通过 Playground 上传文件
+- 不支持在 `image_urls` 中传两张图片
+- `video_urls` 最多支持一个视频
+- 提供 `video_urls` 时必须省略 `duration`
+- 响应会返回 `task_id`；查询任务状态以获取生成的视频文件

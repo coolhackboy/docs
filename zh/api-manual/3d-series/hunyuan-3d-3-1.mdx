@@ -1,0 +1,52 @@
+---
+title: "Hunyuan 3D v3.1"
+description: "Hunyuan 3D v3.1 API 使用 Pro 或 Rapid 从文本或单张图像生成 3D 模型。Pro 可接受额外视角图、目标面数、PBR 材质或仅几何的 GLB；Rapid 可返回带纹理的模型或无纹理的白模。"
+icon: "cube"
+openapi: "/zh/api-manual/3d-series/hunyuan-3d-3-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Hunyuan 3D v3.1 通过四个公开 model ID 提供 Pro 和 Rapid 的文生 3D 与图生 3D 模型。
+
+## 模型
+
+- **hunyuan-3d/v3.1/pro/image-to-3d** - 从一张正视图生成 Pro 3D 模型，可附加额外视角图
+- **hunyuan-3d/v3.1/pro/text-to-3d** - 从文本提示词生成 Pro 3D 模型
+- **hunyuan-3d/v3.1/rapid/text-to-3d** - 从文本提示词更快地生成 Rapid 3D 模型
+- **hunyuan-3d/v3.1/rapid/image-to-3d** - 从一张图像更快地生成 Rapid 3D 模型
+
+## 必填参数
+
+- **model**：四个 Hunyuan 3D v3.1 公开 model ID 之一
+- **input.prompt**：文生 3D 模型必填
+- **input.image_urls**：图生 3D 模型必填。只能传一个图像 URL。
+
+## 可选参数
+
+- **generate_type**：仅 Pro 模型。`Normal` 或 `Geometry`
+- **enable_pbr**：启用 PBR 材质生成。仅几何生成时忽略
+- **face_count**：仅 Pro 模型。目标面数，范围 `40000` 到 `1500000`；默认 `500000`
+- **enable_geometry**：仅 Rapid 模型。生成不带纹理的仅几何白模
+- **back_image_url**、**left_image_url**、**right_image_url**、**top_image_url**、**bottom_image_url**、**left_front_image_url**、**right_front_image_url**：仅 Pro 图生 3D。可选的额外物体视角图
+- **callback_url**：可选，任务完成通知的 Webhook URL
+
+## 输出
+
+任务结果可能包括：
+
+- `model_glb` 或其他返回的 3D 模型文件
+- `thumbnail`
+- `model_urls`：可用时包括 `glb`、`obj`、`mtl`、`texture` 及其他格式
+- 可用时包括纹理和材质文件
+
+每个文件条目在可用时包括 `label`、`file_url`、`file_type`、`format`、`content_type`、`file_name` 和 `file_size`。
+
+## 注意事项
+
+- 图生 3D 模型在 `image_urls` 中只接受一张必填图像。
+- Pro 图生 3D 还可接受可选的、按名称区分的额外视角图 URL。
+- API 返回异步任务状态。请轮询统一的 3D 任务状态接口，或使用 `callback_url`。

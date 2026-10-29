@@ -1,0 +1,434 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "DeepSeek API",
+    "description": "通过兼容 OpenAI 的 Chat Completions 接口调用 DeepSeek 模型。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/chat/completions": {
+      "post": {
+        "summary": "DeepSeek",
+        "description": "使用 DeepSeek 模型进行对话补全。",
+        "operationId": "createDeepSeekChatCompletion",
+        "tags": [
+          "LLM"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "基础对话补全",
+                  "value": {
+                    "model": "deepseek-v4-flash",
+                    "messages": [
+                      {
+                        "role": "user",
+                        "content": "Explain vector databases in one sentence."
+                      }
+                    ]
+                  }
+                },
+                "system_prompt": {
+                  "summary": "DeepSeek V4 Pro 系统提示词",
+                  "value": {
+                    "model": "deepseek-v4-pro",
+                    "messages": [
+                      {
+                        "role": "system",
+                        "content": "You are a senior Python reviewer. Reply with a numbered list."
+                      },
+                      {
+                        "role": "user",
+                        "content": "Review: def add(a, b): return a+b"
+                      }
+                    ],
+                    "max_tokens": 512
+                  }
+                },
+                "stream": {
+                  "summary": "流式输出",
+                  "value": {
+                    "model": "deepseek-flash",
+                    "messages": [
+                      {
+                        "role": "user",
+                        "content": "Generate 5 short titles about AI agents."
+                      }
+                    ],
+                    "stream": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "补全已创建",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletion"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "成功响应",
+                    "value": {
+                      "id": "chatcmpl-9876543210",
+                      "object": "chat.completion",
+                      "created": 1677652288,
+                      "model": "deepseek-v4-flash",
+                      "choices": [
+                        {
+                          "index": 0,
+                          "message": {
+                            "role": "assistant",
+                            "content": "A vector database stores embeddings and finds the most similar ones quickly."
+                          },
+                          "finish_reason": "stop"
+                        }
+                      ],
+                      "usage": {
+                        "prompt_tokens": 12,
+                        "completion_tokens": 18,
+                        "total_tokens": 30
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效，或模型不支持此 API 格式",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "API Key 缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "未知的 model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "ChatCompletionRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deepseek-flash",
+              "deepseek-v4-pro",
+              "deepseek-v4-flash"
+            ],
+            "default": "deepseek-v4-flash",
+            "description": "DeepSeek 模型 ID。`deepseek-flash` 即 DeepSeek V4.1 Flash。"
+          },
+          "messages": {
+            "type": "array",
+            "description": "对话消息列表。每条消息包含 `role` 和 `content`。`system` 用于定义模型行为，`user` 用于用户输入，`assistant` 用于多轮对话中模型之前的回复。",
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "description": "控制输出的随机性，范围 0-2。较低的值（如 0.2）使输出更确定，较高的值（如 1.8）使输出更随机。默认值：1.0。",
+            "example": 1
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "生成的最大 token 数。不同模型的上限不同。",
+            "example": 256
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "是否使用流式输出。`true` 以 SSE 格式返回流式响应，`false` 一次性返回完整响应。默认值：false。",
+            "example": false
+          },
+          "top_p": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "核采样参数，范围 0-1。控制生成文本的多样性。建议只使用 `top_p` 或 `temperature` 其中之一，不要同时使用。默认值：1.0。",
+            "example": 1
+          },
+          "frequency_penalty": {
+            "type": "number",
+            "minimum": -2,
+            "maximum": 2,
+            "description": "频率惩罚，范围 -2.0 到 2.0。正值会降低重复相同词语的可能性。默认值：0。",
+            "example": 0
+          },
+          "presence_penalty": {
+            "type": "number",
+            "minimum": -2,
+            "maximum": 2,
+            "description": "存在惩罚，范围 -2.0 到 2.0。正值会提高谈论新话题的可能性。默认值：0。",
+            "example": 0
+          },
+          "stop": {
+            "description": "停止序列。最多 4 个，遇到其中任一序列时停止生成。",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "\n\nHuman:"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "生成的补全数量。默认值：1。必须是普通数字，如 `1`，不要加引号。",
+            "example": 1
+          }
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant"
+            ],
+            "description": "消息角色。`user` 为用户输入，`assistant` 为多轮对话中模型之前的输出，`system` 为系统提示词。",
+            "default": "user"
+          },
+          "content": {
+            "type": "string",
+            "description": "消息内容、问题或指令。",
+            "example": "Explain vector databases in one sentence."
+          }
+        }
+      },
+      "ChatCompletion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "响应的唯一标识符。",
+            "example": "chatcmpl-9876543210"
+          },
+          "object": {
+            "type": "string",
+            "description": "对象类型。",
+            "example": "chat.completion"
+          },
+          "created": {
+            "type": "integer",
+            "description": "创建时间戳。",
+            "example": 1677652288
+          },
+          "model": {
+            "type": "string",
+            "description": "实际使用的模型名称。",
+            "example": "deepseek-v4-flash"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChatCompletionChoice"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        }
+      },
+      "ChatCompletionChoice": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "example": 0
+          },
+          "message": {
+            "$ref": "#/components/schemas/ChatMessage"
+          },
+          "finish_reason": {
+            "type": "string",
+            "description": "结束原因。",
+            "enum": [
+              "stop",
+              "length",
+              "content_filter",
+              "function_call"
+            ],
+            "example": "stop"
+          }
+        }
+      },
+      "Usage": {
+        "type": "object",
+        "properties": {
+          "prompt_tokens": {
+            "type": "integer",
+            "description": "输入消息的 token 数。",
+            "example": 12
+          },
+          "completion_tokens": {
+            "type": "integer",
+            "description": "生成内容的 token 数。",
+            "example": 18
+          },
+          "total_tokens": {
+            "type": "integer",
+            "description": "token 总数。",
+            "example": 30
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "PoyoValidationError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters: messages: Field required"
+              },
+              "type": {
+                "type": "string",
+                "example": "validation_error"
+              },
+              "details": {
+                "type": "object",
+                "description": "字段级校验错误（如有）。"
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "模型或请求在此 API 格式下被拒绝时返回的错误。",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

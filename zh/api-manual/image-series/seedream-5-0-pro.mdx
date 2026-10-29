@@ -1,0 +1,94 @@
+---
+title: "Seedream-5.0-Pro"
+description: "Seedream 5.0 Pro API 根据文本生成图像或编辑最多 10 张参考图。在各预设宽高比下，输出分辨率为 1K 或 2K。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/seedream-5-0-pro.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Seedream-5.0-Pro 是字节跳动的旗舰图像模型，用于文生图和区域精确的图像编辑。它适用于复杂提示词、结构化版式、多语言文字排版、产品视觉和多参考图编辑工作流。
+
+## 模型
+
+- **seedream-5.0-pro** - 旗舰文生图
+- **seedream-5.0-pro-edit** - 图像编辑，支持多图参考（最多 10 张）
+
+## 尺寸
+
+`input.size` 为必填，控制输出宽高比。省略时系统默认使用 `1:1`：
+
+- 比例预设：`1:1`、`4:3`、`3:4`、`16:9`、`9:16`、`2:3`、`3:2`、`21:9`
+
+## 分辨率
+
+`input.resolution` 为必填，控制输出分辨率。省略时系统默认使用 `1K`：
+
+- 分辨率预设：`1K`、`2K`
+
+## 示例
+
+使用统一提交接口：`POST /api/generate/submit`
+
+文生图示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-pro",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Editorial studio portrait of a fashion model wearing vibrant West African wax-print clothing, matching headwrap, layered bead jewelry and bracelets, confident pose, warm textured backdrop, saturated colors, dramatic fashion lighting.",
+      "size": "3:4",
+      "resolution": "2K",
+      "output_format": "jpeg"
+    }
+  }'
+```
+
+多图示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-pro",
+    "input": {
+      "prompt": "A clean science magazine cover about renewable city infrastructure, dense but readable layout, accurate icons, modern editorial design",
+      "size": "16:9",
+      "resolution": "1K",
+      "output_format": "png"
+    }
+  }'
+```
+
+编辑示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-5.0-pro-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Replace the perfume bottle in the first reference image with the green BB cream tube from the second reference image, keep the outdoor flower-and-water background, and apply the script logo from the third reference image to the front label.",
+      "image_urls": [
+        "https://example.com/reference-scene.jpg",
+        "https://example.com/reference-product.jpg",
+        "https://example.com/reference-logo.jpg"
+      ],
+      "size": "3:4",
+      "resolution": "2K"
+    }
+  }'
+```

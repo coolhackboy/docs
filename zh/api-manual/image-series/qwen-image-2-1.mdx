@@ -1,0 +1,108 @@
+---
+title: "Qwen Image 2.1"
+description: "Qwen Image 2.1 API 根据文本生成一张图像、组合最多 10 张参考图，或进行蒙版编辑。输出为 1K 或 2K，背景可为不透明或透明。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/qwen-image-2-1.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 **`qwen-image-2.1`** 进行文生图、多参考图编辑、透明素材生成和局部编辑。每次请求生成一张图像。
+
+文生图时省略 `image_urls` 或传入空数组。图生图时提供 1–10 个参考图 URL。参考图顺序与提示词中的引用对应，例如“第一张图”。若要更好地保留细节，请使用四张或更少的参考图。
+
+## 模型
+
+- **qwen-image-2.1** — Qwen Image 2.1
+
+## 必填参数
+
+- `prompt` 必填，为非空文本，最多 5,000 个字符。
+
+## 可选参数
+
+- `image_urls` 最多接受 10 个可公开访问的 HTTP(S) 参考图 URL。支持 JPEG、PNG 和 WebP，每张图最大 30MB、25MP。媒体限制在生成过程中校验。
+- `size` 支持 `1:1`、`4:3`、`3:4`、`3:2`、`2:3`、`16:9`、`9:16`、`21:9` 和 `9:21`。带参考图的请求还支持 `auto`。文生图默认为 `1:1`，图生图默认为 `auto`。
+- `resolution` 支持 `1K`（默认）和 `2K`。
+- `output_format` 支持 `png`（默认）、`webp` 和 `jpeg`。
+- `prompt_extend` 控制提示词增强，默认开启。
+- `enable_safety_checker` 控制内容安全检查，默认开启。
+- `background` 支持 `opaque`（默认）和 `transparent`。透明输出需要 PNG 或 WebP。
+- `mask_url` 接受一个 HTTP(S) 蒙版 URL，需配合恰好一张参考图和不透明背景使用。
+- `seed` 接受可选整数。省略时使用随机种子生成。
+
+按上文说明使用 `size`、`prompt_extend` 和 `enable_safety_checker`。不支持 `negative_prompt` 和多图输出参数。
+
+## 示例
+
+### 文生图
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "input": {
+    "prompt": "A bilingual technology poster with the headline Future Vision, precise typography, blue and silver palette",
+    "size": "3:4",
+    "resolution": "1K"
+  }
+}
+```
+
+### 多参考图生成
+
+请将示例 URL 替换为可公开访问的图像。
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "input": {
+    "prompt": "Combine the product in the first image with the colors and lighting of the second image",
+    "image_urls": [
+      "https://example.com/product.png",
+      "https://example.com/style.jpg"
+    ],
+    "size": "auto",
+    "resolution": "2K",
+    "prompt_extend": false
+  }
+}
+```
+
+### 透明素材
+
+只描述主体。描述背景、场景或表面可能导致无法得到透明结果。JPEG 不支持透明。
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "input": {
+    "prompt": "A playful corgi sticker, isolated subject",
+    "background": "transparent",
+    "output_format": "webp",
+    "seed": 20260921
+  }
+}
+```
+
+### 蒙版编辑
+
+蒙版白色区域会被编辑，黑色区域保持不变。请使用与参考图宽高比相同的蒙版，其尺寸会缩放到参考图大小。此模式需要恰好一张参考图，且不支持透明背景。
+
+输出沿用参考图的宽高比。提供蒙版时会忽略 `size` 和 `prompt_extend`。
+
+```json
+{
+  "model": "qwen-image-2.1",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the marked cushion with a blue velvet cushion",
+    "image_urls": ["https://example.com/room.png"],
+    "mask_url": "https://example.com/mask.png",
+    "resolution": "2K",
+    "output_format": "png"
+  }
+}
+```

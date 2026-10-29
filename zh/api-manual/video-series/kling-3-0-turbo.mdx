@@ -1,0 +1,24 @@
+---
+title: "Kling 3.0 Turbo"
+description: "Kling 3.0 Turbo API 可根据文本或首帧生成 3–15 秒的 720p 或 1080p 视频，可选多镜头提示词。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/kling-3-0-turbo.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **kling-3.0-turbo/standard** - 720p Turbo 视频生成
+- **kling-3.0-turbo/pro** - 1080p Turbo 视频生成
+
+## 功能
+
+- **自动模式路由**：如果 `input.image_urls` 有值，请求按图生视频处理；否则按文生视频处理
+- **图片输入**：在图生视频模式下，`image_urls[0]` 用作首帧图片
+- **灵活时长**：3 到 15 秒。未传时默认时长为 5 秒
+- **宽高比**：文生视频模式支持 `16:9`、`9:16` 和 `1:1`
+- **多镜头**：使用 `multi_prompt` 进行多镜头叙事，每个镜头可单独设置提示词和时长

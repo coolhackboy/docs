@@ -1,0 +1,54 @@
+---
+title: "MiniMax Music 2.6"
+description: "MiniMax Music 2.6 API 根据风格提示词生成完整音轨，可使用提供的歌词、根据提示词生成的歌词，或纯伴奏模式。音频可按文档列出的采样率和码率以 MP3、WAV 或 PCM 返回。"
+icon: "music"
+openapi: "/zh/api-manual/music-series/minimax-music-2.6.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+- **minimax-music-2.6** — MiniMax Music 2.6
+
+## 功能
+
+- 此接口根据风格提示词生成包含演唱、伴奏和细致编曲的完整音轨
+- 你可以提供自定义歌词，让模型根据提示词优化歌词，或启用纯伴奏模式生成无人声音乐
+- 最终结果通过 `callback_url` 或[查询任务状态](/zh/api-manual/task-management/status)异步返回
+
+## 必填参数
+
+- `prompt`（必填）：描述风格、情绪、流派、配器、速度或场景的音乐提示词
+  - 长度：`10-2000` 个字符
+  - 明确说明你希望最终音轨呈现的音乐方向
+
+## 可选参数
+
+- `lyrics`：可选，用于人声生成的歌词内容
+  - 除非 `is_instrumental` 或 `lyrics_optimizer` 为 `true`，否则必填
+  - 最大长度：`3500` 个字符
+
+- `lyrics_optimizer`：可选布尔值
+  - 为 `true` 且 `lyrics` 为空时，模型根据 `prompt` 自动生成歌词
+  - 适合想要带人声的歌曲、但不想提供具体歌词的情况
+
+- `is_instrumental`：可选布尔值
+  - 设为 `true` 可生成不含人声的纯伴奏音乐
+  - 为 `true` 时，省略 `lyrics`，且不要启用 `lyrics_optimizer`
+
+- `audio_setting`：可选的输出音频设置对象
+  - `sample_rate`：`16000`、`24000`、`32000`、`44100`
+  - `bitrate`：`32000`、`64000`、`128000`、`256000`
+  - `format`：`mp3`、`wav`、`pcm`
+  - 仅支持这三个键
+
+## 注意事项
+
+- 如果 `is_instrumental` 和 `lyrics_optimizer` 都为 `false`，请提供 `lyrics`，以免出现校验错误
+- `lyrics_optimizer` 遵循上游 MiniMax Music 2.6 的 schema。如果上游服务拒绝优化歌词的请求，请改用明确的 `lyrics` 重试
+- 通过标准任务状态 API 查询状态，而不是音乐详情接口
+- 成功响应返回 `files`，其中生成的音乐使用 `file_type: audio`

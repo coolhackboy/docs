@@ -1,0 +1,32 @@
+---
+title: "Seedance 2.5"
+description: "Seedance 2.5 API 可根据文本、首尾帧，或图片、视频和音频参考生成 4–30 秒、480p、720p 或 1080p 的视频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/seedance-2.5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+## 模型
+
+使用 `seedance-2.5` 进行文生视频、首尾帧生成和多模态参考生视频。
+
+## 输入模式
+
+- 文生视频时不传媒体字段。
+- 使用 `image_urls` 传入一张起始帧和可选的结束帧。
+- 使用 `reference_image_urls`、`reference_video_urls` 和 `reference_audio_urls` 传入多模态参考。在提示词中以 `@Image1`、`@Video1` 或 `@Audio1` 引用它们。
+
+## 注意事项
+
+- `prompt`、`duration` 和 `resolution` 为必填。
+- `duration` 接受 4 到 30 秒的整数值。
+- `resolution` 接受 `480p`、`720p` 或 `1080p`。
+- `image_urls` 最多接受两张图片，不能与参考媒体同时使用，并使用 `aspect_ratio: auto`。
+- 参考模式最多接受 30 张图片、10 个视频和 10 个音频文件，总计最多 50 个文件。
+- 音频参考需要至少一张参考图片或一个参考视频。
+- `aspect_ratio` 接受 `auto`、`21:9`、`16:9`、`4:3`、`1:1`、`3:4` 或 `9:16`。
+- 所有媒体 URL 都必须可公开访问并可直接下载。

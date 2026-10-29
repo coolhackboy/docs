@@ -1,0 +1,65 @@
+---
+title: "音乐与音频模型"
+description: "PoYo 上可用的全部音乐、语音和文本转语音模型及其 model ID。"
+icon: "music"
+---
+
+音乐和音频模型通过 `POST /api/generate/submit` 调用。在 `model` 中传入 model ID，在 `input` 中传入参数，并可选传入 `callback_url`。请求会立即返回 `task_id`，任务异步执行。
+
+## 工作流程
+
+Suno 与其他供应商使用不同的结果接口：
+
+- **Suno**：轮询[查询音乐详情](/zh/api-manual/music-series/query-music-detail)，或通过 `callback_url` 接收结果（参见[音乐 Webhook](/zh/api-manual/music-series/music-webhook)）。
+- **MiniMax、ElevenLabs、Google、xAI**：轮询统一的[查询任务状态](/zh/api-manual/task-management/status)，或通过 `callback_url` 接收结果（参见 [Webhook 回调](/zh/api-manual/task-management/webhooks)）。
+
+## Suno
+
+Suno 按动作组织，每个动作有自己的 model ID。从[生成音乐](/zh/api-manual/music-series/generate-music)开始；有些动作会基于之前的任务或上传的音频文件对歌曲进行延长、翻唱或编辑。如需自定义声音，请按照 [Suno 声音工作流程](/zh/api-manual/music-series/voice/overview)操作。
+
+| 动作 | 类别 | Model ID |
+| --- | --- | --- |
+| [生成音乐](/zh/api-manual/music-series/generate-music) | 音乐 | `generate-music` |
+| [生成 MIDI](/zh/api-manual/music-series/generate-midi) | 人声分离 | `generate-midi` |
+| [生成混搭](/zh/api-manual/music-series/generate-mashup) | 音乐 | `generate-mashup` |
+| [生成音效](/zh/api-manual/music-series/generate-sounds) | 音乐 | `generate-sounds` |
+| [延长音乐](/zh/api-manual/music-series/extend-music) | 音乐 | `extend-music` |
+| [上传并翻唱音频](/zh/api-manual/music-series/upload-and-cover-audio) | 音乐 | `upload-and-cover-audio` |
+| [上传并延长音频](/zh/api-manual/music-series/upload-and-extend-audio) | 音乐 | `upload-and-extend-audio` |
+| [添加伴奏](/zh/api-manual/music-series/add-instrumental) | 音乐 | `add-instrumental` |
+| [添加人声](/zh/api-manual/music-series/add-vocals) | 音乐 | `add-vocals` |
+| [获取带时间戳的歌词](/zh/api-manual/music-series/get-timestamped-lyrics) | 音乐 | `get-timestamped-lyrics` |
+| [增强音乐风格](/zh/api-manual/music-series/boost-music-style) | 音乐 | `boost-music-style` |
+| [生成音乐封面](/zh/api-manual/music-series/generate-music-cover) | 音乐 | `generate-music-cover` |
+| [替换片段](/zh/api-manual/music-series/replace-section) | 音乐 | `replace-section` |
+| [生成 Persona](/zh/api-manual/music-series/generate-persona) | 音乐 | `generate-persona` |
+| [生成歌词](/zh/api-manual/music-series/generate-lyrics) | 音乐 | `generate-lyrics` |
+| [转换为 WAV](/zh/api-manual/music-series/convert-to-wav) | 音乐 | `convert-to-wav` |
+| [分离人声](/zh/api-manual/music-series/vocal-remover/separate-vocals) | 人声分离 | `separate-vocals` |
+| [分轨拆分](/zh/api-manual/music-series/vocal-remover/stem-split) | 人声分离 | `stem-split` |
+| [上传并分离人声](/zh/api-manual/music-series/vocal-remover/upload-and-separate-vocals) | 人声分离 | `upload-and-separate-vocals` |
+| [验证 Suno 声音](/zh/api-manual/music-series/voice/validate) | Suno 声音 | `suno-voice-validate` |
+| [生成 Suno 声音](/zh/api-manual/music-series/voice/generate) | Suno 声音 | `suno-voice-generate` |
+| [重新生成验证短语](/zh/api-manual/music-series/voice/regenerate) | Suno 声音 | `suno-voice-regenerate` |
+| [检查 Suno 声音](/zh/api-manual/music-series/voice/check) | Suno 声音 | `suno-voice-check` |
+| [创建音乐视频](/zh/api-manual/music-series/create-music-video) | 音乐 | `create-music-video` |
+
+## 音乐与 TTS 模型
+
+| 模型 | 供应商 | Model ID |
+| --- | --- | --- |
+| [MiniMax Music 2.6](/zh/api-manual/music-series/minimax-music-2.6) | MiniMax | `minimax-music-2.6` |
+| [ElevenLabs Music](/zh/api-manual/music-series/elevenlabs-music) | ElevenLabs | `elevenlabs-music` |
+| [ElevenLabs V3 TTS](/zh/api-manual/music-series/elevenlabs-v3-tts) | ElevenLabs | `elevenlabs-v3-tts` |
+| [ElevenLabs TTS Turbo v2.5](/zh/api-manual/music-series/elevenlabs-tts-turbo-2-5) | ElevenLabs | `elevenlabs-tts-turbo-2-5` |
+| [ElevenLabs V4 TTS](/zh/api-manual/music-series/elevenlabs-v4-tts) | ElevenLabs | `elevenlabs-v4-tts` |
+| [ElevenLabs V4 Turbo TTS](/zh/api-manual/music-series/elevenlabs-v4-turbo-tts) | ElevenLabs | `elevenlabs-v4-turbo-tts` |
+| [Gemini 3.1 Flash TTS](/zh/api-manual/music-series/gemini-3-1-flash-tts) | Google | `gemini-3-1-flash-tts` |
+| [Gemini 3.8 Flash Lite TTS](/zh/api-manual/music-series/gemini-3-8-flash-lite-tts) | Google | `gemini-3.8-flash-lite-tts` |
+| [Gemini 3.8 Flash TTS](/zh/api-manual/music-series/gemini-3-8-flash-tts) | Google | `gemini-3.8-flash-tts` |
+| [xAI TTS 1](/zh/api-manual/music-series/xai-tts-1) | xAI | `xai-tts-1` |
+
+## 注意事项
+
+- 每个页面列出该 model ID 的参数和限制，参数在不同模型之间不通用。
+- URL 输入必须是可公开访问的 HTTP(S) URL。如需使用本地文件，请先通过[文件管理](/zh/api-manual/file-series/upload-url)上传。

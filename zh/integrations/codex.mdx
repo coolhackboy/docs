@@ -1,0 +1,49 @@
+---
+title: "Codex"
+description: "将 Codex 连接到 PoYo MCP 并添加 PoYo Agent Skill"
+icon: "code"
+---
+
+# 连接 Codex
+
+Codex CLI 和 IDE 扩展从 `~/.codex/config.toml` 读取 MCP 配置。
+
+在启动 Codex 之前设置 `POYO_API_KEY`，然后添加：
+
+<Note>
+  `export POYO_API_KEY=...` 或 `$env:POYO_API_KEY=...` 只对当前终端会话生效。除非 Codex 应用和 IDE 扩展是从该会话启动的，或者该变量设置在系统级或用户级，否则它们读取不到。
+</Note>
+
+```toml
+[mcp_servers.poyo]
+url = "https://api.poyo.ai/mcp"
+bearer_token_env_var = "POYO_API_KEY"
+tool_timeout_sec = 45
+```
+
+保存后开启新的 Codex 会话。
+
+<Warning>
+  把 API Key 保留在环境变量中。不要把它放进 URL，也不要提交到项目配置中。
+</Warning>
+
+## 添加类型化工具
+
+当任务需要模型专属的 schema 时，使用带筛选参数的 URL：
+
+```toml
+[mcp_servers.poyo_image]
+url = "https://api.poyo.ai/mcp?categories=image"
+bearer_token_env_var = "POYO_API_KEY"
+tool_timeout_sec = 45
+```
+
+筛选行为和限制见[选择 MCP 工具](/zh/integrations/mcp-filtering)。
+
+## 添加工作流指引
+
+`poyo-ai-models` Agent Skill 提供模型选择、执行和任务等待方面的指引。它可以搭配 MCP 或 CLI 使用。如果想在不使用 MCP 的情况下使用 Codex，请按照[快速开始](/zh/integrations/quickstart)操作，并使用 `--agent codex`。
+
+## 验证
+
+向 Codex 提问：`Use PoYo to check my account, find an image model, inspect its schema and price, and explain how you would run it.`

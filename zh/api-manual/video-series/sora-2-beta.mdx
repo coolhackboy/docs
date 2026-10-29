@@ -1,0 +1,80 @@
+---
+title: "Sora 2 Beta"
+description: "Sora 2 Beta API 可根据文本生成 4、8 或 12 秒、16:9 或 9:16 的视频，可选传入一张参考图片。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/sora-2-beta.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`sora-2-beta` 支持文生视频，以及可选的单图引导生成，时长固定为 4 秒、8 秒和 12 秒。
+
+## 模型
+
+- **sora-2-beta** - 文生视频和图生视频，可选传入一张参考图片
+
+## 功能
+
+### 文生视频
+
+不传 `input.image_urls`，即可直接根据 `input.prompt` 生成视频。
+
+```json
+{
+  "model": "sora-2-beta",
+  "input": {
+    "prompt": "A cinematic shot of a red sports car driving through neon rain at night.",
+    "duration": 4,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 图生视频
+
+在 `input.image_urls` 中提供恰好一张图片。该图片会作为视频生成的参考图片。
+
+```json
+{
+  "model": "sora-2-beta",
+  "input": {
+    "prompt": "Animate this image into a smooth cinematic video with natural motion.",
+    "duration": 4,
+    "aspect_ratio": "16:9",
+    "image_urls": ["https://example.com/reference-image.png"]
+  }
+}
+```
+
+`image_urls` 也支持 Base64 图片：
+
+```json
+{
+  "model": "sora-2-beta",
+  "input": {
+    "prompt": "Animate this image into a smooth cinematic video with natural motion.",
+    "duration": 4,
+    "aspect_ratio": "16:9",
+    "image_urls": ["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."]
+  }
+}
+```
+
+## 必填参数
+
+- **prompt**：用于视频生成的文本提示词
+
+## 可选参数
+
+- **duration**：`4`、`8` 或 `12`。默认为 `4`
+- **aspect_ratio**：`16:9` 或 `9:16`。默认为 `16:9`
+- **image_urls**：用于图生视频的可选参考图片数组。最多 `1` 张图片。支持 HTTP(S) 图片 URL 或 Base64 图片字符串
+
+## 注意事项
+
+- `image_urls` 为可选。如果提供，仅支持一张图片，并作为图生视频的参考图片使用。
+- Base64 输入会先上传并转换为图片 URL，再发送给视频供应商。
+- 本页仅介绍统一的提交请求。请通过标准的任务状态 API 查询状态。

@@ -1,0 +1,297 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Vidu Q4",
+    "description": "根据一张起始帧或参考图片生成视频，可选参考音频。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Vidu Q4 视频任务",
+        "operationId": "submit_vidu_q4",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "image-to-video": {
+                  "summary": "让一张起始帧动起来",
+                  "value": {
+                    "model": "vidu-q4",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/start-frame.png"
+                      ]
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "由参考图片和音频引导的视频",
+                  "value": {
+                    "model": "vidu-q4",
+                    "input": {
+                      "prompt": "Animate the character from the reference image with movement guided by the reference audio.",
+                      "reference_image_urls": [
+                        "https://example.com/character.png"
+                      ],
+                      "reference_audio_urls": [
+                        "https://example.com/reference.mp3"
+                      ],
+                      "duration": 5,
+                      "resolution": "720p"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "vidu-q4"
+            ],
+            "description": "公开的模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于接收任务完成或失败通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "视频指令，最多 5,000 个字符。参考生视频时必填且不能为空；图生视频时可选。"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 1,
+                "description": "图生视频使用的起始帧图片，必须恰好一张。不能与 reference_image_urls 或 reference_audio_urls 同时使用。请使用公开可访问的 HTTP 或 HTTPS URL。"
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 12,
+                "description": "参考生视频时必填。提供 1-12 张参考图片。不能与 image_urls 同时使用。请使用公开可访问的 HTTP 或 HTTPS URL。"
+              },
+              "reference_audio_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "minItems": 1,
+                "maxItems": 3,
+                "description": "配合 reference_image_urls 使用的可选参考音频。最多支持 3 个 MP3 文件，每个时长 3-12 秒。没有参考图片时不能使用音频。请使用公开可访问的 HTTP 或 HTTPS URL。"
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 16,
+                "default": 5,
+                "description": "输出时长，单位为整秒。"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "540p",
+                  "720p",
+                  "1080p",
+                  "2k",
+                  "4k"
+                ],
+                "default": "720p",
+                "description": "输出视频分辨率。"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "4:3",
+                  "3:4",
+                  "1:1"
+                ],
+                "default": "16:9",
+                "description": "参考生视频的输出宽高比。图生视频时不要传此字段。"
+              },
+              "generate_audio": {
+                "type": "boolean",
+                "default": false,
+                "description": "为参考生视频生成音轨。图生视频时不要传此字段。"
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "启用内容安全检查。"
+              }
+            },
+            "description": "提供一张 image_urls 起始帧，或提供 prompt 加 1-12 张 reference_image_urls。参考音频可选，且需要配合参考图片使用。",
+            "not": {
+              "properties": {
+                "image_urls": {
+                  "maxItems": 0
+                },
+                "reference_image_urls": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792190000-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-17T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

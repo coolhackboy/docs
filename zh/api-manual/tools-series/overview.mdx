@@ -1,0 +1,29 @@
+---
+title: "AI 工具"
+description: "PoYo 上可用的 AI 工具：翻译、背景移除、超分辨率和内容审核。"
+icon: "wrench"
+---
+
+工具用于处理你已有的媒体：翻译、清理、增强或审核。它们使用与生成模型相同的异步流程。
+
+## 工作流程
+
+1. 使用下表中的 model ID 向 `POST /api/generate/submit` 提交任务，并在 `input` 中传入该工具的参数。
+2. 用返回的 `task_id` 轮询[查询任务状态](/zh/api-manual/task-management/status)，或在 `callback_url` 接收结果（见 [Webhook 回调](/zh/api-manual/task-management/webhooks)）。
+3. 状态变为 `finished` 后，下载 `files` 中的文件。Omni Moderation 的结果在 `output` 中返回，而不是 `files`。
+
+## 模型
+
+| 工具 | Model ID | 输入 |
+| --- | --- | --- |
+| [图像翻译](/zh/api-manual/tools-series/image-translator) | `poyo-ai/image-translator` | 一张图像 |
+| [视频翻译](/zh/api-manual/tools-series/video-translator) | `poyo-ai/video-translator` | 一个视频或音频文件，最长 6 分钟 |
+| [视频背景移除](/zh/api-manual/tools-series/video-background-removal) | `poyo-ai/video-background-removal` | 一个视频 |
+| [视频超分](/zh/api-manual/tools-series/video-upscaler) | `poyo-ai/video-upscaler` | 一个视频 |
+| [Omni Moderation](/zh/api-manual/moderation-series/omni-moderation) | `omni-moderation-latest` | 文本和图像 |
+
+## 注意事项
+
+- 输入文件必须是可公开访问的 HTTP(S) URL。如需使用本地文件，请先通过[文件管理](/zh/api-manual/file-series/upload-url)上传。
+- PoYo 在提交前会检查输入文件（类型、大小、时长）。校验错误在响应体中以 `code: 400` 返回，有时 HTTP 状态码为 200。请始终检查 `code`。
+- 生成的文件在创建后 3 天内可访问。请及时下载并保存。

@@ -1,0 +1,103 @@
+---
+title: "Ideogram V4.5"
+description: "Ideogram 4.5 API 根据提示词生成图像，或编辑一张主图。编辑时最多可添加四张参考图，设置蒙版时最多三张；高精度模式会保留未编辑区域的像素。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/ideogram-v4-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+根据文本提示词生成图像，或结合参考图、可选蒙版和精度控制编辑一张主图。
+
+## 模型
+
+- **ideogram-v4.5** - 文生图，支持质量和尺寸控制
+- **ideogram-v4.5-edit** - 编辑恰好一张主图，可选参考图、蒙版和精度控制
+
+## 必填参数
+
+- **model**：`ideogram-v4.5` 或 `ideogram-v4.5-edit`
+- **input.prompt**：两个模型均必填。使用 `1-10000` 个字符，且须包含非空白文本
+- **input.image_urls**：`ideogram-v4.5-edit` 必填。恰好一张主图。`ideogram-v4.5` 不支持
+
+## 可选参数
+
+- **n**：输出图像数量。取值为 `1` 到 `8` 的整数。默认为 `1`
+- **quality**：输出质量。默认为 `medium`。`ideogram-v4.5` 接受 `low`、`medium` 和 `high`。`ideogram-v4.5-edit` 还接受 `very_low`
+- **size**：输出尺寸。参见下方的尺寸规则
+- **reference_image_urls**：仅限编辑。不使用蒙版时最多四张参考图，设置 `mask_url` 时最多三张
+- **mask_url**：仅限编辑。必须与主图尺寸一致，且同时包含黑色编辑区域和白色保留区域。图像内容要求在处理过程中检查。需要 `size=auto` 或省略 `size`
+- **edit_precision**：仅限编辑。`regular` 或 `high`。默认为 `regular`。`high` 会还原未改动的像素，需要 `size=auto` 或省略 `size`
+- **callback_url**：可选的 Webhook URL，用于任务完成通知
+
+所有图像字段都接受公开的 HTTP(S) 图像 URL 或图像 data URI。
+
+## 尺寸
+
+`ideogram-v4.5` 默认为 `1:1 HD`。它接受宽高比 `1:1`、`1:1 HD`、`4:3`、`3:4`、`16:9` 和 `9:16`，或以下任一精确尺寸：
+
+`1024x1024`, `1024x3072`, `1120x896`, `1152x2944`, `1152x864`, `1248x3328`, `1248x832`, `1280x3072`, `1280x720`, `1280x800`, `1296x3168`, `1440x2560`, `1440x2880`, `1440x720`, `1600x2560`, `1664x2496`, `1728x2304`, `1792x2240`, `2048x2048`, `2240x1792`, `2304x1728`, `2496x1664`, `2560x1440`, `2560x1600`, `2880x1440`, `2944x1152`, `3072x1024`, `3072x1280`, `3168x1296`, `3328x1248`, `720x1280`, `720x1440`, `800x1280`, `832x1248`, `864x1152`, `896x1120`.
+
+`ideogram-v4.5-edit` 默认为 `auto`，保留源图尺寸。
+
+- 使用蒙版或 `edit_precision=high` 时，需要 `auto` 或省略尺寸。
+- 比例预设和自定义 `WIDTHxHEIGHT` 尺寸仅适用于无蒙版的常规编辑。
+- 自定义编辑尺寸的每个维度至少为 `256` 且能被 `32` 整除，总像素数不超过 `4,194,304`，宽高比不超过 `6:1`。
+
+## 示例
+
+### 生成图像
+
+```json
+{
+  "model": "ideogram-v4.5",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A ceramic robot with a clean silhouette."
+  }
+}
+```
+
+### 编辑图像
+
+```json
+{
+  "model": "ideogram-v4.5-edit",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the background with a blue studio.",
+    "image_urls": [
+      "https://example.com/source.png"
+    ]
+  }
+}
+```
+
+### 高精度蒙版编辑
+
+```json
+{
+  "model": "ideogram-v4.5-edit",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Replace the black mask area with flowers.",
+    "image_urls": [
+      "https://example.com/source.png"
+    ],
+    "mask_url": "https://example.com/mask.png",
+    "reference_image_urls": [
+      "https://example.com/flowers.png"
+    ],
+    "edit_precision": "high"
+  }
+}
+```
+
+## 注意事项
+
+- `ideogram-v4.5-edit` 要求 `image_urls` 中恰好有一张主图。
+- 通过标准的任务状态 API 查询状态。
+- 成功响应返回 `files`，其中生成的图像为 `file_type: image`。

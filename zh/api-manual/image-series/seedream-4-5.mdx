@@ -1,0 +1,109 @@
+---
+title: "Seedream-4.5"
+description: "Seedream 4.5 API 根据文本生成图像或编辑最多 10 张参考图。输出可为 2K、4K、预设宽高比或自定义宽高。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/seedream-4-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Seedream-4.5 是一款先进的图像生成模型，支持文生图、图生图以及多参考图图像编辑。它可生成高质量图像，提供灵活的宽高比和提示词优化选项。
+
+## 模型
+
+- **seedream-4.5** - 高质量文生图和图生图生成
+- **seedream-4.5-edit** - 高级图像编辑，支持多图参考（最多 10 张）
+
+## 尺寸
+
+`input.size` 支持以下形式：
+
+- 分辨率预设：`2K`、`4K`
+- 比例预设：`1:1`、`4:3`、`3:4`、`16:9`、`9:16`、`3:2`、`2:3`、`21:9`
+- 自定义字符串：`WIDTHxHEIGHT`，例如 `1920x4096`
+- 自定义对象：`{ "width": 2304, "height": 3072 }`
+
+文生图和 `seedream-4.5-edit` 都支持自定义 `size`。
+
+编辑模式下：
+
+- `2K`、`4K` 等预设分辨率由上游模型自动处理
+- `1920x4096` 或 `{ "width": 2304, "height": 3072 }` 等自定义尺寸会使用你明确提供的宽度和高度
+
+## 示例
+
+使用统一提交接口：`POST /api/generate/submit`
+
+预设尺寸示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-4.5",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "A serene Japanese garden with cherry blossoms and a koi pond",
+      "size": "16:9",
+      "n": 1
+    }
+  }'
+```
+
+自定义尺寸示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-4.5",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Seedream 4.5 API now Available on Poyo.ai",
+      "size": "1920x4096",
+      "n": 1
+    }
+  }'
+```
+
+使用自定义尺寸编辑示例：
+
+```bash
+curl --request POST \
+  --url https://api.poyo.ai/api/generate/submit \
+  --header 'Authorization: Bearer YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "seedream-4.5-edit",
+    "callback_url": "https://your-domain.com/callback",
+    "input": {
+      "prompt": "Transform the scene to a winter wonderland with snow",
+      "image_urls": ["https://example.com/reference1.jpg"],
+      "size": "1920x4096",
+      "n": 1
+    }
+  }'
+```
+
+自定义尺寸对象示例：
+
+```json
+{
+  "model": "seedream-4.5",
+  "input": {
+    "prompt": "A fashion editorial portrait in a studio",
+    "size": {
+      "width": 2304,
+      "height": 3072
+    },
+    "n": 1
+  }
+}
+```

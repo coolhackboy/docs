@@ -1,0 +1,553 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Responses API",
+    "description": "Responses API 是兼容 OpenAI 的接口，支持纯文本或结构化图片输入。所选模型支持时，可使用工具调用和 server-sent events 流式输出。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/responses": {
+      "post": {
+        "summary": "Responses API",
+        "description": "根据文本、多模态输入和可选工具创建响应。",
+        "operationId": "createResponse",
+        "tags": [
+          "Text Series"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResponsesRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "基础文本响应",
+                  "value": {
+                    "model": "gpt-5.2",
+                    "input": "Write a product tagline in one sentence.",
+                    "max_output_tokens": 120
+                  }
+                },
+                "multimodal": {
+                  "summary": "图像理解",
+                  "value": {
+                    "model": "gpt-5",
+                    "input": [
+                      {
+                        "role": "user",
+                        "content": [
+                          {
+                            "type": "input_text",
+                            "text": "Describe this image in one paragraph."
+                          },
+                          {
+                            "type": "input_image",
+                            "image_url": "https://example.com/image.jpg"
+                          }
+                        ]
+                      }
+                    ],
+                    "max_output_tokens": 300
+                  }
+                },
+                "webSearch": {
+                  "summary": "网页搜索",
+                  "value": {
+                    "model": "gpt-5",
+                    "input": "Use web search to find the latest product update on poyo.ai. Reply with the title and URL only.",
+                    "tools": [
+                      {
+                        "type": "web_search_preview"
+                      }
+                    ],
+                    "tool_choice": "auto",
+                    "max_output_tokens": 2000
+                  }
+                },
+                "streaming": {
+                  "summary": "流式响应",
+                  "value": {
+                    "model": "gpt-5.2",
+                    "input": "Write a 100-word product introduction.",
+                    "max_output_tokens": 200,
+                    "stream": true,
+                    "store": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "响应已创建",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseObject"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "成功响应",
+                    "value": {
+                      "id": "resp_9876543210",
+                      "object": "response",
+                      "created_at": 1677652288,
+                      "status": "completed",
+                      "model": "gpt-5.2",
+                      "output": [
+                        {
+                          "id": "msg_123",
+                          "type": "message",
+                          "status": "completed",
+                          "role": "assistant",
+                          "content": [
+                            {
+                              "type": "output_text",
+                              "text": "Launch faster with a smarter AI workspace built for teams."
+                            }
+                          ]
+                        }
+                      ],
+                      "usage": {
+                        "input_tokens": 12,
+                        "output_tokens": 14,
+                        "total_tokens": 26
+                      }
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-sent events 流。事件以 `data: [DONE]` 结束。"
+                },
+                "example": "event: response.output_text.delta\ndata: {\"type\":\"response.output_text.delta\",\"delta\":\"Hello\"}\n\ndata: [DONE]\n\n"
+              }
+            }
+          },
+          "400": {
+            "description": "请求无效"
+          },
+          "401": {
+            "description": "API Key 无效或缺失"
+          },
+          "402": {
+            "description": "余额不足"
+          },
+          "404": {
+            "description": "未知的 model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超出速率限制"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "ResponsesRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型名称。",
+            "example": "gpt-5.2"
+          },
+          "input": {
+            "$ref": "#/components/schemas/ResponsesInput"
+          },
+          "instructions": {
+            "type": "string",
+            "description": "引导模型响应的系统或开发者指令。"
+          },
+          "tools": {
+            "type": "array",
+            "description": "模型可用的工具。工具支持情况取决于所选模型。",
+            "items": {
+              "$ref": "#/components/schemas/ResponsesTool"
+            }
+          },
+          "tool_choice": {
+            "description": "控制模型如何选择工具。",
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "auto"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          },
+          "max_output_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "生成的最大输出 token 数。",
+            "example": 200
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "用于兼容旧版的最大输出 token 字段。",
+            "example": 200
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "是否以 SSE 格式流式输出。",
+            "default": false,
+            "example": false
+          },
+          "store": {
+            "type": "boolean",
+            "description": "支持时，是否存储该响应。",
+            "example": false
+          },
+          "reasoning": {
+            "type": "object",
+            "description": "推理配置，所选模型支持时可用。",
+            "additionalProperties": true,
+            "example": {
+              "effort": "medium"
+            }
+          },
+          "text": {
+            "type": "object",
+            "description": "文本输出配置，例如支持时的结构化输出格式选项。",
+            "additionalProperties": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "请求的自定义元数据键值对。",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "previous_response_id": {
+            "type": "string",
+            "description": "用于继续对话的上一个响应 ID。"
+          },
+          "include": {
+            "type": "array",
+            "description": "支持时，需要额外包含的响应字段。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parallel_tool_calls": {
+            "type": "boolean",
+            "description": "是否允许模型并行调用多个工具。"
+          },
+          "truncation": {
+            "type": "string",
+            "description": "长上下文的截断行为，支持时可用。",
+            "example": "auto"
+          },
+          "user": {
+            "type": "string",
+            "description": "最终用户标识符，用于滥用监控和请求追踪。"
+          },
+          "background": {
+            "type": "boolean",
+            "description": "支持时，是否以后台模式运行响应。"
+          },
+          "service_tier": {
+            "type": "string",
+            "description": "服务层级选择，支持时可用。",
+            "example": "auto"
+          },
+          "prompt": {
+            "type": "object",
+            "description": "提示词对象，所选模型支持时可用。",
+            "additionalProperties": true
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "description": "控制输出的随机性，范围 0-2。",
+            "example": 1
+          },
+          "top_p": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "核采样参数，范围 0-1。",
+            "example": 1
+          }
+        }
+      },
+      "ResponsesInput": {
+        "description": "纯文本输入或结构化输入项数组。",
+        "oneOf": [
+          {
+            "type": "string",
+            "example": "Write a product tagline in one sentence."
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponsesInputItem"
+            }
+          }
+        ]
+      },
+      "ResponsesInputItem": {
+        "type": "object",
+        "description": "结构化输入项。",
+        "additionalProperties": true,
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "输入角色。",
+            "enum": [
+              "system",
+              "developer",
+              "user",
+              "assistant"
+            ],
+            "example": "user"
+          },
+          "content": {
+            "description": "输入内容。",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ResponsesContentBlock"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "ResponsesContentBlock": {
+        "type": "object",
+        "description": "输入内容块。",
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "内容块类型，例如 `input_text`、`input_image` 或 `input_audio`。",
+            "example": "input_text"
+          },
+          "text": {
+            "type": "string",
+            "description": "文本块的文本内容。",
+            "example": "Describe this image."
+          },
+          "image_url": {
+            "type": "string",
+            "description": "图片 URL 或 Base64 Data URI。",
+            "example": "https://example.com/image.jpg"
+          },
+          "audio": {
+            "type": "object",
+            "description": "音频数据，所选模型支持时可用。",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ResponsesTool": {
+        "type": "object",
+        "description": "工具定义。工具支持情况取决于所选模型。",
+        "required": [
+          "type"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "工具类型。",
+            "example": "web_search_preview"
+          }
+        }
+      },
+      "ResponseObject": {
+        "type": "object",
+        "description": "响应对象。",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "resp_9876543210"
+          },
+          "object": {
+            "type": "string",
+            "example": "response"
+          },
+          "created_at": {
+            "type": "integer",
+            "example": 1677652288
+          },
+          "status": {
+            "type": "string",
+            "example": "completed"
+          },
+          "model": {
+            "type": "string",
+            "example": "gpt-5.2"
+          },
+          "output": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponseOutputItem"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/ResponseUsage"
+          }
+        }
+      },
+      "ResponseOutputItem": {
+        "type": "object",
+        "description": "响应输出项。",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "message"
+          },
+          "status": {
+            "type": "string",
+            "example": "completed"
+          },
+          "role": {
+            "type": "string",
+            "example": "assistant"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponseContent"
+            }
+          }
+        }
+      },
+      "ResponseContent": {
+        "type": "object",
+        "description": "响应内容块。",
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "output_text"
+          },
+          "text": {
+            "type": "string",
+            "example": "Launch faster with a smarter AI workspace built for teams."
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "ResponseUsage": {
+        "type": "object",
+        "description": "token 用量统计。",
+        "additionalProperties": true,
+        "properties": {
+          "input_tokens": {
+            "type": "integer",
+            "example": 12
+          },
+          "output_tokens": {
+            "type": "integer",
+            "example": 14
+          },
+          "total_tokens": {
+            "type": "integer",
+            "example": 26
+          },
+          "input_tokens_details": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "output_tokens_details": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "模型或请求在此 API 格式下被拒绝时返回的错误。",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+---
+title: "上传并延长音频"
+description: "在保留原有风格的同时延长音轨"
+icon: "music"
+openapi: "/zh/api-manual/music-series/upload-and-extend-audio.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询音乐详情](/zh/api-manual/music-series/query-music-detail)接口获取结果。
+</Tip>
+
+`persona_model` 接受 `style_persona` 或 `voice_persona`，需要 `persona_id`，且仅在 `default_param_flag: true` 并使用 V5、V5_5、V6、V6_MINI 或 V6_WILD 时支持。
+
+## 使用指南
+
+- 此接口始终为自定义模式。`default_param_flag: false` 会被拒绝
+- 上传现有音轨，并指定从哪里继续
+- AI 会生成与原曲无缝融合的新增内容
+- 上传的音频文件时长不得超过 8 分钟（**注意**：V4_5ALL 模型最多 1 分钟）
+
+## 参数详情
+
+- 当 `default_param_flag: true`（自定义参数模式）时：
+
+  - 完全控制风格、标题和其他参数
+
+  - 如果 `instrumental: true`：`upload_url`、`mv`、`style`、`title` 和 `continue_at` 为必填
+
+  - 如果 `instrumental: false`：`upload_url`、`mv`、`style`、`title` 和 `continue_at` 为必填。`prompt` 为可选，提供时会被使用
+
+  - 字符限制因模型而异：
+
+    - **V4**：`prompt` 3000 个字符，`style` 200 个字符，`title` 80 个字符
+
+    - **V4_5 和 V4_5PLUS**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+
+    - **V4_5ALL**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 80 个字符
+
+    - **V5**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V5_5**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+    - **V6、V6_MINI 和 V6_WILD**：`prompt` 5000 个字符，`style` 1000 个字符，`title` 100 个字符
+
+## 开发者说明
+
+- `default_param_flag` 必须省略或设为 `true`。`false` 会被拒绝。
+- `continue_at` 参数决定延长从哪里开始，请将其设为你希望新内容开始的位置
+
+## 可选参数
+
+- `prompt` (string)：可选，延长音频的描述或歌词。输出人声时如果省略，会自动生成歌词。
+
+- `style` (string)：音乐风格说明。`default_param_flag` 为 `true` 时必填。
+
+- `title` (string)：延长音频的音轨标题。字符限制因模型而异（V4 和 V4_5ALL：80；V4_5、V4_5PLUS、V5、V5_5、V6、V6_MINI 和 V6_WILD：100）。
+
+- `negative_tags` (string)：生成时要排除的音乐风格。
+
+- `vocal_gender` (string)：人声性别偏好。`m` 表示男声，`f` 表示女声。注意：此参数只能提高概率，不能保证生成指定性别。
+
+- `style_weight` (number)：对风格的遵循强度。范围 0-1，最多 2 位小数。
+
+- `weirdness_constraint` (number)：控制创意偏离程度。范围 0-1，最多 2 位小数。
+
+- `audio_weight` (number)：音频特征的平衡权重。范围 0-1，最多 2 位小数。
+
+- `persona_id` (string)：应用于生成音乐的 Persona ID。仅在 `default_param_flag: true` 且使用 V5、V5_5、V6、V6_MINI 或 V6_WILD 时可用。如何生成 persona_id，请参阅 [generate-persona](/zh/api-manual/music-series/generate-persona)。

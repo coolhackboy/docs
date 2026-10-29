@@ -1,0 +1,350 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Kling 1.6 API",
+    "description": "Kling 1.6 API 根据文本或首帧生成 5 或 10 秒的视频。Pro 还可以设置尾帧。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Kling 1.6 视频生成任务",
+        "description": "使用 Kling 1.6 Standard 或 Pro 生成视频。PoYo 会根据输入的图像字段自动选择文生视频、图生视频或 Elements。",
+        "operationId": "submitKling16Task",
+        "tags": [
+          "Kling 1.6"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "kling-1-6-standard-text": {
+                  "summary": "Kling 1.6 Standard - 文生视频",
+                  "value": {
+                    "model": "kling-1.6/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A quiet city street after rain, soft reflections on the pavement as the camera moves forward",
+                      "duration": 5,
+                      "aspect_ratio": "16:9",
+                      "negative_prompt": "blur, low quality, distorted hands",
+                      "cfg_scale": 0.5
+                    }
+                  }
+                },
+                "kling-1-6-standard-image": {
+                  "summary": "Kling 1.6 Standard - 图生视频",
+                  "value": {
+                    "model": "kling-1.6/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A landscape photograph comes alive as mist drifts across a quiet mountain lake at sunrise",
+                      "duration": 5,
+                      "start_image_url": "https://example.com/start-frame.png",
+                      "negative_prompt": "blur, flicker, distorted scenery",
+                      "cfg_scale": 0.45
+                    }
+                  }
+                },
+                "kling-1-6-standard-elements": {
+                  "summary": "Kling 1.6 Standard - Elements",
+                  "value": {
+                    "model": "kling-1.6/standard",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A ceramic teapot, linen cloth, and wooden table stay visually consistent as the camera circles the scene",
+                      "duration": 5,
+                      "aspect_ratio": "1:1",
+                      "image_urls": [
+                        "https://example.com/reference-1.png",
+                        "https://example.com/reference-2.png"
+                      ]
+                    }
+                  }
+                },
+                "kling-1-6-pro-text": {
+                  "summary": "Kling 1.6 Pro - 文生视频",
+                  "value": {
+                    "model": "kling-1.6/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Glass sculptures catch shifting afternoon light inside a quiet gallery as the camera slowly moves past",
+                      "duration": 10,
+                      "aspect_ratio": "16:9",
+                      "negative_prompt": "low quality, jitter, artifacts",
+                      "cfg_scale": 0.35
+                    }
+                  }
+                },
+                "kling-1-6-pro-image": {
+                  "summary": "Kling 1.6 Pro - 图生视频",
+                  "value": {
+                    "model": "kling-1.6/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A still indoor scene gently animates as warm afternoon light moves across the room",
+                      "duration": 10,
+                      "aspect_ratio": "16:9",
+                      "start_image_url": "https://example.com/start-frame.png",
+                      "end_image_url": "https://example.com/end-frame.png",
+                      "negative_prompt": "warped face, flicker, artifacts",
+                      "cfg_scale": 0.4
+                    }
+                  }
+                },
+                "kling-1-6-pro-elements": {
+                  "summary": "Kling 1.6 Pro - Elements",
+                  "value": {
+                    "model": "kling-1.6/pro",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "Four reference objects form a calm tabletop scene while their shapes and materials stay consistent",
+                      "duration": 5,
+                      "aspect_ratio": "9:16",
+                      "image_urls": [
+                        "https://example.com/reference-1.png",
+                        "https://example.com/reference-2.png",
+                        "https://example.com/reference-3.png",
+                        "https://example.com/reference-4.png"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Kling 1.6 对外模型标识符",
+            "enum": [
+              "kling-1.6/standard",
+              "kling-1.6/pro"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt",
+              "duration"
+            ],
+            "description": "生成的输入参数。PoYo 根据提供的图像字段选择生成工作流。",
+            "additionalProperties": false,
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "视频生成的文本提示词",
+                "maxLength": 2500,
+                "example": "A cinematic video scene"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "输出时长，单位为秒",
+                "enum": [
+                  5,
+                  10
+                ],
+                "example": 5
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "视频宽高比。Standard 在文生视频和 Elements 中支持此参数，Standard 图生视频不支持 aspect_ratio。Pro 在所有 Kling 1.6 工作流中都支持 aspect_ratio",
+                "enum": [
+                  "1:1",
+                  "16:9",
+                  "9:16"
+                ],
+                "example": "16:9"
+              },
+              "negative_prompt": {
+                "type": "string",
+                "description": "可选的负向提示词",
+                "maxLength": 2500,
+                "example": "blur, low quality, artifacts"
+              },
+              "cfg_scale": {
+                "type": "number",
+                "description": "文生视频和图生视频的提示词引导强度。有效范围为 0 到 1。提供 image_urls 时不支持",
+                "minimum": 0,
+                "maximum": 1,
+                "example": 0.5
+              },
+              "start_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "图生视频的首帧图像 URL。如果省略此项且同时省略 image_urls，请求将按文生视频执行",
+                "example": "https://example.com/start-frame.png"
+              },
+              "end_image_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Pro 图生视频的尾帧图像 URL。需要同时提供 start_image_url，且仅 kling-1.6/pro 支持",
+                "example": "https://example.com/end-frame.png"
+              },
+              "image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Elements 的 1 到 4 张参考图像 URL。提供后，PoYo 会将请求路由到 Elements。不能与 start_image_url、end_image_url 或 cfg_scale 同时使用",
+                "minItems": 1,
+                "maxItems": 4,
+                "example": [
+                  "https://example.com/reference-1.png"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

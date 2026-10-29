@@ -1,0 +1,58 @@
+---
+title: "Nano Banana 2 Lite"
+description: "Nano Banana 2 Lite API 根据文本生成图像或编辑参考图。它是快速的 Gemini 3.1 Flash Lite Image 模型，可显式设置输出宽高比。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/nano-banana-2-lite.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Nano Banana 2 Lite 是 Google 速度最快、性价比最高的 Gemini Image 模型，对应 Gemini 3.1 Flash Lite Image。它适用于快速构思、低延迟创意草稿、高吞吐量生成，以及对速度和成本最敏感的规模化图像流水线。
+
+## 模型
+
+- **nano-banana-2-lite** - 文生图
+- **nano-banana-2-lite-edit** - 基于参考图的图像编辑
+
+## 必填参数
+
+- `prompt` - 必填。用于生成或编辑图像的文本指令。
+
+## 可选参数
+
+- `image_urls` - `nano-banana-2-lite-edit` 必填。`nano-banana-2-lite` 不支持。
+- `size` - 可选宽高比。省略时不指定明确的输出宽高比。
+
+支持的 `size` 值：`1:1`、`2:3`、`3:2`、`3:4`、`4:3`、`4:5`、`5:4`、`9:16`、`16:9`、`21:9`。
+
+## 示例
+
+### 文生图示例
+
+```json
+{
+  "model": "nano-banana-2-lite",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A small red cube on a plain white background",
+    "size": "1:1"
+  }
+}
+```
+
+### 图像编辑示例
+
+```json
+{
+  "model": "nano-banana-2-lite-edit",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "Change the background to a clean pale blue studio backdrop",
+    "image_urls": ["https://example.com/source-image.png"],
+    "size": "1:1"
+  }
+}
+```

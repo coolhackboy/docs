@@ -1,0 +1,68 @@
+---
+title: "Flux 3 Klein"
+description: "基于参考图生成或编辑图像，输出最高 4K。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/flux-3-klein.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Flux 3 Klein 可根据文本生成图像，也可编辑或组合参考图。适用于产品摄影、插画和基于参考图的构图。
+
+## 模型
+
+- **flux-3-klein** — 文生图
+- **flux-3-klein-edit** — 图像编辑，最多支持 10 张参考图
+
+## 功能
+
+- 每次请求生成 1–4 张图像，格式为 PNG、JPEG 或 WebP。
+- 可选择 1K、2K 或 4K 输出，并指定宽高比或精确像素尺寸。
+- 编辑或组合最多 10 张参考图。
+
+## 输入模式
+
+| 模式 | 模型 | 输入 |
+| --- | --- | --- |
+| 文生图 | `flux-3-klein` | 在 `prompt` 中描述目标图像。 |
+| 图像编辑 | `flux-3-klein-edit` | 提供 `prompt`，并在 `image_urls` 中提供 1–10 个 URL。 |
+
+生成模型不接受参考图。编辑时，按提供顺序指代图像，例如“第一张图”。
+
+## 必填参数
+
+- `prompt` (string)：非空的完整目标图像描述，包括主体、构图、背景、光线以及希望进行的编辑。
+- `image_urls` (array of strings)：仅 `flux-3-klein-edit` 必填。提供 1–10 个可公开访问的 HTTP(S) 参考图 URL。
+
+## 可选参数
+
+- `size` (string)：`1:1`、`4:3`、`3:4`、`16:9`、`9:16`、`3:2`、`2:3`，或精确的 `WIDTHxHEIGHT` 值。两种模式下默认均为 `1:1`。
+- `resolution` (string)：`1K`、`2K` 或 `4K`。默认为 `1K`；使用自定义像素尺寸时需显式传入匹配的值。
+- `n` (integer)：输出图像数量，取值 1 到 4。默认为 1。
+- `output_format` (string)：`png`（默认）、`jpeg` 或 `webp`。
+- `enable_safety_checker` (boolean)：启用内容安全检查。默认为 `true`。
+
+## 尺寸
+
+使用宽高比时，`resolution` 将长边设为 1024、2048 或 4096 像素。短边按所请求的比例计算，并取整到最接近的 16 的倍数。
+
+使用自定义 `WIDTHxHEIGHT` 尺寸时，每边必须为 256–4096 像素且能被 16 整除。需按较长边确定的档位显式传入 `resolution`：
+
+| 较长边 | 所需分辨率 |
+| --- | --- |
+| 256–1024 像素 | `1K` |
+| 大于 1024 且不超过 2048 像素 | `2K` |
+| 大于 2048 且不超过 4096 像素 | `4K` |
+
+例如，`size: "1536x1024"` 需要 `resolution: "2K"`。
+
+## 示例
+
+OpenAPI 示例包括生成、参考图编辑和自定义尺寸。
+
+## 注意事项
+
+所有生成参数都放在 `input` 内；`callback_url` 位于请求顶层。

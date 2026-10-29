@@ -1,0 +1,32 @@
+---
+title: "Sora 2 Official"
+description: "Sora 2 Official API 可根据文本生成 4–20 秒、16:9 或 9:16 的视频，可选传入一张参考图片。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/sora-2-official.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`sora-2-official` 支持文生视频，以及可选的单图引导生成，时长固定为 4 秒、8 秒、12 秒、16 秒和 20 秒。
+
+## 模型
+
+- **sora-2-official** - 文生视频，可选传入参考图片
+
+## 必填参数
+
+- **prompt**：用于视频生成的文本提示词
+
+## 可选参数
+
+- **duration**：`4`、`8`、`12`、`16` 或 `20`。默认为 `4`
+- **aspect_ratio**：`16:9` 或 `9:16`。默认为 `16:9`
+- **image_urls**：可选的参考图片数组。最多 `1` 张图片
+
+## 注意事项
+
+- `image_urls` 为可选。如果提供，仅支持一张图片。
+- 本页仅介绍统一的提交请求。请通过标准的任务状态 API 查询状态。

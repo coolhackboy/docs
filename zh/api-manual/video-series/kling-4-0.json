@@ -1,0 +1,436 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kling 4.0",
+    "description": "根据文本、首尾帧或视觉参考生成视频，并可编辑已有视频。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Kling 4.0 视频任务",
+        "operationId": "submit_kling_4_0",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "根据文本提示词生成视频",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "A paper boat floats through a miniature city at sunset."
+                    }
+                  }
+                },
+                "reference-image": {
+                  "summary": "用参考图像引导视频",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "The character in @image_1 walks along a sunlit forest trail.",
+                      "reference_image_urls": [
+                        "https://example.com/character.png"
+                      ],
+                      "duration": 10,
+                      "resolution": "1080p",
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "reference-video": {
+                  "summary": "用参考视频引导运动",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "Recreate the camera movement from @video_1 in a snowy mountain landscape.",
+                      "reference_video_urls": [
+                        "https://example.com/camera-motion.mp4"
+                      ],
+                      "duration": 10
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "让起始图像和可选的结束图像动起来",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "The camera moves from the sunlit garden to the lantern-lit courtyard.",
+                      "image_urls": [
+                        "https://example.com/start.png",
+                        "https://example.com/end.png"
+                      ]
+                    }
+                  }
+                },
+                "multi-shot": {
+                  "summary": "分别描述各个镜头，而不是使用单个提示词",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "multi_prompt": [
+                        {
+                          "prompt": "A paper boat passes beneath a bridge.",
+                          "duration": 4
+                        },
+                        {
+                          "prompt": "The camera rises above the river.",
+                          "duration": 6
+                        }
+                      ],
+                      "duration": 10
+                    }
+                  }
+                },
+                "image-subject": {
+                  "summary": "用正面视图和参考视图引导主体",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "@Element1 walks through the city square shown in @Image1.",
+                      "reference_image_urls": [
+                        "https://example.com/square.png"
+                      ],
+                      "kling_elements": [
+                        {
+                          "element_input_urls": [
+                            "https://example.com/character-front.png",
+                            "https://example.com/character-side.png"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "video-subject": {
+                  "summary": "用一段参考视频引导主体",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "@Element1 walks through a snowy forest.",
+                      "kling_elements": [
+                        {
+                          "element_input_video_urls": [
+                            "https://example.com/character.mp4"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "video-edit": {
+                  "summary": "编辑视频并保留其原始时长",
+                  "value": {
+                    "model": "kling-4.0",
+                    "input": {
+                      "prompt": "Replace the background with a snowy mountain landscape while keeping the camera movement.",
+                      "video_url": "https://example.com/source.mp4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "kling-4.0"
+            ],
+            "description": "公开的模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于接收任务完成或失败通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "提供 video_url 时选择编辑模式；提供参考图像、参考视频或主体时选择参考生视频；仅提供 image_urls 时选择图生视频；否则选择文生视频。生成模式需要且只能提供 prompt 和 multi_prompt 之一；编辑模式需要 prompt。所有媒体 URL 必须是可公开访问的 HTTP 或 HTTPS URL。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 26000,
+                "description": "视频指令，至少包含一个非空白字符。prompt 和 multi_prompt 只能提供其一，不能同时提供。编辑模式需要 prompt。按数组顺序以 @Image1、@Video1 和 @Element1 引用参考图像、视频和主体。原有的 @image_1 和 @video_1 引用仍然支持。"
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 30,
+                "description": "输出时长（整秒）。普通生成默认为 5 秒；多镜头生成以镜头总时长为准。与 multi_prompt 同时提供时，必须等于镜头总时长。编辑模式下省略此字段可保留源视频时长；计费输出时长向上取整到整秒。"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "720p",
+                "description": "输出视频分辨率。"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "21:9"
+                ],
+                "description": "文本模式和参考模式下的输出宽高比。省略时根据提供的素材自适应；没有素材时默认为 16:9。图像模式和编辑模式下不要提供此字段。"
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "最多 10 张可公开访问的 HTTP 或 HTTPS 参考图像。以 @Image1、@Image2 等引用；原有的 @image_1 引用仍然支持。参考模式下，这些图像与可选的起始帧合计不能超过 10 张。参考模式和编辑模式支持此字段。"
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "maxItems": 5,
+                "x-video-duration-seconds": {
+                  "minimum": 3,
+                  "maximum": 30
+                },
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "最多 5 个可公开访问的 HTTP 或 HTTPS 参考视频，每个时长 3-30 秒。以 @Video1、@Video2 等引用；原有的 @video_1 引用仍然支持。参考视频与基于视频的主体的原始时长合计不得超过 30 秒。编辑模式下不要提供此字段。"
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "可公开访问的 HTTP 或 HTTPS 图像 URL，第一张为起始帧，第二张为可选的结束帧。没有参考素材时选择图生视频。参考模式下最多允许一张起始帧，并计入 10 张图像和 15 个素材的上限。编辑模式下不要提供此字段。",
+                "minItems": 1
+              },
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "x-video-duration-seconds": {
+                  "minimum": 3,
+                  "maximum": 30
+                },
+                "description": "用于编辑的可公开访问的 HTTP 或 HTTPS 源视频，时长 3-30 秒。提供后选择编辑模式。支持参考图像和基于图像的主体；不能与 image_urls、reference_video_urls、基于视频的主体、multi_prompt 或 aspect_ratio 同时使用。"
+              },
+              "multi_prompt": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "prompt"
+                  ],
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512,
+                      "description": "该镜头的指令，至少包含一个非空白字符。"
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30,
+                      "default": 5,
+                      "description": "该镜头的时长（整秒）。"
+                    }
+                  }
+                },
+                "description": "生成模式下 prompt 的替代方式。镜头时长（省略时每个镜头默认 5 秒）合计必须为 3-30 秒。如果提供了顶层 duration，必须等于该合计。不能与 prompt 或 video_url 同时使用。"
+              },
+              "kling_elements": {
+                "type": "array",
+                "maxItems": 7,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 1,
+                  "maxProperties": 1,
+                  "description": "element_input_urls 和 element_input_video_urls 必须且只能提供其一。主体按数组位置引用，例如 @Element1，无需命名。",
+                  "properties": {
+                    "element_input_urls": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 4,
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "description": "该主体的可公开访问的 HTTP 或 HTTPS 图像：第一张为正面视图，其后为 1-3 张额外参考视图。参考模式和编辑模式支持此字段。"
+                    },
+                    "element_input_video_urls": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "x-video-duration-seconds": {
+                        "minimum": 3,
+                        "maximum": 30
+                      },
+                      "description": "恰好一个可公开访问的 HTTP 或 HTTPS 主体视频，时长 3-30 秒。最多 3 个主体可以使用视频。参考视频与主体视频合计不得超过 30 秒。编辑模式不支持。"
+                    }
+                  }
+                },
+                "description": "最多 7 个按位置引用的主体。在提示词中使用 @Element1、@Element2 等。起始帧、参考图像、参考视频和主体合计不能超过 15 个素材；一个主体内的图像算作一个主体。最多 3 个主体可以使用视频。编辑模式仅支持基于图像的主体。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792741800-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-10-23T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

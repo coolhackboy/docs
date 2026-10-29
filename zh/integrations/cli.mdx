@@ -1,0 +1,119 @@
+---
+title: "PoYo CLI"
+description: "发现模型、流式对话、运行生成任务并管理任务"
+icon: "terminal"
+---
+
+# PoYo CLI
+
+CLI 需要 Node.js 20 或更高版本，可用 `node --version` 检查。源码：[npm](https://www.npmjs.com/package/@poyoapi/cli) · [GitHub](https://github.com/PoyoAPI/poyo-devtools)（MIT）。
+
+无需全局安装即可运行 CLI：
+
+```bash
+npx -y @poyoapi/cli help
+```
+
+下面的示例使用较短的 `poyo` 命令。请先全局安装，或把 `poyo` 替换为 `npx -y @poyoapi/cli`：
+
+```bash
+npm install --global @poyoapi/cli
+```
+
+## 认证
+
+```bash
+npx -y @poyoapi/cli auth login
+npx -y @poyoapi/cli auth status
+```
+
+凭据优先级如下：
+
+1. `--api-key`
+2. `POYO_API_KEY`
+3. 系统密钥环
+4. 本地配置文件
+
+优先使用环境变量或密钥环，避免 Key 进入 shell 历史记录。旧的或无效的 `POYO_API_KEY` 会覆盖 `auth login` 保存的 Key；`auth status` 会显示当前使用的来源，例如 `(environment)` 或 `(keyring)`。`auth login` 保存到系统密钥环，没有可用密钥环时回退到本地配置文件。
+
+`auth status` 不会调用 API。要验证 Key 并查看余额，请运行：
+
+```bash
+npx -y @poyoapi/cli account
+```
+
+`401` 表示 Key 缺失或无效。`402` 表示账户积分不足。
+
+## 发现模型
+
+```bash
+poyo models
+poyo models image --q gpt-image-2 --limit 10
+poyo describe MODEL_ID
+```
+
+`models` 和 `describe` 读取公开的能力目录，不需要 API Key。`describe` 返回单个模型的输入 schema、支持的协议、执行模式、回调支持情况和公开价格。
+
+## 对话
+
+```bash
+poyo chat MODEL_ID \
+  --protocol openai-chat \
+  --input '{"messages":[{"role":"user","content":"Hello"}]}'
+```
+
+流式输出对话 token：
+
+```bash
+poyo chat MODEL_ID \
+  --protocol anthropic \
+  --stream \
+  --input-file request.json
+```
+
+支持的协议值为 `openai-chat`、`openai-responses`、`anthropic` 和 `gemini`。默认逐步打印文本；使用 `--format jsonl` 可保留原始 SSE 事件 JSON。
+
+## 生成
+
+```bash
+poyo run MODEL_ID --input '{"prompt":"A mountain lake"}'
+poyo submit MODEL_ID --input-file request.json
+poyo task get TASK_ID
+poyo task wait TASK_ID --timeout 300
+```
+
+`run` 会提交并等待。`submit` 会立即返回，除非指定了 `--wait`。
+
+- `run` 默认每 2 秒检查一次任务，最多等待 90 秒。超时只会停止本地等待，不会取消任务。请用 `poyo task wait TASK_ID` 继续等待，不要再次提交，因为第二次提交会产生一个新的付费任务。
+- 对于视频、音频、3D 和其他长时间运行的任务，优先使用 `submit` + `task wait`。
+
+schema 中的模型字段也可以作为命令行参数使用。带连字符的参数会映射到下划线字段名：
+
+```bash
+poyo run gpt-image-2 --prompt "cinematic product photo" --size 4:3 --output-format png --format json
+```
+
+未知参数会在本地报错。必填字段和完整的 schema 校验由 API 检查。
+
+<Tip>
+  在 Windows 上，内联的 `--input '{...}'` JSON 经常被 shell 引号处理破坏。优先使用 schema 参数，例如 `--prompt "..." --resolution 1K`，或使用 `--input-file`。
+</Tip>
+
+## stdio MCP
+
+```bash
+poyo mcp
+poyo mcp --models flux-schnell,tripo3d-h3.1-text-to-3d
+```
+
+`poyo mcp` 是连接 `https://api.poyo.ai/mcp` 的 stdio 桥接。模型仍在 PoYo 上运行。`--categories` 和 `--models` 互斥。在暴露按分类或按模型的工具之前，请参阅[选择 MCP 工具](/zh/integrations/mcp-filtering)。
+
+## 输出
+
+使用 `--format table|json|jsonl|csv`，并可选择 `--output FILE`。流式输出（`--stream`）始终写到 stdout 并忽略 `--output`；如需写入文件，请重定向 stdout。
+
+## CI
+
+- 将 Key 保存在 CI 的密钥管理中，并以 `POYO_API_KEY` 暴露。
+- 固定版本以便复现，例如 `npx -y @poyoapi/cli@VERSION`。
+- 使用 `--format json`，并将任何非零退出码视为失败。

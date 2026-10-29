@@ -1,0 +1,53 @@
+---
+title: "Tripo3D H3.1"
+description: "Tripo3D H3.1 API 从文本、单张图像或同一物体的多个视角生成高细节 3D 网格。可请求纹理、PBR 贴图、四边形拓扑，以及 standard 或 detailed 的几何与纹理质量。"
+icon: "cube"
+openapi: "/zh/api-manual/3d-series/tripo-h31-3d.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Tripo3D H3.1 通过三个公开 model ID 支持高细节的文生 3D、单图生 3D 和多视角生 3D。
+
+## 模型
+
+- **tripo3d-h3.1-text-to-3d** - 从提示词生成高细节 3D 模型
+- **tripo3d-h3.1-image-to-3d** - 从一张物体图像生成 3D 模型
+- **tripo3d-h3.1-multiview-to-3d** - 从同一物体的 2-4 个视角生成 3D 模型
+
+## 必填参数
+
+- **model**：`tripo3d-h3.1-text-to-3d`、`tripo3d-h3.1-image-to-3d` 或 `tripo3d-h3.1-multiview-to-3d`
+- **input.prompt**：`tripo3d-h3.1-text-to-3d` 必填
+- **input.image_urls**：图像模型必填。图生 3D 只能传一项；多视角生 3D 传 2-4 项
+
+## 可选参数
+
+- **negative_prompt**：仅文生 3D。需要避免的特征
+- **face_limit**：目标面数，范围 `1000` 到 `2000000`
+- **texture**：是否生成纹理。默认 `true`
+- **pbr**：启用纹理时是否生成 PBR 材质
+- **model_seed**、**image_seed**、**texture_seed**：可选的整数种子
+- **texture_quality**：`standard` 或 `detailed`。默认 `standard`
+- **geometry_quality**：`standard` 或 `detailed`。默认 `standard`
+- **auto_size**：是否自动缩放模型
+- **quad**：是否生成四边形网格拓扑
+- **callback_url**：可选，任务完成通知的 Webhook URL
+
+## 输出
+
+任务结果以文件列表返回。可用条目可能包括：
+
+- `model_glb`
+- `thumbnail`
+- 可用时包括 `model_urls` 中的条目，例如 `glb`、`base_model` 和 `pbr_model`
+
+每个文件条目在可用时包括 `label`、`file_url`、`file_type`、`format`、`content_type`、`file_name` 和 `file_size`。
+
+## 注意事项
+
+- 多视角输入应从不同角度展示同一物体。
+- API 返回异步任务状态。请轮询统一的任务状态接口，或使用 `callback_url`。

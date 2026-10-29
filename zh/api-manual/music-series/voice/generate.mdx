@@ -1,0 +1,8 @@
+---
+title: "生成 Suno 声音"
+description: "根据验证录音创建可复用的 Voice ID"
+icon: "microphone-lines"
+openapi: "/zh/api-manual/music-series/voice/generate.json POST /api/generate/submit"
+---
+
+使用验证声音返回的 `task_id`，或重新生成短语返回的新 `task_id`。`verify_url` 必须是所生成短语的干净录音。完成后的结果包含 `voice_id` 和 `voice_status`。可选的元数据包括 `voice_name`、`description`、`style` 和 `singer_skill_level`。

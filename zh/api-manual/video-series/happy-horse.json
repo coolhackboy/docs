@@ -1,0 +1,334 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Happy Horse API",
+    "description": "Happy Horse API 根据文本、一张首帧或最多九张参考图片生成 3–15 秒的 720p 或 1080p 视频，也可以编辑源视频并保留或替换其音频。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Happy Horse 任务",
+        "description": "使用阿里巴巴 Happy Horse 生成或编辑视频",
+        "operationId": "submitHappyHorseTask",
+        "tags": [
+          "Happy Horse"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "文生视频",
+                  "value": {
+                    "model": "happy-horse",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A small robot barista prepares coffee in a sunlit Tokyo cafe, cinematic camera movement, warm ambient sound.",
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "image-to-video": {
+                  "summary": "图生视频",
+                  "value": {
+                    "model": "happy-horse",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/first-frame.png"
+                      ],
+                      "prompt": "Bring the scene in the image to life with gentle camera movement.",
+                      "resolution": "720p",
+                      "duration": 5
+                    }
+                  }
+                },
+                "reference-to-video": {
+                  "summary": "参考生视频",
+                  "value": {
+                    "model": "happy-horse",
+                    "input": {
+                      "prompt": "A dance battle between character1 and character2, cinematic lighting, smooth camera movement.",
+                      "reference_image_urls": [
+                        "https://example.com/character1.png",
+                        "https://example.com/character2.png"
+                      ],
+                      "aspect_ratio": "16:9",
+                      "resolution": "1080p",
+                      "duration": 5,
+                      "seed": 42
+                    }
+                  }
+                },
+                "video-edit": {
+                  "summary": "视频编辑",
+                  "value": {
+                    "model": "happy-horse",
+                    "input": {
+                      "video_url": "https://example.com/source-video.mp4",
+                      "prompt": "Recolor the sky to a deep purple sunset.",
+                      "reference_image_urls": [
+                        "https://example.com/style-reference.png"
+                      ],
+                      "resolution": "1080p",
+                      "audio_setting": "auto",
+                      "enable_safety_checker": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Happy Horse 模型标识",
+            "enum": [
+              "happy-horse"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "接收结果通知的 Webhook 回调 URL",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "文本提示词。文生视频、参考生视频和视频编辑时必填，图生视频时可选。最大长度为 5,000 个非中文字符或 2,500 个中文字符。",
+                "example": "A small robot barista prepares coffee in a sunlit Tokyo cafe, cinematic camera movement, warm ambient sound."
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "图生视频使用的首帧图片 URL 数组，仅含一项。不要与 reference_image_urls 或 video_url 同时使用。",
+                "example": [
+                  "https://example.com/first-frame.png"
+                ]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "参考图片。参考生视频时提供 1-9 张图片，并在提示词中以 character1、character2 等引用。视频编辑时最多可选提供 5 张图片，并以 @Image1、@Image2 等引用。",
+                "example": [
+                  "https://example.com/reference.png"
+                ]
+              },
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "视频编辑使用的源视频 URL。支持的源视频时长为 3-60 秒。输出跟随源视频，较长的输入会截取前 15 秒。",
+                "example": "https://example.com/source-video.mp4"
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "文生视频和参考生视频的输出宽高比",
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "4:3",
+                  "3:4"
+                ],
+                "default": "16:9",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "description": "输出分辨率",
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
+                "default": "1080p",
+                "example": "1080p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "文生视频、图生视频和参考生视频的输出时长（秒）。视频编辑时忽略此参数，因为输出跟随源视频，且最长 15 秒。",
+                "minimum": 3,
+                "maximum": 15,
+                "default": 5,
+                "example": 5
+              },
+              "audio_setting": {
+                "type": "string",
+                "description": "视频编辑的音频处理方式。`auto` 由模型决定是否重新生成音频；`origin` 保留原始音频。",
+                "enum": [
+                  "auto",
+                  "origin"
+                ],
+                "default": "auto",
+                "example": "auto"
+              },
+              "seed": {
+                "type": "integer",
+                "description": "可选的随机种子，用于复现生成结果",
+                "minimum": 0,
+                "maximum": 2147483647,
+                "example": 42
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "description": "对输入和输出启用内容审核",
+                "example": true
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-04-27T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
