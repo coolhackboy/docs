@@ -1,0 +1,42 @@
+---
+title: "Video Background Removal"
+description: "Remove the background from a video and return a transparent or solid-color result."
+icon: "eraser"
+openapi: "/api-manual/tools-series/video-background-removal.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Video Background Removal separates the subject from the background in one video. Return the result with a transparent background or a solid color, in the container and codec you choose.
+
+## Models
+
+- **poyo-ai/video-background-removal** — Remove the background from one video
+
+## Required parameters
+
+- `video_url` (string): Source video URL.
+
+## Optional parameters
+
+- `output_container_and_codec` (string): `mp4_h265`, `mp4_h264`, `webm_vp9`, `mov_h265`, `mov_proresks`, `mkv_h265`, `mkv_h264`, `mkv_vp9`, or `gif`.
+- `preserve_audio` (boolean): Whether to keep the source audio track.
+- `background_color` (string): `Transparent`, `Black`, `White`, `Gray`, `Red`, `Green`, `Blue`, `Yellow`, `Cyan`, `Magenta`, or `Orange`. Case-sensitive.
+
+## Output
+
+A finished task returns one video in `files` with `file_type: video`, encoded with the requested `output_container_and_codec`.
+
+## Examples
+
+- **Transparent background as WebM** — sets `video_url`, `background_color`, `output_container_and_codec`, `preserve_audio`.
+- **Green screen as MP4** — sets `video_url`, `background_color`, `output_container_and_codec`.
+
+## Notes
+
+- Optional fields that are omitted use the provider defaults.
+- For a transparent result, pair `Transparent` with a container that supports an alpha channel, such as `webm_vp9` or `mov_proresks`.
+- PoYo reads the video duration before submitting. Submission fails if the duration cannot be determined.

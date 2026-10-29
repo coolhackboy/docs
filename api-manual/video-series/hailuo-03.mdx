@@ -10,6 +10,10 @@ openapi: "/api-manual/video-series/hailuo-03.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
+## Models
+
+- **hailuo-03** — Hailuo 03
+
 ## Features
 
 - **Text-to-Video**: Generate a video directly from a prompt.
@@ -39,4 +43,3 @@ openapi: "/api-manual/video-series/hailuo-03.json POST /api/generate/submit"
 - `reference_audio_urls` accepts up to 3 audio clips. Each clip should be 2–15 seconds, with a combined duration of at most 15 seconds.
 - Mention reference assets in the prompt by modality and order, such as `Image 1`, `Video 1`, and `Audio 1`.
 - All media URLs must be publicly accessible and directly downloadable.
-

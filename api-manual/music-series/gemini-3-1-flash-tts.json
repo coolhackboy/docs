@@ -230,7 +230,6 @@
           "speaker_id": {
             "type": "string",
             "description": "Alias containing only letters, numbers, and underscores with no whitespace, unique within the request, used to identify this speaker as a prefix in the text field.",
-            "pattern": "^[A-Za-z0-9_]+$",
             "example": "Host"
           }
         }

@@ -1,0 +1,37 @@
+---
+title: "OpenAI"
+description: "Call OpenAI GPT-6, GPT-5.6, and GPT-5 series models through the Responses or Chat Completions endpoint."
+icon: "comments"
+openapi: "/api-manual/chat-series/openai.json POST /v1/responses"
+---
+
+OpenAI GPT models cover chat, coding, reasoning, and agent workflows. The playground on this page uses [Responses](/api-manual/chat-series/responses), which every GPT model supports.
+
+## Models
+
+- **gpt-6.1-sol** — GPT-6.1 Sol. Supports Responses and Chat Completions.
+- **gpt-6.1-terra** — GPT-6.1 Terra, a fast model for visual reasoning, computer use, and natural writing. Supports Responses and Chat Completions.
+- **gpt-6-astra** — GPT-6 Astra, for advanced reasoning, coding, and agent workflows. Supports Responses and Chat Completions.
+- **gpt-6-sol** — GPT-6 Sol. Supports Responses and Chat Completions.
+- **gpt-6-luna** — GPT-6 Luna, the low-cost GPT-6 tier. Supports Responses and Chat Completions.
+- **gpt-5-6-sol** — GPT-5.6 Sol, for frontier coding and agent workflows. Responses only.
+- **gpt-5-6-terra** — GPT-5.6 Terra. Responses only.
+- **gpt-5-6-luna** — GPT-5.6 Luna, for high-throughput automation. Responses only.
+- **gpt-5.5** — GPT-5.5. Supports Responses and Chat Completions.
+- **gpt-5.4** — GPT-5.4. Supports Responses and Chat Completions.
+- **gpt-5.2** — GPT-5.2. Supports Responses and Chat Completions.
+
+## Examples
+
+- **Basic text response** — plain string `input` with `max_output_tokens`.
+- **Image understanding** — structured `input` with `input_text` and `input_image`.
+- **Web search** — `tools` with `web_search_preview`.
+- **Streaming response** — `stream: true`, returned as SSE.
+
+To call a model with the Chat Completions format, send the same model id to [Chat Completions](/api-manual/chat-series/chat-completions).
+
+## Notes
+
+- `gpt-5-6-sol`, `gpt-5-6-terra`, and `gpt-5-6-luna` only accept `/v1/responses`.
+- Tools such as web search depend on the selected model.
+- See [LLM Models](/api-manual/chat-series/overview) for every model and the formats it supports.

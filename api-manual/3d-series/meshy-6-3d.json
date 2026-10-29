@@ -22,7 +22,9 @@
         "summary": "Submit Meshy 6 3D Task",
         "description": "Generate a 3D model from text, one image, or multiple images.",
         "operationId": "submitMeshy6ThreeDTask",
-        "tags": ["Meshy 6 3D"],
+        "tags": [
+          "Meshy 6 3D"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -55,7 +57,9 @@
                   "value": {
                     "model": "meshy-6-image-to-3d",
                     "input": {
-                      "image_urls": ["https://example.com/object-front.png"],
+                      "image_urls": [
+                        "https://example.com/object-front.png"
+                      ],
                       "topology": "triangle",
                       "target_polycount": 30000,
                       "symmetry_mode": "auto",
@@ -100,6 +104,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -116,7 +140,10 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -155,7 +182,10 @@
           },
           "mode": {
             "type": "string",
-            "enum": ["preview", "full"],
+            "enum": [
+              "preview",
+              "full"
+            ],
             "default": "full",
             "description": "Text-to-3D only."
           },
@@ -165,7 +195,10 @@
           },
           "topology": {
             "type": "string",
-            "enum": ["quad", "triangle"],
+            "enum": [
+              "quad",
+              "triangle"
+            ],
             "default": "triangle"
           },
           "target_polycount": {
@@ -178,7 +211,11 @@
           },
           "symmetry_mode": {
             "type": "string",
-            "enum": ["off", "auto", "on"],
+            "enum": [
+              "off",
+              "auto",
+              "on"
+            ],
             "default": "auto"
           },
           "should_texture": {
@@ -191,7 +228,11 @@
           },
           "pose_mode": {
             "type": "string",
-            "enum": ["a-pose", "t-pose", ""],
+            "enum": [
+              "a-pose",
+              "t-pose",
+              ""
+            ],
             "default": ""
           },
           "enable_prompt_expansion": {
@@ -227,7 +268,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -236,7 +280,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -244,7 +292,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -252,6 +302,36 @@
                 "type": "string",
                 "format": "date-time",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

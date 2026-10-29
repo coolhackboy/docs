@@ -1,0 +1,119 @@
+---
+title: "Get Task Status"
+description: "Query video task execution status and retrieve generated video files"
+openapi: "/api-manual/task-management/video-status.json GET /api/generate/status/{task_id}"
+---
+
+# Get Task Status
+
+Query the execution status of video generation tasks and retrieve generated videos when complete.
+
+## Endpoint
+
+```http
+GET https://api.poyo.ai/api/generate/status/{task_id}
+```
+
+## Authentication
+
+All requests require Bearer token authentication:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Parameters
+
+### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `task_id` | string | Yes | Unique task identifier returned from the submit endpoint |
+
+## Response
+
+### Success Response (200)
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165211-xyz789",
+    "status": "finished",
+    "credits_amount": 20,
+    "files": [
+      {
+        "file_url": "https://storage.poyo.ai/generated/video-xyz789.mp4",
+        "file_type": "video"
+      }
+    ],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 100,
+    "error_message": null
+  }
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | integer | HTTP status code (200 for success) |
+| `data.task_id` | string | Unique task identifier |
+| `data.status` | string | Task status: `not_started`, `running`, `finished`, `failed` |
+| `data.credits_amount` | number | Credits charged for the task |
+| `data.files` | array | Generated videos when status is `finished` |
+| `data.files[].file_url` | string | Direct URL to generated file |
+| `data.files[].file_type` | string | Type of generated file, usually `video` |
+| `data.created_time` | string | ISO 8601 timestamp of task creation |
+| `data.progress` | integer | Completion percentage (0-100) |
+| `data.error_message` | string | Error description when status is `failed` |
+
+### Status Values
+
+| Status | Description |
+|--------|-------------|
+| `not_started` | Task is queued, waiting to be processed |
+| `running` | Task is currently being generated |
+| `finished` | Task completed successfully, results available in `files` |
+| `failed` | Task failed, error details in `error_message` |
+
+### Failed Task
+
+```json
+{
+  "code": 200,
+  "data": {
+    "task_id": "task-unified-1757165211-xyz789",
+    "status": "failed",
+    "credits_amount": 0,
+    "files": [],
+    "created_time": "2025-11-12T10:30:00",
+    "progress": 0,
+    "error_message": "The prompt violates our content policy"
+  }
+}
+```
+
+## Code Example
+
+```bash
+curl -X GET https://api.poyo.ai/api/generate/status/task-unified-1757165211-xyz789 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Important Notes
+
+<Tip>
+  **Poll Interval**: Check status every 2-5 seconds. Typical video generation takes 90-300 seconds.
+</Tip>
+
+<Warning>
+  **Content Validity**: Generated videos are accessible for **3 days** after creation. Download and save your content promptly.
+</Warning>
+
+<Tip>
+  **Webhooks**: Instead of polling, you can provide a `callback_url` when submitting tasks to receive automatic notifications. See [Video Webhook Callbacks](/api-manual/task-management/video-webhooks).
+</Tip>
+
+For code samples in more languages, polling with backoff, and HTTP error codes, see the [unified task status](/api-manual/task-management/status) page.

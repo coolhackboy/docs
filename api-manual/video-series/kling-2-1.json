@@ -22,7 +22,9 @@
         "summary": "Submit Kling 2.1 Task",
         "description": "Generate video with Kling 2.1 Standard or Pro",
         "operationId": "submitKling21Task",
-        "tags": ["Kling 2.1"],
+        "tags": [
+          "Kling 2.1"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -69,6 +71,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -86,12 +108,18 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Kling 2.1 public model identifier",
-            "enum": ["kling-2.1/standard", "kling-2.1/pro"]
+            "enum": [
+              "kling-2.1/standard",
+              "kling-2.1/pro"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -101,7 +129,10 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt", "start_image_url"],
+            "required": [
+              "prompt",
+              "start_image_url"
+            ],
             "properties": {
               "prompt": {
                 "type": "string",
@@ -112,7 +143,10 @@
               "duration": {
                 "type": "integer",
                 "description": "Output duration in seconds",
-                "enum": [5, 10],
+                "enum": [
+                  5,
+                  10
+                ],
                 "default": 5,
                 "example": 5
               },
@@ -139,7 +173,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -147,7 +184,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -155,13 +196,45 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {
                 "type": "string",
                 "format": "date-time",
                 "example": "2025-11-12T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

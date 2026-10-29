@@ -22,7 +22,9 @@
         "summary": "Submit Gemini Omni 1.1 Flash Task",
         "description": "Generate a video from text, keyframes, reference images, or a reference video",
         "operationId": "submitGeminiOmni11FlashTask",
-        "tags": ["Gemini Omni 1.1 Flash"],
+        "tags": [
+          "Gemini Omni 1.1 Flash"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -82,8 +84,12 @@
                     "model": "gemini-omni-1.1-flash",
                     "input": {
                       "prompt": "Follow the reference motion while applying the supplied visual style",
-                      "reference_image_urls": ["https://example.com/style.webp"],
-                      "reference_video_urls": ["https://example.com/reference.mp4"],
+                      "reference_image_urls": [
+                        "https://example.com/style.webp"
+                      ],
+                      "reference_video_urls": [
+                        "https://example.com/reference.mp4"
+                      ],
                       "resolution": "720p",
                       "aspect_ratio": "16:9"
                     }
@@ -103,6 +109,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -111,7 +137,9 @@
       "get": {
         "summary": "Query Task Status",
         "operationId": "getGeminiOmni11FlashTaskStatus",
-        "tags": ["Gemini Omni 1.1 Flash"],
+        "tags": [
+          "Gemini Omni 1.1 Flash"
+        ],
         "parameters": [
           {
             "name": "task_id",
@@ -149,12 +177,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Gemini Omni 1.1 Flash model identifier",
-            "enum": ["gemini-omni-1.1-flash"]
+            "enum": [
+              "gemini-omni-1.1-flash"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -164,7 +197,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "properties": {
               "prompt": {
                 "type": "string",
@@ -196,7 +231,9 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "example": ["https://example.com/reference-image.webp"]
+                "example": [
+                  "https://example.com/reference-image.webp"
+                ]
               },
               "reference_video_urls": {
                 "type": "array",
@@ -207,7 +244,9 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "example": ["https://example.com/reference-video.mp4"],
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ],
                 "x-video-duration-seconds": {
                   "minimum": 3,
                   "maximum": 10
@@ -216,21 +255,34 @@
               "resolution": {
                 "type": "string",
                 "description": "The resolution of the generated video. Available values are 360p, 720p, 1080p, and 4k.",
-                "enum": ["360p", "720p", "1080p", "4k"],
+                "enum": [
+                  "360p",
+                  "720p",
+                  "1080p",
+                  "4k"
+                ],
                 "default": "720p",
                 "example": "720p"
               },
               "duration": {
                 "type": "integer",
                 "description": "Output duration in seconds. Default is 8. This field does not affect reference-video generation.",
-                "enum": [4, 6, 8, 10],
+                "enum": [
+                  4,
+                  6,
+                  8,
+                  10
+                ],
                 "default": 8,
                 "example": 8
               },
               "aspect_ratio": {
                 "type": "string",
                 "description": "The aspect ratio of the generated video. 16:9 is landscape, and 9:16 is portrait.",
-                "enum": ["16:9", "9:16"],
+                "enum": [
+                  "16:9",
+                  "9:16"
+                ],
                 "default": "16:9",
                 "example": "16:9"
               }
@@ -238,12 +290,18 @@
             "allOf": [
               {
                 "not": {
-                  "required": ["image_urls", "reference_image_urls"]
+                  "required": [
+                    "image_urls",
+                    "reference_image_urls"
+                  ]
                 }
               },
               {
                 "not": {
-                  "required": ["image_urls", "reference_video_urls"]
+                  "required": [
+                    "image_urls",
+                    "reference_video_urls"
+                  ]
                 }
               }
             ]
@@ -252,7 +310,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -264,7 +325,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -272,7 +337,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"]
+                "enum": [
+                  "not_started"
+                ]
               },
               "created_time": {
                 "type": "string",
@@ -297,7 +364,12 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started", "running", "finished", "failed"]
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ]
               },
               "credits_amount": {
                 "type": "number"
@@ -328,6 +400,36 @@
               "error_message": {
                 "type": "string",
                 "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

@@ -97,38 +97,35 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ResponsesEnvelope"
+                  "$ref": "#/components/schemas/ResponseObject"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful response",
                     "value": {
-                      "code": 200,
-                      "data": {
-                        "id": "resp_9876543210",
-                        "object": "response",
-                        "created_at": 1677652288,
-                        "status": "completed",
-                        "model": "gpt-5.2",
-                        "output": [
-                          {
-                            "id": "msg_123",
-                            "type": "message",
-                            "status": "completed",
-                            "role": "assistant",
-                            "content": [
-                              {
-                                "type": "output_text",
-                                "text": "Launch faster with a smarter AI workspace built for teams."
-                              }
-                            ]
-                          }
-                        ],
-                        "usage": {
-                          "input_tokens": 12,
-                          "output_tokens": 14,
-                          "total_tokens": 26
+                      "id": "resp_9876543210",
+                      "object": "response",
+                      "created_at": 1677652288,
+                      "status": "completed",
+                      "model": "gpt-5.2",
+                      "output": [
+                        {
+                          "id": "msg_123",
+                          "type": "message",
+                          "status": "completed",
+                          "role": "assistant",
+                          "content": [
+                            {
+                              "type": "output_text",
+                              "text": "Launch faster with a smarter AI workspace built for teams."
+                            }
+                          ]
                         }
+                      ],
+                      "usage": {
+                        "input_tokens": 12,
+                        "output_tokens": 14,
+                        "total_tokens": 26
                       }
                     }
                   }
@@ -151,6 +148,23 @@
           },
           "402": {
             "description": "Insufficient balance"
+          },
+          "404": {
+            "description": "Unknown model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
+                  }
+                }
+              }
+            }
           },
           "429": {
             "description": "Rate limit exceeded"
@@ -398,18 +412,6 @@
           }
         }
       },
-      "ResponsesEnvelope": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 200
-          },
-          "data": {
-            "$ref": "#/components/schemas/ResponseObject"
-          }
-        }
-      },
       "ResponseObject": {
         "type": "object",
         "description": "Response object.",
@@ -520,6 +522,29 @@
           "output_tokens_details": {
             "type": "object",
             "additionalProperties": true
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "Error returned when the model or request is rejected for this API format.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
           }
         }
       }

@@ -6,6 +6,8 @@ icon: "terminal"
 
 # PoYo CLI
 
+The CLI requires Node.js 20 or newer. Check with `node --version`. Source: [npm](https://www.npmjs.com/package/@poyoapi/cli) · [GitHub](https://github.com/PoyoAPI/poyo-devtools) (MIT).
+
 Run the CLI without a global installation:
 
 ```bash
@@ -32,15 +34,25 @@ Credential priority is:
 3. System keyring
 4. Local config fallback
 
-Prefer the environment or keyring so the key does not enter shell history. An old or invalid `POYO_API_KEY` overrides the key saved by `auth login`; `auth status` shows the source in use, such as `(environment)` or `(keyring)`.
+Prefer the environment or keyring so the key does not enter shell history. An old or invalid `POYO_API_KEY` overrides the key saved by `auth login`; `auth status` shows the source in use, such as `(environment)` or `(keyring)`. `auth login` saves to the system keyring and falls back to the local config file when no keyring is available.
+
+`auth status` does not call the API. To verify the key and see your balance, run:
+
+```bash
+npx -y @poyoapi/cli account
+```
+
+A `401` means the key is missing or invalid. A `402` means the account has insufficient credits.
 
 ## Discover models
 
 ```bash
 poyo models
-poyo models image
+poyo models image --q gpt-image-2 --limit 10
 poyo describe MODEL_ID
 ```
+
+`models` and `describe` read the public Capability Catalog and do not need an API key. `describe` returns the input schema, supported protocols, execution mode, callback support, and public price for one model.
 
 ## Chat
 
@@ -72,6 +84,17 @@ poyo task wait TASK_ID --timeout 300
 
 `run` submits and waits. `submit` returns immediately unless `--wait` is provided.
 
+- `run` checks the task every 2 seconds and waits up to 90 seconds by default. A timeout stops local waiting but does not cancel the task. Continue with `poyo task wait TASK_ID` instead of submitting again, because a second submission is a new paid task.
+- Prefer `submit` + `task wait` for video, audio, 3D, and other long-running jobs.
+
+Model fields from the schema are also available as flags. Hyphenated flags map to underscore field names:
+
+```bash
+poyo run gpt-image-2 --prompt "cinematic product photo" --size 4:3 --output-format png --format json
+```
+
+Unknown flags fail locally. Required fields and full schema validation are checked by the API.
+
 <Tip>
   On Windows, inline `--input '{...}'` JSON is often broken by shell quoting. Prefer schema flags such as `--prompt "..." --resolution 1K`, or use `--input-file`.
 </Tip>
@@ -83,8 +106,14 @@ poyo mcp
 poyo mcp --models flux-schnell,tripo3d-h3.1-text-to-3d
 ```
 
-See [Choose MCP tools](/integrations/mcp-filtering) before exposing category or model-specific tools.
+`poyo mcp` is a stdio bridge to `https://api.poyo.ai/mcp`. Models still run on PoYo. `--categories` and `--models` are mutually exclusive. See [Choose MCP tools](/integrations/mcp-filtering) before exposing category or model-specific tools.
 
 ## Output
 
-Use `--format table|json|jsonl|csv` and optionally `--output FILE`.
+Use `--format table|json|jsonl|csv` and optionally `--output FILE`. Streaming output (`--stream`) always goes to stdout and ignores `--output`; redirect stdout if you need a file.
+
+## CI
+
+- Store the key in your CI secret manager and expose it as `POYO_API_KEY`.
+- Pin the version, for example `npx -y @poyoapi/cli@VERSION`, for reproducible runs.
+- Use `--format json` and treat any non-zero exit code as a failure.

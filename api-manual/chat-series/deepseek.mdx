@@ -1,0 +1,27 @@
+---
+title: "DeepSeek"
+description: "Call DeepSeek V4 and V4.1 models through the OpenAI-compatible Chat Completions endpoint."
+icon: "comments"
+openapi: "/api-manual/chat-series/deepseek.json POST /v1/chat/completions"
+---
+
+DeepSeek models handle chat, coding, reasoning, and agent workloads with a 1M-token context window. The playground on this page uses [Chat Completions](/api-manual/chat-series/chat-completions), which every DeepSeek model supports.
+
+## Models
+
+- **deepseek-flash** — DeepSeek V4.1 Flash. 552B MoE model with native vision and up to 384K output tokens. Supports Chat Completions and Responses.
+- **deepseek-v4-pro** — DeepSeek V4 Pro. 1.6T total / 49B active parameters, for stronger reasoning, coding, and agent workflows. Chat Completions only.
+- **deepseek-v4-flash** — DeepSeek V4 Flash. 284B total / 13B active parameters, for fast and low-cost chat. Chat Completions only.
+
+## Examples
+
+- **Basic chat completion** — `deepseek-v4-flash` with a single user message.
+- **System prompt** — `deepseek-v4-pro` with a `system` message and `max_tokens`.
+- **Streaming output** — `deepseek-flash` with `stream: true`, returned as SSE.
+
+To call `deepseek-flash` with the Responses format, send the same model id to [Responses](/api-manual/chat-series/responses).
+
+## Notes
+
+- `deepseek-v4-pro` and `deepseek-v4-flash` only accept `/v1/chat/completions`.
+- See [LLM Models](/api-manual/chat-series/overview) for every model and the formats it supports.

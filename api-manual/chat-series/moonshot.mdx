@@ -1,0 +1,23 @@
+---
+title: "Moonshot AI"
+description: "Call Moonshot AI Kimi K3 through the OpenAI-compatible Chat Completions endpoint."
+icon: "comments"
+openapi: "/api-manual/chat-series/moonshot.json POST /v1/chat/completions"
+---
+
+Kimi K3 is Moonshot AI's multimodal flagship model with a 1M-token context window, for long-horizon coding, deep reasoning, knowledge work, and tool-using agents. The playground on this page uses [Chat Completions](/api-manual/chat-series/chat-completions).
+
+## Models
+
+- **kimi-k3** — Kimi K3. 2.8T parameters, 1M-token context. Chat Completions only.
+
+## Examples
+
+- **Basic chat completion** — single user message.
+- **System prompt** — `system` message with `max_tokens`.
+- **Streaming output** — `stream: true`, returned as SSE.
+
+## Notes
+
+- `kimi-k3` only accepts `/v1/chat/completions`.
+- See [LLM Models](/api-manual/chat-series/overview) for every model and the formats it supports.

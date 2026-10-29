@@ -22,7 +22,9 @@
         "summary": "Submit Happy Horse 1.1 Task",
         "description": "Generate video with Alibaba Happy Horse 1.1",
         "operationId": "submitHappyHorse11Task",
-        "tags": ["Happy Horse 1.1"],
+        "tags": [
+          "Happy Horse 1.1"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -49,7 +51,9 @@
                   "value": {
                     "model": "happy-horse-1.1",
                     "input": {
-                      "image_urls": ["https://storage.poyo.ai/happy-horse-1-1/image-to-video-input.png"],
+                      "image_urls": [
+                        "https://storage.poyo.ai/happy-horse-1-1/image-to-video-input.png"
+                      ],
                       "prompt": "A bearded man sits in a warm rustic study with brick and wood walls, bookshelves, a glowing table lamp, and a leather chair. He gently strums an acoustic guitar, then looks up toward the camera and starts singing with natural lip-sync. The camera slowly pushes in, keeping the cozy room light and shallow depth of field. Audio: soft acoustic guitar, intimate male vocal, quiet room tone.",
                       "resolution": "1080p",
                       "duration": 10
@@ -89,6 +93,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -106,12 +130,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Happy Horse 1.1 model identifier",
-            "enum": ["happy-horse-1.1"]
+            "enum": [
+              "happy-horse-1.1"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -136,7 +165,9 @@
                   "format": "uri"
                 },
                 "description": "Single-item first-frame image URL array for image-to-video. Do not combine with reference_image_urls.",
-                "example": ["https://example.com/first-frame.png"]
+                "example": [
+                  "https://example.com/first-frame.png"
+                ]
               },
               "reference_image_urls": {
                 "type": "array",
@@ -146,19 +177,34 @@
                   "format": "uri"
                 },
                 "description": "Reference images for reference-to-video. Do not combine with image_urls.",
-                "example": ["https://example.com/reference.png"]
+                "example": [
+                  "https://example.com/reference.png"
+                ]
               },
               "aspect_ratio": {
                 "type": "string",
                 "description": "Output aspect ratio for text-to-video and reference-to-video",
-                "enum": ["21:9", "16:9", "4:3", "1:1", "3:4", "4:5", "5:4", "9:16", "9:21"],
+                "enum": [
+                  "21:9",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "4:5",
+                  "5:4",
+                  "9:16",
+                  "9:21"
+                ],
                 "default": "16:9",
                 "example": "16:9"
               },
               "resolution": {
                 "type": "string",
                 "description": "Output resolution",
-                "enum": ["720p", "1080p"],
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
                 "default": "1080p",
                 "example": "1080p"
               },
@@ -188,7 +234,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -196,7 +245,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -204,13 +257,45 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {
                 "type": "string",
                 "format": "date-time",
                 "example": "2026-06-23T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

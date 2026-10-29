@@ -101,6 +101,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -148,24 +168,21 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 32000,
-                "pattern": "\\S",
-                "description": "Prompt describing the image or the requested edit."
+                "description": "Prompt describing the image or the requested edit. Must contain non-whitespace text."
               },
               "image_urls": {
                 "type": "array",
                 "maxItems": 16,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://"
+                  "format": "uri"
                 },
-                "description": "Optional reference image URLs. A non-empty array selects editing; an omitted or empty array selects text-to-image generation."
+                "description": "Optional reference image URLs. A non-empty array selects editing; an omitted or empty array selects text-to-image generation. Must be a publicly accessible HTTP or HTTPS URL."
               },
               "size": {
                 "type": "string",
                 "default": "1:1",
                 "description": "Aspect ratio or custom WIDTHxHEIGHT. Supported values: auto, 1:1, 2:3, 3:2, 4:3, 3:4, 4:5, 5:4, 16:9, 9:16, 21:9, or WIDTHxHEIGHT. Defaults to 1:1. auto is available only at 1K. Custom sizes require resolution 2K or 4K, dimensions divisible by 16, max edge 3840, aspect ratio at most 3:1, and total pixels 655360–8294400. A custom 3840-pixel edge requires 4K.",
-                "pattern": "^(?:auto|1:1|2:3|3:2|4:3|3:4|4:5|5:4|16:9|9:16|21:9|\\s*\\d+\\s*[xX]\\s*\\d+\\s*)$",
                 "example": "1:1"
               },
               "resolution": {
@@ -213,8 +230,7 @@
               "mask_url": {
                 "type": "string",
                 "format": "uri",
-                "pattern": "^https?://",
-                "description": "Optional mask image URL identifying the area to edit. Requires non-empty image_urls."
+                "description": "Optional mask image URL identifying the area to edit. Requires non-empty image_urls. Must be a publicly accessible HTTP or HTTPS URL."
               }
             }
           }
@@ -258,6 +274,36 @@
                 "format": "date-time",
                 "example": "2026-09-09T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

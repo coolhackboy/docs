@@ -132,6 +132,8 @@
       "/api-manual/video-series/omnihuman-2-0.json",
       "/api-manual/video-series/pixverse-v6-max.json",
       "/api-manual/task-management/3d-status.json",
+      "/api-manual/task-management/image-status.json",
+      "/api-manual/task-management/video-status.json",
       "/api-manual/3d-series/meshy-6-3d.json",
       "/api-manual/3d-series/hunyuan-3d-3-1.json",
       "/api-manual/3d-series/tripo-h31-3d.json",
@@ -170,6 +172,18 @@
       "/api-manual/chat-series/responses.json",
       "/api-manual/chat-series/claude-messages.json",
       "/api-manual/chat-series/gemini-native-format.json",
+      "/api-manual/chat-series/openai.json",
+      "/api-manual/chat-series/anthropic.json",
+      "/api-manual/chat-series/google.json",
+      "/api-manual/chat-series/deepseek.json",
+      "/api-manual/chat-series/xai.json",
+      "/api-manual/chat-series/moonshot.json",
+      "/api-manual/tools-series/image-translator.json",
+      "/api-manual/tools-series/video-translator.json",
+      "/api-manual/tools-series/video-background-removal.json",
+      "/api-manual/tools-series/video-upscaler.json",
+      "/api-manual/image-series/gpt-image-2-5-fixed.json",
+      "/api-manual/music-series/generate-midi.json",
       "/api-manual/account-management/user-balance.json",
       "/api-manual/file-series/upload-url.json",
       "/api-manual/file-series/upload-base64.json",
@@ -179,7 +193,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Model API",
+        "tab": "Platform",
         "groups": [
           {
             "group": "Overview",
@@ -190,8 +204,74 @@
             ]
           },
           {
-            "group": "Image Model",
+            "group": "Task Management",
             "pages": [
+              {
+                "group": "All Tasks",
+                "pages": [
+                  "api-manual/task-management/status",
+                  "api-manual/task-management/webhooks"
+                ]
+              },
+              {
+                "group": "Image",
+                "pages": [
+                  "api-manual/task-management/image-status",
+                  "api-manual/task-management/image-webhooks"
+                ]
+              },
+              {
+                "group": "Video",
+                "pages": [
+                  "api-manual/task-management/video-status",
+                  "api-manual/task-management/video-webhooks"
+                ]
+              },
+              {
+                "group": "3D",
+                "pages": [
+                  "api-manual/task-management/3d-status",
+                  "api-manual/task-management/3d-webhooks"
+                ]
+              },
+              {
+                "group": "Music",
+                "pages": [
+                  "api-manual/music-series/query-music-detail",
+                  "api-manual/music-series/music-webhook"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "File Management",
+            "pages": [
+              "api-manual/file-series/upload-url",
+              "api-manual/file-series/upload-base64",
+              "api-manual/file-series/upload-stream"
+            ]
+          },
+          {
+            "group": "Account Management",
+            "pages": [
+              "api-manual/account-management/user-balance"
+            ]
+          },
+          {
+            "group": "Security & Best Practices",
+            "pages": [
+              "platform-security/end-user-identification"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Image Models",
+        "groups": [
+          {
+            "group": "Image Models",
+            "pages": [
+              "api-manual/image-series/overview",
               {
                 "group": "OpenAI",
                 "pages": [
@@ -199,7 +279,8 @@
                   "api-manual/image-series/gpt-image-1.5",
                   "api-manual/image-series/gpt-image-2",
                   "api-manual/image-series/gpt-image-2-5-flare",
-                  "api-manual/image-series/gpt-image-2-5-sunburst"
+                  "api-manual/image-series/gpt-image-2-5-sunburst",
+                  "api-manual/image-series/gpt-image-2-5-fixed"
                 ]
               },
               {
@@ -264,10 +345,16 @@
                 ]
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Video Models",
+        "groups": [
           {
-            "group": "Video Model",
+            "group": "Video Models",
             "pages": [
+              "api-manual/video-series/overview",
               {
                 "group": "Google",
                 "pages": [
@@ -375,14 +462,83 @@
                 ]
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "LLM Models",
+        "groups": [
           {
-            "group": "Music Model",
+            "group": "LLM Models",
             "pages": [
+              "api-manual/chat-series/overview",
+              {
+                "group": "API Formats",
+                "pages": [
+                  "api-manual/chat-series/chat-completions",
+                  "api-manual/chat-series/responses",
+                  "api-manual/chat-series/claude-messages",
+                  "api-manual/chat-series/gemini-native-format"
+                ]
+              },
+              {
+                "group": "Models",
+                "pages": [
+                  "api-manual/chat-series/openai",
+                  "api-manual/chat-series/anthropic",
+                  "api-manual/chat-series/google",
+                  "api-manual/chat-series/deepseek",
+                  "api-manual/chat-series/xai",
+                  "api-manual/chat-series/moonshot"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "3D Models",
+        "groups": [
+          {
+            "group": "3D Models",
+            "pages": [
+              "api-manual/3d-series/overview",
+              {
+                "group": "Meshy",
+                "pages": [
+                  "api-manual/3d-series/meshy-6-3d",
+                  "api-manual/3d-series/meshy-7-1-3d"
+                ]
+              },
+              {
+                "group": "Hunyuan3D",
+                "pages": [
+                  "api-manual/3d-series/hunyuan-3d-3-1"
+                ]
+              },
+              {
+                "group": "Tripo3D",
+                "pages": [
+                  "api-manual/3d-series/tripo-h31-3d",
+                  "api-manual/3d-series/tripo-p1-3d"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Music Models",
+        "groups": [
+          {
+            "group": "Music Models",
+            "pages": [
+              "api-manual/music-series/overview",
               {
                 "group": "Suno AI",
                 "pages": [
                   "api-manual/music-series/generate-music",
+                  "api-manual/music-series/generate-midi",
                   "api-manual/music-series/generate-mashup",
                   "api-manual/music-series/generate-sounds",
                   "api-manual/music-series/extend-music",
@@ -415,9 +571,7 @@
                       "api-manual/music-series/voice/check"
                     ]
                   },
-                  "api-manual/music-series/create-music-video",
-                  "api-manual/music-series/query-music-detail",
-                  "api-manual/music-series/music-webhook"
+                  "api-manual/music-series/create-music-video"
                 ]
               },
               {
@@ -451,154 +605,59 @@
                 ]
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "AI Tools",
+        "groups": [
           {
-            "group": "Chat Model",
+            "group": "AI Tools",
             "pages": [
-              {
-                "group": "OpenAI",
-                "pages": [
-                  "api-manual/chat-series/chat-completions",
-                  "api-manual/chat-series/responses"
-                ]
-              },
-              {
-                "group": "Claude",
-                "pages": [
-                  "api-manual/chat-series/claude-messages"
-                ]
-              },
-              {
-                "group": "Gemini",
-                "pages": [
-                  "api-manual/chat-series/gemini-native-format"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "3D Model",
-            "pages": [
-              {
-                "group": "Meshy",
-                "pages": [
-                  "api-manual/3d-series/meshy-6-3d",
-                  "api-manual/3d-series/meshy-7-1-3d"
-                ]
-              },
-              {
-                "group": "Hunyuan3D",
-                "pages": [
-                  "api-manual/3d-series/hunyuan-3d-3-1"
-                ]
-              },
-              {
-                "group": "Tripo3D",
-                "pages": [
-                  "api-manual/3d-series/tripo-h31-3d",
-                  "api-manual/3d-series/tripo-p1-3d"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Moderation Model",
-            "pages": [
+              "api-manual/tools-series/overview",
+              "api-manual/tools-series/image-translator",
+              "api-manual/tools-series/video-translator",
+              "api-manual/tools-series/video-background-removal",
+              "api-manual/tools-series/video-upscaler",
               "api-manual/moderation-series/omni-moderation"
             ]
-          },
-          {
-            "group": "Task Management",
-            "pages": [
-              {
-                "group": "Image",
-                "pages": [
-                  "api-manual/task-management/status",
-                  "api-manual/task-management/webhooks"
-                ]
-              },
-              {
-                "group": "Video",
-                "pages": [
-                  "api-manual/task-management/status",
-                  "api-manual/task-management/webhooks"
-                ]
-              },
-              {
-                "group": "3D",
-                "pages": [
-                  "api-manual/task-management/3d-status",
-                  "api-manual/task-management/3d-webhooks"
-                ]
-              },
-              {
-                "group": "Music",
-                "pages": [
-                  "api-manual/music-series/query-music-detail",
-                  "api-manual/music-series/music-webhook"
-                ]
-              }
-            ]
           }
         ]
       },
       {
-          "tab": "AI Agents",
-          "groups": [
-            {
-              "group": "Get started",
-              "pages": [
-                "integrations/overview",
-                "integrations/quickstart",
-                "integrations/authentication",
-                "integrations/skill",
-                "integrations/cli"
-              ]
-            },
-            {
-              "group": "MCP",
-              "pages": [
-                "integrations/mcp",
-                "integrations/mcp-filtering"
-              ]
-            },
-            {
-              "group": "Clients",
-              "pages": [
-                "integrations/claude-desktop",
-                "integrations/cursor",
-                "integrations/codex",
-                "integrations/vscode"
-              ]
-            }
-          ]
-      },
-      {
-        "tab": "Common API",
+        "tab": "AI Agents",
         "groups": [
           {
-            "group": "File Management",
+            "group": "Get started",
             "pages": [
-              "api-manual/file-series/upload-url",
-              "api-manual/file-series/upload-base64",
-              "api-manual/file-series/upload-stream"
+              "integrations/overview",
+              "integrations/quickstart",
+              "integrations/authentication",
+              "integrations/skill",
+              "integrations/cli"
             ]
           },
           {
-            "group": "Account Management",
+            "group": "MCP",
             "pages": [
-              "api-manual/account-management/user-balance"
+              "integrations/mcp",
+              "integrations/mcp-filtering"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Security & Best Practices",
-        "groups": [
+          },
           {
-            "group": "Guides",
+            "group": "Clients",
             "pages": [
-              "platform-security/end-user-identification"
+              "integrations/claude-desktop",
+              "integrations/cursor",
+              "integrations/codex",
+              "integrations/vscode"
+            ]
+          },
+          {
+            "group": "Workflow tools",
+            "pages": [
+              "integrations/n8n",
+              "integrations/comfyui"
             ]
           }
         ]

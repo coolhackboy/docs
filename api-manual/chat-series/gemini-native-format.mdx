@@ -1,5 +1,5 @@
 ---
-title: "Gemini Native Format"
+title: "Gemini Native"
 description: "The Gemini Native Format API calls generateContent and streamGenerateContent. Requests use contents and parts, including text and inline image data."
 icon: "comments"
 openapi: "/api-manual/chat-series/gemini-native-format.json POST /v1beta/models/{model}:{method}"
@@ -96,3 +96,28 @@ Request body:
 * Use `generateContent` for complete JSON responses.
 * Use `streamGenerateContent` for streaming generation.
 * Put text instructions before multimodal parts when possible.
+
+## Response
+
+`generateContent` returns the Gemini `GenerateContentResponse` object directly, without a `code` / `data` wrapper. Text is in `candidates[].content.parts[].text`, and token counts are in `usageMetadata`. Thinking models can add parts with `thought: true` or `thoughtSignature`; skip parts that have no `text`.
+
+## Streaming
+
+`streamGenerateContent` returns `text/event-stream`. Each event is a `data:` line with a partial `GenerateContentResponse`, and the stream ends with `data: [DONE]`. The `alt=sse` query parameter is accepted but not required.
+
+```text
+data: {"candidates":[{"content":{"parts":[{"thought":true}],"role":"model"}}],"usageMetadata":{"promptTokenCount":260,...}}
+data: {"candidates":[{"content":{"parts":[{"text":"OK."}],"role":"model"}}],"usageMetadata":{"candidatesTokenCount":2,...}}
+data: {"candidates":[{"content":{"parts":[{"thoughtSignature":"..."}],"role":"model"},"finishReason":"STOP"}],"usageMetadata":{...}}
+data: [DONE]
+```
+
+- Concatenate the `text` parts in order. The last event carries `finishReason`.
+
+## Errors
+
+- `401`: missing or invalid API key.
+- `400`: invalid request, or the model is not a Gemini model. The body uses the Google error shape: `{"error": {"code": 400, "message": "...", "status": "INVALID_ARGUMENT"}}`.
+- `404`: unknown model id.
+
+See [Error Codes](/api-manual/error-codes#llm-endpoint-errors) for example bodies, and [LLM Models](/api-manual/chat-series/overview) for which models support this format.

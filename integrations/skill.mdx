@@ -24,7 +24,16 @@ Run this in your project directory, replacing `claude-code` with `codex` or `cur
 npx skills add PoyoAPI/poyo-devtools --skill poyo-ai-models --agent claude-code --yes
 ```
 
-For the full setup, including saving your API key and an example prompt, see the [Quickstart](/integrations/quickstart).
+Supported clients include Codex, Claude Code, Cursor, GitHub Copilot, and any client that supports Agent Skills. The installer needs Node.js 18 or newer; the CLI it uses needs Node.js 20 or newer.
+
+Verify that the key works before asking the agent to run a model:
+
+```bash
+npx -y @poyoapi/cli auth login
+npx -y @poyoapi/cli account
+```
+
+For the full setup, including an example prompt, see the [Quickstart](/integrations/quickstart). Source: [PoyoAPI/poyo-devtools](https://github.com/PoyoAPI/poyo-devtools).
 
 ## How it executes
 

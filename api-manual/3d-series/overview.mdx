@@ -1,0 +1,31 @@
+---
+title: "3D Models"
+description: "All 3D generation models available on PoYo, with their model IDs."
+icon: "cube"
+---
+
+Every 3D model is called through `POST /api/generate/submit`. Send a model ID in `model`, the model's parameters in `input`, and an optional `callback_url`. The request returns a `task_id` right away and the task runs asynchronously.
+
+## Workflow
+
+1. Submit a task to `POST /api/generate/submit` with a model ID from the table below.
+2. Poll [Get Task Status](/api-manual/task-management/3d-status) with the returned `task_id`, or receive the result at `callback_url` (see [Webhook Callbacks](/api-manual/task-management/3d-webhooks)).
+3. Download the files in `files` when the status is `finished`.
+
+Each 3D model exposes one model ID per input mode, such as text-to-3D, image-to-3D, or multi-image-to-3D.
+
+## Models
+
+| Model | Provider | Model IDs |
+| --- | --- | --- |
+| [Meshy 6 3D](/api-manual/3d-series/meshy-6-3d) | Meshy | `meshy-6-text-to-3d`<br />`meshy-6-image-to-3d`<br />`meshy-6-multi-image-to-3d` |
+| [Meshy 7.1 3D](/api-manual/3d-series/meshy-7-1-3d) | Meshy | `meshy-7.1-text-to-3d`<br />`meshy-7.1-image-to-3d`<br />`meshy-7.1-multi-image-to-3d` |
+| [Hunyuan 3D v3.1](/api-manual/3d-series/hunyuan-3d-3-1) | Hunyuan3D | `hunyuan-3d/v3.1/pro/image-to-3d`<br />`hunyuan-3d/v3.1/pro/text-to-3d`<br />`hunyuan-3d/v3.1/rapid/text-to-3d`<br />`hunyuan-3d/v3.1/rapid/image-to-3d` |
+| [Tripo3D H3.1](/api-manual/3d-series/tripo-h31-3d) | Tripo3D | `tripo3d-h3.1-text-to-3d`<br />`tripo3d-h3.1-image-to-3d`<br />`tripo3d-h3.1-multiview-to-3d` |
+| [Tripo3D P1](/api-manual/3d-series/tripo-p1-3d) | Tripo3D | `tripo3d-p1-text-to-3d`<br />`tripo3d-p1-image-to-3d` |
+
+## Notes
+
+- Each model page lists the parameters, limits, and modes for its model IDs. Parameters are not shared across models.
+- Generated 3D files are accessible for 3 days after creation. Download and store them promptly.
+- URL inputs must be publicly accessible HTTP(S) URLs. To use local files, upload them first with [File Management](/api-manual/file-series/upload-url).

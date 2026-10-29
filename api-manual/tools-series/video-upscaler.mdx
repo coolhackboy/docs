@@ -1,0 +1,37 @@
+---
+title: "Video Upscaler"
+description: "Increase the resolution of an existing video by a scale factor from 1 to 8."
+icon: "up-right-and-down-left-from-center"
+openapi: "/api-manual/tools-series/video-upscaler.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Video Upscaler increases the resolution of an existing video. The output size is the input size multiplied by `scale`.
+
+## Models
+
+- **poyo-ai/video-upscaler** — Upscale one video
+
+## Required parameters
+
+- `video_url` (string): Source video URL.
+
+## Optional parameters
+
+- `scale` (number): Upscale factor from `1` to `8`. Default is `2`. Decimals are allowed.
+
+## Output
+
+A finished task returns one upscaled video in `files` with `file_type: video`.
+
+## Examples
+
+- **Upscale a video 2x** — sets `video_url`, `scale`.
+
+## Notes
+
+- PoYo reads the source width, height, duration, and frame rate before submitting. Submission fails if the file has no readable video stream.

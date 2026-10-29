@@ -1,4 +1,4 @@
-﻿{
+{
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O1-Image-Edit API",
@@ -22,7 +22,9 @@
         "summary": "Submit Kling-O1-Image-Edit Generation Task",
         "description": "A high-consistency image generation model optimized for precise reference alignment and fine detail control, ideal for character and product-focused use cases",
         "operationId": "submitKlingO1ImageEditTask",
-        "tags": ["Kling-O1-Image-Edit"],
+        "tags": [
+          "Kling-O1-Image-Edit"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -121,12 +123,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Kling-O1-Image-Edit model identifier",
-            "enum": ["kling-o1-image-edit"]
+            "enum": [
+              "kling-o1-image-edit"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -136,7 +143,10 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt", "image_urls"],
+            "required": [
+              "prompt",
+              "image_urls"
+            ],
             "description": "Input parameters for image editing",
             "properties": {
               "prompt": {
@@ -154,7 +164,9 @@
                 "minItems": 1,
                 "maxItems": 10,
                 "description": "Reference image URLs for editing. Required for kling-o1-image-edit.",
-                "example": ["https://example.com/reference1.png"]
+                "example": [
+                  "https://example.com/reference1.png"
+                ]
               },
               "elements": {
                 "type": "array",
@@ -190,21 +202,38 @@
               "resolution": {
                 "type": "string",
                 "description": "Output resolution preset",
-                "enum": ["1K", "2K"],
+                "enum": [
+                  "1K",
+                  "2K"
+                ],
                 "default": "1K",
                 "example": "2K"
               },
               "size": {
                 "type": "string",
                 "description": "Output aspect ratio preset",
-                "enum": ["auto", "16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "21:9"],
+                "enum": [
+                  "auto",
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "3:2",
+                  "2:3",
+                  "21:9"
+                ],
                 "default": "auto",
                 "example": "16:9"
               },
               "output_format": {
                 "type": "string",
                 "description": "Output image format.",
-                "enum": ["jpeg", "png", "webp"],
+                "enum": [
+                  "jpeg",
+                  "png",
+                  "webp"
+                ],
                 "default": "png",
                 "example": "png"
               },
@@ -222,7 +251,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -231,7 +263,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -240,7 +276,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -256,7 +294,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -265,7 +306,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

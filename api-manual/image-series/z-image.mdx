@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Z-Image"
 description: "The Z-Image API generates an image from a prompt or edits exactly one reference image. Text-to-image requires an aspect ratio of 1:1, 4:3, 3:4, 16:9, or 9:16."
 icon: "image"
@@ -21,9 +21,12 @@ Generate high-quality images using the Z-Image model. Supports both text-to-imag
 
 - **z-image** - Unified text-to-image and image editing model
 
-## Parameters
+## Required parameters
 
 - `prompt` - Required prompt, max `1000` characters
+
+## Optional parameters
+
 - `size` - Required for text-to-image, optional for image editing. Supported values: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`
 - `image_urls` - Optional reference image array for editing, must contain exactly `1` image URL
 - `enable_safety_checker` - Optional boolean safety checker switch, defaults to `true`
@@ -73,4 +76,3 @@ curl --request POST \
 
 - `input.image_urls[0]` is used as the edit reference image
 - When `image_urls` is present, `size` can be omitted
-

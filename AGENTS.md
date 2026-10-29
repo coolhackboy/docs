@@ -10,7 +10,7 @@
 
 以下页面保持各自现有模板，不要套用本节的 `##` 顺序：
 
-- Chat：`chat-series/`（chat completions、Claude messages、responses）
+- LLM：`chat-series/`，按下文「LLM 页面结构」写
 - Moderation：`moderation-series/`
 - 音乐动作页：`generate-music`、`generate-lyrics`、`extend-music`、`add-vocals`、`add-instrumental`、`upload-and-cover-audio`、`upload-and-extend-audio`、vocal / style / cover / mashup / wav 转换等非「一个模型一张生成页」的页面
 - Task management、account、file upload
@@ -100,3 +100,26 @@ openapi: "/api-manual/image-series/nano-banana.json POST /api/generate/submit"
 不要加 Pricing、Billing、Credit Billing，也不要写预估积分数。积分数量放在定价站。任务状态接口里的响应字段（例如 `credits_amount`）可以保留，那是 API 字段，不是定价说明。
 
 不要在 MDX 里重复 OpenAPI 已经生成的大段 cURL / SDK 示例，除非 `## Examples` 需要点出模式差异。
+
+## LLM 页面结构
+
+`chat-series/` 下的侧栏分组叫 LLM Model，分三类页面：
+
+- `overview.mdx`：全量模型表，列 model id、厂商、支持的 API 格式。不挂 `openapi`。
+- API 格式页：`chat-completions`、`responses`、`claude-messages`、`gemini-native-format`，每种协议一页，与模型无关。
+- 厂商页：一个厂商一对 `{provider}.mdx` / `{provider}.json`，例如 `openai`、`anthropic`、`deepseek`。
+
+模型列表和每个模型支持的格式以前端为准：模型来自 `poyoapi/data/models.json`（`tasks` 含 `Chat`），格式规则来自 `poyoapi/components/tool/chat-playground/index.tsx` 的 endpoint 选择逻辑。
+
+新增 LLM 模型时：
+
+1. 在 `overview.mdx` 表里加一行。
+2. 在对应厂商页 `## Models` 加一条，并把 id 加进该厂商 JSON 里 `model` 的 `enum`。
+3. 没有对应厂商页时新建一对文件，并在 `docs.json` 的 `api.openapi` 和 LLM Model 下的 `Models` 分组登记。
+
+厂商页规则：
+
+- `title` 写厂商名，例如 `OpenAI`、`Anthropic`、`xAI`。
+- playground 用一个该厂商全部模型都支持的格式，`openapi` 指向厂商 JSON。JSON 复制对应格式页的 schema，只把 `model` 改成该厂商的 `enum` 并给 `default`，不写 `example`。Gemini Native 的 `model` 在路径参数里。
+- 二级标题顺序：`## Models`（每条注明支持的格式或「only」限制）、`## Examples`（对应 JSON examples）、`## Notes`。
+- 不写价格。不要复制格式页的大段参数说明，链接过去即可。

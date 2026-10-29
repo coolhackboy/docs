@@ -29,7 +29,30 @@ Access image, video, audio, music, 3D, and chat models through **one API key**. 
 
 ## 1. Available Models & Playground
 
-Find the **latest supported models** on our [Model page](https://poyo.ai/models).
+Each model category has an overview listing every model, its model IDs, and how to get results:
+
+<CardGroup cols={3}>
+  <Card title="Image" icon="image" href="/api-manual/image-series/overview">
+    Text-to-image and image editing.
+  </Card>
+  <Card title="Video" icon="video" href="/api-manual/video-series/overview">
+    Text, image, and reference to video.
+  </Card>
+  <Card title="LLM" icon="comments" href="/api-manual/chat-series/overview">
+    GPT, Claude, Gemini, DeepSeek, Grok, and Kimi.
+  </Card>
+  <Card title="3D" icon="cube" href="/api-manual/3d-series/overview">
+    Text and image to 3D meshes.
+  </Card>
+  <Card title="Music & Audio" icon="music" href="/api-manual/music-series/overview">
+    Suno music, TTS, and audio tools.
+  </Card>
+  <Card title="AI Tools" icon="wrench" href="/api-manual/tools-series/overview">
+    Translation, upscaling, background removal, and moderation.
+  </Card>
+</CardGroup>
+
+Find the **latest supported models**, prices, and Playgrounds on our [Model page](https://poyo.ai/models).
 
 - We continuously update and onboard new models as soon as they are stable.
 - Each model page links to its Playground, where you can test and experiment directly in our UI before calling the API.
@@ -75,6 +98,8 @@ Every API request **must include** the correct headers:
 Authorization: Bearer <YOUR_API_KEY>
 Content-Type: application/json
 ```
+
+[Anthropic Messages](/api-manual/chat-series/claude-messages) (`/v1/messages`) also accepts `x-api-key: <YOUR_API_KEY>`, so the official Anthropic SDKs work without changes.
 
 <Accordion title="What a missing or invalid key returns">
   ```json
@@ -179,7 +204,7 @@ Inspect all your historical tasks on the [task history page](https://poyo.ai/das
 | Data | Retention |
 |---|---|
 | Generated media files | Stored for **3 days**, then automatically deleted |
-| Log records (text / metadata) | Stored for **2 months**, then automatically deleted |
+| Billing details and generation history | Stored for **3 months**, then automatically deleted |
 
 <Warning>
   If you need long-term access, make sure to download and store results on your side in time.
@@ -208,6 +233,8 @@ All generation tasks on PoYo.ai are **asynchronous**. A successful request retur
 | New generation requests | **Up to 20 per 10 seconds** |
 | Typical concurrent running tasks | 100+ |
 | Scope | Per account |
+
+This limit applies to generation tasks submitted to `/api/generate/submit`. LLM endpoints are currently not rate limited.
 
 If you exceed the limit, requests are rejected with **HTTP 429** and do not enter the queue. For most users, this is more than sufficient. If you consistently hit 429 errors, you may contact support to request a higher limit; approvals are handled cautiously.
 
@@ -252,7 +279,7 @@ Use the support entry in the [PoYo dashboard](https://poyo.ai/dashboard) for the
   </Card>
 </CardGroup>
 
-Support hours: UTC 21:00 - UTC 17:00 (next day).
+Support hours: UTC 01:00 - UTC 10:00 (09:00 - 18:00 Beijing time, UTC+8).
 
 ## 14. Stability Expectations
 

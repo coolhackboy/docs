@@ -1,0 +1,31 @@
+---
+title: "Google"
+description: "Call Google Gemini 4 and Gemini 3 series models through the Gemini Native or Chat Completions endpoint."
+icon: "comments"
+openapi: "/api-manual/chat-series/google.json POST /v1beta/models/{model}:{method}"
+---
+
+Google Gemini models cover reasoning, coding, multimodal input, and agent workflows. The playground on this page uses [Gemini Native](/api-manual/chat-series/gemini-native-format), which every Gemini model supports. Pick the model in the `model` path parameter.
+
+## Models
+
+- **gemini-4-argon** — Gemini 4 Argon, a frontier reasoning model with 1M context for long-horizon coding and knowledge work.
+- **gemini-3.8-flash** — Gemini 3.8 Flash, for software engineering, autonomous agents, and enterprise workflows.
+- **gemini-3.7-flash** — Gemini 3.7 Flash, for agentic coding, multimodal reasoning, and tool use.
+- **gemini-3.5-flash** — Gemini 3.5 Flash.
+- **gemini-3.1-pro-preview** — Gemini 3.1 Pro Preview.
+- **gemini-3-pro-preview** — Gemini 3 Pro Preview.
+- **gemini-3-flash-preview** — Gemini 3 Flash Preview.
+
+Every Gemini model supports Gemini Native and Chat Completions.
+
+## Examples
+
+- **Basic request** — `generateContent` with `contents` and `generationConfig`.
+
+Set `method` to `streamGenerateContent` for streaming. To call a model with the Chat Completions format, send the same model id in the `model` body field to [Chat Completions](/api-manual/chat-series/chat-completions).
+
+## Notes
+
+- In Gemini Native, the model id goes in the URL path, not the request body.
+- See [LLM Models](/api-manual/chat-series/overview) for every model and the formats it supports.

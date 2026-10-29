@@ -6,7 +6,23 @@ icon: "book"
 
 # PoYo AI API Documentation
 
-PoYo AI provides state-of-the-art image and video generation APIs with a unified, asynchronous architecture.
+PoYo AI provides image, video, LLM, 3D, and music APIs behind one API key.
+
+## Model Categories
+
+Generation models (image, video, 3D, music) run as asynchronous tasks. LLMs answer directly in the HTTP response or as a stream.
+
+| Category | Request | Result | Overview |
+|----------|---------|--------|----------|
+| Image | `POST /api/generate/submit` | [Image task status](/api-manual/task-management/image-status) or webhook | [Image Models](/api-manual/image-series/overview) |
+| Video | `POST /api/generate/submit` | [Video task status](/api-manual/task-management/video-status) or webhook | [Video Models](/api-manual/video-series/overview) |
+| 3D | `POST /api/generate/submit` | [3D task status](/api-manual/task-management/3d-status) or webhook | [3D Models](/api-manual/3d-series/overview) |
+| Music (Suno) | `POST /api/generate/submit` | [Query Music Detail](/api-manual/music-series/query-music-detail) or webhook | [Music & Audio Models](/api-manual/music-series/overview) |
+| Music & TTS (other providers) | `POST /api/generate/submit` | [Task status](/api-manual/task-management/status) or webhook | [Music & Audio Models](/api-manual/music-series/overview) |
+| AI Tools | `POST /api/generate/submit` | [Task status](/api-manual/task-management/status) or webhook | [AI Tools](/api-manual/tools-series/overview) |
+| LLM | `/v1/chat/completions`, `/v1/responses`, `/v1/messages`, or Gemini Native | Returned in the response or streamed | [LLM Models](/api-manual/chat-series/overview) |
+
+The rest of this page describes the asynchronous task flow used by generation models.
 
 ## Base URL
 
@@ -32,14 +48,14 @@ Authorization: Bearer YOUR_API_KEY
 
 ### Unified Endpoints
 
-PoYo AI uses a simple two-endpoint architecture for all generation types:
+Image, video, 3D, and most audio models use two endpoints:
 
 #### Submit Task
 ```http
 POST https://api.poyo.ai/api/generate/submit
 ```
 
-Submit image or video generation requests. Returns immediately with a `task_id`.
+Submit a generation request. Returns immediately with a `task_id`.
 
 #### Query Status
 ```http
@@ -171,7 +187,7 @@ payload = {
 ## Important Notes
 
 <Warning>
-  **File Validity**: Generated images and videos are accessible for **24 hours** after creation. Download and save your content promptly.
+  **File Validity**: Generated images and videos are accessible for **3 days** after creation. Download and save your content promptly.
 </Warning>
 
 <Info>

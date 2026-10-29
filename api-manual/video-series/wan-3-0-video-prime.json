@@ -11,19 +11,27 @@
       "description": "Production server"
     }
   ],
-  "security": [{"BearerAuth": []}],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
   "paths": {
     "/api/generate/submit": {
       "post": {
         "summary": "Submit a Wan 3.0 Prime Video Task",
         "description": "Generate video with a Wan 3.0 Prime model.",
         "operationId": "submitWan30PrimeVideoTask",
-        "tags": ["Wan 3.0 Prime Video"],
+        "tags": [
+          "Wan 3.0 Prime Video"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {"$ref": "#/components/schemas/SubmitRequest"},
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
               "examples": {
                 "prime-text-to-video": {
                   "summary": "Prime text to video model",
@@ -43,7 +51,9 @@
                   "value": {
                     "model": "wan3.0-prime-image-to-video",
                     "input": {
-                      "image_urls": ["https://example.com/product.png"],
+                      "image_urls": [
+                        "https://example.com/product.png"
+                      ],
                       "prompt": "A polished studio product reveal with smooth rotation and soft highlights.",
                       "resolution": "1080p",
                       "duration": 5,
@@ -57,7 +67,9 @@
                     "model": "wan3.0-prime-reference-to-video",
                     "input": {
                       "prompt": "Create a concise product introduction based on this presentation.",
-                      "reference_file_urls": ["https://example.com/product-brief.pdf"],
+                      "reference_file_urls": [
+                        "https://example.com/product-brief.pdf"
+                      ],
                       "resolution": "480p",
                       "aspect_ratio": "16:9",
                       "duration": 10,
@@ -75,7 +87,29 @@
             "description": "Task submitted successfully",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/SubmitResponse"}
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
               }
             }
           }
@@ -95,7 +129,10 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -124,52 +161,81 @@
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 2,
-                "items": {"type": "string", "format": "uri"},
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "description": "Image-to-video start frame and optional end frame."
               },
               "reference_image_urls": {
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 10,
-                "items": {"type": "string", "format": "uri"},
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "description": "Reference images for reference-to-video."
               },
               "reference_video_urls": {
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 5,
-                "items": {"type": "string", "format": "uri"},
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "description": "Reference videos for reference-to-video."
               },
               "reference_audio_urls": {
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 5,
-                "items": {"type": "string", "format": "uri"},
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "description": "Reference audio clips for reference-to-video."
               },
               "reference_file_urls": {
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 1,
-                "items": {"type": "string", "format": "uri"},
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "description": "One reference document. Cannot be combined with reference_link_urls."
               },
               "reference_link_urls": {
                 "type": "array",
                 "minItems": 1,
                 "maxItems": 1,
-                "items": {"type": "string", "format": "uri"},
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "description": "One publicly accessible webpage. Cannot be combined with reference_file_urls."
               },
               "resolution": {
                 "type": "string",
-                "enum": ["480p", "720p", "1080p"],
+                "enum": [
+                  "480p",
+                  "720p",
+                  "1080p"
+                ],
                 "default": "720p"
               },
               "aspect_ratio": {
                 "type": "string",
-                "enum": ["adaptive", "16:9", "4:3", "1:1", "3:4", "9:16"],
+                "enum": [
+                  "adaptive",
+                  "16:9",
+                  "4:3",
+                  "1:1",
+                  "3:4",
+                  "9:16"
+                ],
                 "default": "adaptive"
               },
               "duration": {
@@ -200,16 +266,67 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
-          "code": {"type": "integer", "example": 200},
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
-              "task_id": {"type": "string", "example": "task-unified-1787654321-abcd1234"},
-              "status": {"type": "string", "enum": ["not_started"]},
-              "created_time": {"type": "string", "format": "date-time"}
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1787654321-abcd1234"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started"
+                ]
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
             }
           }
         }

@@ -22,7 +22,9 @@
         "summary": "Submit Seedance 2 Mini Video Generation Task",
         "description": "Generate videos using Seedance 2 Mini with text-to-video, first and last frame, and reference-to-video workflows.",
         "operationId": "submitSeedance2MiniTask",
-        "tags": ["Seedance 2 Mini"],
+        "tags": [
+          "Seedance 2 Mini"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -91,6 +93,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -108,12 +130,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Seedance 2 Mini model identifier",
-            "enum": ["seedance-2-mini"]
+            "enum": [
+              "seedance-2-mini"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -122,7 +149,10 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt", "duration"],
+            "required": [
+              "prompt",
+              "duration"
+            ],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
@@ -153,7 +183,9 @@
                 },
                 "maxItems": 9,
                 "description": "Optional reference image URLs for reference-to-video mode. Cannot be used together with image_urls.",
-                "example": ["https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-first-frame.jpg"]
+                "example": [
+                  "https://storage.poyo.ai/models/seedance-2-mini/examples/image-to-video-first-frame.jpg"
+                ]
               },
               "reference_video_urls": {
                 "type": "array",
@@ -163,7 +195,9 @@
                 },
                 "maxItems": 3,
                 "description": "Reference videos to guide video generation. Refer to them in the prompt as @Video1, @Video2, etc. Supported formats: MP4, MOV. Up to 3 videos, combined duration must be between 2 and 15 seconds, total size under 50 MB. Each video must be between ~480p (640x640) and ~720p (834x1112) in resolution.",
-                "example": ["https://storage.poyo.ai/models/seedance-2-mini/examples/text-to-video-chase-output.mp4"]
+                "example": [
+                  "https://storage.poyo.ai/models/seedance-2-mini/examples/text-to-video-chase-output.mp4"
+                ]
               },
               "reference_audio_urls": {
                 "type": "array",
@@ -182,14 +216,25 @@
               "resolution": {
                 "type": "string",
                 "description": "Output resolution",
-                "enum": ["480p", "720p"],
+                "enum": [
+                  "480p",
+                  "720p"
+                ],
                 "default": "720p",
                 "example": "720p"
               },
               "aspect_ratio": {
                 "type": "string",
                 "description": "Optional output video aspect ratio.",
-                "enum": ["auto", "1:1", "21:9", "4:3", "3:4", "16:9", "9:16"],
+                "enum": [
+                  "auto",
+                  "1:1",
+                  "21:9",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16"
+                ],
                 "example": "auto"
               },
               "duration": {
@@ -205,7 +250,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -214,7 +262,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -223,7 +275,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -232,6 +286,36 @@
                 "format": "date-time",
                 "example": "2026-06-25T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

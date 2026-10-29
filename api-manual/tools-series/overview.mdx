@@ -1,0 +1,29 @@
+---
+title: "AI Tools"
+description: "AI tools available on PoYo: translation, background removal, upscaling, and content moderation."
+icon: "wrench"
+---
+
+Tools process media you already have: translate it, clean it up, enhance it, or review it. They use the same asynchronous flow as generation models.
+
+## Workflow
+
+1. Submit a task to `POST /api/generate/submit` with a model ID from the table below and the tool's parameters in `input`.
+2. Poll [Get Task Status](/api-manual/task-management/status) with the returned `task_id`, or receive the result at `callback_url` (see [Webhook Callbacks](/api-manual/task-management/webhooks)).
+3. Download the files in `files` when the status is `finished`. Omni Moderation returns its result in `output` instead of `files`.
+
+## Models
+
+| Tool | Model ID | Input |
+| --- | --- | --- |
+| [Image Translator](/api-manual/tools-series/image-translator) | `poyo-ai/image-translator` | One image |
+| [Video Translator](/api-manual/tools-series/video-translator) | `poyo-ai/video-translator` | One video or audio file, up to 6 minutes |
+| [Video Background Removal](/api-manual/tools-series/video-background-removal) | `poyo-ai/video-background-removal` | One video |
+| [Video Upscaler](/api-manual/tools-series/video-upscaler) | `poyo-ai/video-upscaler` | One video |
+| [Omni Moderation](/api-manual/moderation-series/omni-moderation) | `omni-moderation-latest` | Text and images |
+
+## Notes
+
+- Input files must be publicly accessible HTTP(S) URLs. To use local files, upload them first with [File Management](/api-manual/file-series/upload-url).
+- PoYo inspects input files before submitting (type, size, duration). Validation errors are returned in the response body with `code: 400`, sometimes with HTTP status 200. Always check `code`.
+- Generated files are accessible for 3 days after creation. Download and store them promptly.

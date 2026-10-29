@@ -31,10 +31,6 @@ openapi: "/api-manual/music-series/xai-tts-1.json POST /api/generate/submit"
   - `sample_rate`: `8000`, `16000`, `22050`, `24000`, `44100`, or `48000`. Default: `24000`
   - `bit_rate`: `32000`, `64000`, `96000`, `128000`, `192000`, or `null`. Only applicable for MP3. Default: `128000`
 
-## Supported Languages
-
-Supported values: `auto`, `en`, `ar-EG`, `ar-SA`, `ar-AE`, `bn`, `zh`, `fr`, `de`, `hi`, `id`, `it`, `ja`, `ko`, `pt-BR`, `pt-PT`, `ru`, `es-MX`, `es-ES`, `tr`, `vi`.
-
 ## Examples
 
 ```json
@@ -55,6 +51,10 @@ Supported values: `auto`, `en`, `ar-EG`, `ar-SA`, `ar-AE`, `bn`, `zh`, `fr`, `de
 ```
 
 ## Notes
+
+### Supported Languages
+
+Supported values: `auto`, `en`, `ar-EG`, `ar-SA`, `ar-AE`, `bn`, `zh`, `fr`, `de`, `hi`, `id`, `it`, `ja`, `ko`, `pt-BR`, `pt-PT`, `ru`, `es-MX`, `es-ES`, `tr`, `vi`.
 
 - PoYo's public parameter name is `language_code`; it is mapped to fal's `language` field upstream.
 - PoYo's public parameter name is `text`; it is mapped to fal's `text` field upstream.

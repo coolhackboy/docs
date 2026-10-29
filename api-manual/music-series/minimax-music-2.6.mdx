@@ -10,17 +10,23 @@ openapi: "/api-manual/music-series/minimax-music-2.6.json POST /api/generate/sub
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
+## Models
+
+- **minimax-music-2.6** — MiniMax Music 2.6
+
 ## Features
 
 - This endpoint generates complete tracks with singing, backing music, and detailed arrangements from a style prompt
 - You can provide custom lyrics, let the model optimize lyrics from the prompt, or enable instrumental mode for music without vocals
 - Final results are returned asynchronously through `callback_url` or [Query Task Status](/api-manual/task-management/status)
 
-## Parameters
+## Required parameters
 
 - `prompt` (required): Music prompt describing style, mood, genre, instrumentation, tempo, or scene
   - Length: `10-2000` characters
   - Be specific about the musical direction you want in the final track
+
+## Optional parameters
 
 - `lyrics`: Optional lyrics content for vocal generation
   - Required unless `is_instrumental` or `lyrics_optimizer` is `true`

@@ -22,7 +22,9 @@
         "summary": "Submit Happy Horse Task",
         "description": "Generate or edit video with Alibaba Happy Horse",
         "operationId": "submitHappyHorseTask",
-        "tags": ["Happy Horse"],
+        "tags": [
+          "Happy Horse"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -49,7 +51,9 @@
                   "value": {
                     "model": "happy-horse",
                     "input": {
-                      "image_urls": ["https://example.com/first-frame.png"],
+                      "image_urls": [
+                        "https://example.com/first-frame.png"
+                      ],
                       "prompt": "Bring the scene in the image to life with gentle camera movement.",
                       "resolution": "720p",
                       "duration": 5
@@ -80,7 +84,9 @@
                     "input": {
                       "video_url": "https://example.com/source-video.mp4",
                       "prompt": "Recolor the sky to a deep purple sunset.",
-                      "reference_image_urls": ["https://example.com/style-reference.png"],
+                      "reference_image_urls": [
+                        "https://example.com/style-reference.png"
+                      ],
                       "resolution": "1080p",
                       "audio_setting": "auto",
                       "enable_safety_checker": true
@@ -101,6 +107,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -118,12 +144,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Happy Horse model identifier",
-            "enum": ["happy-horse"]
+            "enum": [
+              "happy-horse"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -148,7 +179,9 @@
                   "format": "uri"
                 },
                 "description": "Single-item first-frame image URL array for image-to-video. Do not combine with reference_image_urls or video_url.",
-                "example": ["https://example.com/first-frame.png"]
+                "example": [
+                  "https://example.com/first-frame.png"
+                ]
               },
               "reference_image_urls": {
                 "type": "array",
@@ -157,7 +190,9 @@
                   "format": "uri"
                 },
                 "description": "Reference images. For reference-to-video, provide 1-9 images and refer to them as character1, character2, and so on in the prompt. For video-edit, provide up to 5 optional images and refer to them as @Image1, @Image2, and so on.",
-                "example": ["https://example.com/reference.png"]
+                "example": [
+                  "https://example.com/reference.png"
+                ]
               },
               "video_url": {
                 "type": "string",
@@ -168,14 +203,23 @@
               "aspect_ratio": {
                 "type": "string",
                 "description": "Output aspect ratio for text-to-video and reference-to-video",
-                "enum": ["16:9", "9:16", "1:1", "4:3", "3:4"],
+                "enum": [
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "4:3",
+                  "3:4"
+                ],
                 "default": "16:9",
                 "example": "16:9"
               },
               "resolution": {
                 "type": "string",
                 "description": "Output resolution",
-                "enum": ["720p", "1080p"],
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
                 "default": "1080p",
                 "example": "1080p"
               },
@@ -190,7 +234,10 @@
               "audio_setting": {
                 "type": "string",
                 "description": "Video-edit audio handling. `auto` lets the model decide whether to regenerate audio; `origin` preserves original audio.",
-                "enum": ["auto", "origin"],
+                "enum": [
+                  "auto",
+                  "origin"
+                ],
                 "default": "auto",
                 "example": "auto"
               },
@@ -212,7 +259,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -220,7 +270,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -228,13 +282,45 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {
                 "type": "string",
                 "format": "date-time",
                 "example": "2026-04-27T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

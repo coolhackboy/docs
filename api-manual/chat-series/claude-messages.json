@@ -56,32 +56,66 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ClaudeMessageResponse"
+                  "$ref": "#/components/schemas/ClaudeMessageResult"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful response",
                     "value": {
-                      "code": 200,
-                      "data": {
-                        "id": "msg_013zva2CMHNLnXJNN3QKQ2EF",
-                        "type": "message",
-                        "role": "assistant",
-                        "content": [
-                          {
-                            "type": "text",
-                            "text": "Hello! I'm Claude. Nice to meet you."
-                          }
-                        ],
-                        "model": "claude-sonnet-4-5-20250929",
-                        "stop_reason": "end_turn",
-                        "stop_sequence": null,
-                        "usage": {
-                          "input_tokens": 10,
-                          "output_tokens": 13
+                      "id": "msg_013zva2CMHNLnXJNN3QKQ2EF",
+                      "type": "message",
+                      "role": "assistant",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Hello! I'm Claude. Nice to meet you."
                         }
+                      ],
+                      "model": "claude-sonnet-4-5-20250929",
+                      "stop_reason": "end_turn",
+                      "stop_sequence": null,
+                      "usage": {
+                        "input_tokens": 10,
+                        "output_tokens": 13
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters, or the model does not support this API format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
                   }
                 }
               }
@@ -171,7 +205,7 @@
             "$ref": "#/components/schemas/ClaudeOutputConfig"
           },
           "thinking": {
-            "description": "Configuration for Claude extended thinking. Use this field with the `claude-opus-4-7-thinking` model. Thinking tokens count toward `max_tokens`.",
+            "description": "Configuration for Claude extended thinking. Supported on Claude models with extended thinking. Thinking tokens count toward `max_tokens`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ClaudeThinkingEnabled"
@@ -397,18 +431,6 @@
           }
         }
       },
-      "ClaudeMessageResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 200
-          },
-          "data": {
-            "$ref": "#/components/schemas/ClaudeMessageResult"
-          }
-        }
-      },
       "ClaudeMessageResult": {
         "type": "object",
         "properties": {
@@ -496,6 +518,77 @@
           "output_tokens": {
             "type": "integer",
             "example": 13
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "PoyoValidationError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters: messages: Field required"
+              },
+              "type": {
+                "type": "string",
+                "example": "validation_error"
+              },
+              "details": {
+                "type": "object",
+                "description": "Field-level validation errors when available."
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "Error returned when the model or request is rejected for this API format.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
           }
         }
       }

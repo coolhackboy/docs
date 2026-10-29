@@ -1,0 +1,43 @@
+---
+title: "GPT Image 2.5 Fixed"
+description: "Generate or edit images with GPT Image 2.5 Flare or Sunburst at a fixed per-image price by resolution."
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-2-5-fixed.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+GPT Image 2.5 Fixed runs GPT Image 2.5 Flare or Sunburst with per-image pricing based on `resolution`, instead of token-based pricing. Choose the variant with `version`. Add reference images to edit or guide the output.
+
+## Models
+
+- **gpt-image-2.5-fixed** — GPT Image 2.5 Flare or Sunburst with per-image pricing
+
+## Required parameters
+
+- `prompt` (string): Image description, 1–32000 characters.
+
+## Optional parameters
+
+- `version` (string): `flare` or `sunburst`. Default is `flare`.
+- `resolution` (string): `1K`, `2K`, or `4K`. Default is `1K`.
+- `size` (string): `auto`, `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`, `5:4`, `4:5`, or `21:9`. Default is `1:1`.
+- `image_urls` (array of strings): Up to 16 reference image URLs.
+
+## Output
+
+A finished task returns the generated image in `files` with `file_type: image`.
+
+## Examples
+
+- **Text to image with Flare at 2K** — sets `prompt`, `version`, `resolution`, `size`.
+- **Edit with a reference image using Sunburst** — sets `prompt`, `version`, `image_urls`.
+
+## Notes
+
+- `n` and `num_images` are not supported. Each task returns one image.
+- `image_urls` must be an array, even for one image.
+- For token-based pricing, use [GPT Image 2.5 Flare](/api-manual/image-series/gpt-image-2-5-flare) or [GPT Image 2.5 Sunburst](/api-manual/image-series/gpt-image-2-5-sunburst).

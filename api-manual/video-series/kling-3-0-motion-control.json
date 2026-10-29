@@ -22,7 +22,9 @@
         "summary": "Submit Kling 3.0 Motion Control Task",
         "description": "Transfer motion from a reference video to a reference image",
         "operationId": "submitKling30MotionControlTask",
-        "tags": ["Kling 3.0 Motion Control"],
+        "tags": [
+          "Kling 3.0 Motion Control"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -71,6 +73,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -88,12 +110,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Kling 3.0 Motion Control model identifier",
-            "enum": ["kling-3.0-motion-control"]
+            "enum": [
+              "kling-3.0-motion-control"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -103,7 +130,11 @@
           },
           "input": {
             "type": "object",
-            "required": ["image_urls", "video_urls", "character_orientation"],
+            "required": [
+              "image_urls",
+              "video_urls",
+              "character_orientation"
+            ],
             "properties": {
               "prompt": {
                 "type": "string",
@@ -120,7 +151,9 @@
                 "minItems": 1,
                 "maxItems": 1,
                 "description": "Reference image URL array. Only one image is supported. Supports JPG, JPEG, PNG, max 10MB",
-                "example": ["https://storage.poyo.ai/kling-3.0-motion-control/reference-image-new.png"]
+                "example": [
+                  "https://storage.poyo.ai/kling-3.0-motion-control/reference-image-new.png"
+                ]
               },
               "video_urls": {
                 "type": "array",
@@ -131,18 +164,26 @@
                 "minItems": 1,
                 "maxItems": 1,
                 "description": "Reference video URL array. Only one video is supported. Supports MP4, MOV, max 100MB",
-                "example": ["https://storage.poyo.ai/kling-3.0-motion-control/reference-video-new.mp4"]
+                "example": [
+                  "https://storage.poyo.ai/kling-3.0-motion-control/reference-video-new.mp4"
+                ]
               },
               "character_orientation": {
                 "type": "string",
                 "description": "Character orientation mode",
-                "enum": ["image", "video"],
+                "enum": [
+                  "image",
+                  "video"
+                ],
                 "example": "image"
               },
               "resolution": {
                 "type": "string",
                 "description": "Output resolution",
-                "enum": ["720p", "1080p"],
+                "enum": [
+                  "720p",
+                  "1080p"
+                ],
                 "default": "720p",
                 "example": "720p"
               },
@@ -151,7 +192,10 @@
                 "maxItems": 1,
                 "items": {
                   "type": "object",
-                  "required": ["frontal_image_url", "reference_image_urls"],
+                  "required": [
+                    "frontal_image_url",
+                    "reference_image_urls"
+                  ],
                   "properties": {
                     "frontal_image_url": {
                       "type": "string",
@@ -190,7 +234,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -198,7 +245,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -206,13 +257,45 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {
                 "type": "string",
                 "format": "date-time",
                 "example": "2025-11-12T10:30:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

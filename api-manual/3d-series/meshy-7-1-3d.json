@@ -95,6 +95,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -201,15 +221,14 @@
             "type": "string",
             "maxLength": 600,
             "minLength": 1,
-            "pattern": "\\S",
             "description": "Required only for meshy-7.1-text-to-3d; omit for image models. Use 1–600 characters containing non-whitespace text."
           },
           "image_urls": {
             "type": "array",
             "items": {
               "type": "string",
-              "pattern": "^(https?://\\S+|data:image/\\S+)$",
-              "description": "Public image URL or image data URI."
+              "description": "Public image URL or image data URI.",
+              "format": "uri"
             },
             "minItems": 1,
             "maxItems": 4,
@@ -305,8 +324,8 @@
           },
           "texture_image_url": {
             "type": "string",
-            "pattern": "^(https?://\\S+|data:image/\\S+)$",
-            "description": "Optional texture guidance for all models; accepts a public HTTP(S) image URL or image data URI. For meshy-7.1-multi-image-to-3d, requires should_texture=true."
+            "description": "Optional texture guidance for all models; accepts a public HTTP(S) image URL or image data URI. For meshy-7.1-multi-image-to-3d, requires should_texture=true.",
+            "format": "uri"
           },
           "enable_rigging": {
             "type": "boolean",
@@ -361,8 +380,8 @@
           },
           "texture_image_url": {
             "type": "string",
-            "pattern": "^(https?://\\S+|data:image/\\S+)$",
-            "description": "Public image URL or image data URI."
+            "description": "Public image URL or image data URI. Must be a publicly accessible HTTP or HTTPS URL.",
+            "format": "uri"
           },
           "seed": {
             "type": "integer",
@@ -377,8 +396,7 @@
             "type": "string",
             "maxLength": 600,
             "minLength": 1,
-            "pattern": "\\S",
-            "description": "Prompt."
+            "description": "Prompt. Must contain non-whitespace text."
           },
           "target_polycount": {
             "default": 30000,
@@ -559,8 +577,8 @@
           },
           "texture_image_url": {
             "type": "string",
-            "pattern": "^(https?://\\S+|data:image/\\S+)$",
-            "description": "Public image URL or image data URI."
+            "description": "Public image URL or image data URI. Must be a publicly accessible HTTP or HTTPS URL.",
+            "format": "uri"
           },
           "enable_animation": {
             "type": "boolean",
@@ -649,12 +667,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "pattern": "^(https?://\\S+|data:image/\\S+)$",
-              "description": "Public image URL or image data URI."
+              "description": "Public image URL or image data URI.",
+              "format": "uri"
             },
             "minItems": 1,
             "maxItems": 1,
-            "description": "Image urls."
+            "description": "Image urls. Must be a publicly accessible HTTP or HTTPS URL."
           }
         },
         "additionalProperties": false,
@@ -734,8 +752,8 @@
           },
           "texture_image_url": {
             "type": "string",
-            "pattern": "^(https?://\\S+|data:image/\\S+)$",
-            "description": "Public image URL or image data URI."
+            "description": "Public image URL or image data URI. Must be a publicly accessible HTTP or HTTPS URL.",
+            "format": "uri"
           },
           "enable_animation": {
             "type": "boolean",
@@ -818,12 +836,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "pattern": "^(https?://\\S+|data:image/\\S+)$",
-              "description": "Public image URL or image data URI."
+              "description": "Public image URL or image data URI.",
+              "format": "uri"
             },
             "minItems": 1,
             "maxItems": 4,
-            "description": "Image urls."
+            "description": "Image urls. Must be a publicly accessible HTTP or HTTPS URL."
           },
           "texture_prompt": {
             "type": "string",
@@ -924,6 +942,36 @@
                 "type": "string",
                 "format": "date-time",
                 "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

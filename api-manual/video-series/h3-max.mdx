@@ -10,6 +10,10 @@ openapi: "/api-manual/video-series/h3-max.json POST /api/generate/submit"
 2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
+## Models
+
+- **h3-max** — H3 Max
+
 ## Input modes
 
 | Mode | Input |
@@ -20,9 +24,12 @@ openapi: "/api-manual/video-series/h3-max.json POST /api/generate/submit"
 
 Starting and ending frames cannot be combined with any reference assets. Reference video and audio always require at least one reference image. Empty arrays do not select a mode.
 
-## Parameters
+## Required parameters
 
 - `prompt` is required, with up to 50,000 characters.
+
+## Optional parameters
+
 - `duration` is an integer from 5 through 15 seconds; the default is 5.
 - `resolution` is `480p`, `768p`, or `1080p`; the default is `768p`.
 - `enable_safety_checker` (boolean) enables the safety checker when `true`. Defaults to `true` in every mode; set `false` to disable it.
@@ -76,4 +83,3 @@ Reference images currently support `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `5:2`, a
   }
 }
 ```
-

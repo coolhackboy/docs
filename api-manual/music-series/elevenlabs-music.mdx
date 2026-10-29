@@ -16,7 +16,7 @@ openapi: "/api-manual/music-series/elevenlabs-music.json POST /api/generate/subm
 
 - **elevenlabs-music** - ElevenLabs Music generation with text and composition-plan controls
 
-## Parameters
+## Input modes
 
 Provide exactly one creative control path:
 
@@ -24,7 +24,9 @@ Provide exactly one creative control path:
 - Use **composition_plan** for section-level arrangement control.
 - Do not send both `text` and `composition_plan` in the same request.
 
-All supported `input` fields:
+## Optional parameters
+
+All supported `input` fields. `text` or `composition_plan` is required, depending on the input mode:
 
 - **text**: Text describing the music to generate. Required when `composition_plan` is not provided. Length: `1-4100` characters.
 - **composition_plan**: Structured composition plan. Required when `text` is not provided.

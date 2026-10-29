@@ -1,0 +1,37 @@
+---
+title: "Video Translator"
+description: "Translate the speech in a video or audio file and return a dubbed video with target-language subtitles."
+icon: "language"
+openapi: "/api-manual/tools-series/video-translator.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Video Translator transcribes the speech in one video or audio file, translates it, and returns a dubbed video. A subtitle file in the target language is returned when available. Use it to localize talking-head videos, tutorials, and short-form content.
+
+## Models
+
+- **poyo-ai/video-translator** — Translate and dub one video or audio file
+
+## Required parameters
+
+- `video_urls` (array of strings): Exactly one video or audio URL. MP4, MOV, AVI, MP3, or WAV, up to 400 MB and 6 minutes.
+- `source_language` (string): Spoken language in the source file, for example `en`. `auto` is not accepted.
+- `target_language` (string): Language to translate into, for example `ja`.
+
+## Output
+
+A finished task returns the translated video in `files` with `file_type: video`. When a subtitle track is produced, a target-language SRT file is also returned with `file_type: other`. Long files can be processed in segments, and each segment adds its own video and subtitle entries.
+
+## Examples
+
+- **Translate an English video into Japanese** — sets `video_urls`, `source_language`, `target_language`.
+
+## Notes
+
+- Only one file is accepted per task.
+- `source_language` must be an explicit language. Language detection is not supported for video translation.
+- Files longer than 6 minutes or larger than 400 MB are rejected at submission.

@@ -1,0 +1,527 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Google API",
+    "description": "Call Google Gemini models through the Gemini Native generateContent endpoint.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1beta/models/{model}:{method}": {
+      "post": {
+        "summary": "Google",
+        "description": "Gemini Native generateContent with Google Gemini models.",
+        "operationId": "generateGoogleGeminiContent",
+        "tags": [
+          "Text Series"
+        ],
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "gemini-4-argon",
+                "gemini-3.8-flash",
+                "gemini-3.7-flash",
+                "gemini-3.5-flash",
+                "gemini-3.1-pro-preview",
+                "gemini-3-pro-preview",
+                "gemini-3-flash-preview"
+              ],
+              "default": "gemini-3-flash-preview"
+            },
+            "description": "Gemini model id, sent in the URL path."
+          },
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "generateContent",
+                "streamGenerateContent"
+              ],
+              "example": "generateContent"
+            },
+            "description": "Request method. Use `generateContent` for complete JSON responses and `streamGenerateContent` for streaming generation."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeminiGenerateContentRequest"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic request",
+                  "value": {
+                    "contents": [
+                      {
+                        "role": "user",
+                        "parts": [
+                          {
+                            "text": "Summarize the 'new night mode' requirements in 3 points and provide next steps."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeminiGenerateContentResult"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful response",
+                    "value": {
+                      "candidates": [
+                        {
+                          "content": {
+                            "role": "model",
+                            "parts": [
+                              {
+                                "text": "Hello! I'm pleased to introduce myself."
+                              }
+                            ]
+                          },
+                          "finishReason": "STOP",
+                          "index": 0
+                        }
+                      ],
+                      "promptFeedback": {
+                        "safetyRatings": [
+                          {
+                            "category": "HARM_CATEGORY_HATE_SPEECH",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_HARASSMENT",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            "probability": "NEGLIGIBLE"
+                          }
+                        ]
+                      },
+                      "usageMetadata": {
+                        "promptTokenCount": 15,
+                        "candidatesTokenCount": 29,
+                        "totalTokenCount": 44,
+                        "thoughtsTokenCount": 0,
+                        "promptTokensDetails": [
+                          {
+                            "modality": "TEXT",
+                            "tokenCount": 15
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, or the model does not support Gemini Native",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeminiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nGet your API Key:\n\nVisit the API Key Management Page to get your API Key\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "GeminiGenerateContentRequest": {
+        "type": "object",
+        "required": [
+          "contents"
+        ],
+        "properties": {
+          "contents": {
+            "type": "array",
+            "description": "Conversation contents with roles and parts. Each content object may include a `role` (`user` or `model`) and a `parts` array containing text or inline data.",
+            "items": {
+              "$ref": "#/components/schemas/GeminiContent"
+            }
+          },
+          "generationConfig": {
+            "description": "Generation configuration, including temperature, topP, topK, maxOutputTokens, and stopSequences.",
+            "$ref": "#/components/schemas/GeminiGenerationConfig"
+          },
+          "safetySettings": {
+            "type": "array",
+            "description": "Safety settings.",
+            "items": {
+              "$ref": "#/components/schemas/GeminiSafetySetting"
+            }
+          }
+        }
+      },
+      "GeminiContent": {
+        "type": "object",
+        "required": [
+          "role",
+          "parts"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "model"
+            ],
+            "description": "Role type. Use `user` for user input and `model` for model output.",
+            "example": "user"
+          },
+          "parts": {
+            "type": "array",
+            "description": "Parts list. Each part can contain text or inline data.",
+            "items": {
+              "$ref": "#/components/schemas/GeminiPart"
+            }
+          }
+        }
+      },
+      "GeminiPart": {
+        "type": "object",
+        "description": "A part can contain text or inline data.",
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "example": "Hello!"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "inlineData"
+            ],
+            "properties": {
+              "inlineData": {
+                "$ref": "#/components/schemas/GeminiInlineData"
+              }
+            }
+          }
+        ]
+      },
+      "GeminiInlineData": {
+        "type": "object",
+        "required": [
+          "mimeType",
+          "data"
+        ],
+        "properties": {
+          "mimeType": {
+            "type": "string",
+            "example": "image/png"
+          },
+          "data": {
+            "type": "string",
+            "description": "Base64-encoded data.",
+            "example": "BASE64_ENCODED_IMAGE"
+          }
+        }
+      },
+      "GeminiGenerationConfig": {
+        "type": "object",
+        "description": "Generation configuration.",
+        "properties": {
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "description": "Controls output randomness.",
+            "example": 0.7
+          },
+          "topP": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Nucleus sampling parameter.",
+            "example": 0.9
+          },
+          "topK": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Top-k sampling parameter.",
+            "example": 40
+          },
+          "maxOutputTokens": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum output tokens.",
+            "example": 512
+          },
+          "stopSequences": {
+            "type": "array",
+            "description": "Stop sequences.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GeminiSafetySetting": {
+        "type": "object",
+        "description": "Safety setting.",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Safety category.",
+            "example": "HARM_CATEGORY_DANGEROUS_CONTENT"
+          },
+          "threshold": {
+            "type": "string",
+            "description": "Blocking threshold.",
+            "example": "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        }
+      },
+      "GeminiGenerateContentResult": {
+        "type": "object",
+        "properties": {
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiCandidate"
+            }
+          },
+          "promptFeedback": {
+            "$ref": "#/components/schemas/GeminiPromptFeedback"
+          }
+        }
+      },
+      "GeminiCandidate": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/GeminiContent"
+          },
+          "finishReason": {
+            "type": "string",
+            "example": "STOP"
+          },
+          "index": {
+            "type": "integer",
+            "example": 0
+          },
+          "safetyRatings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiSafetyRating"
+            }
+          }
+        }
+      },
+      "GeminiPromptFeedback": {
+        "type": "object",
+        "properties": {
+          "safetyRatings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiSafetyRating"
+            }
+          }
+        }
+      },
+      "GeminiSafetyRating": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "HARM_CATEGORY_DANGEROUS_CONTENT"
+          },
+          "probability": {
+            "type": "string",
+            "example": "NEGLIGIBLE"
+          }
+        }
+      },
+      "GeminiUsageMetadata": {
+        "type": "object",
+        "properties": {
+          "promptTokenCount": {
+            "type": "integer",
+            "example": 15
+          },
+          "candidatesTokenCount": {
+            "type": "integer",
+            "example": 29
+          },
+          "totalTokenCount": {
+            "type": "integer",
+            "example": 44
+          },
+          "thoughtsTokenCount": {
+            "type": "integer",
+            "example": 0
+          },
+          "promptTokensDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeminiTokenDetail"
+            }
+          }
+        }
+      },
+      "GeminiTokenDetail": {
+        "type": "object",
+        "properties": {
+          "modality": {
+            "type": "string",
+            "example": "TEXT"
+          },
+          "tokenCount": {
+            "type": "integer",
+            "example": 15
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "Error returned when the model or request is rejected for this API format.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
+          }
+        }
+      },
+      "GeminiError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer",
+                "example": 400
+              },
+              "message": {
+                "type": "string",
+                "example": "URI '/v1beta/models/deepseek-v4-flash:generateContent' is not supported by this model. Supported URIs: ['/v1/chat/completions']"
+              },
+              "status": {
+                "type": "string",
+                "example": "INVALID_ARGUMENT"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

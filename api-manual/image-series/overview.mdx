@@ -1,0 +1,58 @@
+---
+title: "Image Models"
+description: "All image generation and editing models available on PoYo, with their model IDs."
+icon: "image"
+---
+
+Every image model is called through `POST /api/generate/submit`. Send a model ID in `model`, the model's parameters in `input`, and an optional `callback_url`. The request returns a `task_id` right away and the task runs asynchronously.
+
+## Workflow
+
+1. Submit a task to `POST /api/generate/submit` with a model ID from the table below.
+2. Poll [Get Task Status](/api-manual/task-management/image-status) with the returned `task_id`, or receive the result at `callback_url` (see [Webhook Callbacks](/api-manual/task-management/image-webhooks)).
+3. Download the files in `files` when the status is `finished`.
+
+Model IDs ending in `-edit` are the image-editing variants and take input images. Check each model page for which IDs also accept reference images.
+
+## Models
+
+| Model | Provider | Model IDs |
+| --- | --- | --- |
+| [GPT-4o Image](/api-manual/image-series/gpt-4o-image) | OpenAI | `gpt-4o-image`<br />`gpt-4o-image-edit` |
+| [GPT Image 1.5](/api-manual/image-series/gpt-image-1.5) | OpenAI | `gpt-image-1.5`<br />`gpt-image-1.5-edit` |
+| [GPT Image 2](/api-manual/image-series/gpt-image-2) | OpenAI | `gpt-image-2`<br />`gpt-image-2-edit` |
+| [GPT Image 2.5 Flare](/api-manual/image-series/gpt-image-2-5-flare) | OpenAI | `gpt-image-2.5-flare` |
+| [GPT Image 2.5 Sunburst](/api-manual/image-series/gpt-image-2-5-sunburst) | OpenAI | `gpt-image-2.5-sunburst` |
+| [GPT Image 2.5 Fixed](/api-manual/image-series/gpt-image-2-5-fixed) | OpenAI | `gpt-image-2.5-fixed` |
+| [Nano Banana](/api-manual/image-series/nano-banana) | Google | `nano-banana`<br />`nano-banana-edit` |
+| [Nano Banana Pro](/api-manual/image-series/nano-banana-2) | Google | `nano-banana-2`<br />`nano-banana-2-edit`<br />`nano-banana-pro`<br />`nano-banana-pro-edit` |
+| [Nano Banana 2](/api-manual/image-series/nano-banana-2-new) | Google | `nano-banana-2-new`<br />`nano-banana-2-new-edit`<br />`nano-banana-2-official`<br />`nano-banana-2-official-edit` |
+| [Nano Banana 2 Lite](/api-manual/image-series/nano-banana-2-lite) | Google | `nano-banana-2-lite`<br />`nano-banana-2-lite-edit` |
+| [Nano Banana 2.1](/api-manual/image-series/nano-banana-2-1) | Google | `nano-banana-2.1` |
+| [Flux.2](/api-manual/image-series/flux-2) | Flux | `flux-2-pro`<br />`flux-2-pro-edit`<br />`flux-2-flex`<br />`flux-2-flex-edit` |
+| [Flux Dev](/api-manual/image-series/flux-dev) | Flux | `flux-dev` |
+| [Flux Schnell](/api-manual/image-series/flux-schnell) | Flux | `flux-schnell` |
+| [Flux Kontext](/api-manual/image-series/flux-kontext) | Flux | `flux-kontext-pro`<br />`flux-kontext-pro-edit`<br />`flux-kontext-max`<br />`flux-kontext-max-edit` |
+| [Flux 3 Klein](/api-manual/image-series/flux-3-klein) | Flux | `flux-3-klein`<br />`flux-3-klein-edit` |
+| [Seedream-4](/api-manual/image-series/seedream-4) | Seedream | `seedream-4`<br />`seedream-4-edit` |
+| [Seedream-4.5](/api-manual/image-series/seedream-4-5) | Seedream | `seedream-4.5`<br />`seedream-4.5-edit` |
+| [Seedream-5.0-Lite](/api-manual/image-series/seedream-5-0-lite) | Seedream | `seedream-5.0-lite`<br />`seedream-5.0-lite-edit` |
+| [Seedream-5.0-Pro](/api-manual/image-series/seedream-5-0-pro) | Seedream | `seedream-5.0-pro`<br />`seedream-5.0-pro-edit` |
+| [Seedream-5.0-Flash](/api-manual/image-series/seedream-5-0-flash) | Seedream | `seedream-5.0-flash`<br />`seedream-5.0-flash-edit` |
+| [Grok Imagine Image](/api-manual/image-series/grok-imagine-image) | Grok (xAI) | `grok-imagine-image` |
+| [Grok Imagine Image Quality](/api-manual/image-series/grok-imagine-image-quality) | Grok (xAI) | `grok-imagine-image-quality` |
+| [Grok Imagine Image 2.0](/api-manual/image-series/grok-imagine-image-2-0) | Grok (xAI) | `grok-imagine-image-2.0` |
+| [Kling-o1](/api-manual/image-series/kling-o1) | Kling | `kling-o1-image-edit` |
+| [Kling-o3](/api-manual/image-series/kling-o3) | Kling | `kling-o3-image`<br />`kling-o3-image-edit` |
+| [Qwen Image 3](/api-manual/image-series/qwen-image-3) | Alibaba | `qwen-image-3`<br />`qwen-image-3-pro` |
+| [Qwen Image 2.1](/api-manual/image-series/qwen-image-2-1) | Alibaba | `qwen-image-2.1` |
+| [Wan-2.7-Image-Pro](/api-manual/image-series/wan-2-7-image-pro) | Alibaba | `wan-2.7-image-pro` |
+| [Wan-2.7-Image](/api-manual/image-series/wan-2-7-image) | Alibaba | `wan-2.7-image` |
+| [Z-Image](/api-manual/image-series/z-image) | Alibaba | `z-image` |
+| [Ideogram V4.5](/api-manual/image-series/ideogram-v4-5) | Ideogram | `ideogram-v4.5`<br />`ideogram-v4.5-edit` |
+
+## Notes
+
+- Each model page lists the parameters, limits, and modes for its model IDs. Parameters are not shared across models.
+- Generated image files are accessible for 3 days after creation. Download and store them promptly.
+- URL inputs must be publicly accessible HTTP(S) URLs. To use local files, upload them first with [File Management](/api-manual/file-series/upload-url).

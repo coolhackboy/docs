@@ -1,0 +1,26 @@
+---
+title: "xAI"
+description: "Call xAI Grok 4.7 and Grok 4.6 through the OpenAI-compatible Chat Completions endpoint."
+icon: "comments"
+openapi: "/api-manual/chat-series/xai.json POST /v1/chat/completions"
+---
+
+xAI Grok models cover long-running agents, coding, engineering, and knowledge work. The playground on this page uses [Chat Completions](/api-manual/chat-series/chat-completions), which every Grok model supports.
+
+## Models
+
+- **grok-4.7** — Grok 4.7. Chat Completions only.
+- **grok-4.6** — Grok 4.6, for long-running agents, coding, and interactive or visual projects. Supports Chat Completions and Responses.
+
+## Examples
+
+- **Basic chat completion** — single user message.
+- **System prompt** — `system` message with `max_tokens`.
+- **Streaming output** — `stream: true`, returned as SSE.
+
+To call `grok-4.6` with the Responses format, send the same model id to [Responses](/api-manual/chat-series/responses).
+
+## Notes
+
+- `grok-4.7` only accepts `/v1/chat/completions`.
+- See [LLM Models](/api-manual/chat-series/overview) for every model and the formats it supports.

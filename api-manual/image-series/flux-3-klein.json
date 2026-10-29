@@ -148,8 +148,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the complete target image, including the subject, framing, background, and lighting."
+                "description": "Describe the complete target image, including the subject, framing, background, and lighting. Must contain non-whitespace text."
               },
               "image_urls": {
                 "type": "array",
@@ -157,10 +156,9 @@
                 "maxItems": 10,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://\\S+$"
+                  "format": "uri"
                 },
-                "description": "Required for flux-3-klein-edit only. Supply 1-10 reference image URLs. Do not send this field for flux-3-klein."
+                "description": "Required for flux-3-klein-edit only. Supply 1-10 reference image URLs. Do not send this field for flux-3-klein. Must be a publicly accessible HTTP or HTTPS URL."
               },
               "size": {
                 "type": "string",
@@ -238,8 +236,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the complete target image, including the subject, framing, background, and lighting."
+                "description": "Describe the complete target image, including the subject, framing, background, and lighting. Must contain non-whitespace text."
               },
               "size": {
                 "type": "string",
@@ -257,7 +254,7 @@
                     ]
                   },
                   {
-                    "pattern": "^\\d+x\\d+$"
+                    "description": "Use the `WIDTHxHEIGHT` format, such as `1024x768`."
                   }
                 ],
                 "description": "Output aspect ratio, or exact WIDTHxHEIGHT pixels. Custom dimensions must each be 256-4096, divisible by 16, and accompanied by an explicit matching resolution."
@@ -330,8 +327,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the complete target image, including the subject, framing, background, and lighting."
+                "description": "Describe the complete target image, including the subject, framing, background, and lighting. Must contain non-whitespace text."
               },
               "size": {
                 "type": "string",
@@ -349,7 +345,7 @@
                     ]
                   },
                   {
-                    "pattern": "^\\d+x\\d+$"
+                    "description": "Use the `WIDTHxHEIGHT` format, such as `1024x768`."
                   }
                 ],
                 "description": "Output aspect ratio, or exact WIDTHxHEIGHT pixels. Custom dimensions must each be 256-4096, divisible by 16, and accompanied by an explicit matching resolution."
@@ -392,10 +388,9 @@
                 "maxItems": 10,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://\\S+$"
+                  "format": "uri"
                 },
-                "description": "Reference images in prompt order. Refer to the first image, second image, and so on."
+                "description": "Reference images in prompt order. Refer to the first image, second image, and so on. Must be a publicly accessible HTTP or HTTPS URL."
               }
             }
           }

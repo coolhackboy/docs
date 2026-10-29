@@ -1,0 +1,53 @@
+---
+title: "n8n"
+description: "Install the PoYo community node and run PoYo models inside n8n workflows."
+icon: "diagram-project"
+---
+
+# n8n
+
+The PoYo community node for n8n lets workflows submit PoYo tasks, wait for results, and resume from signed PoYo callbacks. It uses the same API key, model catalog, task statuses, and results as the REST API.
+
+Source and sample workflows: [PoyoAPI/poyo-n8n](https://github.com/PoyoAPI/poyo-n8n).
+
+## Requirements
+
+- An n8n instance that allows Community Nodes
+- A PoYo API key from the [API key page](https://poyo.ai/dashboard/api-key)
+
+## Install
+
+<Steps>
+  <Step title="Install the community node">
+    In n8n, open **Settings → Community Nodes → Install** and enter `n8n-nodes-poyo`. Searching for "PoYo" in the node panel should then show the PoYo nodes.
+  </Step>
+  <Step title="Create the credential">
+    Open **Credentials → New credential → PoYo API**, paste your API key, keep the default Base URL `https://api.poyo.ai`, and click **Test**.
+  </Step>
+  <Step title="Run a sample workflow">
+    Download a sample workflow, choose **Import from File** in the n8n workflow menu, select your PoYo credential, and run it.
+  </Step>
+</Steps>
+
+## Sample workflows
+
+| Workflow | What it does |
+|---|---|
+| [poyo-run-and-wait.json](https://github.com/PoyoAPI/poyo-n8n/blob/main/workflows/poyo-run-and-wait.json) | Submits a PoYo task, waits for it to finish, and passes the result to the next node |
+| [poyo-webhook-result.json](https://github.com/PoyoAPI/poyo-n8n/blob/main/workflows/poyo-webhook-result.json) | Resumes a workflow from a signed PoYo callback and fetches the final result |
+
+The webhook sample relies on PoYo's signed callbacks. See [Webhook Callbacks](/api-manual/task-management/webhooks) for the signature headers.
+
+## Notes
+
+- The API key is stored in the n8n credential, not in exported workflow files.
+- Requests call the PoYo REST endpoints directly and include an `X-PoYo-Source` header to identify the integration.
+- Tasks use the standard statuses `not_started`, `running`, `finished`, and `failed`.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| PoYo nodes are missing | Confirm Community Nodes are enabled and that n8n lists `n8n-nodes-poyo` as installed. |
+| Credential test returns 401 | Create a new key, paste it without surrounding spaces, and keep the Base URL `https://api.poyo.ai`. |
+| A run waits too long | Check the task status before submitting again. A second submission creates another paid task. |

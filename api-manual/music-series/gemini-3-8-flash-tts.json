@@ -82,6 +82,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -209,7 +229,7 @@
                 "speaker_id": {
                   "type": "string",
                   "minLength": 1,
-                  "pattern": "\\S"
+                  "description": "Must contain non-whitespace text."
                 }
               }
             },
@@ -229,12 +249,12 @@
                 "speaker_id": {
                   "type": "string",
                   "minLength": 1,
-                  "pattern": "\\S"
+                  "description": "Must contain non-whitespace text."
                 },
                 "text": {
                   "type": "string",
                   "minLength": 1,
-                  "pattern": "\\S"
+                  "description": "Must contain non-whitespace text."
                 },
                 "style_instructions": {
                   "type": "string"
@@ -255,8 +275,7 @@
           "text": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\S",
-            "description": "Single-speaker transcript. Required for single-speaker mode. Omit when using speakers and turns. Complete input is limited to 8192 tokens."
+            "description": "Single-speaker transcript. Required for single-speaker mode. Omit when using speakers and turns. Complete input is limited to 8192 tokens. Must contain non-whitespace text."
           }
         },
         "description": "Use either text (single speaker) or speakers with turns (dialogue). These modes are mutually exclusive; dialogue cannot include top-level text or voice."
@@ -295,6 +314,36 @@
                 "type": "string",
                 "format": "date-time",
                 "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

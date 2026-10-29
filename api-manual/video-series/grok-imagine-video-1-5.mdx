@@ -18,9 +18,16 @@ Use `grok-imagine-video-1.5` for three generation modes with 1–15 second outpu
 
 `image_urls` and `reference_image_urls` cannot be used together.
 
-## Parameters
+## Models
+
+- **grok-imagine-video-1.5** — Grok Imagine Video 1.5
+
+## Required parameters
 
 - **prompt** (required): up to 4,096 characters.
+
+## Optional parameters
+
 - **image_urls**: exactly one first-frame image for image-to-video.
 - **reference_image_urls**: 1–7 reference images for character, subject, or style consistency.
 - **resolution**: `480p`, `720p`, or `1080p`. Reference-to-video does not support `1080p`. Default: `720p`.

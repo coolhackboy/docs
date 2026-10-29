@@ -1,0 +1,72 @@
+---
+title: "Video Models"
+description: "All video generation models available on PoYo, with their model IDs."
+icon: "video"
+---
+
+Every video model is called through `POST /api/generate/submit`. Send a model ID in `model`, the model's parameters in `input`, and an optional `callback_url`. The request returns a `task_id` right away and the task runs asynchronously.
+
+## Workflow
+
+1. Submit a task to `POST /api/generate/submit` with a model ID from the table below.
+2. Poll [Get Task Status](/api-manual/task-management/video-status) with the returned `task_id`, or receive the result at `callback_url` (see [Webhook Callbacks](/api-manual/task-management/video-webhooks)).
+3. Download the files in `files` when the status is `finished`.
+
+Some models expose one model ID per mode, such as text-to-video, image-to-video, or reference-to-video. Others use a single ID and choose the mode from the inputs you send; see each model page.
+
+## Models
+
+| Model | Provider | Model IDs |
+| --- | --- | --- |
+| [VEO 3.1](/api-manual/video-series/veo-3-1) | Google | `veo3.1-fast`<br />`veo3.1-lite`<br />`veo3.1-quality` |
+| [VEO 3.1 Official](/api-manual/video-series/veo-3-1-official) | Google | `veo3.1-fast-official`<br />`veo3.1-lite-official`<br />`veo3.1-quality-official` |
+| [Omni Flash](/api-manual/video-series/omni-flash) | Google | `omni-flash` |
+| [Gemini Omni 1.1 Flash](/api-manual/video-series/gemini-omni-1.1-flash) | Google | `gemini-omni-1.1-flash` |
+| [Flux 3](/api-manual/video-series/flux-3) | Flux | `flux-3/text-to-video`<br />`flux-3/image-to-video`<br />`flux-3/first-last-frame-to-video`<br />`flux-3/extend-video`<br />`flux-3/keyframes-to-video` |
+| [Flux 3 Max](/api-manual/video-series/flux-3-max) | Flux | `flux-3-max/text-to-video`<br />`flux-3-max/image-to-video`<br />`flux-3-max/keyframes-to-video` |
+| [Wan Animate](/api-manual/video-series/wan-animate) | Wan | `wan-animate-replace`<br />`wan-animate-move` |
+| [Wan 2.2 Text-to-Video Fast](/api-manual/video-series/wan2.2-text-to-video-fast) | Wan | `wan2.2-text-to-video-fast` |
+| [Wan 2.2 Image-to-Video Fast](/api-manual/video-series/wan2.2-image-to-video-fast) | Wan | `wan2.2-image-to-video-fast` |
+| [Wan 2.5 Image-to-Video](/api-manual/video-series/wan2.5-image-to-video) | Wan | `wan2.5-image-to-video` |
+| [Wan 2.5 Text-to-Video](/api-manual/video-series/wan2.5-text-to-video) | Wan | `wan2.5-text-to-video` |
+| [Wan 2.6](/api-manual/video-series/wan-2-6) | Wan | `wan2.6-text-to-video`<br />`wan2.6-image-to-video`<br />`wan2.6-video-to-video` |
+| [Wan 2.7](/api-manual/video-series/wan-2-7-video) | Wan | `wan2.7-text-to-video`<br />`wan2.7-image-to-video`<br />`wan2.7-reference-to-video`<br />`wan2.7-edit-video` |
+| [Wan 3.0](/api-manual/video-series/wan-3-0-video) | Wan | `wan3.0-text-to-video`<br />`wan3.0-image-to-video`<br />`wan3.0-reference-to-video` |
+| [Wan 3.0 Prime](/api-manual/video-series/wan-3-0-video-prime) | Wan | `wan3.0-prime-text-to-video`<br />`wan3.0-prime-image-to-video`<br />`wan3.0-prime-reference-to-video` |
+| [Kling 1.6](/api-manual/video-series/kling-1-6) | Kling | `kling-1.6/standard`<br />`kling-1.6/pro` |
+| [Kling 2.1](/api-manual/video-series/kling-2-1) | Kling | `kling-2.1/standard`<br />`kling-2.1/pro` |
+| [Kling 2.5 Turbo Pro](/api-manual/video-series/kling-2-5-turbo-pro) | Kling | `kling-2.5-turbo-pro` |
+| [Kling 2.6](/api-manual/video-series/kling-2-6) | Kling | `kling-2.6` |
+| [Kling 3.0](/api-manual/video-series/kling-3-0) | Kling | `kling-3.0/standard`<br />`kling-3.0/pro` |
+| [Kling 3.0 Turbo](/api-manual/video-series/kling-3-0-turbo) | Kling | `kling-3.0-turbo/standard`<br />`kling-3.0-turbo/pro` |
+| [Kling 3.0 4K](/api-manual/video-series/kling-3-0-4k) | Kling | `kling-3.0/4K` |
+| [Kling 4.0](/api-manual/video-series/kling-4-0) | Kling | `kling-4.0` |
+| [Kling Avatar 2.0](/api-manual/video-series/kling-avatar-2-0) | Kling | `kling-avatar-2.0/standard`<br />`kling-avatar-2.0/pro` |
+| [Kling O3](/api-manual/video-series/kling-o3) | Kling | `kling-o3/standard`<br />`kling-o3/pro` |
+| [Kling O3 4K](/api-manual/video-series/kling-o3-4k) | Kling | `kling-o3/4K` |
+| [Kling 2.6 Motion Control](/api-manual/video-series/kling-2.6-motion-control) | Kling | `kling-2.6-motion-control` |
+| [Kling 3.0 Motion Control](/api-manual/video-series/kling-3-0-motion-control) | Kling | `kling-3.0-motion-control` |
+| [Grok Imagine](/api-manual/video-series/grok-imagine) | Grok (xAI) | `grok-imagine` |
+| [Grok Imagine Video 1.5](/api-manual/video-series/grok-imagine-video-1-5) | Grok (xAI) | `grok-imagine-video-1.5` |
+| [Hailuo 02](/api-manual/video-series/hailuo-02) | Hailuo | `hailuo-02`<br />`hailuo-02-pro` |
+| [Hailuo 2.3](/api-manual/video-series/hailuo-2-3) | Hailuo | `hailuo-2.3` |
+| [Hailuo 03](/api-manual/video-series/hailuo-03) | Hailuo | `hailuo-03` |
+| [H3 Max](/api-manual/video-series/h3-max) | Hailuo | `h3-max` |
+| [H3 Max Turbo](/api-manual/video-series/h3-max-turbo) | Hailuo | `h3-max-turbo` |
+| [Vidu Q4](/api-manual/video-series/vidu-q4) | Vidu | `vidu-q4` |
+| [PixVerse V6 Max](/api-manual/video-series/pixverse-v6-max) | PixVerse | `pixverse-v6-max` |
+| [OmniHuman 2.0](/api-manual/video-series/omnihuman-2-0) | ByteDance | `omnihuman-2.0` |
+| [Runway Gen-4.5](/api-manual/video-series/runway-gen-4-5) | Runway | `runway-gen-4.5` |
+| [Seedance 1.0 Pro](/api-manual/video-series/seedance-1.0-pro) | Seedance | `seedance-1.0-pro` |
+| [Seedance 1.5 Pro](/api-manual/video-series/seedance-1-5-pro) | Seedance | `seedance-1.5-pro` |
+| [Seedance 2](/api-manual/video-series/seedance-2) | Seedance | `seedance-2`<br />`seedance-2-fast` |
+| [Seedance 2 Mini](/api-manual/video-series/seedance-2-mini) | Seedance | `seedance-2-mini` |
+| [Seedance 2.5](/api-manual/video-series/seedance-2.5) | Seedance | `seedance-2.5` |
+| [Happy Horse](/api-manual/video-series/happy-horse) | Alibaba | `happy-horse` |
+| [Happy Horse 1.1](/api-manual/video-series/happy-horse-1-1) | Alibaba | `happy-horse-1.1` |
+
+## Notes
+
+- Each model page lists the parameters, limits, and modes for its model IDs. Parameters are not shared across models.
+- Generated video files are accessible for 3 days after creation. Download and store them promptly.
+- URL inputs must be publicly accessible HTTP(S) URLs. To use local files, upload them first with [File Management](/api-manual/file-series/upload-url).

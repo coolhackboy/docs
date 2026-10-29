@@ -22,7 +22,9 @@
         "summary": "Submit Hunyuan 3D v3.1 Task",
         "description": "Generate a 3D model from text or one image with Hunyuan 3D v3.1 Pro or Rapid.",
         "operationId": "submitHunyuan3D31Task",
-        "tags": ["Hunyuan 3D v3.1"],
+        "tags": [
+          "Hunyuan 3D v3.1"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -37,7 +39,9 @@
                     "model": "hunyuan-3d/v3.1/pro/image-to-3d",
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
-                      "image_urls": ["https://example.com/object-front.png"],
+                      "image_urls": [
+                        "https://example.com/object-front.png"
+                      ],
                       "generate_type": "Normal",
                       "enable_pbr": true,
                       "face_count": 500000
@@ -71,7 +75,9 @@
                   "value": {
                     "model": "hunyuan-3d/v3.1/rapid/image-to-3d",
                     "input": {
-                      "image_urls": ["https://example.com/object-front.png"],
+                      "image_urls": [
+                        "https://example.com/object-front.png"
+                      ],
                       "enable_geometry": false,
                       "enable_pbr": false
                     }
@@ -91,6 +97,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -107,7 +133,10 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -146,7 +175,10 @@
           },
           "generate_type": {
             "type": "string",
-            "enum": ["Normal", "Geometry"],
+            "enum": [
+              "Normal",
+              "Geometry"
+            ],
             "description": "Pro models only."
           },
           "enable_pbr": {
@@ -203,7 +235,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -211,19 +246,55 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string"
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started"
               },
               "created_time": {
                 "type": "string",
                 "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

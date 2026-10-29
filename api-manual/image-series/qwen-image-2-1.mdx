@@ -14,9 +14,16 @@ Use **`qwen-image-2.1`** for text-to-image generation, multi-reference image edi
 
 Omit `image_urls` or pass an empty array for text-to-image. Provide 1–10 reference image URLs for image-to-image. Reference order matches references in your prompt, such as “the first image”. For stronger detail preservation, use four or fewer reference images.
 
-## Parameters
+## Models
+
+- **qwen-image-2.1** — Qwen Image 2.1
+
+## Required parameters
 
 - `prompt` is required, with non-empty text up to 5,000 characters.
+
+## Optional parameters
+
 - `image_urls` accepts up to 10 publicly accessible HTTP(S) reference URLs. JPEG, PNG, and WebP are supported, up to 30MB and 25MP per image. Media limits are checked during generation.
 - `size` supports `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `16:9`, `9:16`, `21:9`, and `9:21`. Reference-image requests also support `auto`. Defaults to `1:1` for text-to-image and `auto` for image-to-image.
 - `resolution` supports `1K` (default) and `2K`.
@@ -29,7 +36,9 @@ Omit `image_urls` or pass an empty array for text-to-image. Provide 1–10 refer
 
 Use `size`, `prompt_extend`, and `enable_safety_checker` as shown above. `negative_prompt` and multiple-image output parameters are not supported.
 
-## Text-to-Image
+## Examples
+
+### Text-to-Image
 
 ```json
 {
@@ -42,7 +51,7 @@ Use `size`, `prompt_extend`, and `enable_safety_checker` as shown above. `negati
 }
 ```
 
-## Multi-Reference Generation
+### Multi-Reference Generation
 
 Replace the example URLs with publicly accessible images.
 
@@ -62,7 +71,7 @@ Replace the example URLs with publicly accessible images.
 }
 ```
 
-## Transparent Assets
+### Transparent Assets
 
 Describe the subject only. Background, scene, or surface descriptions may prevent a transparent result. JPEG cannot carry transparency.
 
@@ -78,7 +87,7 @@ Describe the subject only. Background, scene, or surface descriptions may preven
 }
 ```
 
-## Mask Editing
+### Mask Editing
 
 White mask areas are edited; black areas stay unchanged. Use a mask with the same aspect ratio as the reference image; its dimensions are scaled to the reference. Exactly one reference image is required, and transparent backgrounds are unavailable in this mode.
 

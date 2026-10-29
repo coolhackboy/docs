@@ -22,7 +22,9 @@
         "summary": "Submit Flux Dev Task",
         "description": "Generate images from text with Flux Dev, or provide one image URL for image-to-image editing.",
         "operationId": "submitFluxDevTask",
-        "tags": ["Flux Dev"],
+        "tags": [
+          "Flux Dev"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -51,7 +53,9 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Turn the scene into a polished studio product shot while preserving the subject shape",
-                      "image_urls": ["https://example.com/source-image.png"],
+                      "image_urls": [
+                        "https://example.com/source-image.png"
+                      ],
                       "n": 1,
                       "output_format": "png"
                     }
@@ -68,6 +72,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -88,12 +112,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Flux Dev model identifier",
-            "enum": ["flux-dev"]
+            "enum": [
+              "flux-dev"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -103,7 +132,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters. Omit image_urls for text-to-image generation, or provide one image URL for image-to-image editing.",
             "properties": {
               "prompt": {
@@ -121,17 +152,26 @@
                 "minItems": 1,
                 "maxItems": 1,
                 "description": "Optional source image URL for image-to-image editing. Only one image is supported.",
-                "example": ["https://example.com/source-image.png"]
+                "example": [
+                  "https://example.com/source-image.png"
+                ]
               },
               "size": {
                 "type": "string",
                 "description": "Output image size for text-to-image generation. Use 1:1 for standard square output and 1:1 HD for high-definition square output. Custom WIDTHxHEIGHT values are supported.",
                 "oneOf": [
                   {
-                    "enum": ["1:1", "1:1 HD", "4:3", "3:4", "16:9", "9:16"]
+                    "enum": [
+                      "1:1",
+                      "1:1 HD",
+                      "4:3",
+                      "3:4",
+                      "16:9",
+                      "9:16"
+                    ]
                   },
                   {
-                    "pattern": "^\\d+x\\d+$"
+                    "description": "Use the `WIDTHxHEIGHT` format, such as `1024x768`."
                   }
                 ],
                 "default": "1:1",
@@ -146,7 +186,10 @@
               "output_format": {
                 "type": "string",
                 "description": "Output image format.",
-                "enum": ["jpeg", "png"],
+                "enum": [
+                  "jpeg",
+                  "png"
+                ],
                 "default": "png",
                 "example": "png"
               }
@@ -156,7 +199,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -165,7 +211,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -174,7 +224,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -183,6 +235,36 @@
                 "format": "date-time",
                 "example": "2026-06-26T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

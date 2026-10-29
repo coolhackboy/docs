@@ -1,11 +1,11 @@
 ---
-title: "General Chat"
+title: "Chat Completions"
 description: "The General Chat API is a model-agnostic endpoint compatible with the OpenAI Chat Completions request shape. Send a model id and messages, and optionally request a server-sent event stream."
 icon: "comments"
 openapi: "/api-manual/chat-series/chat-completions.json POST /v1/chat/completions"
 ---
 
-- Unified chat API interface supporting all text generation models
+- Unified chat API interface for most LLMs; see [LLM Models](/api-manual/chat-series/overview) for which models support it
 - Select different AI models via the model parameter
 - Compatible with OpenAI Chat Completions API format
 
@@ -64,3 +64,29 @@ openapi: "/api-manual/chat-series/chat-completions.json POST /v1/chat/completion
 * Use `stream: true` for SSE streaming responses.
 * Different models may support different context lengths, output limits, and optional parameters.
 * For new OpenAI-compatible workflows that need tools or multimodal structured input, use the Responses API.
+
+## Response
+
+Non-streaming requests return the Chat Completions object directly, without a `code` / `data` wrapper. Reasoning models such as DeepSeek also return their reasoning text in `choices[].message.reasoning_content`, and count it in `usage.completion_tokens_details.reasoning_tokens`.
+
+## Streaming
+
+With `"stream": true`, the response is `text/event-stream`. Each event is a `data:` line with a `chat.completion.chunk` object, and the stream ends with `data: [DONE]`:
+
+```text
+data: {"id":"...","object":"chat.completion.chunk","model":"deepseek-v4-flash","choices":[{"index":0,"delta":{"role":"assistant"}}]}
+data: {"id":"...","object":"chat.completion.chunk","model":"deepseek-v4-flash","choices":[{"index":0,"delta":{"content":"OK"}}]}
+data: {"id":"...","object":"chat.completion.chunk","model":"deepseek-v4-flash","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":"stop"}],"usage":{"prompt_tokens":36,"completion_tokens":16,"total_tokens":52}}
+data: [DONE]
+```
+
+- Text arrives in `choices[0].delta.content`. Reasoning models stream `choices[0].delta.reasoning_content` first.
+- The last chunk carries `finish_reason` and `usage`.
+
+## Errors
+
+- `401`: missing or invalid API key.
+- `400`: invalid parameters, or the model does not support Chat Completions (for example `gpt-5-6-sol`, which only supports Responses). The message lists the supported URIs.
+- `404`: unknown model id.
+
+See [Error Codes](/api-manual/error-codes#llm-endpoint-errors) for example bodies, and [LLM Models](/api-manual/chat-series/overview) for which models support this format.

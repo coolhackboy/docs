@@ -22,7 +22,9 @@
         "summary": "Submit Grok Imagine Image Generation Task",
         "description": "Generate images using Grok Imagine model with text-to-image and image-to-image support",
         "operationId": "submitGrokImagineImageTask",
-        "tags": ["Grok Imagine Image"],
+        "tags": [
+          "Grok Imagine Image"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -49,7 +51,9 @@
                     "callback_url": "https://your-domain.com/callback",
                     "input": {
                       "prompt": "Add warm sunset lighting with golden highlights",
-                      "image_urls": ["https://example.com/reference-image.png"],
+                      "image_urls": [
+                        "https://example.com/reference-image.png"
+                      ],
                       "size": "9:16"
                     }
                   }
@@ -65,6 +69,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -85,7 +109,9 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": [
+          "model"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -102,7 +128,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters for generation. For image-to-image, input.image_urls is required.",
             "properties": {
               "prompt": {
@@ -119,12 +147,20 @@
                 },
                 "maxItems": 1,
                 "description": "Required for image-to-image. An array containing a single URL string pointing to the reference image. Please provide the URL of the uploaded file; Accepted types: image/jpeg, image/png, image/webp; Max size: 10.0MB",
-                "example": ["https://example.com/reference-image.png"]
+                "example": [
+                  "https://example.com/reference-image.png"
+                ]
               },
               "size": {
                 "type": "string",
                 "description": "Optional image aspect ratio",
-                "enum": ["1:1", "2:3", "3:2", "9:16", "16:9"],
+                "enum": [
+                  "1:1",
+                  "2:3",
+                  "3:2",
+                  "9:16",
+                  "16:9"
+                ],
                 "example": "1:1"
               }
             }
@@ -133,7 +169,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -142,7 +181,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -151,7 +194,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -167,7 +212,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -176,7 +224,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

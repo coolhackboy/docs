@@ -59,35 +59,69 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                  "$ref": "#/components/schemas/ChatCompletion"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful response",
                     "value": {
-                      "code": 200,
-                      "data": {
-                        "id": "chatcmpl-9876543210",
-                        "object": "chat.completion",
-                        "created": 1677652288,
-                        "model": "gpt-5.2",
-                        "choices": [
-                          {
-                            "index": 0,
-                            "message": {
-                              "role": "assistant",
-                              "content": "The history of artificial intelligence (AI) dates back to the 1950s..."
-                            },
-                            "finish_reason": "stop"
-                          }
-                        ],
-                        "usage": {
-                          "prompt_tokens": 28,
-                          "completion_tokens": 320,
-                          "total_tokens": 348
+                      "id": "chatcmpl-9876543210",
+                      "object": "chat.completion",
+                      "created": 1677652288,
+                      "model": "gpt-5.2",
+                      "choices": [
+                        {
+                          "index": 0,
+                          "message": {
+                            "role": "assistant",
+                            "content": "The history of artificial intelligence (AI) dates back to the 1950s..."
+                          },
+                          "finish_reason": "stop"
                         }
+                      ],
+                      "usage": {
+                        "prompt_tokens": 28,
+                        "completion_tokens": 320,
+                        "total_tokens": 348
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters, or the model does not support this API format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
                   }
                 }
               }
@@ -131,7 +165,7 @@
             "minimum": 0,
             "maximum": 2,
             "description": "Controls output randomness, range 0-2. Lower values such as 0.2 make output more deterministic. Higher values such as 1.8 make output more random. Default: 1.0.",
-            "example": 1.0
+            "example": 1
           },
           "max_tokens": {
             "type": "integer",
@@ -149,7 +183,7 @@
             "minimum": 0,
             "maximum": 1,
             "description": "Nucleus sampling parameter, range 0-1. Controls diversity of generated text. We recommend using either `top_p` or `temperature`, not both. Default: 1.0.",
-            "example": 1.0
+            "example": 1
           },
           "frequency_penalty": {
             "type": "number",
@@ -210,18 +244,6 @@
             "type": "string",
             "description": "Message content, question, or instruction.",
             "example": "Explain vector databases in one sentence."
-          }
-        }
-      },
-      "ChatCompletionResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 200
-          },
-          "data": {
-            "$ref": "#/components/schemas/ChatCompletion"
           }
         }
       },
@@ -299,6 +321,77 @@
             "type": "integer",
             "description": "Total number of tokens.",
             "example": 348
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "PoyoValidationError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters: messages: Field required"
+              },
+              "type": {
+                "type": "string",
+                "example": "validation_error"
+              },
+              "details": {
+                "type": "object",
+                "description": "Field-level validation errors when available."
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "Error returned when the model or request is rejected for this API format.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
           }
         }
       }

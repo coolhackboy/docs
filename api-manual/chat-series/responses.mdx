@@ -106,3 +106,32 @@ Common event types include:
 * For image input, public URLs must be reachable by the model service.
 * Base64 images must use the full Data URI prefix, for example `data:image/png;base64,`.
 * Content block order can affect model understanding. Put text instructions before images when possible.
+
+## Response
+
+Non-streaming requests return the Responses object directly, without a `code` / `data` wrapper. The generated text is in `output[].content[]` items with `type: "output_text"`.
+
+## Streaming
+
+With `"stream": true`, the response is `text/event-stream`. Each event is a `data:` line whose JSON `type` names the event, and the stream ends with `data: [DONE]`:
+
+```text
+data: {"type":"response.created","sequence_number":0,"response":{"id":"resp_...","status":"in_progress",...}}
+data: {"type":"response.output_item.added","sequence_number":2,"output_index":0,"item":{"type":"message",...}}
+data: {"type":"response.output_text.delta","sequence_number":4,"item_id":"msg_...","delta":"OK"}
+data: {"type":"response.output_text.done","sequence_number":6,"item_id":"msg_...","text":"OK"}
+data: {"type":"response.completed","sequence_number":9,"response":{"id":"resp_...","status":"completed","usage":{...}}}
+data: [DONE]
+```
+
+- Concatenate `response.output_text.delta` events to build the text.
+- `response.completed` carries the final response object, including `usage`.
+- Events are sent as `data:` lines only, without separate `event:` lines. Read the event name from `type`.
+
+## Errors
+
+- `401`: missing or invalid API key.
+- `400`: invalid parameters, or the model does not support Responses. The message lists the supported URIs.
+- `404`: unknown model id.
+
+See [Error Codes](/api-manual/error-codes#llm-endpoint-errors) for example bodies, and [LLM Models](/api-manual/chat-series/overview) for which models support this format.

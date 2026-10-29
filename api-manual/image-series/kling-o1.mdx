@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Kling-o1"
 description: "The Kling O1 API edits images using 1 to 10 reference images and optional character or object elements. Output is 1K or 2K, in preset aspect ratios or auto."
 icon: "image"
@@ -14,10 +14,13 @@ openapi: "/api-manual/image-series/kling-o1.json POST /api/generate/submit"
 
 - **kling-o1-image-edit** - Image editing with reference images and optional element guidance
 
-## Parameters
+## Required parameters
 
 - `prompt` - Required editing prompt
 - `image_urls` - Required reference image URLs, `1-10` images
+
+## Optional parameters
+
 - `elements` - Optional array of element descriptors for character/object control. Reference them in prompt as `@Element1`, `@Element2`, etc. Recommended structure: `frontal_image_url` for the main face/object image, and optional `reference_image_urls` for additional reference views
 - `resolution` - `1K` or `2K`
 - `size` - `auto`, `16:9`, `9:16`, `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `21:9`

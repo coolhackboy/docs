@@ -1,4 +1,4 @@
-﻿{
+{
   "openapi": "3.0.0",
   "info": {
     "title": "PoYo AI - Kling-O3-Image API",
@@ -22,7 +22,9 @@
         "summary": "Submit Kling-O3-Image Generation Task",
         "description": "A high-expressiveness image generation model optimized for strong semantic understanding and scene composition, ideal for creative and narrative-driven visuals",
         "operationId": "submitKlingO3ImageTask",
-        "tags": ["Kling-O3-Image"],
+        "tags": [
+          "Kling-O3-Image"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -127,12 +129,18 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Model identifier.",
-            "enum": ["kling-o3-image", "kling-o3-image-edit"]
+            "enum": [
+              "kling-o3-image",
+              "kling-o3-image-edit"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -142,7 +150,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters for image generation or editing",
             "properties": {
               "prompt": {
@@ -160,7 +170,9 @@
                 "minItems": 1,
                 "maxItems": 10,
                 "description": "Reference image URLs. Required when `model` is `kling-o3-image-edit`.",
-                "example": ["https://example.com/reference1.png"]
+                "example": [
+                  "https://example.com/reference1.png"
+                ]
               },
               "elements": {
                 "type": "array",
@@ -196,21 +208,39 @@
               "resolution": {
                 "type": "string",
                 "description": "Output resolution preset",
-                "enum": ["1K", "2K", "4K"],
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
                 "default": "1K",
                 "example": "4K"
               },
               "size": {
                 "type": "string",
                 "description": "Output aspect ratio preset. `auto` is only supported when `model` is `kling-o3-image-edit`; `kling-o3-image` only supports fixed aspect ratios.",
-                "enum": ["auto", "16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "21:9"],
+                "enum": [
+                  "auto",
+                  "16:9",
+                  "9:16",
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "3:2",
+                  "2:3",
+                  "21:9"
+                ],
                 "default": "16:9",
                 "example": "16:9"
               },
               "output_format": {
                 "type": "string",
                 "description": "Output image format.",
-                "enum": ["jpeg", "png", "webp"],
+                "enum": [
+                  "jpeg",
+                  "png",
+                  "webp"
+                ],
                 "default": "png",
                 "example": "png"
               },
@@ -228,7 +258,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -237,7 +270,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -246,7 +283,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -262,7 +301,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -271,7 +313,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

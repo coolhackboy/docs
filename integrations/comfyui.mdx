@@ -1,0 +1,69 @@
+---
+title: "ComfyUI"
+description: "Install the PoYo custom nodes and use PoYo models on the ComfyUI canvas."
+icon: "diagram-project"
+---
+
+# ComfyUI
+
+The PoYo custom nodes add PoYo image, video, and audio models to ComfyUI, next to your local nodes. Results are saved as files in your ComfyUI output folder.
+
+Source and sample workflows: [PoyoAPI/poyo-comfyui](https://github.com/PoyoAPI/poyo-comfyui).
+
+## Requirements
+
+- ComfyUI 0.32.0 or newer
+- Git
+- A PoYo API key from the [API key page](https://poyo.ai/dashboard/api-key)
+
+## Install
+
+Clone the repository into `custom_nodes`, then fully restart ComfyUI:
+
+```bash
+cd ComfyUI/custom_nodes
+git clone https://github.com/PoyoAPI/poyo-comfyui.git
+```
+
+After the restart, searching the node menu for "PoYo" shows the PoYo nodes.
+
+## Configure the API key
+
+Set the key before starting ComfyUI:
+
+<CodeGroup>
+```bash macOS / Linux
+export POYO_API_KEY=your_poyo_api_key
+export POYO_BASE_URL=https://api.poyo.ai
+```
+
+```bat Windows
+set POYO_API_KEY=your_poyo_api_key
+set POYO_BASE_URL=https://api.poyo.ai
+```
+
+```bash Local config
+python -m poyo_nodes.configure
+```
+</CodeGroup>
+
+<Warning>
+  Do not paste the API key into workflow node fields. Node values are saved in exported workflow files.
+</Warning>
+
+## Sample workflows
+
+| Workflow | What it does |
+|---|---|
+| [poyo-generate-image.json](https://github.com/PoyoAPI/poyo-comfyui/blob/main/workflows/poyo-generate-image.json) | Runs a PoYo image model and saves the returned image |
+| [poyo-submit-and-await.json](https://github.com/PoyoAPI/poyo-comfyui/blob/main/workflows/poyo-submit-and-await.json) | Submits any catalog model, waits for completion, and saves the result file |
+
+Drag the JSON onto the canvas or use **Workflow → Open**, pick a model, then **Queue Prompt**. Results are saved under `ComfyUI/output/poyo`.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| PoYo nodes do not appear | Restart ComfyUI completely and look for a `poyo_nodes` import error in the startup console. |
+| The model catalog does not load | Check the API key and network, then restart ComfyUI after changing environment variables. |
+| No output file | Wait for the task to reach `finished`, then check the Save Result File node and `ComfyUI/output/poyo`. |

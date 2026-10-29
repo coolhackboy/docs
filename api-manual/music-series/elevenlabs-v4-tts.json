@@ -64,6 +64,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -157,15 +177,13 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 5000,
-            "pattern": "\\S",
-            "description": "Text."
+            "description": "Text. Must contain non-whitespace text."
           },
           "voice": {
             "type": "string",
             "default": "Rachel",
             "minLength": 1,
-            "pattern": "\\S",
-            "description": "Prebuilt voice for single-speaker speech."
+            "description": "Prebuilt voice for single-speaker speech. Must contain non-whitespace text."
           },
           "similarity_boost": {
             "type": "number",
@@ -216,6 +234,36 @@
                 "type": "string",
                 "format": "date-time",
                 "example": "2026-10-13T10:30:00+08:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

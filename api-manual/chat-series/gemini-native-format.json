@@ -84,48 +84,45 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GeminiGenerateContentResponse"
+                  "$ref": "#/components/schemas/GeminiGenerateContentResult"
                 },
                 "examples": {
                   "success": {
                     "summary": "Successful response",
                     "value": {
-                      "code": 200,
-                      "data": {
-                        "candidates": [
-                          {
-                            "content": {
-                              "role": "model",
-                              "parts": [
-                                {
-                                  "text": "Hello! I'm pleased to introduce myself."
-                                }
-                              ]
-                            },
-                            "finishReason": "STOP",
-                            "index": 0
-                          }
-                        ],
-                        "promptFeedback": {
-                          "safetyRatings": [
-                            {
-                              "category": "HARM_CATEGORY_HATE_SPEECH",
-                              "probability": "NEGLIGIBLE"
-                            },
-                            {
-                              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                              "probability": "NEGLIGIBLE"
-                            },
-                            {
-                              "category": "HARM_CATEGORY_HARASSMENT",
-                              "probability": "NEGLIGIBLE"
-                            },
-                            {
-                              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                              "probability": "NEGLIGIBLE"
-                            }
-                          ]
+                      "candidates": [
+                        {
+                          "content": {
+                            "role": "model",
+                            "parts": [
+                              {
+                                "text": "Hello! I'm pleased to introduce myself."
+                              }
+                            ]
+                          },
+                          "finishReason": "STOP",
+                          "index": 0
                         }
+                      ],
+                      "promptFeedback": {
+                        "safetyRatings": [
+                          {
+                            "category": "HARM_CATEGORY_HATE_SPEECH",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_HARASSMENT",
+                            "probability": "NEGLIGIBLE"
+                          },
+                          {
+                            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            "probability": "NEGLIGIBLE"
+                          }
+                        ]
                       },
                       "usageMetadata": {
                         "promptTokenCount": 15,
@@ -140,6 +137,43 @@
                         ]
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, or the model does not support Gemini Native",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeminiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoyoAuthError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown model id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpstreamFormatError"
+                },
+                "example": {
+                  "error": {
+                    "message": "Model not found: no-such-model",
+                    "type": "invalid_request_error",
+                    "code": "model_not_found"
                   }
                 }
               }
@@ -312,21 +346,6 @@
           }
         }
       },
-      "GeminiGenerateContentResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "example": 200
-          },
-          "data": {
-            "$ref": "#/components/schemas/GeminiGenerateContentResult"
-          },
-          "usageMetadata": {
-            "$ref": "#/components/schemas/GeminiUsageMetadata"
-          }
-        }
-      },
       "GeminiGenerateContentResult": {
         "type": "object",
         "properties": {
@@ -424,6 +443,73 @@
           "tokenCount": {
             "type": "integer",
             "example": 15
+          }
+        }
+      },
+      "PoyoAuthError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid API key"
+              },
+              "type": {
+                "type": "string",
+                "example": "authentication_error"
+              }
+            }
+          }
+        }
+      },
+      "UpstreamFormatError": {
+        "type": "object",
+        "description": "Error returned when the model or request is rejected for this API format.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Model not found: no-such-model"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              },
+              "code": {
+                "type": "string",
+                "example": "model_not_found"
+              }
+            }
+          }
+        }
+      },
+      "GeminiError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer",
+                "example": 400
+              },
+              "message": {
+                "type": "string",
+                "example": "URI '/v1beta/models/deepseek-v4-flash:generateContent' is not supported by this model. Supported URIs: ['/v1/chat/completions']"
+              },
+              "status": {
+                "type": "string",
+                "example": "INVALID_ARGUMENT"
+              }
+            }
           }
         }
       }

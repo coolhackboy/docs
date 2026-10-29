@@ -22,7 +22,9 @@
         "summary": "Submit Wan 2.2 Image-to-Video Fast Task",
         "description": "Animate one or two reference images with Wan 2.2 Fast",
         "operationId": "submitWan22ImageToVideoFastTask",
-        "tags": ["Wan 2.2 Fast"],
+        "tags": [
+          "Wan 2.2 Fast"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -60,6 +62,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -77,7 +99,10 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -94,7 +119,10 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt", "image_urls"],
+            "required": [
+              "prompt",
+              "image_urls"
+            ],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
@@ -112,12 +140,17 @@
                 "minItems": 1,
                 "maxItems": 2,
                 "description": "Reference image URLs. The first image is required; the optional second image is used as the last frame.",
-                "example": ["https://example.com/start-image.jpg"]
+                "example": [
+                  "https://example.com/start-image.jpg"
+                ]
               },
               "resolution": {
                 "type": "string",
                 "description": "Output video resolution",
-                "enum": ["480p", "720p"],
+                "enum": [
+                  "480p",
+                  "720p"
+                ],
                 "default": "480p",
                 "example": "480p"
               },
@@ -132,7 +165,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -141,7 +177,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -150,7 +190,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -159,6 +201,36 @@
                 "format": "date-time",
                 "example": "2025-11-12T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

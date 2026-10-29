@@ -36,7 +36,9 @@ All Kling 1.6 requests require `prompt` and `duration`.
 
 `image_urls` cannot be used together with `start_image_url`, `end_image_url`, or `cfg_scale`.
 
-## Parameter Compatibility
+## Notes
+
+### Parameter Compatibility
 
 Elements is a reference-image workflow that uses 1 to 4 images to guide the generated video.
 
@@ -52,4 +54,3 @@ Notes:
 - `end_image_url` requires `start_image_url` and is only supported by `kling-1.6/pro`.
 - `kling-1.6/standard` image-to-video does not support `aspect_ratio`.
 - Elements supports 1 to 4 `image_urls` and does not support `cfg_scale`.
-

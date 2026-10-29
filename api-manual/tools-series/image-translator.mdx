@@ -1,0 +1,39 @@
+---
+title: "Image Translator"
+description: "Translate the text inside an image into another language and return a new image."
+icon: "language"
+openapi: "/api-manual/tools-series/image-translator.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Image Translator detects the text in one image, translates it, and returns a new image with the translated text in place. Use it for product images, posters, screenshots, and marketing assets.
+
+## Models
+
+- **poyo-ai/image-translator** — Translate the text in one image
+
+## Required parameters
+
+- `image_urls` (array of strings): Exactly one image URL. JPEG, PNG, GIF, WebP, or BMP, up to 50 MB.
+- `target_language` (string): Language to translate into, for example `en`, `zh`, `ja`, `ko`, `fr`, `de`, `es`, `pt`, or `ru`.
+
+## Optional parameters
+
+- `source_language` (string): Language of the text in the image. Default is `auto`, which detects the language.
+
+## Output
+
+A finished task returns one translated image in `files` with `file_type: image`.
+
+## Examples
+
+- **Translate an image into Japanese** — sets `image_urls`, `source_language`, `target_language`.
+
+## Notes
+
+- Only one image is accepted per task.
+- The image URL must be publicly accessible. PoYo checks the URL before submitting and rejects unreachable files, unsupported types, and files over 50 MB.

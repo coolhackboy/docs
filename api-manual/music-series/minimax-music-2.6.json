@@ -22,7 +22,9 @@
         "summary": "Submit MiniMax Music 2.6 Task",
         "description": "Generate a complete music track from a style prompt, optional lyrics, lyrics optimization, or instrumental mode.",
         "operationId": "submitMiniMaxMusic26Task",
-        "tags": ["MiniMax Music 2.6"],
+        "tags": [
+          "MiniMax Music 2.6"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -108,6 +110,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -117,7 +139,9 @@
         "summary": "Get MiniMax Music 2.6 Task Status",
         "description": "Retrieve the task status and generated music files.",
         "operationId": "getMiniMaxMusic26TaskStatus",
-        "tags": ["MiniMax Music 2.6"],
+        "tags": [
+          "MiniMax Music 2.6"
+        ],
         "parameters": [
           {
             "name": "task_id",
@@ -194,12 +218,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Model identifier.\n\nMust be `minimax-music-2.6` for this endpoint.",
-            "enum": ["minimax-music-2.6"],
+            "enum": [
+              "minimax-music-2.6"
+            ],
             "example": "minimax-music-2.6"
           },
           "callback_url": {
@@ -210,7 +239,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters for music generation. If `lyrics` is empty, set either `is_instrumental` or `lyrics_optimizer` to `true`.",
             "additionalProperties": false,
             "properties": {
@@ -247,21 +278,35 @@
                   "sample_rate": {
                     "type": "integer",
                     "description": "Output sample rate.",
-                    "enum": [16000, 24000, 32000, 44100],
+                    "enum": [
+                      16000,
+                      24000,
+                      32000,
+                      44100
+                    ],
                     "default": 44100,
                     "example": 44100
                   },
                   "bitrate": {
                     "type": "integer",
                     "description": "Output bitrate.",
-                    "enum": [32000, 64000, 128000, 256000],
+                    "enum": [
+                      32000,
+                      64000,
+                      128000,
+                      256000
+                    ],
                     "default": 256000,
                     "example": 256000
                   },
                   "format": {
                     "type": "string",
                     "description": "Output audio format.",
-                    "enum": ["mp3", "wav", "pcm"],
+                    "enum": [
+                      "mp3",
+                      "wav",
+                      "pcm"
+                    ],
                     "default": "mp3",
                     "example": "mp3"
                   }
@@ -273,7 +318,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -282,7 +330,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -291,7 +343,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -307,7 +361,10 @@
       },
       "StatusResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -316,7 +373,14 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "credits_amount", "files", "created_time", "progress"],
+            "required": [
+              "task_id",
+              "status",
+              "credits_amount",
+              "files",
+              "created_time",
+              "progress"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -325,7 +389,12 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started", "running", "finished", "failed"],
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
                 "example": "finished",
                 "description": "Current task status"
               },
@@ -363,7 +432,10 @@
       },
       "FileItem": {
         "type": "object",
-        "required": ["file_url", "file_type"],
+        "required": [
+          "file_url",
+          "file_type"
+        ],
         "properties": {
           "file_url": {
             "type": "string",
@@ -374,8 +446,41 @@
           "file_type": {
             "type": "string",
             "description": "Generated file type",
-            "enum": ["audio", "other"],
+            "enum": [
+              "audio",
+              "other"
+            ],
             "example": "audio"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
           }
         }
       }

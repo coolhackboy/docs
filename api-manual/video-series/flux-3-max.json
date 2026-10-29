@@ -171,8 +171,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the scene, motion, camera behavior, and desired audio."
+                "description": "Describe the scene, motion, camera behavior, and desired audio. Must contain non-whitespace text."
               },
               "image_urls": {
                 "type": "array",
@@ -180,10 +179,9 @@
                 "maxItems": 2,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://\\S+$"
+                  "format": "uri"
                 },
-                "description": "Required for flux-3-max/image-to-video only. Supply one starting image and an optional ending image, in this order. Do not combine with keyframes."
+                "description": "Required for flux-3-max/image-to-video only. Supply one starting image and an optional ending image, in this order. Do not combine with keyframes. Must be a publicly accessible HTTP or HTTPS URL."
               },
               "keyframes": {
                 "type": "array",
@@ -269,8 +267,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the scene, motion, camera behavior, and desired audio."
+                "description": "Describe the scene, motion, camera behavior, and desired audio. Must contain non-whitespace text."
               },
               "duration": {
                 "type": "integer",
@@ -344,8 +341,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the scene, motion, camera behavior, and desired audio."
+                "description": "Describe the scene, motion, camera behavior, and desired audio. Must contain non-whitespace text."
               },
               "duration": {
                 "type": "integer",
@@ -389,10 +385,9 @@
                 "maxItems": 2,
                 "items": {
                   "type": "string",
-                  "format": "uri",
-                  "pattern": "^https?://\\S+$"
+                  "format": "uri"
                 },
-                "description": "One starting image, optionally followed by an ending image. PNG, JPEG, and WebP are supported."
+                "description": "One starting image, optionally followed by an ending image. PNG, JPEG, and WebP are supported. Must be a publicly accessible HTTP or HTTPS URL."
               }
             }
           }
@@ -430,8 +425,7 @@
               "prompt": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S",
-                "description": "Describe the scene, motion, camera behavior, and desired audio."
+                "description": "Describe the scene, motion, camera behavior, and desired audio. Must contain non-whitespace text."
               },
               "duration": {
                 "type": "integer",
@@ -561,8 +555,7 @@
           "image_url": {
             "type": "string",
             "format": "uri",
-            "pattern": "^https?://\\S+$",
-            "description": "Public PNG, JPEG, or WebP image URL."
+            "description": "Public PNG, JPEG, or WebP image URL. Must be a publicly accessible HTTP or HTTPS URL."
           },
           "frame_index": {
             "type": "integer",

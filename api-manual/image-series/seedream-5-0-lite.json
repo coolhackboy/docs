@@ -22,7 +22,9 @@
         "summary": "Submit Seedream-5.0-Lite Generation Task",
         "description": "Advanced image generation and editing with multi-reference support and up to 3K resolution",
         "operationId": "submitSeedream50LiteTask",
-        "tags": ["Seedream-5.0-Lite"],
+        "tags": [
+          "Seedream-5.0-Lite"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -151,7 +153,10 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -169,7 +174,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
@@ -188,24 +195,41 @@
                 "minItems": 1,
                 "maxItems": 10,
                 "description": "Reference image URLs for image-to-image or editing (1-10 images). Required for seedream-5.0-lite-edit model. Supported formats: JPEG, PNG. Custom size is also supported in edit mode.",
-                "example": ["https://example.com/reference1.jpg", "https://example.com/reference2.jpg"]
+                "example": [
+                  "https://example.com/reference1.jpg",
+                  "https://example.com/reference2.jpg"
+                ]
               },
               "size": {
                 "description": "Output size for both text-to-image and edit mode. Supported forms:\n\n1. Resolution preset: `2K`, `3K`\n2. Ratio preset: `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9`\n3. Custom string: `WIDTHxHEIGHT`, for example `2304x1728`\n4. Custom object: `{ \"width\": 2304, \"height\": 1728 }`\n\nIn edit mode, preset resolutions are handled automatically by the upstream model, while custom size uses the explicit width and height you provide.",
                 "oneOf": [
                   {
                     "type": "string",
-                    "enum": ["2K", "3K", "1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3", "21:9"],
+                    "enum": [
+                      "2K",
+                      "3K",
+                      "1:1",
+                      "4:3",
+                      "3:4",
+                      "16:9",
+                      "9:16",
+                      "3:2",
+                      "2:3",
+                      "21:9"
+                    ],
                     "example": "16:9"
                   },
                   {
                     "type": "string",
-                    "pattern": "^\\s*\\d+\\s*[xX]\\s*\\d+\\s*$",
-                    "example": "2304x1728"
+                    "example": "2304x1728",
+                    "description": "Use the `WIDTHxHEIGHT` format, such as `1024x768`."
                   },
                   {
                     "type": "object",
-                    "required": ["width", "height"],
+                    "required": [
+                      "width",
+                      "height"
+                    ],
                     "properties": {
                       "width": {
                         "type": "integer",
@@ -241,7 +265,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -250,7 +277,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -259,7 +290,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -275,7 +308,10 @@
       },
       "ErrorResponse": {
         "type": "object",
-        "required": ["code", "error"],
+        "required": [
+          "code",
+          "error"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -284,7 +320,10 @@
           },
           "error": {
             "type": "object",
-            "required": ["message", "type"],
+            "required": [
+              "message",
+              "type"
+            ],
             "properties": {
               "message": {
                 "type": "string",

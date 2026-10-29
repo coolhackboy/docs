@@ -1,0 +1,65 @@
+---
+title: "Music & Audio Models"
+description: "All music, voice, and text-to-speech models available on PoYo, with their model IDs."
+icon: "music"
+---
+
+Music and audio models are called through `POST /api/generate/submit`. Send a model ID in `model`, the parameters in `input`, and an optional `callback_url`. The request returns a `task_id` right away and the task runs asynchronously.
+
+## Workflow
+
+Suno and the other providers use different result endpoints:
+
+- **Suno**: poll [Query Music Detail](/api-manual/music-series/query-music-detail), or receive the result at `callback_url` (see [Music Webhook](/api-manual/music-series/music-webhook)).
+- **MiniMax, ElevenLabs, Google, xAI**: poll the unified [Get Task Status](/api-manual/task-management/status), or receive the result at `callback_url` (see [Webhook Callbacks](/api-manual/task-management/webhooks)).
+
+## Suno
+
+Suno is organized by action. Each action has its own model ID. Start with [Generate Music](/api-manual/music-series/generate-music); several actions extend, cover, or edit a song from an earlier task or an uploaded audio file. For custom voices, follow the [Suno Voice Workflow](/api-manual/music-series/voice/overview).
+
+| Action | Category | Model ID |
+| --- | --- | --- |
+| [Generate Music](/api-manual/music-series/generate-music) | Music | `generate-music` |
+| [Generate MIDI](/api-manual/music-series/generate-midi) | Vocal Remover | `generate-midi` |
+| [Generate Mashup](/api-manual/music-series/generate-mashup) | Music | `generate-mashup` |
+| [Generate Sounds](/api-manual/music-series/generate-sounds) | Music | `generate-sounds` |
+| [Extend Music](/api-manual/music-series/extend-music) | Music | `extend-music` |
+| [Upload and Cover Audio](/api-manual/music-series/upload-and-cover-audio) | Music | `upload-and-cover-audio` |
+| [Upload and Extend Audio](/api-manual/music-series/upload-and-extend-audio) | Music | `upload-and-extend-audio` |
+| [Add Instrumental](/api-manual/music-series/add-instrumental) | Music | `add-instrumental` |
+| [Add Vocals](/api-manual/music-series/add-vocals) | Music | `add-vocals` |
+| [Get Timestamped Lyrics](/api-manual/music-series/get-timestamped-lyrics) | Music | `get-timestamped-lyrics` |
+| [Boost Music Style](/api-manual/music-series/boost-music-style) | Music | `boost-music-style` |
+| [Generate Music Cover](/api-manual/music-series/generate-music-cover) | Music | `generate-music-cover` |
+| [Replace Section](/api-manual/music-series/replace-section) | Music | `replace-section` |
+| [Generate Persona](/api-manual/music-series/generate-persona) | Music | `generate-persona` |
+| [Generate Lyrics](/api-manual/music-series/generate-lyrics) | Music | `generate-lyrics` |
+| [Convert to WAV](/api-manual/music-series/convert-to-wav) | Music | `convert-to-wav` |
+| [Separate Vocals](/api-manual/music-series/vocal-remover/separate-vocals) | Vocal Remover | `separate-vocals` |
+| [Stem Split](/api-manual/music-series/vocal-remover/stem-split) | Vocal Remover | `stem-split` |
+| [Upload and Separate Vocals](/api-manual/music-series/vocal-remover/upload-and-separate-vocals) | Vocal Remover | `upload-and-separate-vocals` |
+| [Validate Suno Voice](/api-manual/music-series/voice/validate) | Suno Voice | `suno-voice-validate` |
+| [Generate Suno Voice](/api-manual/music-series/voice/generate) | Suno Voice | `suno-voice-generate` |
+| [Regenerate Voice Phrase](/api-manual/music-series/voice/regenerate) | Suno Voice | `suno-voice-regenerate` |
+| [Check Suno Voice](/api-manual/music-series/voice/check) | Suno Voice | `suno-voice-check` |
+| [Create Music Video](/api-manual/music-series/create-music-video) | Music | `create-music-video` |
+
+## Music and TTS models
+
+| Model | Provider | Model IDs |
+| --- | --- | --- |
+| [MiniMax Music 2.6](/api-manual/music-series/minimax-music-2.6) | MiniMax | `minimax-music-2.6` |
+| [ElevenLabs Music](/api-manual/music-series/elevenlabs-music) | ElevenLabs | `elevenlabs-music` |
+| [ElevenLabs V3 TTS](/api-manual/music-series/elevenlabs-v3-tts) | ElevenLabs | `elevenlabs-v3-tts` |
+| [ElevenLabs TTS Turbo v2.5](/api-manual/music-series/elevenlabs-tts-turbo-2-5) | ElevenLabs | `elevenlabs-tts-turbo-2-5` |
+| [ElevenLabs V4 TTS](/api-manual/music-series/elevenlabs-v4-tts) | ElevenLabs | `elevenlabs-v4-tts` |
+| [ElevenLabs V4 Turbo TTS](/api-manual/music-series/elevenlabs-v4-turbo-tts) | ElevenLabs | `elevenlabs-v4-turbo-tts` |
+| [Gemini 3.1 Flash TTS](/api-manual/music-series/gemini-3-1-flash-tts) | Google | `gemini-3-1-flash-tts` |
+| [Gemini 3.8 Flash Lite TTS](/api-manual/music-series/gemini-3-8-flash-lite-tts) | Google | `gemini-3.8-flash-lite-tts` |
+| [Gemini 3.8 Flash TTS](/api-manual/music-series/gemini-3-8-flash-tts) | Google | `gemini-3.8-flash-tts` |
+| [xAI TTS 1](/api-manual/music-series/xai-tts-1) | xAI | `xai-tts-1` |
+
+## Notes
+
+- Each page lists the parameters and limits for its model ID. Parameters are not shared across models.
+- URL inputs must be publicly accessible HTTP(S) URLs. To use local files, upload them first with [File Management](/api-manual/file-series/upload-url).

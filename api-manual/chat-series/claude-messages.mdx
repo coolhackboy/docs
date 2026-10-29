@@ -1,5 +1,5 @@
 ---
-title: "Claude Messages"
+title: "Anthropic Messages"
 description: "The Claude Messages API is a model-agnostic endpoint compatible with the Anthropic Messages format. It accepts single-turn or multi-turn text and image input, with streaming and tool use shown in the page examples."
 icon: "comments"
 openapi: "/api-manual/chat-series/claude-messages.json POST /v1/messages"
@@ -132,3 +132,53 @@ https://platform.claude.com/docs/en/api/messages/create
 * Use `max_tokens` to control the output length.
 * Thinking tokens count toward `max_tokens`.
 * Image input can use supported base64 media payloads.
+
+## Authentication
+
+Send the API key in either header:
+
+```http
+x-api-key: YOUR_API_KEY
+Authorization: Bearer YOUR_API_KEY
+```
+
+`x-api-key` lets the official Anthropic SDKs work by changing only the base URL to `https://api.poyo.ai`.
+
+## Response
+
+Non-streaming requests return the Anthropic Message object directly, without a `code` / `data` wrapper. With extended thinking, `content` can include `thinking` blocks before the `text` block, and `usage.output_tokens_details.thinking_tokens` counts them.
+
+## Streaming
+
+With `"stream": true`, the response follows the Anthropic event format: each event has an `event:` line and a `data:` line. The stream ends with `message_stop` and has no `[DONE]` marker.
+
+```text
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_...","model":"claude-haiku-5-5","role":"assistant","content":[],"usage":{"input_tokens":113,...}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OK"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":4,...}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+- Text arrives in `content_block_delta` events with `delta.type: "text_delta"`.
+- `message_delta` carries `stop_reason` and the final `usage`.
+
+## Errors
+
+- `401`: missing or invalid API key.
+- `400`: invalid parameters, or the model does not support Anthropic Messages. The message lists the supported URIs.
+- `404`: unknown model id.
+
+See [Error Codes](/api-manual/error-codes#llm-endpoint-errors) for example bodies, and [LLM Models](/api-manual/chat-series/overview) for which models support this format.

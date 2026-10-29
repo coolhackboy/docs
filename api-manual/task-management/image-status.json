@@ -1,0 +1,221 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PoYo AI - Image Task Status API",
+    "description": "Query image task execution status and retrieve generated image files",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Query Image Task Status",
+        "operationId": "queryImageTaskStatus",
+        "tags": [
+          "Image Task Management"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique task identifier returned from the submit endpoint"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "examples": {
+                  "finished": {
+                    "summary": "Finished image task",
+                    "value": {
+                      "code": 200,
+                      "data": {
+                        "task_id": "task-unified-1757165031-uyujaw3d",
+                        "status": "finished",
+                        "credits_amount": 2,
+                        "files": [
+                          {
+                            "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+                            "file_type": "image"
+                          }
+                        ],
+                        "created_time": "2025-11-12T10:30:00",
+                        "progress": 100
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "StatusResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "$ref": "#/components/schemas/TaskStatus"
+          }
+        },
+        "example": {
+          "code": 200,
+          "data": {
+            "task_id": "task-unified-1757165031-uyujaw3d",
+            "status": "finished",
+            "credits_amount": 2,
+            "files": [
+              {
+                "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+                "file_type": "image"
+              }
+            ],
+            "created_time": "2025-11-12T10:30:00",
+            "progress": 100
+          }
+        }
+      },
+      "TaskStatus": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_started",
+              "running",
+              "finished",
+              "failed"
+            ],
+            "example": "finished"
+          },
+          "credits_amount": {
+            "type": "number",
+            "description": "Credits charged for the task",
+            "example": 2
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileItem"
+            }
+          },
+          "created_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "progress": {
+            "type": "number",
+            "example": 100
+          },
+          "error_message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "example": {
+          "task_id": "task-unified-1757165031-uyujaw3d",
+          "status": "finished",
+          "credits_amount": 2,
+          "files": [
+            {
+              "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+              "file_type": "image"
+            }
+          ],
+          "created_time": "2025-11-12T10:30:00",
+          "progress": 100
+        }
+      },
+      "FileItem": {
+        "type": "object",
+        "required": [
+          "file_url",
+          "file_type"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Optional file label when provided by the model"
+          },
+          "file_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://storage.poyo.ai/generated/image-abc123.jpg"
+          },
+          "file_type": {
+            "type": "string",
+            "enum": [
+              "image",
+              "video",
+              "audio",
+              "3d",
+              "other"
+            ],
+            "example": "image"
+          },
+          "format": {
+            "type": "string",
+            "description": "Optional file format when provided by the model"
+          },
+          "content_type": {
+            "type": "string",
+            "description": "Optional MIME type when provided by the model"
+          },
+          "file_name": {
+            "type": "string",
+            "description": "Optional file name when provided by the model"
+          },
+          "file_size": {
+            "type": "integer",
+            "description": "Optional file size in bytes when provided by the model"
+          }
+        },
+        "example": {
+          "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+          "file_type": "image"
+        }
+      }
+    }
+  }
+}

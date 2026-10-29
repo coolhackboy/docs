@@ -22,7 +22,9 @@
         "summary": "Submit Flux Schnell Task",
         "description": "Generate images from text with Flux Schnell.",
         "operationId": "submitFluxSchnellTask",
-        "tags": ["Flux Schnell"],
+        "tags": [
+          "Flux Schnell"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -58,6 +60,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -75,12 +97,17 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
           "model": {
             "type": "string",
             "description": "Flux Schnell model identifier",
-            "enum": ["flux-schnell"]
+            "enum": [
+              "flux-schnell"
+            ]
           },
           "callback_url": {
             "type": "string",
@@ -90,7 +117,9 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt"],
+            "required": [
+              "prompt"
+            ],
             "description": "Input parameters for text-to-image generation.",
             "properties": {
               "prompt": {
@@ -104,10 +133,17 @@
                 "description": "Output image size. Use 1:1 for standard square output and 1:1 HD for high-definition square output. Custom WIDTHxHEIGHT values are supported.",
                 "oneOf": [
                   {
-                    "enum": ["1:1", "1:1 HD", "4:3", "3:4", "16:9", "9:16"]
+                    "enum": [
+                      "1:1",
+                      "1:1 HD",
+                      "4:3",
+                      "3:4",
+                      "16:9",
+                      "9:16"
+                    ]
                   },
                   {
-                    "pattern": "^\\d+x\\d+$"
+                    "description": "Use the `WIDTHxHEIGHT` format, such as `1024x768`."
                   }
                 ],
                 "default": "1:1",
@@ -122,7 +158,10 @@
               "output_format": {
                 "type": "string",
                 "description": "Output image format.",
-                "enum": ["jpeg", "png"],
+                "enum": [
+                  "jpeg",
+                  "png"
+                ],
                 "default": "png",
                 "example": "png"
               }
@@ -132,7 +171,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -141,7 +183,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -150,7 +196,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -159,6 +207,36 @@
                 "format": "date-time",
                 "example": "2026-06-26T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

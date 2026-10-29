@@ -5,79 +5,275 @@
     "description": "The Grok Imagine Video 1.5 API generates 1–15 second videos from text or one first-frame image at up to 1080p, or from up to seven reference images at up to 720p.",
     "version": "1.1.0"
   },
-  "servers": [{ "url": "https://api.poyo.ai", "description": "Production server" }],
-  "security": [{ "BearerAuth": [] }],
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
   "paths": {
     "/api/generate/submit": {
       "post": {
         "summary": "Submit Grok Imagine Video 1.5 Task",
         "description": "Selects text, image, or reference mode from the supplied image field.",
         "operationId": "submitGrokImagineVideo15Task",
-        "tags": ["Grok Imagine Video 1.5"],
+        "tags": [
+          "Grok Imagine Video 1.5"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/SubmitRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
               "examples": {
                 "text-to-video": {
                   "summary": "Text to video",
-                  "value": { "model": "grok-imagine-video-1.5", "input": { "prompt": "A cinematic city at sunrise", "resolution": "1080p", "duration": 6, "aspect_ratio": "16:9" } }
+                  "value": {
+                    "model": "grok-imagine-video-1.5",
+                    "input": {
+                      "prompt": "A cinematic city at sunrise",
+                      "resolution": "1080p",
+                      "duration": 6,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
                 },
                 "image-to-video": {
                   "summary": "Image to video",
-                  "value": { "model": "grok-imagine-video-1.5", "input": { "prompt": "Slow camera push-in", "image_urls": ["https://example.com/first-frame.png"], "resolution": "1080p", "duration": 6 } }
+                  "value": {
+                    "model": "grok-imagine-video-1.5",
+                    "input": {
+                      "prompt": "Slow camera push-in",
+                      "image_urls": [
+                        "https://example.com/first-frame.png"
+                      ],
+                      "resolution": "1080p",
+                      "duration": 6
+                    }
+                  }
                 },
                 "reference-to-video": {
                   "summary": "Reference to video",
-                  "value": { "model": "grok-imagine-video-1.5", "input": { "prompt": "<IMAGE_0> meets <IMAGE_1> in a neon street", "reference_image_urls": ["https://example.com/character.png", "https://example.com/style.png"], "resolution": "720p", "duration": 8, "aspect_ratio": "16:9" } }
+                  "value": {
+                    "model": "grok-imagine-video-1.5",
+                    "input": {
+                      "prompt": "<IMAGE_0> meets <IMAGE_1> in a neon street",
+                      "reference_image_urls": [
+                        "https://example.com/character.png",
+                        "https://example.com/style.png"
+                      ],
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Task submitted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SubmitResponse" } } } }
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     }
   },
   "components": {
     "securitySchemes": {
-      "BearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "API Key" }
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
     },
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model", "input"],
+        "required": [
+          "model",
+          "input"
+        ],
         "properties": {
-          "model": { "type": "string", "enum": ["grok-imagine-video-1.5"] },
-          "callback_url": { "type": "string", "format": "uri" },
-          "input": { "$ref": "#/components/schemas/GenerationInput" }
+          "model": {
+            "type": "string",
+            "enum": [
+              "grok-imagine-video-1.5"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "input": {
+            "$ref": "#/components/schemas/GenerationInput"
+          }
         }
       },
       "GenerationInput": {
         "type": "object",
-        "required": ["prompt"],
+        "required": [
+          "prompt"
+        ],
         "description": "Omit image fields for text-to-video. Use image_urls for one first frame, or reference_image_urls for 1–7 references. The image fields are mutually exclusive.",
         "properties": {
-          "prompt": { "type": "string", "maxLength": 4096, "description": "Prompt. In reference mode, use <IMAGE_0>, <IMAGE_1>, etc." },
-          "image_urls": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "type": "string", "format": "uri" }, "description": "Single first-frame image for image-to-video." },
-          "reference_image_urls": { "type": "array", "minItems": 1, "maxItems": 7, "items": { "type": "string", "format": "uri" }, "description": "Reference images for reference-to-video." },
-          "resolution": { "type": "string", "enum": ["480p", "720p", "1080p"], "default": "720p", "description": "Reference-to-video supports only 480p and 720p." },
-          "duration": { "type": "integer", "minimum": 1, "maximum": 15, "description": "Defaults to 6, or 8 in reference mode." },
-          "aspect_ratio": { "type": "string", "enum": ["16:9", "4:3", "3:2", "1:1", "2:3", "3:4", "9:16"], "default": "16:9", "description": "Only for text and reference modes." }
+          "prompt": {
+            "type": "string",
+            "maxLength": 4096,
+            "description": "Prompt. In reference mode, use <IMAGE_0>, <IMAGE_1>, etc."
+          },
+          "image_urls": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Single first-frame image for image-to-video."
+          },
+          "reference_image_urls": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 7,
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Reference images for reference-to-video."
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "720p",
+              "1080p"
+            ],
+            "default": "720p",
+            "description": "Reference-to-video supports only 480p and 720p."
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 15,
+            "description": "Defaults to 6, or 8 in reference mode."
+          },
+          "aspect_ratio": {
+            "type": "string",
+            "enum": [
+              "16:9",
+              "4:3",
+              "3:2",
+              "1:1",
+              "2:3",
+              "3:4",
+              "9:16"
+            ],
+            "default": "16:9",
+            "description": "Only for text and reference modes."
+          }
         },
         "allOf": [
-          { "not": { "required": ["image_urls", "reference_image_urls"] } }
+          {
+            "not": {
+              "required": [
+                "image_urls",
+                "reference_image_urls"
+              ]
+            }
+          }
         ]
       },
       "SubmitResponse": {
         "type": "object",
         "properties": {
-          "code": { "type": "integer", "example": 200 },
-          "message": { "type": "string" },
-          "data": { "type": "object", "properties": { "task_id": { "type": "string" }, "status": { "type": "string" }, "created_time": { "type": "string", "format": "date-time" } } }
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
         }
       }
     }

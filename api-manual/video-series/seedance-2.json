@@ -22,7 +22,9 @@
         "summary": "Submit Seedance 2 Video Generation Task",
         "description": "Generate videos using Seedance 2 or Seedance 2 Fast with text-to-video, first and last frame, and multimodal reference workflows.",
         "operationId": "submitSeedance2Task",
-        "tags": ["Seedance 2"],
+        "tags": [
+          "Seedance 2"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -114,6 +116,26 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -131,7 +153,9 @@
     "schemas": {
       "SubmitRequest": {
         "type": "object",
-        "required": ["model"],
+        "required": [
+          "model"
+        ],
         "properties": {
           "model": {
             "type": "string",
@@ -149,7 +173,11 @@
           },
           "input": {
             "type": "object",
-            "required": ["prompt", "resolution", "duration"],
+            "required": [
+              "prompt",
+              "resolution",
+              "duration"
+            ],
             "description": "Input parameters for generation",
             "properties": {
               "prompt": {
@@ -167,7 +195,10 @@
                 },
                 "maxItems": 2,
                 "description": "Optional first and last frame images for image-to-video mode. Provide 1 or 2 publicly accessible image URLs. Index 0 is mapped to the starting frame and index 1 is mapped to the optional ending frame. Supported image formats are JPG, JPEG, PNG, WebP, GIF, and AVIF; each image should be up to 30 MB. Cannot be used together with any reference_*_urls fields.",
-                "example": ["https://example.com/first-frame.jpg", "https://example.com/last-frame.jpg"]
+                "example": [
+                  "https://example.com/first-frame.jpg",
+                  "https://example.com/last-frame.jpg"
+                ]
               },
               "reference_image_urls": {
                 "type": "array",
@@ -177,7 +208,9 @@
                 },
                 "maxItems": 9,
                 "description": "Optional reference image URLs for multimodal reference-to-video mode. Supports up to 9 publicly accessible images. Supported image formats are JPG, JPEG, PNG, and WebP; each image should be up to 30 MB. You can reference images in the prompt by order, such as @Image1 or @Image2. Cannot be used together with image_urls.",
-                "example": ["https://example.com/reference-image.jpg"]
+                "example": [
+                  "https://example.com/reference-image.jpg"
+                ]
               },
               "reference_video_urls": {
                 "type": "array",
@@ -187,7 +220,9 @@
                 },
                 "maxItems": 3,
                 "description": "Optional reference video URLs for multimodal reference-to-video mode. Supports up to 3 publicly accessible MP4 or MOV files. The combined reference video duration should be 2 to 15 seconds total, total video size should be under 50 MB, and each video should be 480p to 720p. You can reference videos in the prompt by order, such as @Video1 or @Video2. Cannot be used together with image_urls.",
-                "example": ["https://example.com/reference-video.mp4"]
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ]
               },
               "reference_audio_urls": {
                 "type": "array",
@@ -197,7 +232,9 @@
                 },
                 "maxItems": 3,
                 "description": "Optional reference audio URLs for multimodal reference-to-video mode. Supports up to 3 publicly accessible MP3 or WAV files. The combined reference audio duration should not exceed 15 seconds, and each file should be up to 15 MB. Audio references require at least one reference image or reference video. You can reference audio files in the prompt by order, such as @Audio1 or @Audio2. Cannot be used together with image_urls.",
-                "example": ["https://example.com/reference-audio.mp3"]
+                "example": [
+                  "https://example.com/reference-audio.mp3"
+                ]
               },
               "generate_audio": {
                 "type": "boolean",
@@ -207,13 +244,26 @@
               "resolution": {
                 "type": "string",
                 "description": "Output resolution. `seedance-2` supports `480p`, `720p`, `1080p`, and `4k`. `seedance-2-fast` supports `480p` and `720p` only.",
-                "enum": ["480p", "720p", "1080p", "4k"],
+                "enum": [
+                  "480p",
+                  "720p",
+                  "1080p",
+                  "4k"
+                ],
                 "example": "4k"
               },
               "aspect_ratio": {
                 "type": "string",
                 "description": "Optional output video aspect ratio.",
-                "enum": ["auto", "1:1", "21:9", "4:3", "3:4", "16:9", "9:16"],
+                "enum": [
+                  "auto",
+                  "1:1",
+                  "21:9",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16"
+                ],
                 "example": "auto"
               },
               "duration": {
@@ -227,7 +277,10 @@
       },
       "SubmitResponse": {
         "type": "object",
-        "required": ["code", "data"],
+        "required": [
+          "code",
+          "data"
+        ],
         "properties": {
           "code": {
             "type": "integer",
@@ -236,7 +289,11 @@
           },
           "data": {
             "type": "object",
-            "required": ["task_id", "status", "created_time"],
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
             "properties": {
               "task_id": {
                 "type": "string",
@@ -245,7 +302,9 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["not_started"],
+                "enum": [
+                  "not_started"
+                ],
                 "example": "not_started",
                 "description": "Initial task status"
               },
@@ -254,6 +313,36 @@
                 "format": "date-time",
                 "example": "2026-04-04T10:30:00",
                 "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
               }
             }
           }

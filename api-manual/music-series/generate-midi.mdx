@@ -1,0 +1,35 @@
+---
+title: "Generate MIDI"
+description: "Extract structured MIDI note data from a completed Suno vocal separation task."
+icon: "music"
+openapi: "/api-manual/music-series/generate-midi.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Music Detail](/api-manual/music-series/query-music-detail) endpoint.
+</Tip>
+
+Generate MIDI extracts per-instrument note data from a song that has already been separated with [Separate Vocals](/api-manual/music-series/vocal-remover/separate-vocals) or [Stem Split](/api-manual/music-series/vocal-remover/stem-split).
+
+## Models
+
+- **generate-midi** — Extract MIDI note data from a separated track
+
+## Required parameters
+
+- `task_id` (string): `task_id` of a finished Separate Vocals or Stem Split task from your account.
+
+## Output
+
+The result is returned as `midi_data` by [Query Music Detail](/api-manual/music-series/query-music-detail) and in the music callback. `midi_data` is a JSON object with `state` and an `instruments` array as returned by the provider. No downloadable `.mid` file is produced.
+
+## Examples
+
+- **Generate MIDI from a separation task** — sets `task_id`.
+
+## Notes
+
+- Run Separate Vocals or Stem Split first. Other task types are rejected with "It is necessary to first call the separation of vocals and instruments."
+- An unknown `task_id`, or one from another account, returns "Parent task not found".
+- Validation errors are returned in the response body with `code: 400` even when the HTTP status is 200. Always check `code`.

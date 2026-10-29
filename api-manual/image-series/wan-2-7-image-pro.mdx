@@ -21,15 +21,18 @@ It uses a unified request shape:
 
 - **wan-2.7-image-pro** - Unified text-to-image and image editing model
 
-## Parameters
+## Required parameters
 
 - `prompt` - Required prompt
+
+## Optional parameters
+
 - `size` - Output image size preset, or a custom `{ width, height }` object
 - `n` - Number of images, `1-4`
 - `seed` - Optional random seed
 - `image_urls` - Reference images for editing, `1-4` images required. Order matters: reference them as image 1, image 2, image 3, image 4 in the prompt
 
-## Size Parameter
+## Size
 
 `input.size` supports these preset values:
 
@@ -110,4 +113,3 @@ Custom size example:
   }
 }
 ```
-

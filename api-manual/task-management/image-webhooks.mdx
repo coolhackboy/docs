@@ -1,0 +1,131 @@
+---
+title: "Webhook Callbacks"
+description: "Receive automatic notifications when image tasks complete"
+---
+
+# Webhook Callbacks
+
+Instead of polling the status endpoint, you can provide a callback URL when submitting image tasks to receive automatic notifications when generation completes.
+
+## How It Works
+
+1. **Submit with callback URL**: Include a `callback_url` in your image task submission
+2. **Receive notification**: When the task completes (success or failure), PoYo AI sends a POST request to your URL
+3. **Process result**: Your server receives the complete task data including generated images
+
+## Callback Request
+
+When a task completes, PoYo AI sends a POST request to your callback URL. The callback body uses the same task data shape as the [image status endpoint](/api-manual/task-management/image-status), without the outer `code` and `data` wrapper.
+
+### Request Headers
+
+```http
+Content-Type: application/json
+X-Webhook-Timestamp: 1783680000
+X-Webhook-Signature: base64_hmac_sha256_signature
+```
+
+### Request Body
+
+```json
+{
+  "task_id": "task-unified-1757165031-uyujaw3d",
+  "status": "finished",
+  "files": [
+    {
+      "file_url": "https://storage.poyo.ai/generated/image-abc123.jpg",
+      "file_type": "image"
+    }
+  ],
+  "created_time": "2025-11-12T10:30:00",
+  "error_message": null
+}
+```
+
+### Failed Task Callback
+
+```json
+{
+  "task_id": "task-unified-1757165031-uyujaw3d",
+  "status": "failed",
+  "files": [],
+  "created_time": "2025-11-12T10:30:00",
+  "error_message": "The prompt violates our content policy"
+}
+```
+
+## Signature Verification
+
+PoYo signs every image webhook request with HMAC-SHA256. Existing receivers can ignore these headers, but production systems should verify them.
+
+Get your webhook HMAC key:
+
+```bash
+GET /api/api-keys/webhook-secret
+```
+
+Rotate your webhook HMAC key:
+
+```bash
+POST /api/api-keys/webhook-secret/rotate
+```
+
+Signature rule:
+
+```text
+base64(HMAC-SHA256(task_id + "." + timestamp, webhook_hmac_key))
+```
+
+Where:
+
+- `task_id` is the top-level `task_id` in the callback body
+- `timestamp` is the value of `X-Webhook-Timestamp`
+- `webhook_hmac_key` is returned by `GET /api/api-keys/webhook-secret`
+
+## Requirements
+
+Your callback endpoint must meet the following requirements:
+
+- **HTTPS only**: Must use HTTPS protocol (HTTP not supported)
+- **Maximum URL length**: 2048 characters
+- **Response timeout**: Must respond within 30 seconds
+- **Success response**: Should return HTTP 200-299 status code
+- **No internal IPs**: Cannot use private/internal IP addresses (e.g., 192.168.x.x, 10.x.x.x)
+- **Public accessibility**: Must be publicly accessible from the internet
+
+## Retry Policy
+
+If your callback endpoint fails to respond or returns an error:
+
+- **Retry attempts**: Up to 5 automatic retries
+- **Retry delays**: Exponential backoff, starting at about 60 seconds and capped at 10 minutes
+- **Final failure**: After all retry attempts fail, no further retries are made
+
+<Warning>
+  If all retry attempts fail, you can still retrieve the results by polling the [image status endpoint](/api-manual/task-management/image-status).
+</Warning>
+
+## Important Notes
+
+<Tip>
+  **Verify requests**: Validate `X-Webhook-Timestamp` and `X-Webhook-Signature` before processing callbacks.
+</Tip>
+
+<Tip>
+  **Idempotency**: Design your webhook handler to be idempotent in case of duplicate deliveries.
+</Tip>
+
+<Tip>
+  **Async processing**: Process the callback asynchronously and return 200 quickly to avoid timeouts.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Task Status" icon="list-check" href="/api-manual/task-management/image-status">
+    Learn about polling image task status
+  </Card>
+  <Card title="Image Models" icon="image" href="/api-manual/image-series/overview">
+    Browse all image models
+  </Card>
+</CardGroup>

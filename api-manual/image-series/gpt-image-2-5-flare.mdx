@@ -12,16 +12,23 @@ openapi: "/api-manual/image-series/gpt-image-2-5-flare.json POST /api/generate/s
 
 Use `gpt-image-2.5-flare` to generate one image from a prompt or edit up to 16 reference images. A non-empty `image_urls` array selects editing automatically; omit it or pass an empty array for text-to-image generation.
 
-## Parameters
+## Models
+
+- **gpt-image-2.5-flare** — GPT Image 2.5 Flare
+
+## Required parameters
 
 - `prompt` is required and supports up to 32,000 characters.
+
+## Optional parameters
+
 - `quality`: `low`, `medium`, `high` (default), `xhigh`, or `max`.
 - `background`: `auto` (default), `transparent`, or `opaque`.
 - `output_format`: `png` (default), `jpeg`, or `webp`. Transparent backgrounds require PNG or WebP.
 - `mask_url`: optional HTTP(S) mask image URL identifying the area to edit; requires non-empty `image_urls`.
 - Reference images must use HTTP(S) URLs. Each request produces one output image.
 
-## Image Size
+## Size
 
 - `size` defaults to `1:1`. Supported ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
 - `resolution` supports `1K` (default), `2K`, and `4K`. An omitted size uses a square at the selected tier.
