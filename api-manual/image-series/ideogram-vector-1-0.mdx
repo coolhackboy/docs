@@ -14,31 +14,23 @@ Ideogram Vector 1.0 creates editable SVG graphics from a text prompt, or convert
 
 ## Models
 
-- **ideogram-vector-1.0** — Text-to-vector generation and single-image conversion
+- **ideogram-vector-1.0/text-to-vector** — Generate SVGs from a prompt, with optional reference images
+- **ideogram-vector-1.0/image-to-vector** — Convert exactly one image into an SVG
 
 ## Features
 
 - Generate 1–8 SVGs from a prompt, with quality and aspect-ratio controls.
-- Guide text generation with 1–5 reference images. The first image is the primary reference.
+- Guide text generation with 1–5 reference images in `image_urls`. The first image is the primary reference.
 - Convert exactly one JPEG, PNG, or WebP image into an SVG, with a detail mode or a simpler shape mode.
-
-## Input modes
-
-| Mode | When to use it | Input |
-| --- | --- | --- |
-| Text to vector | Omit `image_urls`, or pass `[]` | Required `prompt`. Optional `reference_image_urls`, `quality`, `n`, and `size`. |
-| Image to vector | `image_urls` contains one image | That image is converted. Optional `mode`. Do not send a prompt or reference images. |
-
-Reference images do not select image conversion. Put them in `reference_image_urls` and keep `image_urls` empty.
 
 ## Required parameters
 
-- `prompt` (string): Required for text to vector. Use 1–9500 characters containing non-whitespace text. Not accepted when `image_urls` is set.
-- `image_urls` (array of strings): Required for image to vector. Exactly one publicly accessible HTTP(S) image URL. JPEG, PNG, or WebP, up to 50 MB.
+- `prompt` (string): Required for `ideogram-vector-1.0/text-to-vector`. Use 1–9500 characters containing non-whitespace text.
+- `image_urls` (array of strings): Required for `ideogram-vector-1.0/image-to-vector`. Exactly one publicly accessible HTTP(S) image URL. JPEG, PNG, or WebP, up to 50 MB.
 
 ## Optional parameters
 
-- `reference_image_urls` (array of strings): Text to vector only. 1–5 publicly accessible HTTP(S) reference images. JPEG, PNG, or WebP, up to 10 MB each. The first URL is the primary reference.
+- `image_urls` (array of strings): Optional for text to vector. 1–5 publicly accessible HTTP(S) reference images. JPEG, PNG, or WebP, up to 10 MB each. The first URL is the primary reference.
 - `quality` (string): Text to vector only. `low`, `medium`, or `high`. Defaults to `medium`.
 - `n` (integer): Text to vector only. Number of SVGs, from 1 through 8. Defaults to 1.
 - `size` (string): Text to vector only. Aspect ratio. Defaults to `auto`.
@@ -50,7 +42,7 @@ Image fields also accept image data URIs.
 
 Text to vector accepts `auto`, `1:1`, `1:4`, `1:3`, `1:2`, `9:16`, `10:16`, `2:3`, `3:4`, `4:5`, `5:4`, `4:3`, `3:2`, `16:10`, `16:9`, `2:1`, `3:1`, and `4:1`. The default is `auto`.
 
-Image conversion does not accept `size`.
+Image to vector does not accept `size`.
 
 ## Output
 
@@ -62,7 +54,6 @@ Text to vector, text to vector with reference images, and single-image conversio
 
 ## Notes
 
-- A non-empty `image_urls` array converts that one image. It rejects `prompt`, `reference_image_urls`, `quality`, `n`, and `size`.
-- `reference_image_urls` is only for text to vector. It does not switch the request to image conversion.
-- `mode` is only for image conversion.
+- Choose the model ID for the task. Text to vector does not accept `mode`. Image to vector does not accept `prompt`, `quality`, `n`, or `size`.
+- On text to vector, `image_urls` are reference images. On image to vector, `image_urls` is the one image to convert.
 - Keep generation parameters inside `input`. `callback_url` belongs at the top level of the request.

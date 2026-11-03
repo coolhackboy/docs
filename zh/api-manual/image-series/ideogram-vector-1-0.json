@@ -33,7 +33,7 @@
                 "text-to-vector": {
                   "summary": "根据提示词生成 SVG",
                   "value": {
-                    "model": "ideogram-vector-1.0",
+                    "model": "ideogram-vector-1.0/text-to-vector",
                     "input": {
                       "prompt": "A playful cat logo with bold outlines and flat colors"
                     }
@@ -42,10 +42,10 @@
                 "text-with-references": {
                   "summary": "带参考图生成 SVG",
                   "value": {
-                    "model": "ideogram-vector-1.0",
+                    "model": "ideogram-vector-1.0/text-to-vector",
                     "input": {
                       "prompt": "A flat mountain travel poster",
-                      "reference_image_urls": ["https://example.com/style.png"],
+                      "image_urls": ["https://example.com/style.png"],
                       "quality": "high",
                       "size": "16:9",
                       "n": 2
@@ -55,7 +55,7 @@
                 "image-to-vector": {
                   "summary": "把一张图片转换成 SVG",
                   "value": {
-                    "model": "ideogram-vector-1.0",
+                    "model": "ideogram-vector-1.0/image-to-vector",
                     "input": {
                       "image_urls": ["https://example.com/source.png"],
                       "mode": "simple"
@@ -118,8 +118,8 @@
         "properties": {
           "model": {
             "type": "string",
-            "enum": ["ideogram-vector-1.0"],
-            "description": "公开模型标识。"
+            "enum": ["ideogram-vector-1.0/text-to-vector", "ideogram-vector-1.0/image-to-vector"],
+            "description": "公开模型标识。文生矢量使用 text-to-vector，单图转矢量使用 image-to-vector。"
           },
           "callback_url": {
             "type": "string",
@@ -129,26 +129,19 @@
           "input": {
             "type": "object",
             "additionalProperties": false,
-            "description": "文生矢量必填 prompt。图片转矢量必填一个图片 URL。参考图放在 reference_image_urls，不会因此切换成图片转矢量。",
+            "description": "文生矢量必填 prompt。图片转矢量必填恰好一个图片 URL。文生矢量里的 image_urls 是可选参考图。",
             "properties": {
               "prompt": {
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 9500,
-                "description": "文生矢量必填。用 1-9500 个字符描述 SVG，且须包含非空白文本。设置了 image_urls 时不要传这个字段。"
+                "description": "ideogram-vector-1.0/text-to-vector 必填。用 1-9500 个字符描述 SVG，且须包含非空白文本。图片转矢量不接受这个字段。"
               },
               "image_urls": {
                 "type": "array",
-                "maxItems": 1,
-                "items": {"type": "string", "format": "uri"},
-                "description": "仅用于图片转矢量。提供恰好一个可公开访问的 HTTP(S) 图片 URL。支持 JPEG、PNG 或 WebP，最大 50 MB。数组非空时转换该图片，并拒绝提示词、参考图、质量、数量和尺寸。"
-              },
-              "reference_image_urls": {
-                "type": "array",
-                "minItems": 1,
                 "maxItems": 5,
                 "items": {"type": "string", "format": "uri"},
-                "description": "仅用于文生矢量。提供 1-5 个可公开访问的 HTTP(S) 参考图。第一个 URL 是主参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。这个字段不会切换成图片转矢量。"
+                "description": "文生矢量可提供 1-5 个可公开访问的 HTTP(S) 参考图，第一个 URL 是主参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。图片转矢量必须提供恰好一个可公开访问的 HTTP(S) 图片 URL，最大 50 MB。"
               },
               "quality": {
                 "type": "string",
