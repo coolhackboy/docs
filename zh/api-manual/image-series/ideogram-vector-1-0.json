@@ -1,0 +1,237 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Ideogram Vector 1.0 API",
+    "description": "根据提示词生成 SVG 矢量图，最多可带五张参考图，或把一张图片转换成 SVG。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Ideogram Vector 1.0 任务",
+        "operationId": "submitIdeogramVector10Task",
+        "tags": ["Ideogram Vector 1.0"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-vector": {
+                  "summary": "根据提示词生成 SVG",
+                  "value": {
+                    "model": "ideogram-vector-1.0",
+                    "input": {
+                      "prompt": "A playful cat logo with bold outlines and flat colors"
+                    }
+                  }
+                },
+                "text-with-references": {
+                  "summary": "带参考图生成 SVG",
+                  "value": {
+                    "model": "ideogram-vector-1.0",
+                    "input": {
+                      "prompt": "A flat mountain travel poster",
+                      "reference_image_urls": ["https://example.com/style.png"],
+                      "quality": "high",
+                      "size": "16:9",
+                      "n": 2
+                    }
+                  }
+                },
+                "image-to-vector": {
+                  "summary": "把一张图片转换成 SVG",
+                  "value": {
+                    "model": "ideogram-vector-1.0",
+                    "input": {
+                      "image_urls": ["https://example.com/source.png"],
+                      "mode": "simple"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": ["model", "input"],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": ["ideogram-vector-1.0"],
+            "description": "公开模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "任务完成或失败时接收通知的 Webhook URL。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "文生矢量必填 prompt。图片转矢量必填一个图片 URL。参考图放在 reference_image_urls，不会因此切换成图片转矢量。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 9500,
+                "description": "文生矢量必填。用 1-9500 个字符描述 SVG，且须包含非空白文本。设置了 image_urls 时不要传这个字段。"
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 1,
+                "items": {"type": "string", "format": "uri"},
+                "description": "仅用于图片转矢量。提供恰好一个可公开访问的 HTTP(S) 图片 URL。支持 JPEG、PNG 或 WebP，最大 50 MB。数组非空时转换该图片，并拒绝提示词、参考图、质量、数量和尺寸。"
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {"type": "string", "format": "uri"},
+                "description": "仅用于文生矢量。提供 1-5 个可公开访问的 HTTP(S) 参考图。第一个 URL 是主参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。这个字段不会切换成图片转矢量。"
+              },
+              "quality": {
+                "type": "string",
+                "enum": ["low", "medium", "high"],
+                "default": "medium",
+                "description": "文生矢量质量。默认为 medium。图片转矢量不可传。"
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8,
+                "default": 1,
+                "description": "文生矢量输出数量，1 到 8。默认为 1。图片转矢量不可传。"
+              },
+              "size": {
+                "type": "string",
+                "enum": ["auto", "1:1", "1:4", "1:3", "1:2", "9:16", "10:16", "2:3", "3:4", "4:5", "5:4", "4:3", "3:2", "16:10", "16:9", "2:1", "3:1", "4:1"],
+                "default": "auto",
+                "description": "文生矢量宽高比。默认为 auto。图片转矢量不可传。"
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["default", "simple"],
+                "default": "default",
+                "description": "仅用于图片转矢量。default 保留更多细节。simple 使用更少图形。默认为 default。文生矢量不可传。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": ["code", "data"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": ["task_id", "status", "created_time"],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792468800-example"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-03T06:00:00"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

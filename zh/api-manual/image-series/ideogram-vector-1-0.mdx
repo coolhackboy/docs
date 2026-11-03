@@ -1,0 +1,68 @@
+---
+title: "Ideogram Vector 1.0"
+description: "根据提示词生成 SVG 矢量图，最多可带五张参考图，或把一张图片转换成 SVG。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/ideogram-vector-1-0.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Ideogram Vector 1.0 可以根据提示词生成可编辑的 SVG，或把一张已有图片转换成 SVG。文生矢量最多可以使用五张参考图。
+
+## 模型
+
+- **ideogram-vector-1.0** — 文生矢量，以及单图转矢量
+
+## 功能
+
+- 根据提示词生成 1–8 张 SVG，可控制质量和宽高比。
+- 文生矢量可带 1–5 张参考图。第一张是主参考图。
+- 把恰好一张 JPEG、PNG 或 WebP 图片转换成 SVG，可选保留细节或使用更少图形。
+
+## 输入模式
+
+| 模式 | 何时使用 | 输入 |
+| --- | --- | --- |
+| 文生矢量 | 省略 `image_urls`，或传入 `[]` | 必填 `prompt`。可选 `reference_image_urls`、`quality`、`n` 和 `size`。 |
+| 图片转矢量 | `image_urls` 包含一张图片 | 转换该图片。可选 `mode`。不要传提示词或参考图。 |
+
+参考图不会切换到图片转矢量。参考图放在 `reference_image_urls`，并保持 `image_urls` 为空。
+
+## 必填参数
+
+- `prompt` (string)：文生矢量必填。使用 1–9500 个字符，且须包含非空白文本。设置了 `image_urls` 时不可传。
+- `image_urls` (array of strings)：图片转矢量必填。恰好一个可公开访问的 HTTP(S) 图片 URL。支持 JPEG、PNG 或 WebP，最大 50 MB。
+
+## 可选参数
+
+- `reference_image_urls` (array of strings)：仅文生矢量。1–5 个可公开访问的 HTTP(S) 参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。第一个 URL 是主参考图。
+- `quality` (string)：仅文生矢量。`low`、`medium` 或 `high`。默认为 `medium`。
+- `n` (integer)：仅文生矢量。SVG 数量，1 到 8。默认为 1。
+- `size` (string)：仅文生矢量。宽高比。默认为 `auto`。
+- `mode` (string)：仅图片转矢量。`default` 保留更多细节。`simple` 使用更少图形。默认为 `default`。
+
+图片字段也接受图片 data URI。
+
+## 尺寸
+
+文生矢量接受 `auto`、`1:1`、`1:4`、`1:3`、`1:2`、`9:16`、`10:16`、`2:3`、`3:4`、`4:5`、`5:4`、`4:3`、`3:2`、`16:10`、`16:9`、`2:1`、`3:1` 和 `4:1`。默认为 `auto`。
+
+图片转矢量不接受 `size`。
+
+## 输出
+
+完成的任务返回 SVG 文件。每个文件的 `file_type` 为 `image`。
+
+## 示例
+
+OpenAPI 示例包含文生矢量、带参考图的文生矢量，以及单图转矢量。
+
+## 注意事项
+
+- `image_urls` 非空时转换这一张图片，并拒绝 `prompt`、`reference_image_urls`、`quality`、`n` 和 `size`。
+- `reference_image_urls` 只用于文生矢量，不会把请求切换成图片转矢量。
+- `mode` 只用于图片转矢量。
+- 生成参数放在 `input` 内。`callback_url` 属于请求顶层。

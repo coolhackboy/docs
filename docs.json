@@ -46,6 +46,7 @@
       "/api-manual/moderation-series/omni-moderation.json",
       "/integrations/capability-catalog.json",
       "/api-manual/image-series/ideogram-v4-5.json",
+      "/api-manual/image-series/ideogram-vector-1-0.json",
       "/api-manual/music-series/elevenlabs-v4-tts.json",
       "/api-manual/music-series/elevenlabs-v4-turbo-tts.json",
       "/api-manual/music-series/gemini-3-8-flash-lite-tts.json",
@@ -192,6 +193,7 @@
       "/zh/api-manual/moderation-series/omni-moderation.json",
       "/zh/integrations/capability-catalog.json",
       "/zh/api-manual/image-series/ideogram-v4-5.json",
+      "/zh/api-manual/image-series/ideogram-vector-1-0.json",
       "/zh/api-manual/music-series/elevenlabs-v4-tts.json",
       "/zh/api-manual/music-series/elevenlabs-v4-turbo-tts.json",
       "/zh/api-manual/music-series/gemini-3-8-flash-lite-tts.json",
@@ -490,7 +492,8 @@
                   {
                     "group": "Ideogram",
                     "pages": [
-                      "api-manual/image-series/ideogram-v4-5"
+                      "api-manual/image-series/ideogram-v4-5",
+                      "api-manual/image-series/ideogram-vector-1-0"
                     ]
                   }
                 ]
@@ -965,7 +968,8 @@
                   {
                     "group": "Ideogram",
                     "pages": [
-                      "zh/api-manual/image-series/ideogram-v4-5"
+                      "zh/api-manual/image-series/ideogram-v4-5",
+                      "zh/api-manual/image-series/ideogram-vector-1-0"
                     ]
                   }
                 ]
