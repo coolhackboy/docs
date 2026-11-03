@@ -26,11 +26,11 @@ Ideogram Vector 1.0 可以根据提示词生成可编辑的 SVG，或把一张�
 ## 必填参数
 
 - `prompt` (string)：`ideogram-vector-1.0/text-to-vector` 必填。使用 1–9500 个字符，且须包含非空白文本。
-- `image_urls` (array of strings)：`ideogram-vector-1.0/image-to-vector` 必填。恰好一个可公开访问的 HTTP(S) 图片 URL。支持 JPEG、PNG 或 WebP，最大 50 MB。
+- `image_urls` (array of strings)：`ideogram-vector-1.0/image-to-vector` 必填。恰好一个可公开访问的 HTTP(S) 图片 URL，用于转换成 SVG。支持 JPEG、PNG 或 WebP，最大 50 MB。
 
 ## 可选参数
 
-- `image_urls` (array of strings)：文生矢量可选。1–5 个可公开访问的 HTTP(S) 参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。第一个 URL 是主参考图。
+- `image_urls` (array of strings)：`ideogram-vector-1.0/text-to-vector` 可选。1–5 个可公开访问的 HTTP(S) 参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。第一个 URL 是主参考图。没有参考图时不要传这个字段。
 - `quality` (string)：仅文生矢量。`low`、`medium` 或 `high`。默认为 `medium`。
 - `n` (integer)：仅文生矢量。SVG 数量，1 到 8。默认为 1。
 - `size` (string)：仅文生矢量。宽高比。默认为 `auto`。

@@ -138,10 +138,25 @@
                 "description": "ideogram-vector-1.0/text-to-vector 必填。用 1-9500 个字符描述 SVG，且须包含非空白文本。图片转矢量不接受这个字段。"
               },
               "image_urls": {
-                "type": "array",
-                "maxItems": 5,
-                "items": {"type": "string", "format": "uri"},
-                "description": "文生矢量可提供 1-5 个可公开访问的 HTTP(S) 参考图，第一个 URL 是主参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。图片转矢量必须提供恰好一个可公开访问的 HTTP(S) 图片 URL，最大 50 MB。"
+                "description": "ideogram-vector-1.0/text-to-vector：可选。提供 1-5 个可公开访问的 HTTP(S) 参考图，第一个 URL 是主参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。没有参考图时不要传这个字段。\n\nideogram-vector-1.0/image-to-vector：必填。提供恰好一个可公开访问的 HTTP(S) 图片 URL，用于转换成 SVG。支持 JPEG、PNG 或 WebP，最大 50 MB。",
+                "oneOf": [
+                  {
+                    "title": "ideogram-vector-1.0/text-to-vector",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "items": {"type": "string", "format": "uri"},
+                    "description": "ideogram-vector-1.0/text-to-vector 可选。提供 1-5 个可公开访问的 HTTP(S) 参考图，第一个 URL 是主参考图。支持 JPEG、PNG 或 WebP，每张最大 10 MB。没有参考图时不要传这个字段。"
+                  },
+                  {
+                    "title": "ideogram-vector-1.0/image-to-vector",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {"type": "string", "format": "uri"},
+                    "description": "ideogram-vector-1.0/image-to-vector 必填。提供恰好一个可公开访问的 HTTP(S) 图片 URL，用于转换成 SVG。支持 JPEG、PNG 或 WebP，最大 50 MB。"
+                  }
+                ]
               },
               "quality": {
                 "type": "string",

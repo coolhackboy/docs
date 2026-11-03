@@ -26,11 +26,11 @@ Ideogram Vector 1.0 creates editable SVG graphics from a text prompt, or convert
 ## Required parameters
 
 - `prompt` (string): Required for `ideogram-vector-1.0/text-to-vector`. Use 1–9500 characters containing non-whitespace text.
-- `image_urls` (array of strings): Required for `ideogram-vector-1.0/image-to-vector`. Exactly one publicly accessible HTTP(S) image URL. JPEG, PNG, or WebP, up to 50 MB.
+- `image_urls` (array of strings): Required for `ideogram-vector-1.0/image-to-vector`. Exactly one publicly accessible HTTP(S) image URL to convert. JPEG, PNG, or WebP, up to 50 MB.
 
 ## Optional parameters
 
-- `image_urls` (array of strings): Optional for text to vector. 1–5 publicly accessible HTTP(S) reference images. JPEG, PNG, or WebP, up to 10 MB each. The first URL is the primary reference.
+- `image_urls` (array of strings): Optional for `ideogram-vector-1.0/text-to-vector`. 1–5 publicly accessible HTTP(S) reference images. JPEG, PNG, or WebP, up to 10 MB each. The first URL is the primary reference. Omit this field when there is no reference image.
 - `quality` (string): Text to vector only. `low`, `medium`, or `high`. Defaults to `medium`.
 - `n` (integer): Text to vector only. Number of SVGs, from 1 through 8. Defaults to 1.
 - `size` (string): Text to vector only. Aspect ratio. Defaults to `auto`.

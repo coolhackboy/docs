@@ -138,10 +138,25 @@
                 "description": "Required for ideogram-vector-1.0/text-to-vector. Describe the SVG in 1-9500 characters containing non-whitespace text. Not accepted for image to vector."
               },
               "image_urls": {
-                "type": "array",
-                "maxItems": 5,
-                "items": {"type": "string", "format": "uri"},
-                "description": "For text to vector, supply 1-5 publicly accessible HTTP(S) reference images. The first URL is the primary reference. JPEG, PNG, or WebP, up to 10 MB each. For image to vector, supply exactly one publicly accessible HTTP(S) image URL, up to 50 MB."
+                "description": "ideogram-vector-1.0/text-to-vector: optional. Supply 1-5 publicly accessible HTTP(S) reference images. The first URL is the primary reference. JPEG, PNG, or WebP, up to 10 MB each. Omit this field when there is no reference image.\n\nideogram-vector-1.0/image-to-vector: required. Supply exactly one publicly accessible HTTP(S) image URL to convert. JPEG, PNG, or WebP, up to 50 MB.",
+                "oneOf": [
+                  {
+                    "title": "ideogram-vector-1.0/text-to-vector",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "items": {"type": "string", "format": "uri"},
+                    "description": "Optional for ideogram-vector-1.0/text-to-vector. Supply 1-5 publicly accessible HTTP(S) reference images. The first URL is the primary reference. JPEG, PNG, or WebP, up to 10 MB each. Omit this field when there is no reference image."
+                  },
+                  {
+                    "title": "ideogram-vector-1.0/image-to-vector",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {"type": "string", "format": "uri"},
+                    "description": "Required for ideogram-vector-1.0/image-to-vector. Supply exactly one publicly accessible HTTP(S) image URL to convert. JPEG, PNG, or WebP, up to 50 MB."
+                  }
+                ]
               },
               "quality": {
                 "type": "string",
