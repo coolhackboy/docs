@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "GPT Image 2.6 Fixed",
-    "description": "GPT Image 2.6 Flare or Sunburst with per-image pricing by resolution.",
+    "description": "GPT Image 2.6 Flare or Sunburst with per-image pricing.",
     "version": "1.0.0"
   },
   "servers": [
@@ -29,13 +29,12 @@
               },
               "examples": {
                 "text": {
-                  "summary": "Text to image with Flare at 2K",
+                  "summary": "Text to image with Flare",
                   "value": {
                     "model": "gpt-image-2.6-fixed",
                     "input": {
                       "prompt": "A paper-cut illustration of a city at sunrise",
                       "version": "flare",
-                      "resolution": "2K",
                       "size": "16:9"
                     }
                   }
@@ -143,16 +142,6 @@
                 ],
                 "default": "flare",
                 "description": "Model variant."
-              },
-              "resolution": {
-                "type": "string",
-                "enum": [
-                  "1K",
-                  "2K",
-                  "4K"
-                ],
-                "default": "1K",
-                "description": "Output resolution tier."
               },
               "size": {
                 "type": "string",

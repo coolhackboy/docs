@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "GPT Image 2.6 Fixed",
-    "description": "GPT Image 2.6 Flare 或 Sunburst，按分辨率逐张计费。",
+    "description": "GPT Image 2.6 Flare 或 Sunburst，逐张计费。",
     "version": "1.0.0"
   },
   "servers": [
@@ -29,13 +29,12 @@
               },
               "examples": {
                 "text": {
-                  "summary": "使用 Flare 以 2K 文生图",
+                  "summary": "使用 Flare 文生图",
                   "value": {
                     "model": "gpt-image-2.6-fixed",
                     "input": {
                       "prompt": "A paper-cut illustration of a city at sunrise",
                       "version": "flare",
-                      "resolution": "2K",
                       "size": "16:9"
                     }
                   }
@@ -143,16 +142,6 @@
                 ],
                 "default": "flare",
                 "description": "模型变体。"
-              },
-              "resolution": {
-                "type": "string",
-                "enum": [
-                  "1K",
-                  "2K",
-                  "4K"
-                ],
-                "default": "1K",
-                "description": "输出分辨率档位。"
               },
               "size": {
                 "type": "string",

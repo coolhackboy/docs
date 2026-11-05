@@ -1,6 +1,6 @@
 ---
 title: "GPT Image 2.6 Fixed"
-description: "使用 GPT Image 2.6 Flare 或 Sunburst 生成或编辑图像，按分辨率以固定的单张价格计费。"
+description: "使用 GPT Image 2.6 Flare 或 Sunburst 生成或编辑图像，以固定的单张价格计费。"
 icon: "image"
 openapi: "/zh/api-manual/image-series/gpt-image-2-6-fixed.json POST /api/generate/submit"
 ---
@@ -10,7 +10,7 @@ openapi: "/zh/api-manual/image-series/gpt-image-2-6-fixed.json POST /api/generat
 2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
 </Tip>
 
-GPT Image 2.6 Fixed 运行 GPT Image 2.6 Flare 或 Sunburst，按 `resolution` 以单张图像计价，而不是按 token 计价。通过 `version` 选择版本：Flare 侧重速度，Sunburst 侧重更细致的画面以及更精确、一致的编辑。添加参考图可编辑或引导输出。
+GPT Image 2.6 Fixed 运行 GPT Image 2.6 Flare 或 Sunburst，按单张图像计价，而不是按 token 计价。通过 `version` 选择版本：Flare 侧重速度，Sunburst 侧重更细致的画面以及更精确、一致的编辑。添加参考图可编辑或引导输出。
 
 ## 模型
 
@@ -23,7 +23,9 @@ GPT Image 2.6 Fixed 运行 GPT Image 2.6 Flare 或 Sunburst，按 `resolution` �
 ## 可选参数
 
 - `version` (string)：`flare` 或 `sunburst`。默认为 `flare`。
+{/* GPT Image 2.6 Fixed 暂时隐藏 resolution，恢复时取消注释：
 - `resolution` (string)：`1K`、`2K` 或 `4K`。默认为 `1K`。
+*/}
 - `size` (string)：`auto`、`1:1`、`16:9`、`9:16`、`4:3`、`3:4`、`3:2`、`2:3`、`5:4`、`4:5` 或 `21:9`。默认为 `1:1`。
 - `image_urls` (array of strings)：最多 16 个参考图 URL。
 
@@ -33,7 +35,7 @@ GPT Image 2.6 Fixed 运行 GPT Image 2.6 Flare 或 Sunburst，按 `resolution` �
 
 ## 示例
 
-- **使用 Flare 以 2K 进行文生图** — 设置 `prompt`、`version`、`resolution`、`size`。
+- **使用 Flare 进行文生图** — 设置 `prompt`、`version`、`size`。
 - **使用 Sunburst 基于参考图编辑** — 设置 `prompt`、`version`、`image_urls`。
 
 ## 注意事项

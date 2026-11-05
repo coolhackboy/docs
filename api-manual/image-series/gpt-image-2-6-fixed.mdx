@@ -1,6 +1,6 @@
 ---
 title: "GPT Image 2.6 Fixed"
-description: "Generate or edit images with GPT Image 2.6 Flare or Sunburst at a fixed per-image price by resolution."
+description: "Generate or edit images with GPT Image 2.6 Flare or Sunburst at a fixed per-image price."
 icon: "image"
 openapi: "/api-manual/image-series/gpt-image-2-6-fixed.json POST /api/generate/submit"
 ---
@@ -10,7 +10,7 @@ openapi: "/api-manual/image-series/gpt-image-2-6-fixed.json POST /api/generate/s
 2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
 </Tip>
 
-GPT Image 2.6 Fixed runs GPT Image 2.6 Flare or Sunburst with per-image pricing based on `resolution`, instead of token-based pricing. Choose the variant with `version`: Flare is tuned for speed, and Sunburst for more detailed visuals and more precise, consistent edits. Add reference images to edit or guide the output.
+GPT Image 2.6 Fixed runs GPT Image 2.6 Flare or Sunburst with per-image pricing instead of token-based pricing. Choose the variant with `version`: Flare is tuned for speed, and Sunburst for more detailed visuals and more precise, consistent edits. Add reference images to edit or guide the output.
 
 ## Models
 
@@ -23,7 +23,9 @@ GPT Image 2.6 Fixed runs GPT Image 2.6 Flare or Sunburst with per-image pricing 
 ## Optional parameters
 
 - `version` (string): `flare` or `sunburst`. Default is `flare`.
+{/* resolution is temporarily hidden for GPT Image 2.6 Fixed; restore this line when it is re-enabled:
 - `resolution` (string): `1K`, `2K`, or `4K`. Default is `1K`.
+*/}
 - `size` (string): `auto`, `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`, `5:4`, `4:5`, or `21:9`. Default is `1:1`.
 - `image_urls` (array of strings): Up to 16 reference image URLs.
 
@@ -33,7 +35,7 @@ A finished task returns the generated image in `files` with `file_type: image`.
 
 ## Examples
 
-- **Text to image with Flare at 2K** — sets `prompt`, `version`, `resolution`, `size`.
+- **Text to image with Flare** — sets `prompt`, `version`, `size`.
 - **Edit with a reference image using Sunburst** — sets `prompt`, `version`, `image_urls`.
 
 ## Notes
