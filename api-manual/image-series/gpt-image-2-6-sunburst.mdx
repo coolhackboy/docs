@@ -1,0 +1,63 @@
+---
+title: "GPT Image 2.6 Sunburst"
+description: "Generate one image from a prompt, or edit up to 16 reference images, when detail and edit precision matter."
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-2-6-sunburst.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+GPT Image 2.6 Sunburst is the detail-focused GPT Image 2.6 option. Use it for dense layouts, small text, and edits that need to change only what the prompt asks for.
+
+## Models
+
+- **gpt-image-2.6-sunburst** — Text-to-image and reference-image editing
+
+## Features
+
+- Generate one image from a prompt, or edit up to 16 reference images in the same model.
+- Mask a region, or request a transparent background.
+- Choose 1K, 2K, or 4K output, including an exact custom pixel size.
+
+## Input modes
+
+- Omit `image_urls`, or pass an empty array, for text-to-image.
+- Pass a non-empty `image_urls` array to edit those reference images. `mask_url` is only available in this mode.
+
+## Required parameters
+
+- `prompt` (string): Image description or edit instruction, 1–32000 characters, and not blank.
+
+## Optional parameters
+
+- `image_urls` (array of strings): Up to 16 publicly accessible HTTP or HTTPS reference image URLs. The value must be an array, even for one image.
+- `quality` (string): `low`, `medium`, `high`, `xhigh`, or `max`. Default is `high`.
+- `resolution` (string): `1K`, `2K`, or `4K`. Default is `1K`.
+- `size` (string): Aspect ratio, `auto`, or custom `WIDTHxHEIGHT`. Default is `1:1`. See Size.
+- `background` (string): `auto`, `transparent`, or `opaque`. Default is `auto`.
+- `output_format` (string): `png`, `jpeg`, or `webp`. Default is `png`.
+- `mask_url` (string): Publicly accessible HTTP or HTTPS mask image. White marks the area to edit and black marks the area to keep. Requires non-empty `image_urls`.
+
+## Size
+
+- Preset ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`. An omitted size uses a square at the selected resolution.
+- `size=auto` is available only at `1K`. At `2K` or `4K`, select a ratio or a custom size.
+- Preset ratios do not guarantee exact pixels. Inspect the returned image, or send `WIDTHxHEIGHT` when the pixel size must be exact.
+- Custom `WIDTHxHEIGHT` requires `2K` or `4K`. Both edges must be divisible by 16, the longest edge must be at most 3840, the aspect ratio must be at most 3:1, and total pixels must be from 655360 to 8294400. An edge of 3840 requires `4K`.
+
+## Examples
+
+- **Text to image** — set `prompt`, `size`, `resolution`, and `quality`. Leave `image_urls` unset.
+- **Edit** — set `prompt` and a non-empty `image_urls` array.
+- **Mask edit** — add `mask_url` together with `image_urls`.
+- **Transparent cutout** — set `background` to `transparent` and `output_format` to `png` or `webp`.
+
+## Notes
+
+- Each task returns one image. `n` and `num_images` are not supported.
+- A transparent background cannot use `jpeg`.
+- `mask_url` without reference images is rejected.
+- For the faster option with the same inputs, use [GPT Image 2.6 Fixed](/api-manual/image-series/gpt-image-2-6-fixed).

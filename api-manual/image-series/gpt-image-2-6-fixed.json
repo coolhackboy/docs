@@ -1,0 +1,344 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - GPT Image 2.6 Fixed API",
+    "description": "Generate one image from a prompt, or edit up to 16 reference images, with the faster GPT Image 2.6 option.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit GPT Image 2.6 Fixed Task",
+        "description": "Generate one image from a prompt, or edit up to 16 reference images, with the faster GPT Image 2.6 option.",
+        "operationId": "submitGPTImage26FixedTask",
+        "tags": [
+          "GPT Image 2.6 Fixed"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text To Image",
+                  "value": {
+                    "model": "gpt-image-2.6-fixed",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+                      "size": "16:9",
+                      "resolution": "2K",
+                      "quality": "medium"
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "Image Edit",
+                  "value": {
+                    "model": "gpt-image-2.6-fixed",
+                    "input": {
+                      "prompt": "Keep the product and replace the background with a warm modern studio",
+                      "image_urls": [
+                        "https://example.com/product.png"
+                      ],
+                      "size": "1:1",
+                      "quality": "high"
+                    }
+                  }
+                },
+                "mask-edit": {
+                  "summary": "Mask Edit",
+                  "value": {
+                    "model": "gpt-image-2.6-fixed",
+                    "input": {
+                      "prompt": "Replace only the masked area with a small vase of flowers",
+                      "image_urls": [
+                        "https://example.com/room.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "size": "auto"
+                    }
+                  }
+                },
+                "transparent-background": {
+                  "summary": "Transparent Background",
+                  "value": {
+                    "model": "gpt-image-2.6-fixed",
+                    "input": {
+                      "prompt": "A clean cutout of a small silver robot",
+                      "background": "transparent",
+                      "output_format": "webp",
+                      "size": "1:1",
+                      "resolution": "4K",
+                      "quality": "xhigh"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "gpt-image-2.6-fixed"
+            ],
+            "description": "GPT Image 2.6 Fixed model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "Generate one image, or edit reference images when image_urls is non-empty.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32000,
+                "description": "Image description or edit instruction, from 1 to 32000 characters, and not blank."
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional reference images. A non-empty array selects editing; omit it or pass an empty array for text-to-image. At most 16 publicly accessible HTTP or HTTPS URLs. Use an array even for one image."
+              },
+              "size": {
+                "type": "string",
+                "default": "1:1",
+                "example": "1:1",
+                "description": "Aspect ratio, auto, or custom WIDTHxHEIGHT. Supported values: auto, 1:1, 2:3, 3:2, 4:3, 3:4, 4:5, 5:4, 16:9, 9:16, 21:9, or WIDTHxHEIGHT. Defaults to 1:1. auto is available only at 1K. Custom sizes require resolution 2K or 4K, dimensions divisible by 16, max edge 3840, aspect ratio at most 3:1, and total pixels 655360-8294400. A custom 3840-pixel edge requires 4K. Preset ratios may not match exact pixels; inspect the returned image."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "1K",
+                "description": "Output resolution tier. Defaults to 1K."
+              },
+              "quality": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max"
+                ],
+                "default": "high",
+                "description": "Output quality. Defaults to high."
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "transparent",
+                  "opaque"
+                ],
+                "default": "auto",
+                "description": "Background mode. Defaults to auto. transparent requires png or webp."
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg",
+                  "webp"
+                ],
+                "default": "png",
+                "description": "Output image format. Defaults to png."
+              },
+              "mask_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional mask image. Must be a publicly accessible HTTP or HTTPS URL. White marks the area to edit and black marks the area to keep. Requires non-empty image_urls."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792468800-abcd1234",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "not_started",
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-05T02:00:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

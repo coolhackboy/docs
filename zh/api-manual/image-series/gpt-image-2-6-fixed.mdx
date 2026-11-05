@@ -1,0 +1,63 @@
+---
+title: "GPT Image 2.6 Fixed"
+description: "使用速度更快的 GPT Image 2.6 选项，根据提示词生成一张图像，或编辑最多 16 张参考图。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/gpt-image-2-6-fixed.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+GPT Image 2.6 Fixed 是速度更快的 GPT Image 2.6 选项。适合产品图、版式较复杂的提示词、透明抠图，以及需要保持主体可识别的编辑。
+
+## 模型
+
+- **gpt-image-2.6-fixed** — 文生图与参考图编辑
+
+## 功能
+
+- 根据提示词生成一张图像，或在同一模型中编辑最多 16 张参考图。
+- 可以指定蒙版区域，或请求透明背景。
+- 支持 1K、2K、4K 输出，也可以指定精确像素尺寸。
+
+## 输入模式
+
+- 省略 `image_urls` 或传入空数组时为文生图。
+- 传入非空 `image_urls` 数组时编辑这些参考图。`mask_url` 只在此模式下可用。
+
+## 必填参数
+
+- `prompt` (string)：图像描述或编辑指令，1–32000 个字符，且不能为空白。
+
+## 可选参数
+
+- `image_urls` (array of strings)：最多 16 个可公开访问的 HTTP 或 HTTPS 参考图 URL。即使只有一张图，也必须使用数组。
+- `quality` (string)：`low`、`medium`、`high`、`xhigh` 或 `max`。默认 `high`。
+- `resolution` (string)：`1K`、`2K` 或 `4K`。默认 `1K`。
+- `size` (string)：宽高比、`auto` 或自定义 `WIDTHxHEIGHT`。默认 `1:1`。见尺寸。
+- `background` (string)：`auto`、`transparent` 或 `opaque`。默认 `auto`。
+- `output_format` (string)：`png`、`jpeg` 或 `webp`。默认 `png`。
+- `mask_url` (string)：可公开访问的 HTTP 或 HTTPS 蒙版图。白色表示要编辑的区域，黑色表示保留的区域。需要非空的 `image_urls`。
+
+## 尺寸
+
+- 预设比例：`1:1`、`2:3`、`3:2`、`4:3`、`3:4`、`4:5`、`5:4`、`16:9`、`9:16`、`21:9`。省略 size 时，使用所选分辨率的正方形。
+- `size=auto` 仅适用于 `1K`。`2K` 或 `4K` 请选择比例或自定义尺寸。
+- 预设比例不保证精确像素。请查看返回图像，或在必须指定像素时传入 `WIDTHxHEIGHT`。
+- 自定义 `WIDTHxHEIGHT` 需要 `2K` 或 `4K`。两边都必须能被 16 整除，最长边不超过 3840，宽高比不超过 3:1，总像素为 655360 到 8294400。边长为 3840 时需要 `4K`。
+
+## 示例
+
+- **文生图** — 设置 `prompt`、`size`、`resolution` 和 `quality`。不要传 `image_urls`。
+- **编辑** — 设置 `prompt` 和非空的 `image_urls` 数组。
+- **蒙版编辑** — 在 `image_urls` 之外再传 `mask_url`。
+- **透明抠图** — 将 `background` 设为 `transparent`，并将 `output_format` 设为 `png` 或 `webp`。
+
+## 注意事项
+
+- 每个任务返回一张图像。不支持 `n` 和 `num_images`。
+- 透明背景不能使用 `jpeg`。
+- 没有参考图时不能传 `mask_url`。
+- 需要相同入参、更注重细节的选项时，使用 [GPT Image 2.6 Sunburst](/zh/api-manual/image-series/gpt-image-2-6-sunburst)。

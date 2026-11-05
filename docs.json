@@ -57,6 +57,8 @@
       "/api-manual/image-series/gpt-image-2.json",
       "/api-manual/image-series/gpt-image-2-5-flare.json",
       "/api-manual/image-series/gpt-image-2-5-sunburst.json",
+      "/api-manual/image-series/gpt-image-2-6-fixed.json",
+      "/api-manual/image-series/gpt-image-2-6-sunburst.json",
       "/api-manual/image-series/qwen-image-3.json",
       "/api-manual/image-series/qwen-image-2-1.json",
       "/api-manual/image-series/nano-banana.json",
@@ -204,6 +206,8 @@
       "/zh/api-manual/image-series/gpt-image-2.json",
       "/zh/api-manual/image-series/gpt-image-2-5-flare.json",
       "/zh/api-manual/image-series/gpt-image-2-5-sunburst.json",
+      "/zh/api-manual/image-series/gpt-image-2-6-fixed.json",
+      "/zh/api-manual/image-series/gpt-image-2-6-sunburst.json",
       "/zh/api-manual/image-series/qwen-image-3.json",
       "/zh/api-manual/image-series/qwen-image-2-1.json",
       "/zh/api-manual/image-series/nano-banana.json",
@@ -431,7 +435,9 @@
                       "api-manual/image-series/gpt-image-2",
                       "api-manual/image-series/gpt-image-2-5-flare",
                       "api-manual/image-series/gpt-image-2-5-sunburst",
-                      "api-manual/image-series/gpt-image-2-5-fixed"
+                      "api-manual/image-series/gpt-image-2-5-fixed",
+                      "api-manual/image-series/gpt-image-2-6-fixed",
+                      "api-manual/image-series/gpt-image-2-6-sunburst"
                     ]
                   },
                   {
@@ -907,7 +913,9 @@
                       "zh/api-manual/image-series/gpt-image-2",
                       "zh/api-manual/image-series/gpt-image-2-5-flare",
                       "zh/api-manual/image-series/gpt-image-2-5-sunburst",
-                      "zh/api-manual/image-series/gpt-image-2-5-fixed"
+                      "zh/api-manual/image-series/gpt-image-2-5-fixed",
+                      "zh/api-manual/image-series/gpt-image-2-6-fixed",
+                      "zh/api-manual/image-series/gpt-image-2-6-sunburst"
                     ]
                   },
                   {

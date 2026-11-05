@@ -197,6 +197,7 @@
               },
               "style": {
                 "type": "string",
+                "maxLength": 1000,
                 "description": "Music style specification defining genre, mood, or artistic direction.\n\nRequired when `default_param_flag` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 1000 characters",
                 "example": "Classical"
               },

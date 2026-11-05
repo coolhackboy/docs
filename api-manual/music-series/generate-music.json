@@ -137,6 +137,7 @@
             "properties": {
               "prompt": {
                 "type": "string",
+                "maxLength": 5000,
                 "description": "A description of the desired audio content.\n\n- In Custom Mode ( `custom_mode: true` ): Optional when `lyrics` is provided. Otherwise the prompt is used as lyrics when `instrumental` is `false`.\n  Character limits by model:\n  - **V4**: Maximum 3000 characters\n  - **V4_5 & V4_5PLUS**: Maximum 5000 characters\n  - **V4_5ALL**: Maximum 5000 characters\n  - **V5**: Maximum 5000 characters\n  - **V5_5, V6, V6_MINI, and V6_WILD**: Maximum 5000 characters\n\n- In Non-custom Mode ( `custom_mode: false` ): The prompt serves as the core idea. Maximum 3000 characters. A request may instead provide style, lyrics, or reference media.\n  Example: \"A short relaxing piano tune\"",
                 "example": "A calm and relaxing piano track with soft melodies"
               },
@@ -154,11 +155,13 @@
               },
               "style": {
                 "type": "string",
+                "maxLength": 1000,
                 "description": "Music style specification defining genre, mood, or artistic direction.\n\nIn custom mode, provide `style`, `lyrics`, or `negative_tags`. `style` itself is optional when one of the other two is present.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 1000 characters",
                 "example": "Classical"
               },
               "title": {
                 "type": "string",
+                "maxLength": 80,
                 "description": "Track title displayed in player and used for file naming.\n\nRequired when `custom_mode` is `true`.\n\nMaximum 80 characters.",
                 "example": "Peaceful Piano Meditation"
               },

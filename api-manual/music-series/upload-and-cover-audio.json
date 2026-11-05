@@ -149,16 +149,19 @@
               },
               "prompt": {
                 "type": "string",
+                "maxLength": 5000,
                 "description": "Description of the desired style transformation.\n\n- In Custom Mode ( `custom_mode: true` ): Required if `instrumental` is `false`. The prompt will be used as the lyrics content.\n\n- In Non-custom Mode ( `custom_mode: false` ): Always required. The prompt serves as the core idea for transformation. Maximum 500 characters.\n\nCharacter limits by model in Custom Mode:\n- **V4**: Maximum 3000 characters\n- **V4_5 & V4_5PLUS**: Maximum 5000 characters\n- **V4_5ALL**: Maximum 5000 characters\n- **V5**: Maximum 5000 characters\n- **V5_5**: Maximum 5000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 5000 characters",
                 "example": "Transform into an upbeat electronic dance version"
               },
               "style": {
                 "type": "string",
+                "maxLength": 1000,
                 "description": "Music style specification for the cover version.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 200 characters\n- **V4_5 & V4_5PLUS**: Maximum 1000 characters\n- **V4_5ALL**: Maximum 1000 characters\n- **V5**: Maximum 1000 characters\n- **V5_5**: Maximum 1000 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 1000 characters",
                 "example": "EDM, Electronic"
               },
               "title": {
                 "type": "string",
+                "maxLength": 100,
                 "description": "Title for the covered track.\n\nRequired when `custom_mode` is `true`.\n\nCharacter limits by model:\n- **V4**: Maximum 80 characters\n- **V4_5 & V4_5PLUS**: Maximum 100 characters\n- **V4_5ALL**: Maximum 80 characters\n- **V5**: Maximum 100 characters\n- **V5_5**: Maximum 100 characters\n- **V6, V6_MINI, and V6_WILD**: Maximum 100 characters",
                 "example": "Dance Remix"
               },

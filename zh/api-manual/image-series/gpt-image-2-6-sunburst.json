@@ -1,0 +1,344 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - GPT Image 2.6 Sunburst API",
+    "description": "在需要细节和编辑精度时，根据提示词生成一张图像，或编辑最多 16 张参考图。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交GPT Image 2.6 Sunburst任务",
+        "description": "在需要细节和编辑精度时，根据提示词生成一张图像，或编辑最多 16 张参考图。",
+        "operationId": "submitGPTImage26SunburstTask",
+        "tags": [
+          "GPT Image 2.6 Sunburst"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "文生图",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+                      "size": "16:9",
+                      "resolution": "2K",
+                      "quality": "medium"
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "图像编辑",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "Keep the product and replace the background with a warm modern studio",
+                      "image_urls": [
+                        "https://example.com/product.png"
+                      ],
+                      "size": "1:1",
+                      "quality": "high"
+                    }
+                  }
+                },
+                "mask-edit": {
+                  "summary": "蒙版编辑",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "Replace only the masked area with a small vase of flowers",
+                      "image_urls": [
+                        "https://example.com/room.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "size": "auto"
+                    }
+                  }
+                },
+                "transparent-background": {
+                  "summary": "透明背景",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "A clean cutout of a small silver robot",
+                      "background": "transparent",
+                      "output_format": "webp",
+                      "size": "1:1",
+                      "resolution": "4K",
+                      "quality": "xhigh"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权，API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer PoYo_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "gpt-image-2.6-sunburst"
+            ],
+            "description": "GPT Image 2.6 Sunburst 的模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选。任务完成或失败时接收 POST 的 Webhook URL。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "image_urls 非空时编辑参考图，否则根据提示词生成一张图像。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32000,
+                "description": "图像描述或编辑指令，1 到 32000 个字符，且不能为空白。"
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "可选参考图。非空数组进入编辑；省略或空数组为文生图。最多 16 个可公开访问的 HTTP 或 HTTPS URL，即使只有一张也必须使用数组。"
+              },
+              "size": {
+                "type": "string",
+                "default": "1:1",
+                "example": "1:1",
+                "description": "宽高比、auto 或自定义 WIDTHxHEIGHT。支持 auto、1:1、2:3、3:2、4:3、3:4、4:5、5:4、16:9、9:16、21:9 或 WIDTHxHEIGHT。默认 1:1。auto 仅适用于 1K。自定义尺寸需要 resolution 为 2K 或 4K，两边都能被 16 整除，最长边不超过 3840，宽高比不超过 3:1，总像素为 655360 到 8294400。边长为 3840 时需要 4K。预设比例不保证精确像素，请查看返回图像。"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "1K",
+                "description": "输出分辨率档位。默认 1K。"
+              },
+              "quality": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max"
+                ],
+                "default": "high",
+                "description": "输出质量。默认 high。"
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "transparent",
+                  "opaque"
+                ],
+                "default": "auto",
+                "description": "背景模式。默认 auto。transparent 需要 png 或 webp。"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg",
+                  "webp"
+                ],
+                "default": "png",
+                "description": "输出图像格式。默认 png。"
+              },
+              "mask_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "可选蒙版图，必须是可公开访问的 HTTP 或 HTTPS URL。白色表示要编辑的区域，黑色表示保留的区域。需要非空 image_urls。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1792468800-abcd1234",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-05T02:00:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "请求参数无效"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
