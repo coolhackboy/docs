@@ -30,11 +30,11 @@ Use `gpt-image-2.5-flare` to generate one image from a prompt or edit up to 16 r
 
 ## Size
 
-- `size` defaults to `1:1`. Supported ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
-- `resolution` supports `1K` (default), `2K`, and `4K`. An omitted size uses a square at the selected tier.
-- Explicit `size=auto` is available only with `1K`; the model determines the image size. Select a ratio or custom size for `2K` or `4K`.
+- `size` defaults to `1:1` for text-to-image. When editing without `size`, the output follows the first reference image's aspect ratio, using the closest supported ratio at the selected `resolution`. Supported ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
+- `resolution` supports `1K` (default), `2K`, and `4K`. An omitted size uses a square at the selected tier for text-to-image, or the first reference image's closest ratio when editing.
+- Explicit `size=auto` lets the model determine the image size (about 1.5 megapixels). It works with any `resolution` and is billed at the `1K` tier.
 - For aspect ratios, actual pixel dimensions may vary by model and generation. Inspect the returned image for exact dimensions; use a custom size when exact pixels are required.
-- Custom `WIDTHxHEIGHT` sizes require `2K` or `4K`. Both dimensions must be divisible by 16, the longest edge must not exceed 3840, the aspect ratio must not exceed 3:1, and total pixels must be between 655,360 and 8,294,400. A 3840-pixel edge requires `4K`.
+- Custom `WIDTHxHEIGHT` sizes work with any `resolution`. Both dimensions must be divisible by 16, the longest edge must not exceed 3840, the aspect ratio must not exceed 3:1, and total pixels must be between 655,360 and 8,294,400. The billing tier follows total pixels (up to 1,572,864 is `1K`, up to 4,194,304 is `2K`, larger is `4K`), or the selected `resolution` if it is higher.
 
 ## Examples
 

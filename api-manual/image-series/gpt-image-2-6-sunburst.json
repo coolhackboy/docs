@@ -1,0 +1,353 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - GPT Image 2.6 Sunburst API",
+    "description": "The GPT Image 2.6 Sunburst API generates one image from a prompt or edits up to 16 reference images. Use it for detailed visual work and precision-focused editing, with masks, transparent backgrounds, and 1K to 4K output.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit GPT Image 2.6 Sunburst Task",
+        "description": "GPT Image 2.6 Sunburst single-image generation and reference-image editing with background, format, and mask controls.",
+        "operationId": "submitGPTImage26SunburstTask",
+        "tags": [
+          "GPT Image 2.6 Sunburst"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text To Image",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+                      "size": "16:9",
+                      "resolution": "2K",
+                      "quality": "medium"
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "Image Edit",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "Keep the product and replace the background with a warm modern studio",
+                      "image_urls": [
+                        "https://example.com/product.png"
+                      ],
+                      "size": "1:1",
+                      "quality": "high"
+                    }
+                  }
+                },
+                "mask-edit": {
+                  "summary": "Mask Edit",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "Replace only the masked area with a small vase of flowers",
+                      "image_urls": [
+                        "https://example.com/room.png"
+                      ],
+                      "mask_url": "https://example.com/mask.png",
+                      "size": "auto"
+                    }
+                  }
+                },
+                "transparent-background": {
+                  "summary": "Transparent Background",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "A clean cutout of a small silver robot",
+                      "background": "transparent",
+                      "output_format": "webp",
+                      "size": "1:1",
+                      "resolution": "4K",
+                      "quality": "xhigh"
+                    }
+                  }
+                },
+                "compressed-jpeg": {
+                  "summary": "Compressed JPEG",
+                  "value": {
+                    "model": "gpt-image-2.6-sunburst",
+                    "input": {
+                      "prompt": "A sunlit street market with colorful fruit stands",
+                      "size": "3:2",
+                      "resolution": "2K",
+                      "output_format": "jpeg",
+                      "output_compression": 80
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "gpt-image-2.6-sunburst"
+            ],
+            "description": "GPT Image 2.6 Sunburst model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "Generate one image, or edit reference images when image_urls is non-empty.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32000,
+                "description": "Prompt describing the image or the requested edit. Must contain non-whitespace text."
+              },
+              "image_urls": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional reference image URLs. A non-empty array selects editing; an omitted or empty array selects text-to-image generation. Must be a publicly accessible HTTP or HTTPS URL."
+              },
+              "size": {
+                "type": "string",
+                "default": "1:1",
+                "description": "Aspect ratio or custom WIDTHxHEIGHT. Supported values: auto, 1:1, 2:3, 3:2, 4:3, 3:4, 4:5, 5:4, 16:9, 9:16, 21:9, or WIDTHxHEIGHT. Defaults to 1:1 for text-to-image; when editing without size, the output follows the first reference image's aspect ratio (closest supported ratio at the selected resolution). auto lets the model choose the size at any resolution and is billed at 1K. Custom sizes work at any resolution and need dimensions divisible by 16, max edge 3840, aspect ratio at most 3:1, and total pixels 655360–8294400; they are billed at the tier matching total pixels (up to 1572864 is 1K, up to 4194304 is 2K, larger is 4K), or the selected resolution if it is higher.",
+                "example": "1:1"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "1K",
+                "description": "Output resolution tier. For aspect ratios, actual pixel dimensions may vary by model and generation; inspect the returned image for exact dimensions. Custom WIDTHxHEIGHT specifies exact dimensions."
+              },
+              "quality": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max"
+                ],
+                "default": "high",
+                "description": "Output quality level."
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "transparent",
+                  "opaque"
+                ],
+                "default": "auto",
+                "description": "Background mode. transparent requires png or webp output."
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg",
+                  "webp"
+                ],
+                "default": "png",
+                "description": "Output image format."
+              },
+              "output_compression": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Compression level for the output image, from 0 to 100. Only allowed when output_format is jpeg or webp; any other format returns 400. When omitted, the upstream default applies."
+              },
+              "mask_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional mask image URL identifying the area to edit. Requires non-empty image_urls. Must be a publicly accessible HTTP or HTTPS URL."
+              },
+              "moderation": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "low"
+                ],
+                "default": "auto",
+                "description": "Content moderation strictness. low applies less restrictive filtering."
+              },
+              "complexity": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "default": "high",
+                "description": "Planning effort the model spends before generating. Does not change the price."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details.",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1786751400-abcd1234",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-09-09T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

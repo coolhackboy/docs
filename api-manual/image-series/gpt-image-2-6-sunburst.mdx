@@ -1,0 +1,119 @@
+---
+title: "GPT Image 2.6 Sunburst"
+description: "The GPT Image 2.6 Sunburst API generates one image from a prompt or edits up to 16 reference images. Use it for detailed visual work and precision-focused editing, with masks, transparent backgrounds, and 1K to 4K output."
+icon: "image"
+openapi: "/api-manual/image-series/gpt-image-2-6-sunburst.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Use `gpt-image-2.6-sunburst` to generate one image from a prompt or edit up to 16 reference images. A non-empty `image_urls` array selects editing automatically; omit it or pass an empty array for text-to-image generation.
+
+## Models
+
+- **gpt-image-2.6-sunburst** — GPT Image 2.6 Sunburst
+
+## Required parameters
+
+- `prompt` is required and supports up to 32,000 characters.
+
+## Optional parameters
+
+- `quality`: `low`, `medium`, `high` (default), `xhigh`, or `max`.
+- `background`: `auto` (default), `transparent`, or `opaque`.
+- `output_format`: `png` (default), `jpeg`, or `webp`. Transparent backgrounds require PNG or WebP.
+- `output_compression`: integer from `0` to `100`. Only allowed when `output_format` is `jpeg` or `webp`; any other format returns a 400 error.
+- `mask_url`: optional HTTP(S) mask image URL identifying the area to edit; requires non-empty `image_urls`.
+- `moderation`: `auto` (default) or `low`. Controls content moderation strictness; `low` is less restrictive.
+- `complexity`: `low`, `medium`, or `high` (default). Controls the model's planning effort and does not change the price.
+- Reference images must use HTTP(S) URLs. Each request produces one output image.
+
+## Size
+
+- `size` defaults to `1:1` for text-to-image. When editing without `size`, the output follows the first reference image's aspect ratio, using the closest supported ratio at the selected `resolution`. Supported ratios: `1:1`, `2:3`, `3:2`, `4:3`, `3:4`, `4:5`, `5:4`, `16:9`, `9:16`, `21:9`.
+- `resolution` supports `1K` (default), `2K`, and `4K`. An omitted size uses a square at the selected tier for text-to-image, or the first reference image's closest ratio when editing.
+- Explicit `size=auto` lets the model determine the image size (about 1.5 megapixels). It works with any `resolution` and is billed at the `1K` tier.
+- For aspect ratios, actual pixel dimensions may vary by model and generation. Inspect the returned image for exact dimensions; use a custom size when exact pixels are required.
+- Custom `WIDTHxHEIGHT` sizes work with any `resolution`. Both dimensions must be divisible by 16, the longest edge must not exceed 3840, the aspect ratio must not exceed 3:1, and total pixels must be between 655,360 and 8,294,400. The billing tier follows total pixels (up to 1,572,864 is `1K`, up to 4,194,304 is `2K`, larger is `4K`), or the selected `resolution` if it is higher.
+
+## Examples
+
+### Text To Image
+
+```json
+{
+  "model": "gpt-image-2.6-sunburst",
+  "input": {
+    "prompt": "A premium product photo of a silver espresso machine in a bright studio",
+    "size": "16:9",
+    "resolution": "2K",
+    "quality": "medium"
+  }
+}
+```
+
+### Image Edit
+
+```json
+{
+  "model": "gpt-image-2.6-sunburst",
+  "input": {
+    "prompt": "Keep the product and replace the background with a warm modern studio",
+    "image_urls": [
+      "https://example.com/product.png"
+    ],
+    "size": "1:1",
+    "quality": "high"
+  }
+}
+```
+
+### Mask Edit
+
+```json
+{
+  "model": "gpt-image-2.6-sunburst",
+  "input": {
+    "prompt": "Replace only the masked area with a small vase of flowers",
+    "image_urls": [
+      "https://example.com/room.png"
+    ],
+    "mask_url": "https://example.com/mask.png",
+    "size": "auto"
+  }
+}
+```
+
+### Transparent Background
+
+```json
+{
+  "model": "gpt-image-2.6-sunburst",
+  "input": {
+    "prompt": "A clean cutout of a small silver robot",
+    "background": "transparent",
+    "output_format": "webp",
+    "size": "1:1",
+    "resolution": "4K",
+    "quality": "xhigh"
+  }
+}
+```
+
+### Compressed JPEG
+
+```json
+{
+  "model": "gpt-image-2.6-sunburst",
+  "input": {
+    "prompt": "A sunlit street market with colorful fruit stands",
+    "size": "3:2",
+    "resolution": "2K",
+    "output_format": "jpeg",
+    "output_compression": 80
+  }
+}
+```
