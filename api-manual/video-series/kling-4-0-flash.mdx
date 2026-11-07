@@ -1,0 +1,72 @@
+---
+title: "Kling 4.0 Flash"
+description: "Generate fast 720p videos of 3–20 seconds from text, a start frame, or visual references, and edit an existing video."
+icon: "video"
+openapi: "/api-manual/video-series/kling-4-0-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Kling 4.0 Flash is the faster 720p tier of [Kling 4.0](/api-manual/video-series/kling-4-0). It creates videos from text, animates a starting frame, combines visual references, or edits an existing video. The supplied media selects the mode automatically.
+
+## Models
+
+- **kling-4.0-flash** — Text-to-video, image-to-video, reference-to-video, and video editing at `720p`
+
+## Features
+
+- **Fast 720p output**: Generate 3–20 second videos at `720p`.
+- **Starting frame**: Animate one starting image. Flash does not accept an ending frame.
+- **Visual references**: Guide appearance and movement with reference images, reference videos, and subjects defined by images or a video.
+- **Video editing**: Supply a source video and describe the changes. Editing also accepts reference images, reference videos, and subjects. Omit `duration` to retain the source video's duration.
+- **Aspect ratios**: Use `16:9`, `9:16`, `1:1`, `21:9`, or `auto` in text and reference modes.
+
+## Input modes
+
+| Mode | Selected when |
+| --- | --- |
+| Video editing | `video_url` is provided |
+| Reference-to-video | Reference images, reference videos, or `kling_elements` are non-empty |
+| Image-to-video | `image_urls` is non-empty without reference materials |
+| Text-to-video | No media is provided |
+
+In reference mode, `image_urls` may contain one optional starting frame. In image mode, `prompt` is optional; omit `aspect_ratio`. Editing does not accept `image_urls` or `aspect_ratio`.
+
+## Required parameters
+
+- `prompt` (string): Video instructions, 1–26,000 characters, containing at least one non-whitespace character. Required in every mode except image-to-video, where it is optional.
+
+## Optional parameters
+
+- `duration` (integer): Output duration from 3 to 20 seconds. Generation defaults to `5`. In editing, omit this field to retain the source video's duration; chargeable output duration is rounded up to whole seconds.
+- `resolution` (string): `720p` only. Default: `720p`.
+- `aspect_ratio` (string): `auto`, `16:9`, `9:16`, `1:1`, or `21:9`, for text and reference modes. Default: `16:9`. In text-to-video, `auto` is treated as `16:9`; in reference mode, `auto` adapts to the supplied materials. Omit this field in image and editing modes.
+- `image_urls` (array of strings): One starting image.
+- `video_url` (string): Source video for editing. Must last 3–20 seconds.
+- `reference_image_urls` (array of strings): Up to 10 publicly accessible HTTP or HTTPS image URLs.
+- `reference_video_urls` (array of strings): Publicly accessible HTTP or HTTPS video URLs, each lasting 3–20 seconds. Up to 5 in reference mode and up to 4 in editing mode.
+- `kling_elements` (array of objects): Up to 7 subjects. Each subject supplies exactly one of:
+  - `element_input_urls` (array of strings): 2–4 images, with the frontal view first and additional reference views after it.
+  - `element_input_video_urls` (array of strings): Exactly one 3–8 second video. At most 3 subjects may use videos.
+
+Subjects use their positions in the array and require no names. Refer to them as `@Element1`, `@Element2`, and so on. Reference images use `@Image1`, `@Image2`, and so on. In reference mode, reference videos start at `@Video1`; in editing mode, the source video is `@Video1` and reference videos start at `@Video2`. Existing `@image_1` and `@video_1` references remain supported.
+
+## Examples
+
+- **Text-to-video**: Send a `prompt` without reference materials. Set `duration` or `aspect_ratio` only when needed.
+- **Image-to-video**: Put one starting image in `image_urls`, optionally with a `prompt`.
+- **Visual references**: Combine `reference_image_urls`, `reference_video_urls`, or `kling_elements`, and refer to them by their positions.
+- **Video editing**: Supply `video_url` and `prompt`, optionally with references. Omit `duration` to keep the original duration, or select a new duration explicitly.
+
+The request examples in the API playground demonstrate these inputs.
+
+
+## Notes
+
+- In reference mode, the optional starting frame and reference images together cannot exceed 10 images. The number of starting frames, reference images, reference videos, and subjects combined cannot exceed 15. Images inside a subject count as one subject, not as separate materials.
+- The source video, reference videos, and video-based subjects must have a combined original duration of at most 20 seconds. Each source or reference video must last 3–20 seconds, and each subject video 3–8 seconds.
+- Flash does not support `1080p`, ending frames, or `multi_prompt`. Use [Kling 4.0](/api-manual/video-series/kling-4-0) for these.
+- Reference indexes start at 1 and follow the order of the corresponding input array. Use publicly accessible media URLs and omit unused optional fields.
