@@ -1,0 +1,560 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Gemini Omni 1.2 Flash API",
+    "description": "The Gemini Omni 1.2 Flash API generates 3–15 second videos at 360p to 4K from text, first and last frames, up to 10 reference images and 3 reference videos, and edits existing videos up to 15 seconds long.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Gemini Omni 1.2 Flash Task",
+        "description": "Generate a video from text, first and last frames, or reference images and videos, or edit an existing video",
+        "operationId": "submitGeminiOmni12FlashTask",
+        "tags": [
+          "Gemini Omni 1.2 Flash"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-video": {
+                  "summary": "Text to video",
+                  "value": {
+                    "model": "gemini-omni-1.2-flash",
+                    "callback_url": "https://your-domain.com/callback",
+                    "input": {
+                      "prompt": "A cinematic night city with neon reflections and a slow camera push-in",
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "first-last-frame": {
+                  "summary": "First and last frame video",
+                  "value": {
+                    "model": "gemini-omni-1.2-flash",
+                    "input": {
+                      "prompt": "Create a smooth cinematic transition between the two frames",
+                      "image_urls": [
+                        "https://example.com/first-frame.webp",
+                        "https://example.com/last-frame.webp"
+                      ],
+                      "resolution": "1080p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "reference-images": {
+                  "summary": "Reference image video",
+                  "value": {
+                    "model": "gemini-omni-1.2-flash",
+                    "input": {
+                      "prompt": "Use the references to create a polished product campaign video",
+                      "reference_image_urls": [
+                        "https://example.com/product.webp",
+                        "https://example.com/environment.webp"
+                      ],
+                      "resolution": "720p",
+                      "duration": 10,
+                      "aspect_ratio": "9:16"
+                    }
+                  }
+                },
+                "reference-video": {
+                  "summary": "Reference images and videos",
+                  "value": {
+                    "model": "gemini-omni-1.2-flash",
+                    "input": {
+                      "prompt": "Follow the motion of the reference video while applying the visual style of the image",
+                      "reference_image_urls": [
+                        "https://example.com/style.webp"
+                      ],
+                      "reference_video_urls": [
+                        "https://example.com/motion.mp4"
+                      ],
+                      "resolution": "720p",
+                      "duration": 8,
+                      "aspect_ratio": "16:9"
+                    }
+                  }
+                },
+                "video-edit": {
+                  "summary": "Video editing",
+                  "value": {
+                    "model": "gemini-omni-1.2-flash",
+                    "input": {
+                      "prompt": "Turn the scene into a watercolor painting while keeping the camera movement",
+                      "video_url": "https://example.com/source.mp4",
+                      "resolution": "720p"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/generate/status/{task_id}": {
+      "get": {
+        "summary": "Query Task Status",
+        "operationId": "getGeminiOmni12FlashTaskStatus",
+        "tags": [
+          "Gemini Omni 1.2 Flash"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task status response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Gemini Omni 1.2 Flash model identifier",
+            "enum": [
+              "gemini-omni-1.2-flash"
+            ]
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook callback URL for result notifications",
+            "example": "https://your-domain.com/callback"
+          },
+          "input": {
+            "type": "object",
+            "required": [
+              "prompt"
+            ],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "Text prompt describing the video, or the edit instruction when `video_url` is provided. Maximum length is 20,000 characters.",
+                "minLength": 1,
+                "maxLength": 20000,
+                "example": "A cinematic night city with neon reflections and a slow camera push-in"
+              },
+              "image_urls": {
+                "type": "array",
+                "description": "Optional first frame and last frame, in order. One or two publicly accessible HTTP or HTTPS image URLs. Cannot be combined with `reference_image_urls` or `reference_video_urls`.",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/first-frame.webp",
+                  "https://example.com/last-frame.webp"
+                ]
+              },
+              "reference_image_urls": {
+                "type": "array",
+                "description": "Optional reference images. Up to 10 publicly accessible HTTP or HTTPS image URLs. Can be combined with `reference_video_urls`.",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/reference-image.webp"
+                ]
+              },
+              "reference_video_urls": {
+                "type": "array",
+                "description": "Optional reference videos. Up to 3 publicly accessible HTTP or HTTPS video URLs, each at most 15 seconds long.",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ],
+                "x-video-duration-seconds": {
+                  "maximum": 15
+                }
+              },
+              "video_url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Optional source video to edit. A publicly accessible HTTP or HTTPS video URL, at most 15 seconds long. When provided, only `prompt` and `resolution` can be sent with it, and the output length follows the source video.",
+                "example": "https://example.com/source.mp4",
+                "x-video-duration-seconds": {
+                  "maximum": 15
+                }
+              },
+              "resolution": {
+                "type": "string",
+                "description": "The resolution of the generated video. Available values are 360p, 720p, 1080p, and 4k.",
+                "enum": [
+                  "360p",
+                  "720p",
+                  "1080p",
+                  "4k"
+                ],
+                "default": "720p",
+                "example": "720p"
+              },
+              "duration": {
+                "type": "integer",
+                "description": "Output duration in seconds, from 3 to 15. Default is 8. At most 10 when a last frame is provided. Not accepted for video editing.",
+                "minimum": 3,
+                "maximum": 15,
+                "default": 8,
+                "example": 8
+              },
+              "aspect_ratio": {
+                "type": "string",
+                "description": "The aspect ratio of the generated video. 16:9 is landscape, and 9:16 is portrait. Not accepted for video editing.",
+                "enum": [
+                  "16:9",
+                  "9:16"
+                ],
+                "default": "16:9",
+                "example": "16:9"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "video_url"
+                  ]
+                },
+                "then": {
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "image_urls"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "reference_image_urls"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "reference_video_urls"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "duration"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "aspect_ratio"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "image_urls",
+                    "reference_image_urls"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "required": [
+                    "image_urls",
+                    "reference_video_urls"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "image_urls"
+                  ],
+                  "properties": {
+                    "image_urls": {
+                      "minItems": 2
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "duration": {
+                      "maximum": 10
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1757165031-uyujaw3d"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "description": "Task status.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "credits_amount": {
+                "type": "number"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "file_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "file_type": {
+                      "type": "string",
+                      "example": "video"
+                    }
+                  }
+                }
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "progress": {
+                "type": "integer"
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
