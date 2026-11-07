@@ -126,12 +126,15 @@
           "input": {
             "type": "object",
             "additionalProperties": false,
-            "description": "Text-to-video requires prompt and omits image_urls. Image-to-video requires exactly one image_urls item and does not accept aspect_ratio.",
+            "description": "Both modes require prompt. Text-to-video omits image_urls. Image-to-video requires exactly one image_urls item and does not accept aspect_ratio.",
+            "required": [
+              "prompt"
+            ],
             "properties": {
               "prompt": {
                 "type": "string",
                 "maxLength": 5000,
-                "description": "Required for text-to-video, up to 5,000 characters. Optional for image-to-video, up to 2,048 characters. Cannot be blank."
+                "description": "Required for both modes. Up to 5,000 characters for text-to-video and 2,048 characters for image-to-video. Cannot be blank."
               },
               "image_urls": {
                 "type": "array",

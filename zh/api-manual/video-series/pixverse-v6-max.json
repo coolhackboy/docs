@@ -126,12 +126,15 @@
           "input": {
             "type": "object",
             "additionalProperties": false,
-            "description": "文生视频需要 prompt，不传 image_urls。图生视频需要恰好一项 image_urls，且不接受 aspect_ratio。",
+            "description": "两种模式都需要 prompt。文生视频不传 image_urls。图生视频需要恰好一项 image_urls，且不接受 aspect_ratio。",
+            "required": [
+              "prompt"
+            ],
             "properties": {
               "prompt": {
                 "type": "string",
                 "maxLength": 5000,
-                "description": "文生视频时必填，最多 5,000 个字符。图生视频时可选，最多 2,048 个字符。不能为空白。"
+                "description": "两种模式都必填。文生视频最多 5,000 个字符，图生视频最多 2,048 个字符。不能为空白。"
               },
               "image_urls": {
                 "type": "array",

@@ -26,7 +26,7 @@ PixVerse V6 Max turns a text prompt or a single image into a short video. Use it
 ## Input modes
 
 - **Text-to-video**: Omit `image_urls`. `prompt` is required. `aspect_ratio` selects the frame.
-- **Image-to-video**: Provide exactly one URL in `image_urls`. `prompt` is optional. The output follows the image, so do not send `aspect_ratio`.
+- **Image-to-video**: Provide exactly one URL in `image_urls`. `prompt` is required. The output follows the image, so do not send `aspect_ratio`.
 
 ## Required parameters
 
@@ -35,7 +35,7 @@ PixVerse V6 Max turns a text prompt or a single image into a short video. Use it
 
 ## Optional parameters
 
-- `prompt` (string): Optional for image-to-video, with a maximum of 2,048 characters. Cannot be blank when provided.
+- `prompt` (string): Required for image-to-video, with a maximum of 2,048 characters. Cannot be blank.
 - `duration` (integer): Output length from 1 to 15 seconds. Defaults to `5`.
 - `resolution` (string): `360p`, `540p`, `720p`, or `1080p`. Defaults to `540p`.
 - `aspect_ratio` (string): `16:9`, `9:16`, `4:3`, `3:4`, `1:1`, `2:3`, `3:2`, or `21:9`. Defaults to `16:9`. Text-to-video only.

@@ -26,7 +26,7 @@ PixVerse V6 Max 可将文本提示词或单张图片转为短视频。适用于�
 ## 输入模式
 
 - **文生视频**：不传 `image_urls`。`prompt` 为必填。`aspect_ratio` 决定画面比例。
-- **图生视频**：在 `image_urls` 中提供恰好一个 URL。`prompt` 为可选。输出跟随图片，因此不要传 `aspect_ratio`。
+- **图生视频**：在 `image_urls` 中提供恰好一个 URL。`prompt` 为必填。输出跟随图片，因此不要传 `aspect_ratio`。
 
 ## 必填参数
 
@@ -35,7 +35,7 @@ PixVerse V6 Max 可将文本提示词或单张图片转为短视频。适用于�
 
 ## 可选参数
 
-- `prompt` (string)：图生视频时可选，最多 2,048 个字符。提供时不能为空白。
+- `prompt` (string)：图生视频时必填，最多 2,048 个字符，且不能为空白。
 - `duration` (integer)：输出时长，1 到 15 秒。默认为 `5`。
 - `resolution` (string)：`360p`、`540p`、`720p` 或 `1080p`。默认为 `540p`。
 - `aspect_ratio` (string)：`16:9`、`9:16`、`4:3`、`3:4`、`1:1`、`2:3`、`3:2` 或 `21:9`。默认为 `16:9`。仅用于文生视频。
