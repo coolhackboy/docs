@@ -116,6 +116,6 @@ The mode is chosen from the fields you send, in this order:
 - `image_urls` cannot be combined with `reference_image_urls` or `reference_video_urls`
 - `video_url` cannot be combined with `image_urls`, `reference_image_urls`, `reference_video_urls`, `duration`, or `aspect_ratio`
 - Reference images and reference videos can be sent together in the same request
-- Media URLs must be publicly accessible HTTP or HTTPS links. Supported image formats are jpg, jpeg, png, webp, gif, avif, heic, and heif; supported video formats are mp4, mov, webm, m4v, and gif
+- Media URLs must be publicly accessible HTTP or HTTPS links
 - Requests with a reference video or source video longer than `15` seconds are rejected
 - The response returns a `task_id`; query task status to retrieve the generated video file

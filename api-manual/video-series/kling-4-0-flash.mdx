@@ -33,7 +33,7 @@ Kling 4.0 Flash is the faster 720p tier of [Kling 4.0](/api-manual/video-series/
 | Image-to-video | `image_urls` is non-empty without reference materials |
 | Text-to-video | No media is provided |
 
-In reference mode, `image_urls` may contain one optional starting frame. In image mode, `prompt` is optional; omit `aspect_ratio`. Editing does not accept `image_urls` or `aspect_ratio`.
+In reference mode, `image_urls` may contain one optional starting frame. In image mode, `prompt` is optional; omit `aspect_ratio`, because the output follows the starting frame's aspect ratio. Editing does not accept `image_urls` or `aspect_ratio`; the output follows the source video's aspect ratio.
 
 ## Required parameters
 
@@ -56,13 +56,82 @@ Subjects use their positions in the array and require no names. Refer to them as
 
 ## Examples
 
-- **Text-to-video**: Send a `prompt` without reference materials. Set `duration` or `aspect_ratio` only when needed.
-- **Image-to-video**: Put one starting image in `image_urls`, optionally with a `prompt`.
-- **Visual references**: Combine `reference_image_urls`, `reference_video_urls`, or `kling_elements`, and refer to them by their positions.
-- **Video editing**: Supply `video_url` and `prompt`, optionally with references. Omit `duration` to keep the original duration, or select a new duration explicitly.
+### Text to Video
 
-The request examples in the API playground demonstrate these inputs.
+```json
+{
+  "model": "kling-4.0-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A paper boat drifts through a miniature city at sunset, slow camera push-in",
+    "duration": 5,
+    "aspect_ratio": "16:9"
+  }
+}
+```
 
+### Image to Video
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "The red panda shakes the snow off its fur and turns toward the camera",
+    "image_urls": ["https://example.com/start-frame.png"],
+    "duration": 5
+  }
+}
+```
+
+### Reference Images and Subjects
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "@Element1 walks along the cliff path toward the lighthouse in @Image1 at golden hour",
+    "reference_image_urls": ["https://example.com/lighthouse.png"],
+    "kling_elements": [
+      {
+        "element_input_urls": [
+          "https://example.com/keeper-front.png",
+          "https://example.com/keeper-side.png"
+        ]
+      }
+    ],
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### Reference Videos
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "Follow the camera movement of @Video1 in the snowy mountain scene from @Image1",
+    "reference_image_urls": ["https://example.com/mountain.png"],
+    "reference_video_urls": ["https://example.com/camera-motion.mp4"],
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### Video Editing
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "Change the season in @Video1 to spring using @Image1, keeping the motion and camera",
+    "video_url": "https://example.com/source.mp4",
+    "reference_image_urls": ["https://example.com/spring.png"]
+  }
+}
+```
 
 ## Notes
 

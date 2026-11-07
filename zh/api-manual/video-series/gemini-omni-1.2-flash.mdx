@@ -116,6 +116,6 @@ openapi: "/zh/api-manual/video-series/gemini-omni-1.2-flash.json POST /api/gener
 - `image_urls` 不能与 `reference_image_urls` 或 `reference_video_urls` 同时使用
 - `video_url` 不能与 `image_urls`、`reference_image_urls`、`reference_video_urls`、`duration` 或 `aspect_ratio` 同时使用
 - 参考图和参考视频可以在同一次请求中同时发送
-- 媒体 URL 必须是可公开访问的 HTTP 或 HTTPS 链接。图片支持 jpg、jpeg、png、webp、gif、avif、heic 和 heif；视频支持 mp4、mov、webm、m4v 和 gif
+- 媒体 URL 必须是可公开访问的 HTTP 或 HTTPS 链接
 - 参考视频或源视频超过 `15` 秒时请求会被拒绝
 - 响应会返回 `task_id`；查询任务状态即可获取生成的视频文件

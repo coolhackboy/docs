@@ -173,7 +173,8 @@
           "callback_url": {
             "type": "string",
             "format": "uri",
-            "description": "Optional webhook URL for task completion or failure notifications."
+            "description": "Optional webhook URL for task completion or failure notifications.",
+            "example": "https://your-domain.com/callback"
           },
           "input": {
             "type": "object",
@@ -184,13 +185,15 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 26000,
-                "description": "Video instructions containing at least one non-whitespace character. Required in every mode except image-to-video, where it is optional. Reference images, videos, and subjects as @Image1, @Video1, and @Element1 in array order. In editing, the source video is @Video1 and reference videos start at @Video2. Existing @image_1 and @video_1 references remain supported."
+                "description": "Video instructions containing at least one non-whitespace character. Required in every mode except image-to-video, where it is optional. Reference images, videos, and subjects as @Image1, @Video1, and @Element1 in array order. In editing, the source video is @Video1 and reference videos start at @Video2. Existing @image_1 and @video_1 references remain supported.",
+                "example": "A paper boat drifts through a miniature city at sunset, slow camera push-in"
               },
               "duration": {
                 "type": "integer",
                 "minimum": 3,
                 "maximum": 20,
-                "description": "Output duration in whole seconds. Generation defaults to 5 seconds. In editing, omit this field to retain the source video duration; chargeable output duration is rounded up to whole seconds."
+                "description": "Output duration in whole seconds. Generation defaults to 5 seconds. In editing, omit this field to retain the source video duration; chargeable output duration is rounded up to whole seconds.",
+                "example": 5
               },
               "resolution": {
                 "type": "string",
@@ -198,7 +201,8 @@
                   "720p"
                 ],
                 "default": "720p",
-                "description": "Output video resolution. Flash supports 720p only."
+                "description": "Output video resolution. Flash supports 720p only.",
+                "example": "720p"
               },
               "aspect_ratio": {
                 "type": "string",
@@ -210,7 +214,8 @@
                   "21:9"
                 ],
                 "default": "16:9",
-                "description": "Output aspect ratio for text and reference modes. Defaults to 16:9. In text-to-video, auto is treated as 16:9; in reference mode, auto adapts to the supplied materials. Do not provide this field in image or editing modes."
+                "description": "Output aspect ratio for text and reference modes. Defaults to 16:9. In text-to-video, auto is treated as 16:9; in reference mode, auto adapts to the supplied materials. Do not provide this field in image or editing modes; those modes follow the aspect ratio of the starting frame or source video.",
+                "example": "16:9"
               },
               "reference_image_urls": {
                 "type": "array",
@@ -219,7 +224,10 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Up to 10 publicly accessible HTTP or HTTPS reference images. Reference them as @Image1, @Image2, and so on. In reference mode, these images and the optional starting frame together cannot exceed 10 images. Supported in reference and editing modes."
+                "description": "Up to 10 publicly accessible HTTP or HTTPS reference images. Reference them as @Image1, @Image2, and so on. In reference mode, these images and the optional starting frame together cannot exceed 10 images. Supported in reference and editing modes.",
+                "example": [
+                  "https://example.com/reference-image.png"
+                ]
               },
               "reference_video_urls": {
                 "type": "array",
@@ -232,7 +240,10 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "Publicly accessible HTTP or HTTPS reference videos, each lasting 3-20 seconds. Up to 5 in reference mode, referenced as @Video1, @Video2, and so on; up to 4 in editing mode, referenced as @Video2, @Video3, and so on. All input videos together must not exceed 20 seconds."
+                "description": "Publicly accessible HTTP or HTTPS reference videos, each lasting 3-20 seconds. Up to 5 in reference mode, referenced as @Video1, @Video2, and so on; up to 4 in editing mode, referenced as @Video2, @Video3, and so on. All input videos together must not exceed 20 seconds.",
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ]
               },
               "image_urls": {
                 "type": "array",
@@ -242,7 +253,10 @@
                   "format": "uri"
                 },
                 "description": "One publicly accessible HTTP or HTTPS starting frame. Flash does not accept an ending frame. Without references, selects image-to-video. In reference mode, the starting frame counts toward the 10-image and 15-material limits. Do not provide this field in editing mode.",
-                "minItems": 1
+                "minItems": 1,
+                "example": [
+                  "https://example.com/start-frame.png"
+                ]
               },
               "video_url": {
                 "type": "string",
@@ -251,7 +265,8 @@
                   "minimum": 3,
                   "maximum": 20
                 },
-                "description": "Publicly accessible HTTP or HTTPS source video for editing, lasting 3-20 seconds. Selects editing mode. Supports reference images, reference videos, and subjects; cannot be combined with image_urls or aspect_ratio."
+                "description": "Publicly accessible HTTP or HTTPS source video for editing, lasting 3-20 seconds. Selects editing mode. Supports reference images, reference videos, and subjects; cannot be combined with image_urls or aspect_ratio.",
+                "example": "https://example.com/source.mp4"
               },
               "kling_elements": {
                 "type": "array",
@@ -289,7 +304,15 @@
                     }
                   }
                 },
-                "description": "Up to 7 position-based subjects. Use @Element1, @Element2, and so on in the prompt. At most 3 subjects may use videos. Supported in reference and editing modes. In reference mode, starting frames, reference images, reference videos, and subjects combined cannot exceed 15 materials; images inside a subject count as one subject."
+                "description": "Up to 7 position-based subjects. Use @Element1, @Element2, and so on in the prompt. At most 3 subjects may use videos. Supported in reference and editing modes. In reference mode, starting frames, reference images, reference videos, and subjects combined cannot exceed 15 materials; images inside a subject count as one subject.",
+                "example": [
+                  {
+                    "element_input_urls": [
+                      "https://example.com/subject-front.png",
+                      "https://example.com/subject-side.png"
+                    ]
+                  }
+                ]
               }
             }
           }

@@ -173,7 +173,8 @@
           "callback_url": {
             "type": "string",
             "format": "uri",
-            "description": "可选的 Webhook URL，用于接收任务完成或失败通知。"
+            "description": "可选的 Webhook URL，用于接收任务完成或失败通知。",
+            "example": "https://your-domain.com/callback"
           },
           "input": {
             "type": "object",
@@ -184,13 +185,15 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 26000,
-                "description": "视频指令，至少包含一个非空白字符。除图生视频可选外，其余模式均必填。按数组顺序以 @Image1、@Video1、@Element1 引用参考图像、视频和主体。编辑模式下源视频为 @Video1，参考视频从 @Video2 开始。原有的 @image_1 和 @video_1 写法仍然支持。"
+                "description": "视频指令，至少包含一个非空白字符。除图生视频可选外，其余模式均必填。按数组顺序以 @Image1、@Video1、@Element1 引用参考图像、视频和主体。编辑模式下源视频为 @Video1，参考视频从 @Video2 开始。原有的 @image_1 和 @video_1 写法仍然支持。",
+                "example": "A paper boat drifts through a miniature city at sunset, slow camera push-in"
               },
               "duration": {
                 "type": "integer",
                 "minimum": 3,
                 "maximum": 20,
-                "description": "输出时长，单位为整秒。生成模式默认 5 秒。编辑模式下省略此字段可保留源视频时长，计费输出时长向上取整到整秒。"
+                "description": "输出时长，单位为整秒。生成模式默认 5 秒。编辑模式下省略此字段可保留源视频时长，计费输出时长向上取整到整秒。",
+                "example": 5
               },
               "resolution": {
                 "type": "string",
@@ -198,7 +201,8 @@
                   "720p"
                 ],
                 "default": "720p",
-                "description": "输出视频分辨率。Flash 仅支持 720p。"
+                "description": "输出视频分辨率。Flash 仅支持 720p。",
+                "example": "720p"
               },
               "aspect_ratio": {
                 "type": "string",
@@ -210,7 +214,8 @@
                   "21:9"
                 ],
                 "default": "16:9",
-                "description": "文生视频和参考模式的输出宽高比，默认 16:9。文生视频中 auto 按 16:9 处理；参考模式中 auto 会根据所提供的素材自适应。图生视频和编辑模式下不要提供此字段。"
+                "description": "文生视频和参考模式的输出宽高比，默认 16:9。文生视频中 auto 按 16:9 处理；参考模式中 auto 会根据所提供的素材自适应。图生视频和编辑模式下不要提供此字段，这两种模式分别沿用起始帧和源视频的宽高比。",
+                "example": "16:9"
               },
               "reference_image_urls": {
                 "type": "array",
@@ -219,7 +224,10 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "最多 10 张可公开访问的 HTTP 或 HTTPS 参考图像，以 @Image1、@Image2 等引用。参考模式下，这些图像与可选的起始帧合计不能超过 10 张。支持参考模式和编辑模式。"
+                "description": "最多 10 张可公开访问的 HTTP 或 HTTPS 参考图像，以 @Image1、@Image2 等引用。参考模式下，这些图像与可选的起始帧合计不能超过 10 张。支持参考模式和编辑模式。",
+                "example": [
+                  "https://example.com/reference-image.png"
+                ]
               },
               "reference_video_urls": {
                 "type": "array",
@@ -232,7 +240,10 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "description": "可公开访问的 HTTP 或 HTTPS 参考视频，每个 3-20 秒。参考模式最多 5 个，以 @Video1、@Video2 等引用；编辑模式最多 4 个，以 @Video2、@Video3 等引用。所有输入视频合计不能超过 20 秒。"
+                "description": "可公开访问的 HTTP 或 HTTPS 参考视频，每个 3-20 秒。参考模式最多 5 个，以 @Video1、@Video2 等引用；编辑模式最多 4 个，以 @Video2、@Video3 等引用。所有输入视频合计不能超过 20 秒。",
+                "example": [
+                  "https://example.com/reference-video.mp4"
+                ]
               },
               "image_urls": {
                 "type": "array",
@@ -242,7 +253,10 @@
                   "format": "uri"
                 },
                 "description": "一张可公开访问的 HTTP 或 HTTPS 起始帧。Flash 不支持结束帧。没有参考素材时选择图生视频。参考模式下起始帧计入 10 张图像和 15 个素材的上限。编辑模式下不要提供此字段。",
-                "minItems": 1
+                "minItems": 1,
+                "example": [
+                  "https://example.com/start-frame.png"
+                ]
               },
               "video_url": {
                 "type": "string",
@@ -251,7 +265,8 @@
                   "minimum": 3,
                   "maximum": 20
                 },
-                "description": "用于编辑的可公开访问的 HTTP 或 HTTPS 源视频，时长 3-20 秒。提供后选择编辑模式。支持参考图像、参考视频和主体；不能与 image_urls 或 aspect_ratio 同时使用。"
+                "description": "用于编辑的可公开访问的 HTTP 或 HTTPS 源视频，时长 3-20 秒。提供后选择编辑模式。支持参考图像、参考视频和主体；不能与 image_urls 或 aspect_ratio 同时使用。",
+                "example": "https://example.com/source.mp4"
               },
               "kling_elements": {
                 "type": "array",
@@ -289,7 +304,15 @@
                     }
                   }
                 },
-                "description": "最多 7 个按位置引用的主体。在提示词中使用 @Element1、@Element2 等。最多 3 个主体可以使用视频。支持参考模式和编辑模式。参考模式下，起始帧、参考图像、参考视频和主体合计不能超过 15 个素材；一个主体内的图像算作一个主体。"
+                "description": "最多 7 个按位置引用的主体。在提示词中使用 @Element1、@Element2 等。最多 3 个主体可以使用视频。支持参考模式和编辑模式。参考模式下，起始帧、参考图像、参考视频和主体合计不能超过 15 个素材；一个主体内的图像算作一个主体。",
+                "example": [
+                  {
+                    "element_input_urls": [
+                      "https://example.com/subject-front.png",
+                      "https://example.com/subject-side.png"
+                    ]
+                  }
+                ]
               }
             }
           }

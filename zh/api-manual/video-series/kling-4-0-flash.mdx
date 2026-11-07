@@ -33,7 +33,7 @@ Kling 4.0 Flash 是 [Kling 4.0](/zh/api-manual/video-series/kling-4-0) 的快速
 | 图生视频 | `image_urls` 非空且没有参考素材 |
 | 文生视频 | 未提供任何媒体 |
 
-在参考模式下，`image_urls` 可包含一个可选的起始帧。在图片模式下，`prompt` 可选；不要传 `aspect_ratio`。编辑模式不接受 `image_urls` 或 `aspect_ratio`。
+在参考模式下，`image_urls` 可包含一个可选的起始帧。在图片模式下，`prompt` 可选；不要传 `aspect_ratio`，输出会沿用起始帧的宽高比。编辑模式不接受 `image_urls` 或 `aspect_ratio`，输出沿用源视频的宽高比。
 
 ## 必填参数
 
@@ -56,13 +56,82 @@ Kling 4.0 Flash 是 [Kling 4.0](/zh/api-manual/video-series/kling-4-0) 的快速
 
 ## 示例
 
-- **文生视频**：发送不带参考素材的 `prompt`。仅在需要时设置 `duration` 或 `aspect_ratio`。
-- **图生视频**：在 `image_urls` 中放一张起始图片，可选附带 `prompt`。
-- **视觉参考**：组合使用 `reference_image_urls`、`reference_video_urls` 或 `kling_elements`，并按位置引用它们。
-- **视频编辑**：提供 `video_url` 和 `prompt`，可选加入参考素材。不传 `duration` 即保留原始时长，或明确指定新的时长。
+### 文生视频
 
-API Playground 中的请求示例演示了这些输入。
+```json
+{
+  "model": "kling-4.0-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A paper boat drifts through a miniature city at sunset, slow camera push-in",
+    "duration": 5,
+    "aspect_ratio": "16:9"
+  }
+}
+```
 
+### 图生视频
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "The red panda shakes the snow off its fur and turns toward the camera",
+    "image_urls": ["https://example.com/start-frame.png"],
+    "duration": 5
+  }
+}
+```
+
+### 参考图与主体
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "@Element1 walks along the cliff path toward the lighthouse in @Image1 at golden hour",
+    "reference_image_urls": ["https://example.com/lighthouse.png"],
+    "kling_elements": [
+      {
+        "element_input_urls": [
+          "https://example.com/keeper-front.png",
+          "https://example.com/keeper-side.png"
+        ]
+      }
+    ],
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### 参考视频
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "Follow the camera movement of @Video1 in the snowy mountain scene from @Image1",
+    "reference_image_urls": ["https://example.com/mountain.png"],
+    "reference_video_urls": ["https://example.com/camera-motion.mp4"],
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 视频编辑
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "Change the season in @Video1 to spring using @Image1, keeping the motion and camera",
+    "video_url": "https://example.com/source.mp4",
+    "reference_image_urls": ["https://example.com/spring.png"]
+  }
+}
+```
 
 ## 注意事项
 
