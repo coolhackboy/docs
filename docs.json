@@ -109,6 +109,7 @@
       "/api-manual/video-series/kling-3-0-turbo.json",
       "/api-manual/video-series/kling-3-0-4k.json",
       "/api-manual/video-series/kling-4-0.json",
+      "/api-manual/video-series/kling-4-0-flash.json",
       "/api-manual/video-series/kling-avatar-2-0.json",
       "/api-manual/video-series/kling-o3.json",
       "/api-manual/video-series/kling-o3-4k.json",
@@ -116,6 +117,7 @@
       "/api-manual/video-series/grok-imagine-video-1-5.json",
       "/api-manual/video-series/omni-flash.json",
       "/api-manual/video-series/gemini-omni-1.1-flash.json",
+      "/api-manual/video-series/gemini-omni-1.2-flash.json",
       "/api-manual/video-series/hailuo-02.json",
       "/api-manual/video-series/hailuo-2-3.json",
       "/api-manual/video-series/hailuo-03.json",
@@ -259,6 +261,7 @@
       "/zh/api-manual/video-series/kling-3-0-turbo.json",
       "/zh/api-manual/video-series/kling-3-0-4k.json",
       "/zh/api-manual/video-series/kling-4-0.json",
+      "/zh/api-manual/video-series/kling-4-0-flash.json",
       "/zh/api-manual/video-series/kling-avatar-2-0.json",
       "/zh/api-manual/video-series/kling-o3.json",
       "/zh/api-manual/video-series/kling-o3-4k.json",
@@ -266,6 +269,7 @@
       "/zh/api-manual/video-series/grok-imagine-video-1-5.json",
       "/zh/api-manual/video-series/omni-flash.json",
       "/zh/api-manual/video-series/gemini-omni-1.1-flash.json",
+      "/zh/api-manual/video-series/gemini-omni-1.2-flash.json",
       "/zh/api-manual/video-series/hailuo-02.json",
       "/zh/api-manual/video-series/hailuo-2-3.json",
       "/zh/api-manual/video-series/hailuo-03.json",
@@ -522,7 +526,8 @@
                       "api-manual/video-series/veo-3-1",
                       "api-manual/video-series/veo-3-1-official",
                       "api-manual/video-series/omni-flash",
-                      "api-manual/video-series/gemini-omni-1.1-flash"
+                      "api-manual/video-series/gemini-omni-1.1-flash",
+                      "api-manual/video-series/gemini-omni-1.2-flash"
                     ]
                   },
                   {
@@ -561,7 +566,8 @@
                       "api-manual/video-series/kling-o3-4k",
                       "api-manual/video-series/kling-2.6-motion-control",
                       "api-manual/video-series/kling-3-0-motion-control",
-                      "api-manual/video-series/kling-4-0"
+                      "api-manual/video-series/kling-4-0",
+                      "api-manual/video-series/kling-4-0-flash"
                     ]
                   },
                   {
@@ -1001,7 +1007,8 @@
                       "zh/api-manual/video-series/veo-3-1",
                       "zh/api-manual/video-series/veo-3-1-official",
                       "zh/api-manual/video-series/omni-flash",
-                      "zh/api-manual/video-series/gemini-omni-1.1-flash"
+                      "zh/api-manual/video-series/gemini-omni-1.1-flash",
+                      "zh/api-manual/video-series/gemini-omni-1.2-flash"
                     ]
                   },
                   {
@@ -1040,7 +1047,8 @@
                       "zh/api-manual/video-series/kling-o3-4k",
                       "zh/api-manual/video-series/kling-2.6-motion-control",
                       "zh/api-manual/video-series/kling-3-0-motion-control",
-                      "zh/api-manual/video-series/kling-4-0"
+                      "zh/api-manual/video-series/kling-4-0",
+                      "zh/api-manual/video-series/kling-4-0-flash"
                     ]
                   },
                   {

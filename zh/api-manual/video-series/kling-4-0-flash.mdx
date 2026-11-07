@@ -1,0 +1,141 @@
+---
+title: "Kling 4.0 Flash"
+description: "根据文本、起始帧或视觉参考快速生成 3–20 秒的 720p 视频，也可编辑已有视频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/kling-4-0-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+Kling 4.0 Flash 是 [Kling 4.0](/zh/api-manual/video-series/kling-4-0) 的快速 720p 版本，可根据文本创建视频、让起始帧动起来、组合视觉参考，或编辑已有视频。模式由提供的媒体自动选择。
+
+## 模型
+
+- **kling-4.0-flash** — `720p` 文生视频、图生视频、参考生视频和视频编辑
+
+## 功能
+
+- **快速 720p 输出**：生成 3–20 秒的 `720p` 视频。
+- **起始帧**：让一张起始图片动起来。Flash 不支持结束帧。
+- **视觉参考**：通过参考图片、参考视频以及由图片或视频定义的主体来引导外观和动作。
+- **视频编辑**：提供源视频并描述要做的修改，编辑时还可以加入参考图片、参考视频和主体。不传 `duration` 即保留源视频时长。
+- **宽高比**：文本模式和参考模式可使用 `16:9`、`9:16`、`1:1`、`21:9` 或 `auto`。
+
+## 输入模式
+
+| 模式 | 选择条件 |
+| --- | --- |
+| 视频编辑 | 提供了 `video_url` |
+| 参考生视频 | 参考图片、参考视频或 `kling_elements` 非空 |
+| 图生视频 | `image_urls` 非空且没有参考素材 |
+| 文生视频 | 未提供任何媒体 |
+
+在参考模式下，`image_urls` 可包含一个可选的起始帧。在图片模式下，`prompt` 可选；不要传 `aspect_ratio`，输出会沿用起始帧的宽高比。编辑模式不接受 `image_urls` 或 `aspect_ratio`，输出沿用源视频的宽高比。
+
+## 必填参数
+
+- `prompt` (string)：视频指令，1–26,000 个字符，至少包含一个非空白字符。除图生视频可选外，其余模式均必填。
+
+## 可选参数
+
+- `duration` (integer)：输出时长，3 到 20 秒。生成模式默认为 `5`。在编辑模式下，不传该字段即保留源视频时长；计费输出时长向上取整到整秒。
+- `resolution` (string)：仅支持 `720p`。默认：`720p`。
+- `aspect_ratio` (string)：`auto`、`16:9`、`9:16`、`1:1` 或 `21:9`，用于文本模式和参考模式。默认：`16:9`。文生视频中 `auto` 按 `16:9` 处理；参考模式中 `auto` 会适配所提供的素材。图片模式和编辑模式下不要传该字段。
+- `image_urls` (array of strings)：一张起始图片。
+- `video_url` (string)：用于编辑的源视频。时长必须为 3–20 秒。
+- `reference_image_urls` (array of strings)：最多 10 个可公开访问的 HTTP 或 HTTPS 图片 URL。
+- `reference_video_urls` (array of strings)：可公开访问的 HTTP 或 HTTPS 视频 URL，每个时长 3–20 秒。参考模式最多 5 个，编辑模式最多 4 个。
+- `kling_elements` (array of objects)：最多 7 个主体。每个主体只能提供以下其中一项：
+  - `element_input_urls` (array of strings)：2–4 张图片，正面视图在前，其他参考视图在后。
+  - `element_input_video_urls` (array of strings)：恰好一个 3–8 秒的视频。最多 3 个主体可以使用视频。
+
+主体按其在数组中的位置识别，无需命名。以 `@Element1`、`@Element2` 等引用它们。参考图片使用 `@Image1`、`@Image2` 等。参考模式下参考视频从 `@Video1` 开始；编辑模式下源视频为 `@Video1`，参考视频从 `@Video2` 开始。现有的 `@image_1` 和 `@video_1` 引用仍然支持。
+
+## 示例
+
+### 文生视频
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A paper boat drifts through a miniature city at sunset, slow camera push-in",
+    "duration": 5,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 图生视频
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "The red panda shakes the snow off its fur and turns toward the camera",
+    "image_urls": ["https://example.com/start-frame.png"],
+    "duration": 5
+  }
+}
+```
+
+### 参考图与主体
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "@Element1 walks along the cliff path toward the lighthouse in @Image1 at golden hour",
+    "reference_image_urls": ["https://example.com/lighthouse.png"],
+    "kling_elements": [
+      {
+        "element_input_urls": [
+          "https://example.com/keeper-front.png",
+          "https://example.com/keeper-side.png"
+        ]
+      }
+    ],
+    "duration": 8,
+    "aspect_ratio": "9:16"
+  }
+}
+```
+
+### 参考视频
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "Follow the camera movement of @Video1 in the snowy mountain scene from @Image1",
+    "reference_image_urls": ["https://example.com/mountain.png"],
+    "reference_video_urls": ["https://example.com/camera-motion.mp4"],
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 视频编辑
+
+```json
+{
+  "model": "kling-4.0-flash",
+  "input": {
+    "prompt": "Change the season in @Video1 to spring using @Image1, keeping the motion and camera",
+    "video_url": "https://example.com/source.mp4",
+    "reference_image_urls": ["https://example.com/spring.png"]
+  }
+}
+```
+
+## 注意事项
+
+- 在参考模式下，可选的起始帧与参考图片合计不能超过 10 张。起始帧、参考图片、参考视频和主体的总数不能超过 15。主体内的图片计为一个主体，而不是单独的素材。
+- 源视频、参考视频与基于视频的主体的原始时长合计最多 20 秒。每个源视频或参考视频时长必须为 3–20 秒，每个主体视频为 3–8 秒。
+- Flash 不支持 `1080p`、结束帧和 `multi_prompt`，需要这些能力请使用 [Kling 4.0](/zh/api-manual/video-series/kling-4-0)。
+- 参考索引从 1 开始，按对应输入数组的顺序排列。请使用可公开访问的媒体 URL，并省略未使用的可选字段。
