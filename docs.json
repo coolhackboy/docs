@@ -109,6 +109,7 @@
       "/api-manual/video-series/kling-3-0-turbo.json",
       "/api-manual/video-series/kling-3-0-4k.json",
       "/api-manual/video-series/kling-4-0.json",
+      "/api-manual/video-series/kling-4-0-flash.json",
       "/api-manual/video-series/kling-avatar-2-0.json",
       "/api-manual/video-series/kling-o3.json",
       "/api-manual/video-series/kling-o3-4k.json",
@@ -259,6 +260,7 @@
       "/zh/api-manual/video-series/kling-3-0-turbo.json",
       "/zh/api-manual/video-series/kling-3-0-4k.json",
       "/zh/api-manual/video-series/kling-4-0.json",
+      "/zh/api-manual/video-series/kling-4-0-flash.json",
       "/zh/api-manual/video-series/kling-avatar-2-0.json",
       "/zh/api-manual/video-series/kling-o3.json",
       "/zh/api-manual/video-series/kling-o3-4k.json",
@@ -561,7 +563,8 @@
                       "api-manual/video-series/kling-o3-4k",
                       "api-manual/video-series/kling-2.6-motion-control",
                       "api-manual/video-series/kling-3-0-motion-control",
-                      "api-manual/video-series/kling-4-0"
+                      "api-manual/video-series/kling-4-0",
+                      "api-manual/video-series/kling-4-0-flash"
                     ]
                   },
                   {
@@ -1040,7 +1043,8 @@
                       "zh/api-manual/video-series/kling-o3-4k",
                       "zh/api-manual/video-series/kling-2.6-motion-control",
                       "zh/api-manual/video-series/kling-3-0-motion-control",
-                      "zh/api-manual/video-series/kling-4-0"
+                      "zh/api-manual/video-series/kling-4-0",
+                      "zh/api-manual/video-series/kling-4-0-flash"
                     ]
                   },
                   {
