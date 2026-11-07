@@ -1,0 +1,121 @@
+---
+title: "Gemini Omni 1.2 Flash"
+description: "The Gemini Omni 1.2 Flash API generates 3–15 second videos at 360p to 4K from text, first and last frames, or reference images and videos, and edits existing videos up to 15 seconds long."
+icon: "video"
+openapi: "/api-manual/video-series/gemini-omni-1.2-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+`gemini-omni-1.2-flash` generates videos from a text prompt, first and last frames, or reference images and videos, and edits an existing video with a text instruction. Use it for product campaigns, social clips, storyboard shots, and restyling footage you already have.
+
+## Models
+
+- **gemini-omni-1.2-flash** - Text-to-video, first/last-frame generation, reference generation with images and videos, and video editing
+
+## Features
+
+- Output durations from `3` to `15` seconds in one-second steps
+- Output resolutions of `360p`, `720p`, `1080p`, and `4k`, in `16:9` landscape or `9:16` portrait
+- Up to `10` reference images and `3` reference videos in a single request
+- Text-instructed editing of an existing video up to `15` seconds long
+
+## Input modes
+
+The mode is chosen from the fields you send, in this order:
+
+- **Video editing**: Send `video_url`. Only `prompt` and `resolution` can be sent with it, and the output length follows the source video
+- **Reference generation**: Send `reference_image_urls`, `reference_video_urls`, or both
+- **First/last frame video**: Send one or two images in `image_urls`
+- **Text to video**: Send only `prompt` and optional generation settings
+
+## Required parameters
+
+- **prompt**: Text prompt describing the scene, motion, style, and camera behavior, or the edit instruction when `video_url` is provided. Maximum length is `20,000` characters
+
+## Optional parameters
+
+- **image_urls**: First-frame and optional last-frame image URL array. At most `2` images are allowed
+- **reference_image_urls**: Reference image URL array. At most `10` images are allowed
+- **reference_video_urls**: Reference video URL array. At most `3` videos are allowed, each at most `15` seconds long
+- **video_url**: Source video URL to edit. The video must be at most `15` seconds long
+- **duration**: Integer from `3` to `15` seconds. Default is `8`. At most `10` when a last frame is provided. Not accepted for video editing
+- **resolution**: `360p`, `720p`, `1080p`, or `4k`. Default is `720p`
+- **aspect_ratio**: `16:9` or `9:16`. Default is `16:9`. Not accepted for video editing
+- **callback_url**: Optional webhook URL for completion notifications
+
+## Examples
+
+### Text to Video
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic night city with neon reflections and a slow camera push-in",
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### First and Last Frames
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "input": {
+    "prompt": "Create a smooth cinematic transition between the two frames",
+    "image_urls": [
+      "https://example.com/first-frame.webp",
+      "https://example.com/last-frame.webp"
+    ],
+    "resolution": "1080p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### Reference Images and Videos
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "input": {
+    "prompt": "Follow the motion of the reference video while applying the visual style of the image",
+    "reference_image_urls": ["https://example.com/style.webp"],
+    "reference_video_urls": ["https://example.com/motion.mp4"],
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### Video Editing
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "input": {
+    "prompt": "Turn the scene into a watercolor painting while keeping the camera movement",
+    "video_url": "https://example.com/source.mp4",
+    "resolution": "720p"
+  }
+}
+```
+
+## Notes
+
+- `image_urls` cannot be combined with `reference_image_urls` or `reference_video_urls`
+- `video_url` cannot be combined with `image_urls`, `reference_image_urls`, `reference_video_urls`, `duration`, or `aspect_ratio`
+- Reference images and reference videos can be sent together in the same request
+- Media URLs must be publicly accessible HTTP or HTTPS links. Supported image formats are jpg, jpeg, png, webp, gif, avif, heic, and heif; supported video formats are mp4, mov, webm, m4v, and gif
+- Requests with a reference video or source video longer than `15` seconds are rejected
+- The response returns a `task_id`; query task status to retrieve the generated video file

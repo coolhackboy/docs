@@ -1,0 +1,121 @@
+---
+title: "Gemini Omni 1.2 Flash"
+description: "Gemini Omni 1.2 Flash API 可根据文本、首尾帧或参考图与参考视频生成 360p 至 4K、时长 3–15 秒的视频，也可编辑 15 秒以内的已有视频。"
+icon: "video"
+openapi: "/zh/api-manual/video-series/gemini-omni-1.2-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+`gemini-omni-1.2-flash` 可根据文本提示词、首尾帧或参考图与参考视频生成视频，也可以用文字指令编辑已有视频。适合产品广告、社媒短视频、分镜镜头，以及对已有素材重新风格化。
+
+## 模型
+
+- **gemini-omni-1.2-flash** - 文生视频、首尾帧生成、参考图与参考视频生成、视频编辑
+
+## 功能
+
+- 输出时长 `3` 到 `15` 秒，按秒设置
+- 输出分辨率 `360p`、`720p`、`1080p` 和 `4k`，支持 `16:9` 横屏和 `9:16` 竖屏
+- 单次请求最多 `10` 张参考图和 `3` 段参考视频
+- 用文字指令编辑 `15` 秒以内的已有视频
+
+## 输入模式
+
+按传入的字段依次判断模式：
+
+- **视频编辑**：发送 `video_url`。只能同时发送 `prompt` 和 `resolution`，输出时长与源视频一致
+- **参考生成**：发送 `reference_image_urls`、`reference_video_urls`，或两者同时发送
+- **首尾帧视频**：在 `image_urls` 中发送一到两张图片
+- **文生视频**：只发送 `prompt` 和可选的生成设置
+
+## 必填参数
+
+- **prompt**：描述场景、运动、风格和镜头行为的文本提示词；传入 `video_url` 时为编辑指令。最长 `20,000` 个字符
+
+## 可选参数
+
+- **image_urls**：首帧和可选尾帧的图片 URL 数组。最多允许 `2` 张图片
+- **reference_image_urls**：参考图 URL 数组。最多允许 `10` 张图片
+- **reference_video_urls**：参考视频 URL 数组。最多允许 `3` 段视频，每段不超过 `15` 秒
+- **video_url**：待编辑视频的 URL。视频时长不超过 `15` 秒
+- **duration**：`3` 到 `15` 之间的整数秒。默认为 `8`。传入尾帧时最多 `10` 秒。视频编辑不支持该字段
+- **resolution**：`360p`、`720p`、`1080p` 或 `4k`。默认为 `720p`
+- **aspect_ratio**：`16:9` 或 `9:16`。默认为 `16:9`。视频编辑不支持该字段
+- **callback_url**：可选的 Webhook URL，用于接收完成通知
+
+## 示例
+
+### 文生视频
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "callback_url": "https://your-domain.com/callback",
+  "input": {
+    "prompt": "A cinematic night city with neon reflections and a slow camera push-in",
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 首尾帧
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "input": {
+    "prompt": "Create a smooth cinematic transition between the two frames",
+    "image_urls": [
+      "https://example.com/first-frame.webp",
+      "https://example.com/last-frame.webp"
+    ],
+    "resolution": "1080p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 参考图与参考视频
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "input": {
+    "prompt": "Follow the motion of the reference video while applying the visual style of the image",
+    "reference_image_urls": ["https://example.com/style.webp"],
+    "reference_video_urls": ["https://example.com/motion.mp4"],
+    "resolution": "720p",
+    "duration": 8,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+### 视频编辑
+
+```json
+{
+  "model": "gemini-omni-1.2-flash",
+  "input": {
+    "prompt": "Turn the scene into a watercolor painting while keeping the camera movement",
+    "video_url": "https://example.com/source.mp4",
+    "resolution": "720p"
+  }
+}
+```
+
+## 注意事项
+
+- `image_urls` 不能与 `reference_image_urls` 或 `reference_video_urls` 同时使用
+- `video_url` 不能与 `image_urls`、`reference_image_urls`、`reference_video_urls`、`duration` 或 `aspect_ratio` 同时使用
+- 参考图和参考视频可以在同一次请求中同时发送
+- 媒体 URL 必须是可公开访问的 HTTP 或 HTTPS 链接。图片支持 jpg、jpeg、png、webp、gif、avif、heic 和 heif；视频支持 mp4、mov、webm、m4v 和 gif
+- 参考视频或源视频超过 `15` 秒时请求会被拒绝
+- 响应会返回 `task_id`；查询任务状态即可获取生成的视频文件
