@@ -1,0 +1,280 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - MiniMax H3 Image API",
+    "description": "MiniMax H3 Image API 可根据提示词生成图像，也可以编辑最多 16 张参考图。支持 1K、2K 和 4K 输出、10 种宽高比，以及最高 2,000 万像素的自定义尺寸。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 MiniMax H3 Image 任务",
+        "description": "MiniMax H3 Image 文生图与图片编辑，最多支持 16 张参考图。",
+        "operationId": "submitMiniMaxH3ImageTask",
+        "tags": [
+          "MiniMax H3 Image"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "文生图",
+                  "value": {
+                    "model": "minimax-h3-image",
+                    "input": {
+                      "prompt": "A vintage travel poster for Kyoto, headline text 'KYOTO' in large bold serif letters and subtitle 'City of a Thousand Gates' below, red torii gates receding up a mossy hill, autumn maple leaves, 1960s screen-print style",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "multi-reference-edit": {
+                  "summary": "多参考图编辑",
+                  "value": {
+                    "model": "minimax-h3-image",
+                    "input": {
+                      "prompt": "Place the sofa from <Picture 2> and the floor lamp from <Picture 3> in the empty living room in <Picture 1>. Keep the walls, windows, and daylight of <Picture 1> unchanged.",
+                      "image_urls": [
+                        "https://example.com/empty-room.png",
+                        "https://example.com/sofa.png",
+                        "https://example.com/floor-lamp.png"
+                      ],
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "custom-size": {
+                  "summary": "自定义尺寸",
+                  "value": {
+                    "model": "minimax-h3-image",
+                    "input": {
+                      "prompt": "Minimal presentation background, soft gradient from deep navy to teal, subtle geometric lines in the lower right, large empty area on the left for text",
+                      "size": "1920x1080",
+                      "enable_prompt_expansion": false,
+                      "output_format": "jpeg"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "minimax-h3-image"
+            ],
+            "description": "MiniMax H3 Image 模型标识。不传 image_urls 时为文生图；传入 1–16 个 image_urls 时为图片编辑。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于任务完成或失败时的通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "生成一张图像；传入 image_urls 时编辑或合成参考图。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 5000,
+                "description": "描述图像或所需编辑的提示词。必须包含非空白文本。需要原样出现在图上的文字请用引号括起来，并写明放在哪里。图片编辑时用 <Picture 1>、<Picture 2> 等指代参考图。"
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "可选的参考图 URL，1–16 个。传入该字段即进入图片编辑模式。即使只有一张图像也必须是数组。参考图按在数组中的顺序编号：第一个 URL 为 <Picture 1>，第二个为 <Picture 2>，依此类推；在提示词中用这些标记指代对应的图。每个 URL 都必须是可公开访问的 HTTP 或 HTTPS URL，指向 JPEG、PNG 或 WEBP 格式、不超过 20 MB、每边 128 到 8192 像素的图片。",
+                "example": [
+                  "https://example.com/empty-room.png",
+                  "https://example.com/sofa.png"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "description": "宽高比、auto 或自定义 WIDTHxHEIGHT。宽高比：1:1、5:4、4:5、4:3、3:4、3:2、2:3、16:9、9:16、21:9，像素尺寸由 resolution 决定。auto 用于图片编辑，跟随 <Picture 1> 的宽高比，像素面积约等于所选 resolution 档位。自定义 WIDTHxHEIGHT 的宽高为整数，总像素数 655360 到 20000000，宽高比在 1:3 到 3:1 之间（例如 2560x1440），输出宽高与请求完全一致。文生图默认为 1:1，图片编辑默认为 auto。",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "2K",
+                "description": "宽高比尺寸和 auto 的像素档位。1K：1:1 为 1024x1024，5:4 为 1152x928，4:5 为 928x1152，4:3 为 1184x896，3:4 为 896x1184，3:2 为 1248x832，2:3 为 832x1248，16:9 为 1376x768，9:16 为 768x1376，21:9 为 1568x672。2K：1:1 为 2048x2048，5:4 为 2304x1824，4:5 为 1824x2304，4:3 为 2368x1760，3:4 为 1760x2368，3:2 为 2496x1664，2:3 为 1664x2496，16:9 为 2720x1536，9:16 为 1536x2720，21:9 为 3136x1344。4K：1:1 为 4096x4096，5:4 为 4576x3648，4:5 为 3648x4576，4:3 为 4736x3552，3:4 为 3552x4736，3:2 为 5024x3360，2:3 为 3360x5024，16:9 为 5472x3072，9:16 为 3072x5472，21:9 为 6272x2688。自定义 WIDTHxHEIGHT 尺寸直接决定输出像素。"
+              },
+              "enable_prompt_expansion": {
+                "type": "boolean",
+                "default": true,
+                "description": "生成前把提示词扩写成对整幅画面的详细描述。用于文生图请求。图片编辑请求始终会扩写提示词。"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg"
+                ],
+                "default": "png",
+                "description": "输出图像格式。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794470400-abcd1234",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,122 @@
+---
+title: "MiniMax H3 Image"
+description: "MiniMax H3 Image API 可根据提示词生成图像，也可以编辑最多 16 张参考图。支持 1K、2K 和 4K 输出、10 种宽高比，以及最高 2,000 万像素的自定义尺寸。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/minimax-h3-image.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `minimax-h3-image` 根据提示词制作海报、产品图、概念设计等各类图像，也可以用同一个 model ID 编辑和合成最多 16 张参考图。MiniMax H3 Image 是 MiniMax 的图像生成与编辑模型，基于 MiniMax H3 架构，于 2026 年 11 月 10 日发布。
+
+## 模型
+
+- **minimax-h3-image** — 不传 `image_urls` 时为文生图；传入 1 到 16 张参考图的 `image_urls` 时为图片编辑
+
+## 功能
+
+- 根据最多 5,000 个字符的提示词生成图像。
+- 渲染图上文字，适合在提示词中用引号写出的标题、标签和说明文字。
+- 支持图片编辑和多参考图合成，最多 16 张参考图，在提示词中用 `<Picture 1>`、`<Picture 2>` 等依次指代。
+- 提供 10 种宽高比，可选 `1K`、`2K` 或 `4K`（`21:9` 最高 6272×2688），也支持 655,360 到 20,000,000 像素的自定义 `WIDTHxHEIGHT` 尺寸。
+- 提示词扩写：把任意语言的简短提示词改写成对整幅画面的详细描述。
+- 输出 PNG 或 JPEG。
+
+## 输入模式
+
+- **文生图** — 不传 `image_urls`。`size` 默认为 `1:1`，是否扩写提示词由 `enable_prompt_expansion` 控制。
+- **图片编辑** — 在 `image_urls` 中传入 1 到 16 个 URL。第一个 URL 是 `<Picture 1>`，第二个是 `<Picture 2>`，依此类推；在提示词中用这些标记说明要修改哪张图、从哪些图中取用内容。`size` 默认为 `auto`，跟随 `<Picture 1>` 的宽高比。图片编辑请求始终会扩写提示词。
+
+## 必填参数
+
+- `prompt` (string)：描述图像或所需编辑的提示词，1–5,000 个字符，必须包含非空白文本。需要原样出现在图上的文字请用引号括起来，并写明放在哪里。
+
+## 可选参数
+
+- `image_urls` (array of strings)：1 到 16 个可公开访问的 HTTP(S) 参考图 URL（JPEG、PNG 或 WEBP，单张不超过 20 MB，每边 128 到 8192 像素）。传入后进入图片编辑模式。在提示词中按顺序指代这些图：第一个 URL 为 `<Picture 1>`，第二个为 `<Picture 2>`，依此类推。
+- `size` (string)：`1:1`、`5:4`、`4:5`、`4:3`、`3:4`、`3:2`、`2:3`、`16:9`、`9:16`、`21:9`、`auto` 或自定义 `WIDTHxHEIGHT`。文生图默认为 `1:1`，图片编辑默认为 `auto`。`auto` 用于图片编辑。参见[尺寸](#尺寸)。
+- `resolution` (string)：`1K`、`2K` 或 `4K`。默认为 `2K`。决定宽高比尺寸和 `auto` 的像素档位。自定义 `WIDTHxHEIGHT` 尺寸直接决定输出像素。
+- `enable_prompt_expansion` (boolean)：生成前把提示词扩写成对整幅画面的详细描述。默认为 `true`。用于文生图请求。图片编辑请求始终会扩写提示词。
+- `output_format` (string)：`png` 或 `jpeg`。默认为 `png`。
+
+## 尺寸
+
+在所选 `resolution` 下，每种宽高比都对应固定的像素尺寸：
+
+| `size` | `1K` | `2K` | `4K` |
+| --- | --- | --- | --- |
+| `1:1` | 1024×1024 | 2048×2048 | 4096×4096 |
+| `5:4` | 1152×928 | 2304×1824 | 4576×3648 |
+| `4:5` | 928×1152 | 1824×2304 | 3648×4576 |
+| `4:3` | 1184×896 | 2368×1760 | 4736×3552 |
+| `3:4` | 896×1184 | 1760×2368 | 3552×4736 |
+| `3:2` | 1248×832 | 2496×1664 | 5024×3360 |
+| `2:3` | 832×1248 | 1664×2496 | 3360×5024 |
+| `16:9` | 1376×768 | 2720×1536 | 5472×3072 |
+| `9:16` | 768×1376 | 1536×2720 | 3072×5472 |
+| `21:9` | 1568×672 | 3136×1344 | 6272×2688 |
+
+- `auto`（图片编辑）：输出跟随 `<Picture 1>` 的宽高比，像素面积约等于所选档位（1024×1024、2048×2048 或 4096×4096）。宽和高都是 32 的倍数，宽高比保持在 1:3 到 3:1 之间。
+- 自定义 `WIDTHxHEIGHT`：宽和高为整数，总像素数 655,360 到 20,000,000，宽高比在 1:3 到 3:1 之间（例如 `2560x1440` 或 `1920x1080`）。输出图像的宽高与请求完全一致。
+
+## 示例
+
+### 文生图
+
+一张带标题和副标题的 2K 16:9 海报（2720×1536）：
+
+```json
+{
+  "model": "minimax-h3-image",
+  "input": {
+    "prompt": "A vintage travel poster for Kyoto, headline text 'KYOTO' in large bold serif letters and subtitle 'City of a Thousand Gates' below, red torii gates receding up a mossy hill, autumn maple leaves, 1960s screen-print style",
+    "size": "16:9",
+    "resolution": "2K"
+  }
+}
+```
+
+### 多参考图编辑
+
+合成多张参考图，按每张图在 `image_urls` 中的位置指代它：
+
+```json
+{
+  "model": "minimax-h3-image",
+  "input": {
+    "prompt": "Place the sofa from <Picture 2> and the floor lamp from <Picture 3> in the empty living room in <Picture 1>. Keep the walls, windows, and daylight of <Picture 1> unchanged.",
+    "image_urls": [
+      "https://example.com/empty-room.png",
+      "https://example.com/sofa.png",
+      "https://example.com/floor-lamp.png"
+    ],
+    "resolution": "2K"
+  }
+}
+```
+
+### 自定义尺寸
+
+一张精确 1920×1080 的 JPEG 幻灯片背景，按原样使用提示词：
+
+```json
+{
+  "model": "minimax-h3-image",
+  "input": {
+    "prompt": "Minimal presentation background, soft gradient from deep navy to teal, subtle geometric lines in the lower right, large empty area on the left for text",
+    "size": "1920x1080",
+    "enable_prompt_expansion": false,
+    "output_format": "jpeg"
+  }
+}
+```
+
+## 注意事项
+
+- 每次请求生成一张图像。
+- `image_urls` 必须是数组，即使只有一张图像。
+- 参考图按在 `image_urls` 中的顺序编号。为获得更好的效果，请在提示词中说明每张图的作用，以及哪些地方要改、哪些保持不变。
+- 一次请求通常在 10 到 25 秒左右完成。4K 输出和带多张参考图的编辑耗时更长。

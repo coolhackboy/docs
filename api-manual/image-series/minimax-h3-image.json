@@ -1,0 +1,280 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - MiniMax H3 Image API",
+    "description": "The MiniMax H3 Image API generates an image from a prompt or edits up to 16 reference images. It supports 1K, 2K, and 4K output, ten aspect ratios, and custom sizes up to 20 megapixels.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit MiniMax H3 Image Task",
+        "description": "MiniMax H3 Image text-to-image generation and image editing with up to 16 reference images.",
+        "operationId": "submitMiniMaxH3ImageTask",
+        "tags": [
+          "MiniMax H3 Image"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text To Image",
+                  "value": {
+                    "model": "minimax-h3-image",
+                    "input": {
+                      "prompt": "A vintage travel poster for Kyoto, headline text 'KYOTO' in large bold serif letters and subtitle 'City of a Thousand Gates' below, red torii gates receding up a mossy hill, autumn maple leaves, 1960s screen-print style",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "multi-reference-edit": {
+                  "summary": "Multi-Reference Edit",
+                  "value": {
+                    "model": "minimax-h3-image",
+                    "input": {
+                      "prompt": "Place the sofa from <Picture 2> and the floor lamp from <Picture 3> in the empty living room in <Picture 1>. Keep the walls, windows, and daylight of <Picture 1> unchanged.",
+                      "image_urls": [
+                        "https://example.com/empty-room.png",
+                        "https://example.com/sofa.png",
+                        "https://example.com/floor-lamp.png"
+                      ],
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "custom-size": {
+                  "summary": "Custom Size",
+                  "value": {
+                    "model": "minimax-h3-image",
+                    "input": {
+                      "prompt": "Minimal presentation background, soft gradient from deep navy to teal, subtle geometric lines in the lower right, large empty area on the left for text",
+                      "size": "1920x1080",
+                      "enable_prompt_expansion": false,
+                      "output_format": "jpeg"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "minimax-h3-image"
+            ],
+            "description": "MiniMax H3 Image model identifier. Omit image_urls for text-to-image; pass 1–16 image_urls for image editing."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "Generate one image. With image_urls, edit or combine the reference images.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 5000,
+                "description": "Prompt describing the image or the requested edit. Must contain non-whitespace text. Put exact on-image text in quotes and state where it goes. In image editing, refer to reference images as <Picture 1>, <Picture 2>, and so on."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional 1–16 reference image URLs. Passing this field selects image editing. Must be an array, even for one image. Images are numbered by their order in the array: the first URL is <Picture 1>, the second is <Picture 2>, and so on; use these tags in the prompt to refer to each image. Each URL must be a publicly accessible HTTP or HTTPS URL pointing to a JPEG, PNG, or WEBP image of up to 20 MB, with each side between 128 and 8192 pixels.",
+                "example": [
+                  "https://example.com/empty-room.png",
+                  "https://example.com/sofa.png"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "description": "Aspect ratio, auto, or custom WIDTHxHEIGHT. Aspect ratios: 1:1, 5:4, 4:5, 4:3, 3:4, 3:2, 2:3, 16:9, 9:16, 21:9; their pixel size comes from resolution. auto applies to image editing and follows the aspect ratio of <Picture 1> at about the pixel area of the selected resolution tier. Custom WIDTHxHEIGHT uses integers with total pixels from 655360 to 20000000 and an aspect ratio between 1:3 and 3:1 (for example 2560x1440); the output has exactly the requested width and height. Defaults to 1:1 for text-to-image and auto for image editing.",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K",
+                  "4K"
+                ],
+                "default": "2K",
+                "description": "Pixel tier for aspect-ratio sizes and auto. 1K: 1:1 1024x1024, 5:4 1152x928, 4:5 928x1152, 4:3 1184x896, 3:4 896x1184, 3:2 1248x832, 2:3 832x1248, 16:9 1376x768, 9:16 768x1376, 21:9 1568x672. 2K: 1:1 2048x2048, 5:4 2304x1824, 4:5 1824x2304, 4:3 2368x1760, 3:4 1760x2368, 3:2 2496x1664, 2:3 1664x2496, 16:9 2720x1536, 9:16 1536x2720, 21:9 3136x1344. 4K: 1:1 4096x4096, 5:4 4576x3648, 4:5 3648x4576, 4:3 4736x3552, 3:4 3552x4736, 3:2 5024x3360, 2:3 3360x5024, 16:9 5472x3072, 9:16 3072x5472, 21:9 6272x2688. A custom WIDTHxHEIGHT size sets the exact output pixels."
+              },
+              "enable_prompt_expansion": {
+                "type": "boolean",
+                "default": true,
+                "description": "Expand the prompt into a detailed description of the whole image before generating. Applies to text-to-image requests. Image editing requests always expand the prompt."
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg"
+                ],
+                "default": "png",
+                "description": "Output image format."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details.",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794470400-abcd1234",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
