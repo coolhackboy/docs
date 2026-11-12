@@ -1,0 +1,117 @@
+---
+title: "MAI Image 2.6 Flash"
+description: "The MAI Image 2.6 Flash API from Microsoft is the faster, lower-cost MAI Image 2.6 option. It generates one image from a prompt, edits a reference image, or combines up to 5 reference images, with 1K and 2K output, custom sizes, and optional web search grounding."
+icon: "image"
+openapi: "/api-manual/image-series/mai-image-2-6-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Use `mai-image-2.6-flash` for quick iteration on posters, product shots, and other images from a prompt, or to edit and combine reference images. It accepts the same parameters as [MAI Image 2.6](/api-manual/image-series/mai-image-2-6) and is faster and lower-cost.
+
+## Models
+
+- **mai-image-2.6-flash** — Faster, lower-cost Microsoft MAI Image 2.6 Flash for text-to-image, image editing, and multi-image composition
+
+## Features
+
+- Text-to-image generation from prompts of up to 32,000 characters.
+- Editing a single reference image, or combining up to 5 reference images into one image.
+- Seven aspect ratios at `1K` or `2K`, plus custom `WIDTHxHEIGHT` sizes.
+- Optional web search that looks up real-time information before generating, for current events and real places, products, or people.
+
+## Input modes
+
+- **Text-to-image** — Omit `image_urls`. The output size comes from `size` and `resolution`.
+- **Editing / composition** — Pass 1 to 5 URLs in `image_urls`. One image is edited; two or more images are combined into one. The output is about 1 megapixel and follows the reference images.
+
+## Required parameters
+
+- `prompt` (string): Description of the image or the requested edit, 1–32,000 characters. Must contain non-whitespace text. Put any exact on-image text in quotes.
+
+## Optional parameters
+
+- `image_urls` (array of strings): 1 to 5 publicly accessible HTTP(S) reference image URLs in JPEG, PNG, or WebP format. Selects editing / composition mode.
+- `size` (string): `1:1`, `4:3`, `3:4`, `3:2`, `2:3`, `16:9`, `9:16`, or a custom `WIDTHxHEIGHT`. Default is `1:1`. See [Size](#size).
+- `resolution` (string): `1K` or `2K`. Default is `1K`. Applies only to aspect-ratio sizes.
+- `enable_web_search` (boolean): Look up real-time web information before generating. Default is `false`.
+
+## Size
+
+Each aspect ratio maps to fixed pixel dimensions at the selected `resolution`:
+
+| `size` | `1K` | `2K` |
+| --- | --- | --- |
+| `1:1` | 1024×1024 | 1536×1536 |
+| `4:3` | 1152×864 | 1760×1312 |
+| `3:4` | 864×1152 | 1312×1760 |
+| `3:2` | 1248×832 | 1856×1248 |
+| `2:3` | 832×1248 | 1248×1856 |
+| `16:9` | 1344×768 | 2048×1152 |
+| `9:16` | 768×1344 | 1152×2048 |
+
+- Custom `WIDTHxHEIGHT` sizes need both sides divisible by 32, each side at least 768, and total pixels at most 2,359,296 (for example `1536x1536` or `3072x768`). A custom size is used exactly as given; `resolution` applies to aspect-ratio sizes.
+
+## Examples
+
+### Text To Image
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "A university campus poster at dusk with the title \"Open Day 2026\", photorealistic, cinematic light",
+    "size": "16:9",
+    "resolution": "2K"
+  }
+}
+```
+
+### Image Edit
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "Change the bicycle to blue and add a small dog next to it",
+    "image_urls": [
+      "https://example.com/bicycle.png"
+    ]
+  }
+}
+```
+
+### Custom Size
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "A wide panoramic banner of a mountain range at sunrise",
+    "size": "3072x768"
+  }
+}
+```
+
+### Web Search
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "A travel poster of the Eiffel Tower at night with the text \"Paris\"",
+    "size": "2:3",
+    "enable_web_search": true
+  }
+}
+```
+
+## Notes
+
+- Each request returns one PNG image.
+- `image_urls` must be an array, even for one image.
+- In editing / composition mode, the output size follows the reference images. If you also send `size` or `resolution`, use valid values.
+- Reference images larger than 1 megapixel are downscaled before generation.

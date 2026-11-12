@@ -1,0 +1,273 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - MAI Image 2.6 Flash API",
+    "description": "The MAI Image 2.6 Flash API from Microsoft is the faster, lower-cost MAI Image 2.6 option. It generates one image from a prompt, edits a reference image, or combines up to 5 reference images, with 1K and 2K output, custom sizes, and optional web search grounding.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit MAI Image 2.6 Flash Task",
+        "description": "MAI Image 2.6 Flash single-image generation, reference-image editing, and multi-image composition with optional web search.",
+        "operationId": "submitMAIImage26FlashTask",
+        "tags": [
+          "MAI Image 2.6 Flash"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text To Image",
+                  "value": {
+                    "model": "mai-image-2.6-flash",
+                    "input": {
+                      "prompt": "A university campus poster at dusk with the title \"Open Day 2026\", photorealistic, cinematic light",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "Image Edit",
+                  "value": {
+                    "model": "mai-image-2.6-flash",
+                    "input": {
+                      "prompt": "Change the bicycle to blue and add a small dog next to it",
+                      "image_urls": [
+                        "https://example.com/bicycle.png"
+                      ]
+                    }
+                  }
+                },
+                "custom-size": {
+                  "summary": "Custom Size",
+                  "value": {
+                    "model": "mai-image-2.6-flash",
+                    "input": {
+                      "prompt": "A wide panoramic banner of a mountain range at sunrise",
+                      "size": "3072x768"
+                    }
+                  }
+                },
+                "web-search": {
+                  "summary": "Web Search",
+                  "value": {
+                    "model": "mai-image-2.6-flash",
+                    "input": {
+                      "prompt": "A travel poster of the Eiffel Tower at night with the text \"Paris\"",
+                      "size": "2:3",
+                      "enable_web_search": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "mai-image-2.6-flash"
+            ],
+            "description": "MAI Image 2.6 Flash model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "Generate one PNG image. With image_urls, edit or combine the reference images.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32000,
+                "description": "Prompt describing the image or the requested edit. Must contain non-whitespace text. Put exact on-image text in quotes."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional 1–5 reference image URLs (JPEG, PNG, or WebP). Must be an array, even for one image. One image is edited; several images are combined. The output is about 1 megapixel and its size follows the reference images. Images larger than 1 megapixel are downscaled first. Each URL must be a publicly accessible HTTP or HTTPS URL."
+              },
+              "size": {
+                "type": "string",
+                "default": "1:1",
+                "description": "Aspect ratio or custom WIDTHxHEIGHT for text-to-image. Supported values: 1:1, 4:3, 3:4, 3:2, 2:3, 16:9, 9:16, or WIDTHxHEIGHT. Defaults to 1:1. Custom sizes need both sides divisible by 32, each side at least 768, and total pixels at most 2359296 (for example 1536x1536 or 3072x768) and are used exactly as given. With image_urls, the output size follows the reference images; any size you send must still be a valid value.",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K"
+                ],
+                "default": "1K",
+                "description": "Output resolution tier for aspect-ratio sizes. 1K: 1:1 1024x1024, 4:3 1152x864, 3:4 864x1152, 3:2 1248x832, 2:3 832x1248, 16:9 1344x768, 9:16 768x1344. 2K: 1:1 1536x1536, 4:3 1760x1312, 3:4 1312x1760, 3:2 1856x1248, 2:3 1248x1856, 16:9 2048x1152, 9:16 1152x2048. Applies to aspect-ratio sizes in text-to-image mode; any resolution you send must still be a valid value."
+              },
+              "enable_web_search": {
+                "type": "boolean",
+                "default": false,
+                "description": "Look up real-time web information before generating, for current events and real places, products, or people."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details.",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794383400-abcd1234",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-11T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

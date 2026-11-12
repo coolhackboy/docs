@@ -1,0 +1,117 @@
+---
+title: "MAI Image 2.6 Flash"
+description: "微软 MAI Image 2.6 Flash API 是 MAI Image 2.6 中速度更快、成本更低的选项。它可根据提示词生成一张图像，也可以编辑一张参考图，或将最多 5 张参考图合成为一张，支持 1K 和 2K 输出、自定义尺寸，并可选择开启联网检索。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/mai-image-2-6-flash.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `mai-image-2.6-flash` 根据提示词快速迭代海报、产品图等各类图像，也可以编辑和合成参考图。它的参数与 [MAI Image 2.6](/zh/api-manual/image-series/mai-image-2-6) 完全相同，速度更快，成本更低。
+
+## 模型
+
+- **mai-image-2.6-flash** — 速度更快、成本更低的微软 MAI Image 2.6 Flash，支持文生图、图像编辑和多图合成
+
+## 功能
+
+- 根据最多 32,000 个字符的提示词生成图像。
+- 编辑单张参考图，或将最多 5 张参考图合成为一张图像。
+- 提供 7 种宽高比，可选 `1K` 或 `2K`，也支持自定义 `WIDTHxHEIGHT` 尺寸。
+- 可选开启联网检索，在生成前查询实时信息，适合涉及时事以及真实地点、产品或人物的画面。
+
+## 输入模式
+
+- **文生图** — 不传 `image_urls`。输出尺寸由 `size` 和 `resolution` 决定。
+- **编辑 / 合成** — 在 `image_urls` 中传入 1 到 5 个 URL。传一张图时编辑该图，传两张及以上时将它们合成为一张。输出约 100 万像素，并跟随参考图。
+
+## 必填参数
+
+- `prompt` (string)：描述图像或所需编辑的提示词，1–32,000 个字符，必须包含非空白文本。需要原样出现在图上的文字，请用引号括起来。
+
+## 可选参数
+
+- `image_urls` (array of strings)：1 到 5 个可公开访问的 HTTP(S) 参考图 URL，格式为 JPEG、PNG 或 WebP。传入后进入编辑 / 合成模式。
+- `size` (string)：`1:1`、`4:3`、`3:4`、`3:2`、`2:3`、`16:9`、`9:16` 或自定义 `WIDTHxHEIGHT`。默认为 `1:1`。参见[尺寸](#尺寸)。
+- `resolution` (string)：`1K` 或 `2K`。默认为 `1K`。只对宽高比尺寸生效。
+- `enable_web_search` (boolean)：生成前查询实时网络信息。默认为 `false`。
+
+## 尺寸
+
+在所选 `resolution` 下，每种宽高比都对应固定的像素尺寸：
+
+| `size` | `1K` | `2K` |
+| --- | --- | --- |
+| `1:1` | 1024×1024 | 1536×1536 |
+| `4:3` | 1152×864 | 1760×1312 |
+| `3:4` | 864×1152 | 1312×1760 |
+| `3:2` | 1248×832 | 1856×1248 |
+| `2:3` | 832×1248 | 1248×1856 |
+| `16:9` | 1344×768 | 2048×1152 |
+| `9:16` | 768×1344 | 1152×2048 |
+
+- 自定义 `WIDTHxHEIGHT` 尺寸要求宽和高都能被 32 整除，每边不小于 768，总像素数不超过 2,359,296（例如 `1536x1536` 或 `3072x768`）。自定义尺寸按填写的宽高原样输出，`resolution` 用于宽高比尺寸。
+
+## 示例
+
+### 文生图
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "A university campus poster at dusk with the title \"Open Day 2026\", photorealistic, cinematic light",
+    "size": "16:9",
+    "resolution": "2K"
+  }
+}
+```
+
+### 图像编辑
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "Change the bicycle to blue and add a small dog next to it",
+    "image_urls": [
+      "https://example.com/bicycle.png"
+    ]
+  }
+}
+```
+
+### 自定义尺寸
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "A wide panoramic banner of a mountain range at sunrise",
+    "size": "3072x768"
+  }
+}
+```
+
+### 联网检索
+
+```json
+{
+  "model": "mai-image-2.6-flash",
+  "input": {
+    "prompt": "A travel poster of the Eiffel Tower at night with the text \"Paris\"",
+    "size": "2:3",
+    "enable_web_search": true
+  }
+}
+```
+
+## 注意事项
+
+- 每次请求返回一张 PNG 图像。
+- `image_urls` 必须是数组，即使只有一张图像。
+- 编辑 / 合成模式下，输出尺寸跟随参考图；如果同时传入 `size` 或 `resolution`，请使用合法取值。
+- 超过 100 万像素的参考图会先缩小再生成。

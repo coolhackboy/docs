@@ -1,0 +1,273 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - MAI Image 2.6 API",
+    "description": "微软 MAI Image 2.6 API 可根据提示词生成一张图像，也可以编辑一张参考图，或将最多 5 张参考图合成为一张。支持 1K 和 2K 输出、自定义尺寸，并可选择开启联网检索。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 MAI Image 2.6 任务",
+        "description": "MAI Image 2.6 单图生成、参考图编辑与多图合成，可选开启联网检索。",
+        "operationId": "submitMAIImage26Task",
+        "tags": [
+          "MAI Image 2.6"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "文生图",
+                  "value": {
+                    "model": "mai-image-2.6",
+                    "input": {
+                      "prompt": "A university campus poster at dusk with the title \"Open Day 2026\", photorealistic, cinematic light",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "image-edit": {
+                  "summary": "图像编辑",
+                  "value": {
+                    "model": "mai-image-2.6",
+                    "input": {
+                      "prompt": "Change the bicycle to blue and add a small dog next to it",
+                      "image_urls": [
+                        "https://example.com/bicycle.png"
+                      ]
+                    }
+                  }
+                },
+                "custom-size": {
+                  "summary": "自定义尺寸",
+                  "value": {
+                    "model": "mai-image-2.6",
+                    "input": {
+                      "prompt": "A wide panoramic banner of a mountain range at sunrise",
+                      "size": "3072x768"
+                    }
+                  }
+                },
+                "web-search": {
+                  "summary": "联网检索",
+                  "value": {
+                    "model": "mai-image-2.6",
+                    "input": {
+                      "prompt": "A travel poster of the Eiffel Tower at night with the text \"Paris\"",
+                      "size": "2:3",
+                      "enable_web_search": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "mai-image-2.6"
+            ],
+            "description": "MAI Image 2.6 模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于任务完成或失败时的通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "生成一张 PNG 图像；传入 image_urls 时编辑或合成参考图。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32000,
+                "description": "描述图像或所需编辑的提示词。必须包含非空白文本。需要原样出现在图上的文字请用引号括起来。"
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "可选的参考图 URL，1–5 个，支持 JPEG、PNG 和 WebP。即使只有一张图像也必须是数组。传一张图时编辑该图，传多张图时将它们合成。输出约 100 万像素，尺寸跟随参考图。超过 100 万像素的图片会先缩小。每个 URL 都必须是可公开访问的 HTTP 或 HTTPS URL。"
+              },
+              "size": {
+                "type": "string",
+                "default": "1:1",
+                "description": "文生图的宽高比或自定义 WIDTHxHEIGHT。支持的值：1:1、4:3、3:4、3:2、2:3、16:9、9:16 或 WIDTHxHEIGHT，默认 1:1。自定义尺寸要求宽高都能被 32 整除，每边不小于 768，总像素数不超过 2359296（例如 1536x1536 或 3072x768），按填写的宽高原样输出。传入 image_urls 时输出尺寸跟随参考图，如果同时传入 size，取值仍须合法。",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "2K"
+                ],
+                "default": "1K",
+                "description": "宽高比尺寸的输出分辨率档位。1K：1:1 为 1024x1024，4:3 为 1152x864，3:4 为 864x1152，3:2 为 1248x832，2:3 为 832x1248，16:9 为 1344x768，9:16 为 768x1344。2K：1:1 为 1536x1536，4:3 为 1760x1312，3:4 为 1312x1760，3:2 为 1856x1248，2:3 为 1248x1856，16:9 为 2048x1152，9:16 为 1152x2048。用于文生图模式下的宽高比尺寸；如果传入，取值仍须合法。"
+              },
+              "enable_web_search": {
+                "type": "boolean",
+                "default": false,
+                "description": "生成前查询实时网络信息，适合涉及时事以及真实地点、产品或人物的画面。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794383400-abcd1234",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["not_started", "running", "finished", "failed"],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-11T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [200, 400, 401, 402, 403, 404, 408, 429, 500, 502, 503],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

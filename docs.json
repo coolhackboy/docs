@@ -189,6 +189,8 @@
       "/api-manual/image-series/gpt-image-2-6-fixed.json",
       "/api-manual/image-series/gpt-image-2-6-flare.json",
       "/api-manual/image-series/gpt-image-2-6-sunburst.json",
+      "/api-manual/image-series/mai-image-2-6.json",
+      "/api-manual/image-series/mai-image-2-6-flash.json",
       "/api-manual/music-series/generate-midi.json",
       "/api-manual/account-management/user-balance.json",
       "/api-manual/file-series/upload-url.json",
@@ -341,6 +343,8 @@
       "/zh/api-manual/image-series/gpt-image-2-6-fixed.json",
       "/zh/api-manual/image-series/gpt-image-2-6-flare.json",
       "/zh/api-manual/image-series/gpt-image-2-6-sunburst.json",
+      "/zh/api-manual/image-series/mai-image-2-6.json",
+      "/zh/api-manual/image-series/mai-image-2-6-flash.json",
       "/zh/api-manual/music-series/generate-midi.json",
       "/zh/api-manual/account-management/user-balance.json",
       "/zh/api-manual/file-series/upload-url.json",
@@ -445,6 +449,13 @@
                       "api-manual/image-series/gpt-image-2-6-flare",
                       "api-manual/image-series/gpt-image-2-6-sunburst",
                       "api-manual/image-series/gpt-image-2-6-fixed"
+                    ]
+                  },
+                  {
+                    "group": "Microsoft",
+                    "pages": [
+                      "api-manual/image-series/mai-image-2-6",
+                      "api-manual/image-series/mai-image-2-6-flash"
                     ]
                   },
                   {
@@ -926,6 +937,13 @@
                       "zh/api-manual/image-series/gpt-image-2-6-flare",
                       "zh/api-manual/image-series/gpt-image-2-6-sunburst",
                       "zh/api-manual/image-series/gpt-image-2-6-fixed"
+                    ]
+                  },
+                  {
+                    "group": "Microsoft",
+                    "pages": [
+                      "zh/api-manual/image-series/mai-image-2-6",
+                      "zh/api-manual/image-series/mai-image-2-6-flash"
                     ]
                   },
                   {
