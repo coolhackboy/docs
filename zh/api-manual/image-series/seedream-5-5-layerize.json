@@ -1,0 +1,317 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedream 5.5 图层拆分 API",
+    "description": "Seedream 5.5 图层拆分 API 把一张图片拆成一张底图和最多 99 个透明 PNG 图层，并返回图层位置、名称、描述以及可选的文字 OCR。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Seedream 5.5 图层拆分任务",
+        "description": "Seedream 5.5 图层拆分：输入一张图片，输出底图和若干透明 PNG 图层。",
+        "operationId": "submitSeedream55LayerizeTask",
+        "tags": [
+          "Seedream 5.5 Layer Decomposition"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "auto-layers": {
+                  "summary": "自动拆层",
+                  "value": {
+                    "model": "seedream-5.5-layerize",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/poster.png"
+                      ]
+                    }
+                  }
+                },
+                "guided-layers": {
+                  "summary": "按提示拆层",
+                  "value": {
+                    "model": "seedream-5.5-layerize",
+                    "input": {
+                      "prompt": "Put each animal on its own layer and keep the rest of the scene in the base image",
+                      "image_urls": [
+                        "https://example.com/animal-illustration.png"
+                      ],
+                      "resolution": "2K",
+                      "max_images": 40
+                    }
+                  }
+                },
+                "text-layers": {
+                  "summary": "文字图层与 OCR",
+                  "value": {
+                    "model": "seedream-5.5-layerize",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/event-poster.png"
+                      ],
+                      "resolution": "1K",
+                      "max_images": 15,
+                      "text_recognition": true,
+                      "output_format": "jpeg"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "seedream-5.5-layerize"
+            ],
+            "description": "Seedream 5.5 图层拆分模型标识。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于任务完成或失败时的通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "image_urls"
+            ],
+            "description": "把一张图片拆成底图和透明 PNG 图层。任务按图片返回文件，底图在前，每个文件带 layer 对象。",
+            "properties": {
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "要拆分的图片 URL，恰好 1 张，必须是数组。URL 必须可公开访问（HTTP/HTTPS），图片为 JPEG 或 PNG，不超过 10 MB，尺寸 512x512 到 6000x6000 像素，宽高比在 1:16 到 16:1 之间。",
+                "example": [
+                  "https://example.com/poster.png"
+                ]
+              },
+              "prompt": {
+                "type": "string",
+                "maxLength": 2000,
+                "description": "可选，描述怎么拆分，最多 2000 个字符（例如把每只动物拆成独立图层，其余保留在底图）。省略时模型自动识别主要元素并各自拆成图层。"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "1.5K",
+                  "2K",
+                  "auto"
+                ],
+                "default": "auto",
+                "description": "输出尺寸档位。auto：原图在 1K–2K 之间保持原尺寸，小于 1K 放大到 1K，大于 2K 缩小到 2K；auto 按 2K 计费。底图保持输入图比例，每个图层保持自身比例、接近所选档位。"
+              },
+              "max_images": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 100,
+                "default": 30,
+                "description": "最多输出几张图片，含底图（2–100）。数值越大拆得越细。返回张数取决于画面内容，按实际返回张数计费。"
+              },
+              "text_recognition": {
+                "type": "boolean",
+                "default": false,
+                "description": "在 layer.text_recognition 中返回常规文字图层的 OCR 结果：全文、逐行位置和近似样式（字体、颜色、粗体、斜体、下划线、删除线、阴影、半透明）。"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg"
+                ],
+                "default": "png",
+                "description": "底图格式。图层固定为带透明通道的 PNG。"
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "内容安全检查。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794470400-abcd1234",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

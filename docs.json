@@ -74,6 +74,8 @@
       "/api-manual/image-series/seedream-5-0-lite.json",
       "/api-manual/image-series/seedream-5-0-pro.json",
       "/api-manual/image-series/seedream-5-0-flash.json",
+      "/api-manual/image-series/seedream-5-5.json",
+      "/api-manual/image-series/seedream-5-5-layerize.json",
       "/api-manual/image-series/wan-2-7-image-pro.json",
       "/api-manual/image-series/wan-2-7-image.json",
       "/api-manual/image-series/z-image.json",
@@ -229,6 +231,8 @@
       "/zh/api-manual/image-series/seedream-5-0-lite.json",
       "/zh/api-manual/image-series/seedream-5-0-pro.json",
       "/zh/api-manual/image-series/seedream-5-0-flash.json",
+      "/zh/api-manual/image-series/seedream-5-5.json",
+      "/zh/api-manual/image-series/seedream-5-5-layerize.json",
       "/zh/api-manual/image-series/wan-2-7-image-pro.json",
       "/zh/api-manual/image-series/wan-2-7-image.json",
       "/zh/api-manual/image-series/z-image.json",
@@ -493,7 +497,9 @@
                       "api-manual/image-series/seedream-4-5",
                       "api-manual/image-series/seedream-5-0-lite",
                       "api-manual/image-series/seedream-5-0-pro",
-                      "api-manual/image-series/seedream-5-0-flash"
+                      "api-manual/image-series/seedream-5-0-flash",
+                      "api-manual/image-series/seedream-5-5",
+                      "api-manual/image-series/seedream-5-5-layerize"
                     ]
                   },
                   {
@@ -987,7 +993,9 @@
                       "zh/api-manual/image-series/seedream-4-5",
                       "zh/api-manual/image-series/seedream-5-0-lite",
                       "zh/api-manual/image-series/seedream-5-0-pro",
-                      "zh/api-manual/image-series/seedream-5-0-flash"
+                      "zh/api-manual/image-series/seedream-5-0-flash",
+                      "zh/api-manual/image-series/seedream-5-5",
+                      "zh/api-manual/image-series/seedream-5-5-layerize"
                     ]
                   },
                   {

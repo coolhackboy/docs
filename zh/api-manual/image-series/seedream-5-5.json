@@ -1,0 +1,330 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedream 5.5 API",
+    "description": "Seedream 5.5 API 根据提示词生成图片，或基于最多 10 张参考图编辑图片，支持 1K、1.5K、2K 输出、8 种宽高比和透明背景 PNG。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "生产环境"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "提交 Seedream 5.5 任务",
+        "description": "Seedream 5.5 文生图，以及最多 10 张参考图的图片编辑。",
+        "operationId": "submitSeedream55Task",
+        "tags": [
+          "Seedream 5.5"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "文生图",
+                  "value": {
+                    "model": "seedream-5.5",
+                    "input": {
+                      "prompt": "A ceramic pour-over coffee set on a walnut counter, soft morning window light, steam rising from the cup, minimalist product photography",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "multi-reference-edit": {
+                  "summary": "多参考图编辑",
+                  "value": {
+                    "model": "seedream-5.5",
+                    "input": {
+                      "prompt": "Put the handbag from image 2 on the wooden table in image 1. Keep the lighting, background, and camera angle of image 1 unchanged.",
+                      "image_urls": [
+                        "https://example.com/living-room.png",
+                        "https://example.com/handbag.png"
+                      ],
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "transparent-png": {
+                  "summary": "透明背景 PNG",
+                  "value": {
+                    "model": "seedream-5.5",
+                    "input": {
+                      "prompt": "A red paper lantern with golden tassels, flat illustration sticker, isolated subject on a transparent background",
+                      "size": "1:1",
+                      "resolution": "1K",
+                      "background": "transparent",
+                      "output_format": "png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "任务提交成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未授权：API Key 无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "所有 API 接口都需要 Bearer Token 认证。\n\n创建 API Key：登录 PoYo，进入 **仪表盘 → API 密钥**（[poyo.ai/zh/dashboard/api-key](https://poyo.ai/zh/dashboard/api-key)），点击创建 Key。\n\n在请求头中添加：\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "seedream-5.5"
+            ],
+            "description": "Seedream 5.5 模型标识。省略 image_urls 为文生图；传 1–10 张 image_urls 为图片编辑。"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "可选的 Webhook URL，用于任务完成或失败时的通知。"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "生成一张图片。传入 image_urls 时编辑或组合参考图。",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 5000,
+                "description": "描述画面或编辑要求，5–5000 个字符。编辑时写清改什么、保留什么，并按顺序称呼参考图（图 1、图 2 等）。"
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "可选，1–10 张参考图 URL。传入即为图片编辑模式。传一张图时也使用数组格式。每个 URL 必须是可公开访问的 HTTP/HTTPS 地址，图片为 JPEG、PNG 或 WEBP，单张不超过 10 MB。",
+                "example": [
+                  "https://example.com/living-room.png",
+                  "https://example.com/handbag.png"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "enum": [
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16",
+                  "3:2",
+                  "2:3",
+                  "21:9",
+                  "auto"
+                ],
+                "description": "宽高比或 auto。宽高比：1:1、4:3、3:4、16:9、9:16、3:2、2:3、21:9，像素尺寸由 resolution 决定。auto 用于图片编辑，按参考图比例、以所选档位的像素面积输出。文生图默认 1:1，图片编辑默认 auto。",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "1.5K",
+                  "2K"
+                ],
+                "default": "2K",
+                "description": "所选 size 的像素档位。1K: 1:1 1024x1024, 4:3 1152x864, 3:4 864x1152, 16:9 1424x800, 9:16 800x1424, 3:2 1248x832, 2:3 832x1248, 21:9 1568x672. 1.5K: 1:1 1536x1536, 4:3 1792x1344, 3:4 1344x1792, 16:9 2048x1152, 9:16 1152x2048, 3:2 1872x1248, 2:3 1248x1872, 21:9 2352x1008. 2K: 1:1 2048x2048, 4:3 2368x1776, 3:4 1776x2368, 16:9 2816x1584, 9:16 1584x2816, 3:2 2496x1664, 2:3 1664x2496, 21:9 3136x1344."
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "transparent",
+                  "opaque"
+                ],
+                "default": "auto",
+                "description": "输出图片的背景。auto 由提示词和输出格式决定；transparent 返回带 Alpha 通道的 RGBA 图片（支持全透明和半透明），需配合 output_format png；opaque 返回 RGB 图片。"
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg"
+                ],
+                "default": "png",
+                "description": "输出图片格式。"
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "内容安全检查。"
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。",
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794470400-abcd1234",
+                "description": "任务唯一标识，用于查询任务状态"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "not_started",
+                "description": "任务状态。提交后立即返回时始终为 `not_started`。后续状态请通过[查询任务状态](/zh/api-manual/task-management/status)接口或 `callback_url` 获取。\n\n- `not_started`：排队中，等待处理\n- `running`：生成中\n- `finished`：已完成，结果在 `files` 或 `output` 中\n- `failed`：失败，详情见 `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-12T10:30:00",
+                "description": "任务创建时间，ISO 8601 格式"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "业务状态码。`200` 表示成功，其他值都表示请求失败。请务必检查这个字段：部分参数校验错误会以 HTTP 200 返回，响应体里的 `code` 为 `400`。\n\n- `200`：成功\n- `400`：请求参数无效\n- `401`：API Key 缺失或无效\n- `402`：积分不足\n- `403`：没有权限\n- `404`：资源不存在\n- `408`：请求超时\n- `429`：请求频率超限\n- `500`：服务器内部错误\n- `502`：上游服务错误\n- `503`：服务暂不可用\n\n详见[错误码](/zh/api-manual/error-codes)。"
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

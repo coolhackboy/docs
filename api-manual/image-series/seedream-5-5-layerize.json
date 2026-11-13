@@ -1,0 +1,317 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedream 5.5 Layer Decomposition API",
+    "description": "The Seedream 5.5 Layer Decomposition API splits one image into a base image and up to 99 transparent PNG layers, with layer positions, names, descriptions, and optional text OCR.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Seedream 5.5 Layer Decomposition Task",
+        "description": "Seedream 5.5 layer decomposition: one input image in, a base image plus transparent PNG layers out.",
+        "operationId": "submitSeedream55LayerizeTask",
+        "tags": [
+          "Seedream 5.5 Layer Decomposition"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "auto-layers": {
+                  "summary": "Automatic Layers",
+                  "value": {
+                    "model": "seedream-5.5-layerize",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/poster.png"
+                      ]
+                    }
+                  }
+                },
+                "guided-layers": {
+                  "summary": "Guided Layers",
+                  "value": {
+                    "model": "seedream-5.5-layerize",
+                    "input": {
+                      "prompt": "Put each animal on its own layer and keep the rest of the scene in the base image",
+                      "image_urls": [
+                        "https://example.com/animal-illustration.png"
+                      ],
+                      "resolution": "2K",
+                      "max_images": 40
+                    }
+                  }
+                },
+                "text-layers": {
+                  "summary": "Text Layers With OCR",
+                  "value": {
+                    "model": "seedream-5.5-layerize",
+                    "input": {
+                      "image_urls": [
+                        "https://example.com/event-poster.png"
+                      ],
+                      "resolution": "1K",
+                      "max_images": 15,
+                      "text_recognition": true,
+                      "output_format": "jpeg"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "seedream-5.5-layerize"
+            ],
+            "description": "Seedream 5.5 Layer Decomposition model identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "image_urls"
+            ],
+            "description": "Split one image into a base image and transparent PNG layers. The task returns one file per image, base image first; each file has a layer object.",
+            "properties": {
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Exactly 1 image URL to decompose. Must be an array. The URL must be a publicly accessible HTTP or HTTPS URL pointing to a JPEG or PNG image of up to 10 MB, from 512x512 to 6000x6000 pixels, with an aspect ratio between 1:16 and 16:1.",
+                "example": [
+                  "https://example.com/poster.png"
+                ]
+              },
+              "prompt": {
+                "type": "string",
+                "maxLength": 2000,
+                "description": "Optional instruction for how to split the image, up to 2000 characters (for example, put each animal on its own layer and keep the rest in the base image). When the prompt is omitted, the model finds the main elements and puts each on its own layer."
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "1.5K",
+                  "2K",
+                  "auto"
+                ],
+                "default": "auto",
+                "description": "Output size tier. auto keeps the original size when it is between 1K and 2K, upscales smaller images to 1K, and downscales larger images to 2K; auto is billed as 2K. The base image keeps the aspect ratio of the input; each layer keeps its own aspect ratio at about the selected tier."
+              },
+              "max_images": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 100,
+                "default": 30,
+                "description": "Maximum number of output images, including the base image (2–100). Larger values give finer decomposition. The number of returned images follows the image content, and credits are charged for the images actually returned."
+              },
+              "text_recognition": {
+                "type": "boolean",
+                "default": false,
+                "description": "Return OCR results for regular text layers in layer.text_recognition: the full text, line positions, and approximate styles (font, color, bold, italic, underline, strikethrough, shadow, translucency)."
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg"
+                ],
+                "default": "png",
+                "description": "Format of the base image. Layers are always PNG with transparency."
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "Content safety check."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details.",
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794470400-abcd1234",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "not_started",
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

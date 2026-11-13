@@ -178,6 +178,11 @@
           "file_type"
         ],
         "properties": {
+          "layer": {
+            "type": "object",
+            "description": "Layer information for layer decomposition results (seedream-5.5-layerize). z_index: stacking order, 0 for the base image and 1+ for layers. name / description: written by the model. bounding_box: absolute [left, top, right, bottom] in base-image pixels and normalized on a 0–1000 scale. text_recognition: OCR result for regular text layers when requested.",
+            "example": {"z_index": 1, "name": "Headline text", "description": "Bold navy headline text.", "bounding_box": {"absolute": [0, 172, 1366, 458], "normalized": [0, 224, 1000, 596]}}
+          },
           "label": {
             "type": "string",
             "description": "Optional file label when provided by the model"

@@ -178,6 +178,11 @@
           "file_type"
         ],
         "properties": {
+          "layer": {
+            "type": "object",
+            "description": "图层拆分结果（seedream-5.5-layerize）的图层信息。z_index：叠放顺序，底图为 0，图层从 1 开始。name / description：模型生成的名称与描述。bounding_box：absolute 为底图像素坐标 [left, top, right, bottom]，normalized 为 0–1000 坐标。text_recognition：开启文字识别时常规文字图层的 OCR 结果。",
+            "example": {"z_index": 1, "name": "Headline text", "description": "Bold navy headline text.", "bounding_box": {"absolute": [0, 172, 1366, 458], "normalized": [0, 224, 1000, 596]}}
+          },
           "label": {
             "type": "string",
             "description": "模型提供时返回的可选文件标签"

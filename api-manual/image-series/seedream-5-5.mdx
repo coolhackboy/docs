@@ -1,0 +1,122 @@
+---
+title: "Seedream 5.5"
+description: "The Seedream 5.5 API generates an image from a prompt or edits up to 10 reference images. It supports 1K, 1.5K, and 2K output, eight aspect ratios, and transparent PNG backgrounds."
+icon: "image"
+openapi: "/api-manual/image-series/seedream-5-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Use `seedream-5.5` to create product shots, posters, stickers, and other images from a prompt, or to edit and combine up to 10 reference images with the same model ID. Seedream 5.5 is ByteDance Seed's image creation model, released on November 9, 2026. It keeps unedited regions stable across repeated edits and outputs native transparent PNGs.
+
+To split an image into a base image and transparent layers, use [Seedream 5.5 Layer Decomposition](/api-manual/image-series/seedream-5-5-layerize).
+
+## Models
+
+- **seedream-5.5** — Text-to-image when `image_urls` is omitted; image editing with 1 to 10 reference images when `image_urls` is provided
+
+## Features
+
+- Text-to-image generation from prompts of 5 to 5,000 characters.
+- Image editing and multi-reference composition with up to 10 reference images.
+- Consistent multi-round editing: pass the previous result as the next reference image and the regions you leave out of the prompt stay the same.
+- Native transparent output: set `background` to `transparent` for an RGBA PNG with full or partial transparency, from a prompt or from reference images.
+- Eight aspect ratios at `1K`, `1.5K`, or `2K` (up to 3136×1344 at `21:9`).
+- PNG or JPEG output.
+
+## Input modes
+
+- **Text-to-image** — Omit `image_urls`. `size` defaults to `1:1`.
+- **Image editing** — Pass 1 to 10 URLs in `image_urls`. Refer to the images in the prompt by their order (image 1, image 2, and so on). `size` defaults to `auto`, which follows the reference images.
+
+## Required parameters
+
+- `prompt` (string): Description of the image or the requested edit, 5–5,000 characters. For an edit, say what changes and what stays the same.
+
+## Optional parameters
+
+- `image_urls` (array of strings): 1 to 10 publicly accessible HTTP(S) reference image URLs (JPEG, PNG, or WEBP, up to 10 MB each). Selects image editing mode.
+- `size` (string): `1:1`, `4:3`, `3:4`, `16:9`, `9:16`, `3:2`, `2:3`, `21:9`, or `auto`. Defaults to `1:1` for text-to-image and `auto` for image editing. `auto` applies to image editing. See [Size](#size).
+- `resolution` (string): `1K`, `1.5K`, or `2K`. Default is `2K`. Sets the pixel tier for the selected `size`.
+- `background` (string): `auto`, `transparent`, or `opaque`. Default is `auto`, where the prompt and output format decide the background. `transparent` returns an RGBA image with an alpha channel and needs `output_format` `png`. `opaque` returns an RGB image.
+- `output_format` (string): `png` or `jpeg`. Default is `png`.
+- `enable_safety_checker` (boolean): Content safety check. Default is `true`.
+
+## Size
+
+Each aspect ratio maps to fixed pixel dimensions at the selected `resolution`:
+
+| `size` | `1K` | `1.5K` | `2K` |
+| --- | --- | --- | --- |
+| `1:1` | 1024×1024 | 1536×1536 | 2048×2048 |
+| `4:3` | 1152×864 | 1792×1344 | 2368×1776 |
+| `3:4` | 864×1152 | 1344×1792 | 1776×2368 |
+| `16:9` | 1424×800 | 2048×1152 | 2816×1584 |
+| `9:16` | 800×1424 | 1152×2048 | 1584×2816 |
+| `3:2` | 1248×832 | 1872×1248 | 2496×1664 |
+| `2:3` | 832×1248 | 1248×1872 | 1664×2496 |
+| `21:9` | 1568×672 | 2352×1008 | 3136×1344 |
+
+- `auto` (image editing): The output follows the reference images at about the pixel area of the selected `resolution`.
+
+## Examples
+
+### Text To Image
+
+A 2K 16:9 product shot (2816×1584):
+
+```json
+{
+  "model": "seedream-5.5",
+  "input": {
+    "prompt": "A ceramic pour-over coffee set on a walnut counter, soft morning window light, steam rising from the cup, minimalist product photography",
+    "size": "16:9",
+    "resolution": "2K"
+  }
+}
+```
+
+### Multi-Reference Edit
+
+Combine two reference images, referring to each one by its position in `image_urls`:
+
+```json
+{
+  "model": "seedream-5.5",
+  "input": {
+    "prompt": "Put the handbag from image 2 on the wooden table in image 1. Keep the lighting, background, and camera angle of image 1 unchanged.",
+    "image_urls": [
+      "https://example.com/living-room.png",
+      "https://example.com/handbag.png"
+    ],
+    "resolution": "2K"
+  }
+}
+```
+
+### Transparent PNG
+
+A sticker on a transparent background:
+
+```json
+{
+  "model": "seedream-5.5",
+  "input": {
+    "prompt": "A red paper lantern with golden tassels, flat illustration sticker, isolated subject on a transparent background",
+    "size": "1:1",
+    "resolution": "1K",
+    "background": "transparent",
+    "output_format": "png"
+  }
+}
+```
+
+## Notes
+
+- Each request generates one image.
+- Pass `image_urls` as an array, including for a single image.
+- For multi-round editing, use the previous result as the next reference image and keep `background` at `opaque` or `auto` until the final transparent step.
+- A request usually finishes in about 20 to 35 seconds.

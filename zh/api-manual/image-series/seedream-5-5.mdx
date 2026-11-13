@@ -1,0 +1,122 @@
+---
+title: "Seedream 5.5"
+description: "Seedream 5.5 API 根据提示词生成图片，或基于最多 10 张参考图编辑图片，支持 1K、1.5K、2K 输出、8 种宽高比和透明背景 PNG。"
+icon: "image"
+openapi: "/zh/api-manual/image-series/seedream-5-5.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `seedream-5.5` 根据提示词制作产品图、海报、贴纸等各类图片，也可以用同一个 model ID 编辑和组合最多 10 张参考图。Seedream 5.5 是字节跳动 Seed 团队的图像创作模型，于 2026 年 11 月 9 日发布，多轮编辑时未改动的区域保持稳定，并可直接输出透明 PNG。
+
+如需把一张图片拆成底图和透明图层，请使用 [Seedream 5.5 图层拆分](/zh/api-manual/image-series/seedream-5-5-layerize)。
+
+## 模型
+
+- **seedream-5.5** — 省略 `image_urls` 时为文生图；传入 1 到 10 张参考图的 `image_urls` 时为图片编辑
+
+## 功能
+
+- 根据 5 到 5,000 个字符的提示词生成图片。
+- 支持图片编辑和多参考图合成，最多 10 张参考图。
+- 多轮编辑稳定：把上一轮结果作为下一轮的参考图，提示词里没提到的区域保持不变。
+- 原生透明输出：`background` 设为 `transparent` 即返回带全透明或半透明背景的 RGBA PNG，文生图和图片编辑都可用。
+- 提供 8 种宽高比，可选 `1K`、`1.5K` 或 `2K`（`21:9` 最高 3136×1344）。
+- 输出 PNG 或 JPEG。
+
+## 输入模式
+
+- **文生图** — 省略 `image_urls`。`size` 默认为 `1:1`。
+- **图片编辑** — 在 `image_urls` 中传入 1 到 10 个 URL。提示词里按顺序称呼参考图（图 1、图 2 等）。`size` 默认为 `auto`，按参考图输出。
+
+## 必填参数
+
+- `prompt`（string）：描述画面或编辑要求，5–5,000 个字符。编辑时写清改什么、保留什么。
+
+## 可选参数
+
+- `image_urls`（字符串数组）：1 到 10 个可公开访问的 HTTP(S) 参考图 URL（JPEG、PNG 或 WEBP，单张不超过 10 MB）。传入即为图片编辑模式。
+- `size`（string）：`1:1`、`4:3`、`3:4`、`16:9`、`9:16`、`3:2`、`2:3`、`21:9` 或 `auto`。文生图默认 `1:1`，图片编辑默认 `auto`。`auto` 用于图片编辑。详见[尺寸](#尺寸)。
+- `resolution`（string）：`1K`、`1.5K` 或 `2K`，默认 `2K`。决定所选 `size` 的像素档位。
+- `background`（string）：`auto`、`transparent` 或 `opaque`，默认 `auto`，由提示词和输出格式决定背景。`transparent` 返回带 Alpha 通道的 RGBA 图片，需配合 `output_format` 为 `png`；`opaque` 返回 RGB 图片。
+- `output_format`（string）：`png` 或 `jpeg`，默认 `png`。
+- `enable_safety_checker`（boolean）：内容安全检查，默认 `true`。
+
+## 尺寸
+
+每种宽高比在所选 `resolution` 下对应固定像素尺寸：
+
+| `size` | `1K` | `1.5K` | `2K` |
+| --- | --- | --- | --- |
+| `1:1` | 1024×1024 | 1536×1536 | 2048×2048 |
+| `4:3` | 1152×864 | 1792×1344 | 2368×1776 |
+| `3:4` | 864×1152 | 1344×1792 | 1776×2368 |
+| `16:9` | 1424×800 | 2048×1152 | 2816×1584 |
+| `9:16` | 800×1424 | 1152×2048 | 1584×2816 |
+| `3:2` | 1248×832 | 1872×1248 | 2496×1664 |
+| `2:3` | 832×1248 | 1248×1872 | 1664×2496 |
+| `21:9` | 1568×672 | 2352×1008 | 3136×1344 |
+
+- `auto`（图片编辑）：按参考图输出，像素面积约为所选 `resolution` 档位。
+
+## 示例
+
+### 文生图
+
+一张 2K 16:9 的产品图（2816×1584）：
+
+```json
+{
+  "model": "seedream-5.5",
+  "input": {
+    "prompt": "A ceramic pour-over coffee set on a walnut counter, soft morning window light, steam rising from the cup, minimalist product photography",
+    "size": "16:9",
+    "resolution": "2K"
+  }
+}
+```
+
+### 多参考图编辑
+
+组合两张参考图，按 `image_urls` 中的顺序称呼每张图：
+
+```json
+{
+  "model": "seedream-5.5",
+  "input": {
+    "prompt": "Put the handbag from image 2 on the wooden table in image 1. Keep the lighting, background, and camera angle of image 1 unchanged.",
+    "image_urls": [
+      "https://example.com/living-room.png",
+      "https://example.com/handbag.png"
+    ],
+    "resolution": "2K"
+  }
+}
+```
+
+### 透明背景 PNG
+
+透明背景的贴纸：
+
+```json
+{
+  "model": "seedream-5.5",
+  "input": {
+    "prompt": "A red paper lantern with golden tassels, flat illustration sticker, isolated subject on a transparent background",
+    "size": "1:1",
+    "resolution": "1K",
+    "background": "transparent",
+    "output_format": "png"
+  }
+}
+```
+
+## 注意事项
+
+- 每次请求生成一张图片。
+- `image_urls` 使用数组格式，传一张图时也一样。
+- 多轮编辑时，把上一轮结果作为下一轮参考图，最后一步再设 `background` 为 `transparent`，中间各轮用 `opaque` 或 `auto`。
+- 一次请求通常在 20 到 35 秒内完成。

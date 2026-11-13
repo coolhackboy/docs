@@ -1,0 +1,157 @@
+---
+title: "Seedream 5.5 Layer Decomposition"
+description: "The Seedream 5.5 Layer Decomposition API splits one image into a base image and up to 99 transparent PNG layers, with layer positions, names, descriptions, and optional text OCR."
+icon: "layer-group"
+openapi: "/api-manual/image-series/seedream-5-5-layerize.json POST /api/generate/submit"
+---
+
+<Tip>
+1. After submission, a `task_id` will be returned. If you provided a `callback_url`, when the task status becomes `finished` or `failed`, a POST request will be sent to the `callback_url`.
+2. Regardless of whether `callback_url` is provided, you can retrieve the response result through the unified [Query Task Status](/api-manual/task-management/status) endpoint.
+</Tip>
+
+Use `seedream-5.5-layerize` to turn a flat poster, illustration, or product image into separate transparent layers that you can move, recolor, replace, or reuse. Each layer comes with its position on the canvas, a name, and a description. With `text_recognition`, regular text layers also return their text, line positions, and approximate styles. This model is the layer decomposition mode of [Seedream 5.5](/api-manual/image-series/seedream-5-5), ByteDance Seed's image creation model released on November 9, 2026.
+
+## Models
+
+- **seedream-5.5-layerize** — One input image in; a base image plus transparent PNG layers out
+
+## Features
+
+- One base image plus up to 99 layers per request (`max_images` up to 100).
+- Prompt-guided decomposition: describe which elements to separate, or leave the prompt out to separate the main elements automatically.
+- Every layer is a transparent PNG with its bounding box on the base image, so the layers stack back into the original layout.
+- Text OCR for regular text layers: full text, line positions, and approximate font, color, and text styles.
+- `1K`, `1.5K`, `2K`, or `auto` output size.
+
+## Required parameters
+
+- `image_urls` (array of strings): Exactly 1 publicly accessible HTTP(S) image URL (JPEG or PNG, up to 10 MB, 512×512 to 6000×6000 pixels, aspect ratio between 1:16 and 16:1).
+
+## Optional parameters
+
+- `prompt` (string): How to split the image, up to 2,000 characters. Example: "Put each animal on its own layer and keep the rest of the scene in the base image." When the prompt is omitted, the model finds the main elements and puts each on its own layer.
+- `resolution` (string): `1K`, `1.5K`, `2K`, or `auto`. Default is `auto`, which keeps the original size when it is between 1K and 2K, upscales smaller images to 1K, and downscales larger images to 2K. The base image keeps the aspect ratio of the input; each layer keeps its own aspect ratio at about the selected tier.
+- `max_images` (integer): Maximum number of output images, including the base image, from 2 to 100. Default is `30`. Larger values give finer decomposition.
+- `text_recognition` (boolean): Return OCR results for regular text layers in `layer.text_recognition`. Default is `false`.
+- `output_format` (string): `png` or `jpeg` for the base image. Default is `png`. Layers are always transparent PNGs.
+- `enable_safety_checker` (boolean): Content safety check. Default is `true`.
+
+## Output
+
+When the task finishes, `files` in [Query Task Status](/api-manual/task-management/status) and in the callback lists one file per image, base image first. Each file has a `layer` object:
+
+- `z_index` (integer): Stacking order. The base image is `0`; layers count up from `1`, and a higher value sits on top.
+- `name` (string): Short layer name written by the model.
+- `description` (string): Longer description of the layer content, such as color, material, and state.
+- `bounding_box` (object): Position of the layer on the base image. `absolute` is `[left, top, right, bottom]` in base-image pixels; `normalized` is the same box on a 0–1000 scale.
+- `text_recognition` (object): OCR result for a regular text layer when `text_recognition` is `true`. `text` holds the full text with line breaks; `lines` holds each line's `bounding_box` and `runs`, and each run has its `text` and a `style` with `similar_font_family`, `foreground_color`, `bold`, `italic`, `underline`, `strikethrough`, `shadow`, and `translucent`.
+
+```json
+{
+  "files": [
+    {
+      "file_url": "https://storage.poyo.ai/images/task-unified-1794470400-abcd1234/task-unified-1794470400-abcd1234_1.png",
+      "file_type": "image",
+      "layer": { "z_index": 0 }
+    },
+    {
+      "file_url": "https://storage.poyo.ai/images/task-unified-1794470400-abcd1234/task-unified-1794470400-abcd1234_2.png",
+      "file_type": "image",
+      "layer": {
+        "z_index": 1,
+        "name": "THANK YOU headline",
+        "description": "Large bold navy headline text reading THANK YOU.",
+        "bounding_box": {
+          "absolute": [0, 172, 1366, 458],
+          "normalized": [0, 224, 1000, 596]
+        },
+        "text_recognition": {
+          "text": "THANK YOU",
+          "lines": [
+            {
+              "bounding_box": {
+                "absolute": [0, 172, 1366, 458],
+                "normalized": [0, 224, 1000, 596]
+              },
+              "runs": [
+                {
+                  "text": "THANK YOU",
+                  "style": {
+                    "similar_font_family": "Arial",
+                    "foreground_color": "#1B3A96",
+                    "bold": true,
+                    "italic": false,
+                    "underline": false,
+                    "strikethrough": false,
+                    "shadow": false,
+                    "translucent": false
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+To rebuild the original image, scale each layer to `right - left` by `bottom - top`, place it at `(left, top)` on the base image, and stack layers in ascending `z_index`. Use `normalized` to place layers on a canvas of another size.
+
+## Examples
+
+### Automatic Layers
+
+Separate the main elements of a poster with the default settings:
+
+```json
+{
+  "model": "seedream-5.5-layerize",
+  "input": {
+    "image_urls": ["https://example.com/poster.png"]
+  }
+}
+```
+
+### Guided Layers
+
+Choose which elements become layers:
+
+```json
+{
+  "model": "seedream-5.5-layerize",
+  "input": {
+    "prompt": "Put each animal on its own layer and keep the rest of the scene in the base image",
+    "image_urls": ["https://example.com/animal-illustration.png"],
+    "resolution": "2K",
+    "max_images": 40
+  }
+}
+```
+
+### Text Layers With OCR
+
+Split an event poster and read its text layers:
+
+```json
+{
+  "model": "seedream-5.5-layerize",
+  "input": {
+    "image_urls": ["https://example.com/event-poster.png"],
+    "resolution": "1K",
+    "max_images": 15,
+    "text_recognition": true,
+    "output_format": "jpeg"
+  }
+}
+```
+
+## Notes
+
+- Credits are charged for the images actually returned, including the base image. At submission, your balance must cover `max_images` images.
+- `auto` resolution is billed at the `2K` rate.
+- The number of returned images follows the image content, up to `max_images`; a simple image yields fewer layers.
+- Layer names and descriptions are written by the model.
+- A request usually finishes in about 20 to 50 seconds; higher `max_images` values take longer.

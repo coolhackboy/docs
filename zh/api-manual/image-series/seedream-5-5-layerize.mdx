@@ -1,0 +1,157 @@
+---
+title: "Seedream 5.5 图层拆分"
+description: "Seedream 5.5 图层拆分 API 把一张图片拆成一张底图和最多 99 个透明 PNG 图层，并返回图层位置、名称、描述以及可选的文字 OCR。"
+icon: "layer-group"
+openapi: "/zh/api-manual/image-series/seedream-5-5-layerize.json POST /api/generate/submit"
+---
+
+<Tip>
+1. 提交后会返回 `task_id`。如果提供了 `callback_url`，当任务状态变为 `finished` 或 `failed` 时，系统会向 `callback_url` 发送 POST 请求。
+2. 无论是否提供 `callback_url`，都可以通过统一的[查询任务状态](/zh/api-manual/task-management/status)接口获取结果。
+</Tip>
+
+使用 `seedream-5.5-layerize` 把一张扁平的海报、插画或产品图拆成独立的透明图层，方便移动、改色、替换或复用。每个图层都带有它在画布上的位置、名称和描述；开启 `text_recognition` 后，常规文字图层还会返回文字内容、逐行位置和近似样式。该模型是 [Seedream 5.5](/zh/api-manual/image-series/seedream-5-5) 的图层拆分模式，Seedream 5.5 是字节跳动 Seed 团队于 2026 年 11 月 9 日发布的图像创作模型。
+
+## 模型
+
+- **seedream-5.5-layerize** — 输入一张图片，输出一张底图和若干透明 PNG 图层
+
+## 功能
+
+- 每次请求输出一张底图和最多 99 个图层（`max_images` 最大 100）。
+- 按提示词拆分：说明要拆出哪些元素；省略提示词时自动拆出主要元素。
+- 每个图层都是透明 PNG，并带有它在底图上的边界框，可按原布局叠回。
+- 常规文字图层的 OCR：全文、逐行位置，以及近似的字体、颜色和文字样式。
+- 输出尺寸可选 `1K`、`1.5K`、`2K` 或 `auto`。
+
+## 必填参数
+
+- `image_urls`（字符串数组）：恰好 1 个可公开访问的 HTTP(S) 图片 URL（JPEG 或 PNG，不超过 10 MB，尺寸 512×512 到 6000×6000 像素，宽高比在 1:16 到 16:1 之间）。
+
+## 可选参数
+
+- `prompt`（string）：描述怎么拆分，最多 2,000 个字符。例如："Put each animal on its own layer and keep the rest of the scene in the base image."。省略时模型自动识别主要元素并各自拆成图层。
+- `resolution`（string）：`1K`、`1.5K`、`2K` 或 `auto`，默认 `auto`：原图在 1K–2K 之间保持原尺寸，小于 1K 放大到 1K，大于 2K 缩小到 2K。底图保持输入图比例，每个图层保持自身比例、接近所选档位。
+- `max_images`（integer）：最多输出几张图片，含底图，范围 2 到 100，默认 `30`。数值越大拆得越细。
+- `text_recognition`（boolean）：在 `layer.text_recognition` 中返回常规文字图层的 OCR 结果，默认 `false`。
+- `output_format`（string）：底图格式，`png` 或 `jpeg`，默认 `png`。图层固定为透明 PNG。
+- `enable_safety_checker`（boolean）：内容安全检查，默认 `true`。
+
+## 输出
+
+任务完成后，[查询任务状态](/zh/api-manual/task-management/status)和回调中的 `files` 按图片逐个列出，底图在前。每个文件带一个 `layer` 对象：
+
+- `z_index`（integer）：叠放顺序。底图为 `0`，图层从 `1` 开始递增，数值越大越靠上。
+- `name`（string）：模型生成的简短图层名。
+- `description`（string）：更详细的图层内容描述，如颜色、材质和状态。
+- `bounding_box`（object）：图层在底图上的位置。`absolute` 为底图像素坐标 `[left, top, right, bottom]`；`normalized` 为同一边界框在 0–1000 范围内的坐标。
+- `text_recognition`（object）：`text_recognition` 为 `true` 时常规文字图层的 OCR 结果。`text` 为全文（含换行）；`lines` 为每一行的 `bounding_box` 和 `runs`，每个 run 有 `text` 和 `style`，`style` 包含 `similar_font_family`、`foreground_color`、`bold`、`italic`、`underline`、`strikethrough`、`shadow`、`translucent`。
+
+```json
+{
+  "files": [
+    {
+      "file_url": "https://storage.poyo.ai/images/task-unified-1794470400-abcd1234/task-unified-1794470400-abcd1234_1.png",
+      "file_type": "image",
+      "layer": { "z_index": 0 }
+    },
+    {
+      "file_url": "https://storage.poyo.ai/images/task-unified-1794470400-abcd1234/task-unified-1794470400-abcd1234_2.png",
+      "file_type": "image",
+      "layer": {
+        "z_index": 1,
+        "name": "THANK YOU headline",
+        "description": "Large bold navy headline text reading THANK YOU.",
+        "bounding_box": {
+          "absolute": [0, 172, 1366, 458],
+          "normalized": [0, 224, 1000, 596]
+        },
+        "text_recognition": {
+          "text": "THANK YOU",
+          "lines": [
+            {
+              "bounding_box": {
+                "absolute": [0, 172, 1366, 458],
+                "normalized": [0, 224, 1000, 596]
+              },
+              "runs": [
+                {
+                  "text": "THANK YOU",
+                  "style": {
+                    "similar_font_family": "Arial",
+                    "foreground_color": "#1B3A96",
+                    "bold": true,
+                    "italic": false,
+                    "underline": false,
+                    "strikethrough": false,
+                    "shadow": false,
+                    "translucent": false
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+还原原图时，把每个图层缩放到 `right - left` × `bottom - top`，放在底图的 `(left, top)` 处，并按 `z_index` 从小到大叠放。放到其他尺寸的画布上时用 `normalized` 换算位置。
+
+## 示例
+
+### 自动拆层
+
+用默认设置拆出海报的主要元素：
+
+```json
+{
+  "model": "seedream-5.5-layerize",
+  "input": {
+    "image_urls": ["https://example.com/poster.png"]
+  }
+}
+```
+
+### 按提示拆层
+
+指定哪些元素拆成图层：
+
+```json
+{
+  "model": "seedream-5.5-layerize",
+  "input": {
+    "prompt": "Put each animal on its own layer and keep the rest of the scene in the base image",
+    "image_urls": ["https://example.com/animal-illustration.png"],
+    "resolution": "2K",
+    "max_images": 40
+  }
+}
+```
+
+### 文字图层与 OCR
+
+拆分活动海报并读取文字图层：
+
+```json
+{
+  "model": "seedream-5.5-layerize",
+  "input": {
+    "image_urls": ["https://example.com/event-poster.png"],
+    "resolution": "1K",
+    "max_images": 15,
+    "text_recognition": true,
+    "output_format": "jpeg"
+  }
+}
+```
+
+## 注意事项
+
+- 按实际返回的图片张数（含底图）计费。提交时账户余额需覆盖 `max_images` 张。
+- `auto` 分辨率按 `2K` 计费。
+- 返回张数取决于画面内容，最多 `max_images` 张；画面越简单，图层越少。
+- 图层名称和描述由模型生成。
+- 一次请求通常在 20 到 50 秒内完成，`max_images` 越大耗时越长。

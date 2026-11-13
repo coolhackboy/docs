@@ -1,0 +1,330 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PoYo AI - Seedream 5.5 API",
+    "description": "The Seedream 5.5 API generates an image from a prompt or edits up to 10 reference images. It supports 1K, 1.5K, and 2K output, eight aspect ratios, and transparent PNG backgrounds.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.poyo.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/generate/submit": {
+      "post": {
+        "summary": "Submit Seedream 5.5 Task",
+        "description": "Seedream 5.5 text-to-image generation and image editing with up to 10 reference images.",
+        "operationId": "submitSeedream55Task",
+        "tags": [
+          "Seedream 5.5"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitRequest"
+              },
+              "examples": {
+                "text-to-image": {
+                  "summary": "Text To Image",
+                  "value": {
+                    "model": "seedream-5.5",
+                    "input": {
+                      "prompt": "A ceramic pour-over coffee set on a walnut counter, soft morning window light, steam rising from the cup, minimalist product photography",
+                      "size": "16:9",
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "multi-reference-edit": {
+                  "summary": "Multi-Reference Edit",
+                  "value": {
+                    "model": "seedream-5.5",
+                    "input": {
+                      "prompt": "Put the handbag from image 2 on the wooden table in image 1. Keep the lighting, background, and camera angle of image 1 unchanged.",
+                      "image_urls": [
+                        "https://example.com/living-room.png",
+                        "https://example.com/handbag.png"
+                      ],
+                      "resolution": "2K"
+                    }
+                  }
+                },
+                "transparent-png": {
+                  "summary": "Transparent PNG",
+                  "value": {
+                    "model": "seedream-5.5",
+                    "input": {
+                      "prompt": "A red paper lantern with golden tassels, flat illustration sticker, isolated subject on a transparent background",
+                      "size": "1:1",
+                      "resolution": "1K",
+                      "background": "transparent",
+                      "output_format": "png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "All API endpoints require Bearer Token authentication.\n\nCreate an API key: sign in to PoYo, open **Dashboard → API Key** at [poyo.ai/dashboard/api-key](https://poyo.ai/dashboard/api-key), and click to create a key.\n\nAdd it to the request header:\n\n```\nAuthorization: Bearer YOUR_API_KEY\n```"
+      }
+    },
+    "schemas": {
+      "SubmitRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "input"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "seedream-5.5"
+            ],
+            "description": "Seedream 5.5 model identifier. Omit image_urls for text-to-image; pass 1–10 image_urls for image editing."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional webhook URL for task completion or failure."
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "prompt"
+            ],
+            "description": "Generate one image. With image_urls, edit or combine the reference images.",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 5,
+                "maxLength": 5000,
+                "description": "Prompt describing the image or the requested edit, 5–5000 characters. For an edit, say what changes and what stays the same, and refer to reference images by their order (image 1, image 2, and so on)."
+              },
+              "image_urls": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "description": "Optional 1–10 reference image URLs. Passing this field selects image editing. Pass it as an array, including for a single image. Each URL must be a publicly accessible HTTP or HTTPS URL pointing to a JPEG, PNG, or WEBP image of up to 10 MB.",
+                "example": [
+                  "https://example.com/living-room.png",
+                  "https://example.com/handbag.png"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "enum": [
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16",
+                  "3:2",
+                  "2:3",
+                  "21:9",
+                  "auto"
+                ],
+                "description": "Aspect ratio or auto. Aspect ratios: 1:1, 4:3, 3:4, 16:9, 9:16, 3:2, 2:3, 21:9; their pixel size comes from resolution. auto applies to image editing and follows the reference images at about the pixel area of the selected resolution. Defaults to 1:1 for text-to-image and auto for image editing.",
+                "example": "16:9"
+              },
+              "resolution": {
+                "type": "string",
+                "enum": [
+                  "1K",
+                  "1.5K",
+                  "2K"
+                ],
+                "default": "2K",
+                "description": "Pixel tier for the selected size. 1K: 1:1 1024x1024, 4:3 1152x864, 3:4 864x1152, 16:9 1424x800, 9:16 800x1424, 3:2 1248x832, 2:3 832x1248, 21:9 1568x672. 1.5K: 1:1 1536x1536, 4:3 1792x1344, 3:4 1344x1792, 16:9 2048x1152, 9:16 1152x2048, 3:2 1872x1248, 2:3 1248x1872, 21:9 2352x1008. 2K: 1:1 2048x2048, 4:3 2368x1776, 3:4 1776x2368, 16:9 2816x1584, 9:16 1584x2816, 3:2 2496x1664, 2:3 1664x2496, 21:9 3136x1344."
+              },
+              "background": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "transparent",
+                  "opaque"
+                ],
+                "default": "auto",
+                "description": "Background of the output image. auto lets the prompt and output format decide. transparent returns an RGBA image with an alpha channel (full or partial transparency) and needs output_format png. opaque returns an RGB image."
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "png",
+                  "jpeg"
+                ],
+                "default": "png",
+                "description": "Output image format."
+              },
+              "enable_safety_checker": {
+                "type": "boolean",
+                "default": true,
+                "description": "Content safety check."
+              }
+            }
+          }
+        }
+      },
+      "SubmitResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200,
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details.",
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ]
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "status",
+              "created_time"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string",
+                "example": "task-unified-1794470400-abcd1234",
+                "description": "Unique task identifier for status tracking"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_started",
+                  "running",
+                  "finished",
+                  "failed"
+                ],
+                "example": "not_started",
+                "description": "Task status. Always `not_started` right after submission. Use [Query Task Status](/api-manual/task-management/status) or `callback_url` to get later states.\n\n- `not_started`: Queued, waiting to be processed\n- `running`: Being generated\n- `finished`: Completed; results are in `files` or `output`\n- `failed`: Failed; details are in `error_message`"
+              },
+              "created_time": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-11-12T10:30:00",
+                "description": "ISO 8601 timestamp when the task was created"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "error"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400,
+            "enum": [
+              200,
+              400,
+              401,
+              402,
+              403,
+              404,
+              408,
+              429,
+              500,
+              502,
+              503
+            ],
+            "description": "Business status code. `200` means success; any other value means the request failed. Always check this field: some validation errors return HTTP 200 with `code: 400` in the body.\n\n- `200`: Success\n- `400`: Invalid request parameters\n- `401`: Missing or invalid API key\n- `402`: Insufficient credits\n- `403`: Permission denied\n- `404`: Resource not found\n- `408`: Request timeout\n- `429`: Rate limit exceeded\n- `500`: Internal server error\n- `502`: Upstream service error\n- `503`: Service unavailable\n\nSee [Error Codes](/api-manual/error-codes) for details."
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "message",
+              "type"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Invalid request parameters"
+              },
+              "type": {
+                "type": "string",
+                "example": "invalid_request_error"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
